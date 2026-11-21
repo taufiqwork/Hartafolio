@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Setup awal · akun</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;" aria-hidden="true">
+<span style="height: 4px; border-radius: 999px; background: var(--brand);"></span>
+<span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span>
+<span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span>
+<span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span>
+</div>
+<span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">Langkah 1 dari 4 · Akun</span>
+</div></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 16px;">
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 0;">
+<svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true" style="margin-left: -4px;"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg>
+<h1 class="title" style="margin: 0; font-size: 22px; line-height: 30px; font-weight: 700;">Selamat datang di Hartafolio</h1>
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Catat emas, perak, crypto, saham, dan uang keluarga di satu tempat, dengan pengingat zakat.</p>
+</div>
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="Yang akan disiapkan">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;"><span class="heading">Mulai dalam 4 langkah</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">sekitar 3 menit</span></div>
+<div class="hf-card" style="gap: 0; padding: 4px 16px;">
+<sc-for list="{{ steps }}" as="t" hint-placeholder-count="4"><div class="hf-detail" style="grid-template-columns: 32px minmax(0, 1fr);">
+<span style="width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; background: {{ t.bg }}; color: {{ t.fg }}; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 20px;">{{ t.n }}</span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ t.t }}</span><span class="hf-detail-meta" style="white-space: normal;">{{ t.d }}</span></div>
+</div></sc-for>
+</div>
+</section>
+<div style="display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--brand-soft);">
+<span style="color: var(--brand); display: grid; padding-top: 2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+<span style="font-size: 13px; line-height: 20px;">Data tersimpan di Google Sheet milik Anda sendiri. Hartafolio tidak menyimpan salinan di server lain.</span>
+</div>
+</main>
+<footer style="padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);">
+<a class="hf-btn hf-btn-primary hf-btn-block" href="01-Setup-2a-Kosong.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="m10 17 5-5-5-5"></path><path d="M15 12H3"></path><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path></svg>Masuk dengan akun Google</a>
+<span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">Dipakai untuk membuat dan membuka Google Sheet Anda</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = [
+      ['Akun', 'Masuk dengan akun Google'],
+      ['Anggota', 'Siapa saja yang dicatat'],
+      ['Lokasi', 'Tempat aset disimpan'],
+      ['Import', 'Pindahkan catatan Excel lama']
+    ];
+    return {
+      theme: this.props.theme ?? 'light',
+      steps: S.map(([t, d], i) => ({ n: i + 1, t, d, bg: i === 0 ? 'var(--brand)' : 'var(--surface-sunken)', fg: i === 0 ? 'var(--on-brand)' : 'var(--ink-muted)' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

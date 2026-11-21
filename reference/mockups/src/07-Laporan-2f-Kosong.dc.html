@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Laporan · kosong</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+.hf-barcol{font:inherit;color:inherit;background:transparent;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:opacity .2s ease}
+.hf-bar{background:linear-gradient(180deg,color-mix(in srgb,var(--brand) 70%,#fff) 0%,var(--brand) 100%);transform-origin:bottom;animation:hfBar .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
+.hf-bar-neg{background:linear-gradient(0deg,color-mix(in srgb,var(--loss) 70%,#fff) 0%,var(--loss) 100%);transform-origin:top}
+@keyframes hfBar{from{transform:scaleY(0)}}
+@media (prefers-reduced-motion: reduce){.hf-bar{animation:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; position: relative; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><a href="09-Lainnya.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; text-decoration: none; line-height: 22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Alat</a><header style="display: flex; justify-content: space-between; align-items: center; gap: 12px;"><h1 class="title" style="margin: 0;">Laporan</h1><sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-sm" type="button" onClick="{{ openExport }}" aria-label="Export ringkasan atau data lengkap" style="flex: none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>Export</button></sc-if></header><sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><div class="hf-toggle" role="group" aria-label="Periode" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; box-sizing: border-box;">
+<sc-for list="{{ periods }}" as="p" hint-placeholder-count="2"><button type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ p.l }}</button></sc-for>
+</div></sc-if></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px calc(var(--safe-bottom) + 24px); display: flex; flex-direction: column; gap: 16px;">
+
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<div class="hf-select" style="position: relative; z-index: {{ memZ }}; flex: none;"><button class="hf-chip" type="button" aria-haspopup="listbox" aria-expanded="{{ memOpenStr }}" onClick="{{ toggleMem }}">{{ memLabel }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><sc-if value="{{ memOpen }}" hint-placeholder-val="{{ false }}"><ul class="hf-select-menu" role="listbox" aria-label="Anggota" style="min-width: 200px;"><sc-for list="{{ memOpts }}" as="o" hint-placeholder-count="5"><li><button class="hf-select-opt" type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}"><span>{{ o.l }}</span></button></li></sc-for></ul></sc-if></div>
+<button class="hf-chip" type="button" aria-pressed="{{ usdStr }}" onClick="{{ toggleUsd }}">Tampilkan dalam USD</button>
+</div>
+<section class="hf-card" aria-label="Perubahan nilai">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="label" style="color: var(--ink-muted);">{{ headLabel }}</span>
+<div style="display: flex; align-items: baseline; gap: 12px;"><span style="font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;">{{ headValue }}</span><span class="{{ headPctCls }}">{{ headPct }}</span></div></div>
+<div role="img" aria-label="{{ chartLabel }}" style="display: grid; grid-template-columns: repeat({{ n }}, minmax(0, 1fr)); gap: 8px; align-items: stretch;">
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="6"><button type="button" class="hf-barcol" aria-pressed="{{ b.pressed }}" aria-label="{{ b.aria }}" onClick="{{ b.tap }}" style="--i: {{ b.i }}; opacity: {{ b.op }};">
+<div style="height: 84px; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px;"><sc-if value="{{ b.pos }}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; line-height: 16px; font-weight: 600; color: var(--gain); font-variant-numeric: tabular-nums;">{{ b.t }}</span></sc-if><div class="hf-bar" style="width: 70%; max-width: 32px; height: {{ b.up }}; border-radius: 8px 8px 2px 2px;"></div></div>
+<div style="height: 1px; width: 100%; background: var(--line-strong);"></div>
+<div style="height: {{ negH }}; width: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 4px;"><div class="hf-bar hf-bar-neg" style="width: 70%; max-width: 32px; height: {{ b.down }}; border-radius: 2px 2px 8px 8px;"></div><sc-if value="{{ b.neg }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; line-height: 16px; font-weight: 600; color: var(--loss); font-variant-numeric: tabular-nums;">{{ b.t }}</span></sc-if></div>
+<span class="caption" style="color: {{ b.lc }}; font-weight: {{ b.fw }};">{{ b.l }}</span>
+</button></sc-for>
+</div>
+<span class="caption" style="color: var(--ink-muted);">{{ chartCaption }}</span>
+</section>
+<section class="hf-card" style="padding: 12px 16px 4px; gap: 0;" aria-label="Per jenis aset">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto 76px; gap: 12px; padding-bottom: 8px;"><span class="label" style="color: var(--ink-muted);">Jenis aset</span><span class="label" style="color: var(--ink-muted); text-align: right;">Nilai</span><span class="label" style="color: var(--ink-muted); text-align: right;">Perubahan</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="5"><div class="hf-detail" style="grid-template-columns: 12px minmax(0, 1fr) auto 76px; border-top: 1px solid var(--line);"><span class="hf-swatch" style="background: {{ r.c }};"></span><span class="hf-detail-name" style="font-weight: 500;">{{ r.k }}</span><span class="hf-detail-amount">{{ r.v }}</span><span class="{{ r.cls }}" style="text-align: right;">{{ r.ch }}</span></div></sc-for>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="Riwayat bulanan">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Riwayat bulanan</span><span class="caption" style="color: var(--ink-muted);">Dicatat otomatis tiap tanggal 1. Ketuk untuk rincian.</span></div>
+<div class="hf-card" style="padding: 4px 16px; gap: 0;">
+<div class="hf-detail" style="align-items: center; grid-template-columns: minmax(0, 1fr) auto 64px 18px; gap: 12px;"><span style="display: flex; flex-direction: column;"><span class="hf-detail-name" style="font-weight: 500;">Nov 2026</span><span class="caption" style="color: var(--ink-muted);">berjalan · dicatat 1 Des</span></span><span class="hf-detail-amount" style="color: var(--ink-muted);">Rp 174,2 jt</span><span></span><span></span></div>
+<sc-for list="{{ months }}" as="m" hint-placeholder-count="6"><a class="hf-detail" href="{{ m.href }}" style="align-items: center; grid-template-columns: minmax(0, 1fr) auto 64px 18px; gap: 12px; text-decoration: none; color: var(--ink); border-top: 1px solid var(--line);"><span style="display: flex; flex-direction: column;"><span class="hf-detail-name" style="font-weight: 500;">{{ m.m }}</span><span class="caption" style="color: var(--ink-muted);">{{ m.rec }}</span></span><span class="hf-detail-amount">{{ m.v }}</span><span class="{{ m.cls }}" style="text-align: right;">{{ m.c }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></a></sc-for>
+</div>
+</section>
+</sc-if>
+<sc-if value="{{ kosong }}" hint-placeholder-val="{{ false }}">
+<section class="hf-card" style="padding: 24px 16px; gap: 12px; justify-items: center; text-align: center;" aria-label="Belum ada laporan">
+<span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg></span>
+<span class="heading">Belum ada data laporan</span>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Terisi setelah nilai bulan pertama dicatat, otomatis 1 Des. Punya nilai lama? Import lewat Alat.</span>
+<a class="hf-btn hf-btn-primary hf-btn-block" href="04-Catat.dc.html">Catat transaksi</a>
+</section></sc-if>
+</main>
+<sc-if value="{{ scrim }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ closeAll }}"></div></sc-if>
+<!-- ===== hfExport sheet ===== -->
+<sc-if value="{{ exOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ exClose }}"></div>
+<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="Export">
+<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 16px;">
+<sc-if value="{{ exForm }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Export</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ exCtx }}</span></div></sc-if>
+<!-- ===== hfExport body (satu sumber) ===== -->
+<sc-if value="{{ exForm }}" hint-placeholder-val="{{ true }}">
+<div class="hf-toggle" role="group" aria-label="Jenis export" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; box-sizing: border-box; flex: none;"><sc-for list="{{ exJenis }}" as="c" hint-placeholder-count="2"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted); margin-top: -4px;">{{ exJenisDesc }}</span>
+<sc-for list="{{ exSels }}" as="f" hint-placeholder-count="2"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span><button class="hf-select-btn" type="button" aria-haspopup="dialog" aria-expanded="{{ f.openStr }}" onClick="{{ f.open }}" style="min-height: 48px; font-size: 16px;"><span>{{ f.v }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-for>
+<div role="radiogroup" aria-label="Format" style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">Format</span>
+<sc-for list="{{ exFmts }}" as="o" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="font: inherit; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 16px; border-radius: 12px; border: 1.5px solid {{ o.bd }}; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="width: 22px; height: 22px; min-width: 22px; margin-top: 1px; border-radius: 999px; border: 2px solid {{ o.ring }}; box-sizing: border-box; display: grid; place-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: {{ o.dot }};"></span></span><span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ o.d }}</span></span></button></sc-for>
+</div>
+<span class="caption" style="color: var(--ink-muted);">{{ exScope }}</span>
+</sc-if>
+<sc-if value="{{ exDone }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-top: 4px;"><span style="width: 56px; height: 56px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="28" height="28"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="title" style="margin: 0;">Export berhasil</span><span style="font-size: 15px; line-height: 24px; color: var(--ink-muted);">{{ exDoneDesc }}</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 20px; background: var(--surface-sunken);"><span style="width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 11px; font-weight: 600; line-height: 16px;">{{ exExt }}</span><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ exFile }}</span><span class="caption" style="color: var(--ink-muted);">{{ exFileMeta }}</span></div></div>
+<section class="hf-card" style="gap: 8px;" aria-label="Isi file"><span class="heading">Isi file</span><sc-for list="{{ exIsi }}" as="r" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 14px; line-height: 20px; color: {{ r.c }};"><span>{{ r.a }}</span><span class="hf-badge">{{ r.b }}</span></div></sc-for><sc-if value="{{ exHasHidden }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted); padding-top: 4px; border-top: 1px solid var(--line);">{{ exHidden }}</span></sc-if></section>
+</sc-if>
+<sc-if value="{{ exFail }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-top: 4px;"><span style="width: 56px; height: 56px; border-radius: 999px; display: grid; place-items: center; background: var(--loss-soft); color: var(--loss);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="28" height="28"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span><span class="title" style="margin: 0;">File belum tersimpan</span><span style="font-size: 15px; line-height: 24px; color: var(--ink-muted);">Data Anda aman dan tidak berubah. Yang gagal hanya menyimpan file ke perangkat.</span></div>
+<section class="hf-card" style="gap: 12px;" aria-label="Penyebab"><span class="heading">Penyebab yang umum</span>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Penyimpanan perangkat penuh</span><span style="color: var(--ink-muted);">Kosongkan sedikit ruang, lalu coba lagi.</span></div>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Unduhan diblokir browser</span><span style="color: var(--ink-muted);">Izinkan unduhan untuk Hartafolio di pengaturan browser.</span></div>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Koneksi terputus</span><span style="color: var(--ink-muted);">Data diambil dari Google Sheet Anda. Sambungkan internet, lalu coba lagi.</span></div>
+</section>
+</sc-if>
+<!-- ===== /hfExport body ===== -->
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);">
+<!-- ===== hfExport footer ===== -->
+<sc-if value="{{ exForm }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ exIdle }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ exGo }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg><span>{{ exCta }}</span></button></sc-if><sc-if value="{{ exBusy }}" hint-placeholder-val="{{ false }}"><div style="height: 4px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden;" role="progressbar" aria-label="Membuat file" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><span style="display: block; width: 60%; height: 100%; background: var(--brand);"></span></div><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">Membuat file…</button></sc-if><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">{{ exFootNote }}</span></sc-if>
+<sc-if value="{{ exDone }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg><span>Buka file</span></button><button class="hf-btn hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="m16 6-4-4-4 4"></path><path d="M12 2v13"></path></svg><span>Bagikan</span></button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ exFinish }}">Selesai</button></sc-if>
+<sc-if value="{{ exFail }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ exRetry }}">Coba lagi</button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ exFinish }}">Batal</button></sc-if>
+<!-- ===== /hfExport footer ===== -->
+</div>
+</section></sc-if>
+<!-- ===== hfExport picker ===== -->
+<sc-if value="{{ exPkOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ exPkClose }}" style="z-index: 22;"></div>
+<div class="hf-sheet" role="dialog" aria-label="{{ exPkTitle }}" style="z-index: 23; gap: 4px; padding-left: 8px; padding-right: 8px;">
+<span class="hf-sheet-handle" style="margin-bottom: 8px;" aria-hidden="true"></span>
+<span class="heading" style="padding: 0 8px 6px;">{{ exPkTitle }}</span>
+<sc-for list="{{ exPkOpts }}" as="o" hint-placeholder-count="5"><button type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}" style="font: inherit; display: grid; grid-template-columns: minmax(0, 1fr) 20px; gap: 12px; align-items: center; min-height: 48px; padding: 4px 12px; border: 0; border-radius: 12px; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="display: flex; flex-direction: column;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><sc-if value="{{ o.hasSub }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ o.sub }}</span></sc-if></span><span style="color: var(--brand); display: grid; visibility: {{ o.vis }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span></button></sc-for>
+</div></sc-if>
+<!-- ===== /hfExport picker ===== -->
+<!-- ===== /hfExport sheet ===== -->
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;},&quot;mulai&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;default&quot;,&quot;triwulan&quot;,&quot;menu-anggota&quot;,&quot;satu-anggota&quot;,&quot;usd&quot;,&quot;export&quot;,&quot;kosong&quot;,&quot;bulan-sebelumnya&quot;],&quot;default&quot;:&quot;kosong&quot;},&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+/* ===== hfExport: satu sumber untuk export (menu Alat, Laporan, Google Sheet) ===== */
+function hfExport(self, X) {
+  const off = { exOn: false, exForm: false, exDone: false, exFail: false, exIdle: false, exBusy: false, exJenis: [], exJenisDesc: '', exSels: [], exFmts: [], exScope: '', exCta: '', exGo: undefined, exFootNote: '', exCtx: '', exDoneDesc: '', exExt: '', exFile: '', exFileMeta: '', exIsi: [], exHasHidden: false, exHidden: '', exFinish: undefined, exRetry: undefined, exClose: undefined, exPkOn: false, exPkTitle: '', exPkOpts: [], exPkClose: undefined };
+  if (!X) return off;
+  const st = self.state || {};
+  const E = Object.assign({ jenis: X.jenis || 'ringkasan', fmt: null, view: X.view || 'form', pk: X.pk || null, periode: X.periode || 'November 2026', anggota: X.anggota || 'Semua anggota' }, (st.ex && st.ex.id === X.id) ? st.ex : {});
+  const put = p => self.setState({ ex: Object.assign({}, E, p, { id: X.id }) });
+  const ring = E.jenis === 'ringkasan';
+  const FM = ring ? [['pdf', 'PDF', '2 halaman: grafik, per jenis aset, per anggota, transaksi terbaru.'], ['xlsx', 'Excel (.xlsx)', 'Angka tanpa pembulatan, 4 sheet: Ringkasan, Per anggota, Per aset, Transaksi.']]
+    : [['xlsx', 'Excel (.xlsx)', 'Format template Hartafolio. Bisa di-import kembali untuk memulihkan.'], ['csv', 'CSV (.zip)', 'Satu file CSV per sheet, untuk aplikasi lain.']];
+  const fmt = FM.some(f => f[0] === E.fmt) ? E.fmt : FM[0][0];
+  const per = { 'November 2026': 'Nov-2026', 'Oktober 2026': 'Okt-2026', 'Triwulan 4 2026': 'Q4-2026', 'Triwulan 3 2026': 'Q3-2026', 'Tahun 2026': '2026' }[E.periode] || 'Nov-2026';
+  const ext = fmt === 'pdf' ? 'PDF' : (fmt === 'csv' ? 'ZIP' : 'XLSX');
+  const file = ring ? 'Hartafolio-Ringkasan-' + per + '.' + ext.toLowerCase() : 'Hartafolio-Data-lengkap-12-Nov-2026.' + ext.toLowerCase();
+  const PK = { periode: ['November 2026', 'Oktober 2026', 'Triwulan 4 2026', 'Triwulan 3 2026', 'Tahun 2026'], anggota: ['Semua anggota', 'Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'] };
+  const PKS = { 'November 2026': 'Sampai 9 Nov', 'Triwulan 4 2026': 'Okt sampai 9 Nov' };
+  const isi = ring
+    ? (fmt === 'pdf' ? [{ a: 'Halaman 1 · grafik dan per jenis aset', b: '1 hal' }, { a: 'Halaman 2 · per anggota dan transaksi', b: '1 hal' }] : [{ a: 'Ringkasan', b: '1 sheet' }, { a: 'Per anggota', b: '4 baris' }, { a: 'Per aset', b: '11 baris' }, { a: 'Transaksi', b: '23 baris' }])
+    : [{ a: 'Transaksi', b: '91 baris' }, { a: 'Aset', b: '11 aset' }, { a: 'Nilai bulanan', b: '18 bulan' }];
+  return {
+    exOn: true, exCtx: ring ? (X.ctx || '') : (X.ctxLengkap !== undefined ? X.ctxLengkap : (X.ctx || '')),
+    exForm: E.view === 'form' || E.view === 'busy', exIdle: E.view === 'form', exBusy: E.view === 'busy', exDone: E.view === 'done', exFail: E.view === 'fail',
+    exJenis: [['ringkasan', 'Ringkasan'], ['lengkap', 'Data lengkap']].map(([k, l]) => ({ l, pressed: String(E.jenis === k), on: () => put({ jenis: k, fmt: null }) })),
+    exJenisDesc: ring ? 'Untuk dibaca, dicetak, atau dibagikan. Tidak bisa di-import.' : 'Salinan semua data sejak awal. Bisa di-import kembali untuk memulihkan.',
+    exSels: ring ? [['periode', 'Periode'], ['anggota', 'Anggota']].map(([k, l]) => ({ l, v: E[k], openStr: String(E.pk === k), open: () => put({ pk: k }) })) : [],
+    exFmts: FM.map(([k, l, d]) => ({ l, d, on: String(fmt === k), bd: fmt === k ? 'var(--brand)' : 'var(--line)', bg: fmt === k ? 'var(--brand-soft)' : 'var(--surface-raised)', ring: fmt === k ? 'var(--brand)' : 'var(--line-strong)', dot: fmt === k ? 'var(--brand)' : 'transparent', pick: () => put({ fmt: k }) })),
+    exScope: ring ? 'Dalam IDR. Mata uang kedua ikut bila aktif.' : 'Selalu semua data sejak awal: 91 transaksi, 11 aset, 4 anggota, 5 lokasi, 18 bulan nilai. Tidak ikut filter.',
+    exCta: ring ? 'Unduh ringkasan ' + (fmt === 'pdf' ? 'PDF' : 'Excel') : 'Unduh data lengkap',
+    exGo: () => put({ view: 'busy' }), exFootNote: E.view === 'busy' ? 'Mengambil data dari Google Sheet Anda' : file,
+    exDoneDesc: ring ? 'Tersimpan di folder Unduhan. Siap dibuka, dicetak, atau dibagikan.' : 'Tersimpan di folder Unduhan. Simpan sebagai cadangan; file ini bisa di-import lagi kapan saja.',
+    exExt: ext, exFile: file, exFileMeta: (ring ? 'Ringkasan · ' + E.periode + ' · ' + E.anggota : 'Data lengkap · semua data') + ' · ' + (fmt === 'pdf' ? '412 KB' : '214 KB'),
+    exIsi: isi.map(r => Object.assign({ c: 'var(--ink)' }, r)),
+    exHasHidden: !ring && fmt === 'xlsx', exHidden: 'Sheet Anggota, Lokasi, Pengaturan, dan Daftar disembunyikan. Isinya dipakai untuk dropdown dan import, tetap bisa dibuka lewat Unhide di Excel.',
+    exFinish: () => { put({ view: 'form' }); if (X.onClose) X.onClose(); }, exRetry: () => put({ view: 'busy' }), exClose: X.onClose,
+    exPkOn: !!E.pk, exPkTitle: E.pk === 'anggota' ? 'Anggota' : 'Periode',
+    exPkOpts: E.pk ? PK[E.pk].map(l => ({ l, sub: E.pk === 'periode' ? (PKS[l] || '') : '', hasSub: E.pk === 'periode' && !!PKS[l], sel: String(E[E.pk] === l), vis: E[E.pk] === l ? 'visible' : 'hidden', bg: E[E.pk] === l ? 'var(--brand-soft)' : 'transparent', on: () => put({ [E.pk]: l, pk: null }) })) : [],
+    exPkClose: () => put({ pk: null })
+  };
+}
+/* ===== /hfExport ===== */
+
+
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const mulai = this.props.mulai ?? 'kosong';
+    const per = st.per || (mulai === 'triwulan' ? 'triwulan' : 'bulan');
+    const MEM = ['Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'];
+    const aM = st.aM === undefined ? (mulai === 'satu-anggota' ? 'Azlan' : null) : st.aM;
+    const memOpen = st.memOpen === undefined ? mulai === 'menu-anggota' : !!st.memOpen;
+    const usd = st.usd === undefined ? mulai === 'usd' : !!st.usd;
+    const exportOpen = st.sheet === undefined ? mulai === 'export' : st.sheet === 'export';
+    const em = st.em || 'lap';
+    const fmtSel = st.fmt || (em === 'lap' ? 'pdf' : 'xlsx');
+    const kosong = mulai === 'kosong';
+    // Nilai per anggota (juta Rp) dan perubahan per jenis aset
+    const VAL = { 'Azlan': { 'Emas': 69.4, 'Crypto': 42.5, 'Perak': 15.6, 'Saham': 9.9, 'Mata uang': 4.3 }, 'Al Ghafiqi': { 'Emas': 10.2, 'Crypto': 2.5, 'Saham': 2.0, 'Mata uang': 2.3 }, 'M. Yahya': { 'Emas': 9.9, 'Crypto': 1.8, 'Perak': 0.1, 'Saham': 2.0 }, 'Yumna': { 'Emas': 1.1, 'Crypto': 0.2, 'Mata uang': 0.4 } };
+    const CH = { 'Emas': ['+6,1%', 'up'], 'Crypto': ['+4,2%', 'up'], 'Perak': ['+8,0%', 'up'], 'Saham': ['−1,3%', 'down'], 'Mata uang': ['0%', 'flat'] };
+    const cats = ['Emas', 'Crypto', 'Perak', 'Saham', 'Mata uang'];
+    const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
+    const tot = sum(Object.assign({}, ...Object.values(VAL).map(o => o)) ) && 174.2;
+    const val = c => aM ? (VAL[aM][c] || 0) : MEM.reduce((a, m) => a + (VAL[m][c] || 0), 0);
+    const share = aM ? sum(VAL[aM]) / 174.2 : 1;
+    const KURS = 16420, PER_JT = 1e6 / KURS;
+    const dot = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const money = jt => usd ? '$ ' + dot(jt * PER_JT) : 'Rp ' + jt.toFixed(1).replace('.', ',') + ' jt';
+    const delta = (jt, d1) => (jt >= 0 ? '+' : '−') + (usd ? '$ ' + dot(Math.abs(jt) * PER_JT) : 'Rp ' + Math.abs(jt).toFixed(1).replace('.', ',') + ' jt');
+    const fmt = (jt) => { const v = usd ? jt * PER_JT : jt; const a = usd ? Math.abs(v).toFixed(0) : Math.abs(v).toFixed(1).replace('.', ','); return (v > 0 ? '+' : v < 0 ? '−' : '') + (usd ? dot(Math.abs(v)) : a); };
+    const ALL = [['Jan', 1.8], ['Feb', -0.9], ['Mar', 2.2], ['Apr', 2.7], ['Mei', -0.3], ['Jun', -1.3], ['Jul', 3.2], ['Agu', -0.5], ['Sep', 3.1], ['Okt', 3.5], ['Nov', 4.1]];
+    const WIN = 6;
+    const monthly = ALL.slice(-WIN);
+    const winLabel = monthly[0][0] + ' – ' + monthly[WIN - 1][0] + ' 2026';
+    const quarterly = [['Q3', 5.8], ['Q4', 7.6]];
+    const data = (per === 'bulan' ? monthly : quarterly).map(([l, v]) => [l, v * share]);
+    const max = Math.max(...data.map(d => Math.abs(d[1])));
+    const anyNeg = data.some(d => d[1] < 0);
+    const bsel = st.bsel === undefined || st.bsel >= data.length ? data.length - 1 : st.bsel;
+    const bars = data.map(([l, v], bi) => ({ i: bi, pressed: String(bi === bsel), op: bi === bsel ? 1 : 0.55, aria: l + ' ' + fmt(v), tap: () => this.setState({ bsel: bi }), last: bi === data.length - 1, fw: bi === bsel ? 700 : 400, lc: bi === bsel ? 'var(--ink)' : 'var(--ink-muted)', l, t: fmt(v), pos: v >= 0, neg: v < 0, up: (v > 0 ? Math.round(v / max * 64) : 0) + 'px', down: (v < 0 ? Math.round(-v / max * 64 * 0.4) + 4 : 0) + 'px' }));
+    const cls = { up: 'hf-delta hf-delta-up', down: 'hf-delta hf-delta-down', flat: 'hf-delta hf-delta-flat' };
+    // Urutan: nilai terbesar dulu, kategori kosong disembunyikan; warna grafik mengikuti urutan
+    const rows = cats.filter(c => val(c) > 0).sort((a, b) => val(b) - val(a)).map((c, i) => ({ k: c, v: money(val(c)), ch: CH[c][0], cls: cls[CH[c][1]], c: 'var(--chart-' + (i + 1) + ')' }));
+    const rawSum = (per === 'bulan' ? monthly : quarterly).reduce((a, d) => a + d[1], 0);
+    const lastV = per === 'bulan' ? monthly[WIN - 1][1] : quarterly[1][1];
+    const pctV = lastV / (174.2 - lastV) * 100;
+    const head = lastV * share;
+    const periodTxt = per === 'bulan' ? 'November 2026 (sampai 9 Nov)' : 'Q4 2026 (sampai 9 Nov)';
+    const memLabel = aM || 'Semua anggota';
+    const FMT = em === 'lap' ? [['pdf', 'PDF', '2 halaman: grafik, per jenis aset, per anggota, transaksi terbaru.'], ['xlsx', 'Excel (.xlsx)', 'Angka tanpa pembulatan, 4 sheet: Ringkasan, Per anggota, Per aset, Transaksi.']] : [['xlsx', 'Excel (.xlsx)', 'Semua data dalam format template, 6 sheet. Bisa di-import kembali.'], ['zip', 'CSV (.zip)', 'Satu file CSV per sheet, untuk aplikasi lain.']];
+    const MONTHS = [['Okt 2026', 170.1, 2.1, 'Tercatat 1 Nov'], ['Sep 2026', 166.6, 1.9, 'Tercatat 1 Okt'], ['Agu 2026', 163.5, -0.3, 'Tercatat 1 Sep'], ['Jul 2026', 164.0, 2.0, 'Tercatat 1 Agu'], ['Jun 2026', 160.8, -0.8, 'Tercatat 1 Jul'], ['Mei 2026', 162.1, null, 'Dari file import']].map(x => ({ m: x[0], rec: x[3], v: 'Rp ' + x[1].toFixed(1).replace('.', ',') + ' jt', c: x[2] === null ? 'import' : (x[2] > 0 ? '+' : '−') + Math.abs(x[2]).toFixed(1).replace('.', ',') + '%', cls: x[2] === null ? 'hf-delta hf-delta-flat' : (x[2] >= 0 ? 'hf-delta hf-delta-up' : 'hf-delta hf-delta-down'), href: x[2] === null ? '07-Laporan-3a-Bulan-Import.dc.html' : '07-Laporan-3-Bulan.dc.html' }));
+    return {
+      months: MONTHS,
+      theme: this.props.theme ?? 'light',
+      hasData: !kosong, kosong,
+      periods: [['bulan', 'Bulanan'], ['triwulan', 'Triwulan']].map(([v, l]) => ({ l, pressed: String(per === v), on: () => this.setState({ per: v }) })),
+      memLabel, memOpen, memOpenStr: String(memOpen), memZ: memOpen ? 30 : 1,
+      toggleMem: () => this.setState({ memOpen: !memOpen, sheet: null }),
+      memOpts: [null, ...MEM].map(m => ({ l: m || 'Semua anggota', sel: String(aM === m), on: () => this.setState({ aM: m, memOpen: false }) })),
+      usdStr: String(usd), toggleUsd: () => this.setState({ usd: !usd }),
+      headLabel: (bsel === data.length - 1 ? periodTxt : (({ Jun: 'Juni', Jul: 'Juli', Agu: 'Agustus', Sep: 'September', Okt: 'Oktober', Nov: 'November' })[data[bsel][0]] || data[bsel][0]) + ' 2026') + (aM ? ' · ' + aM : ''),
+      headValue: bsel === data.length - 1 ? delta(head) : delta(data[bsel][1]),
+      headPctCls: 'hf-delta ' + ((bsel === data.length - 1 ? pctV : data[bsel][1]) >= 0 ? 'hf-delta-up' : 'hf-delta-down'),
+      headPct: bsel === data.length - 1 ? ((pctV >= 0 ? '↑ +' : '↓ −') + Math.abs(pctV).toFixed(1).replace('.', ',') + '%') : ((data[bsel][1] >= 0 ? '↑ +' : '↓ −') + Math.abs(data[bsel][1] / 1.7).toFixed(1).replace('.', ',') + '%'),
+      chartLabel: per === 'bulan' ? 'Perubahan nilai per bulan, 6 bulan terakhir, ' + winLabel : 'Perubahan nilai per triwulan, Q3 dan Q4',
+      chartCaption: '*Angka di atas diagram batang: perubahan nilai (' + (usd ? 'USD' : 'juta Rp') + '), bukan persen.',
+      negH: anyNeg ? '40px' : '0px',
+      n: data.length, bars, rows,
+      scrim: memOpen, closeAll: () => this.setState({ memOpen: false, sheet: null }),
+      ...hfExport(this, exportOpen ? { id: 'lap-export', ctx: 'Periode dan anggota mengikuti tampilan Laporan. Bisa diganti di sini.', ctxLengkap: 'Data lengkap tidak ikut filter Laporan.', jenis: em === 'cad' ? 'lengkap' : 'ringkasan', periode: per === 'bulan' ? 'November 2026' : 'Triwulan 4 2026', anggota: aM || 'Semua anggota', onClose: () => this.setState({ sheet: null }) } : null),
+      openExport: () => this.setState({ sheet: 'export', memOpen: false }),
+      exportOpen, exportSum: em === 'lap' ? 'Ringkasan · ' + (per === 'bulan' ? 'November 2026' : 'Q4 2026') + ' · ' + memLabel + ' · ' + (usd ? 'USD' : 'IDR') : 'Data lengkap · semua anggota, sejak awal · tidak ikut filter di layar',
+      emodes: [['lap', 'Ringkasan'], ['cad', 'Data lengkap']].map(([k, l]) => ({ l, pressed: String(em === k), on: () => this.setState({ em: k, fmt: undefined }) })),
+      formats: FMT.map(([k, t, d]) => ({ t, d, on: String(fmtSel === k), pick: () => this.setState({ fmt: k }), bd: fmtSel === k ? 'var(--brand)' : 'var(--line-strong)', bg: fmtSel === k ? 'var(--brand-soft)' : 'var(--surface-raised)', dot: fmtSel === k ? 'var(--brand)' : 'transparent' })),
+      dlLabel: 'Unduh ' + (em === 'cad' ? 'data lengkap ' + (fmtSel === 'zip' ? 'CSV' : 'Excel') : (fmtSel === 'pdf' ? 'ringkasan PDF' : 'ringkasan Excel')), fmtName: em === 'cad' ? 'data lengkap ' + (fmtSel === 'zip' ? 'CSV' : 'Excel') : (fmtSel === 'pdf' ? 'PDF' : 'Excel'), fileName: em === 'cad' ? 'Hartafolio-Data-lengkap-11-Nov-2026' + (fmtSel === 'zip' ? '.zip' : '.xlsx') : 'Hartafolio-Ringkasan-' + (per === 'bulan' ? 'Nov-2026' : 'Q4-2026') + (fmtSel === 'pdf' ? '.pdf' : '.xlsx')
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Arsip · alasan Beranda lama</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 640px; box-sizing: border-box; padding: 24px; display: flex; flex-direction: column; gap: 16px; background: var(--surface-raised); color: var(--ink); font-family: var(--font-sans); overflow: hidden; border: 1px solid var(--line);"><span class="hf-badge hf-badge-loss" style="align-self:flex-start;">Ditolak</span><h2 class="heading" style="margin:0;">Beranda lama: Live, Perlu perhatian di bawah, jalur donut</h2><span style="font-size:12px;line-height:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-muted);">Alasan</span><ul style="margin:0;padding-left:20px;font-size:14px;line-height:21px;"><li style="margin:0 0 8px;">Pil "Live 14.32" di pojok kanan atas memakai tempat paling berharga untuk informasi yang jarang dibutuhkan dan tidak bisa ditindak.</li><li style="margin:0 0 8px;">Bagian "Perlu perhatian" berada di bawah lipatan layar, sehingga hal mendesak (zakat jatuh tempo, harga basi) tidak terlihat.</li><li style="margin:0 0 8px;">Donut memakai lintasan (rail) yang membuat warna potongan tampak pucat.</li><li style="margin:0 0 8px;">Tombol kartu zakat berwarna sama di semua kondisi, jadi terlambat dan mendekati tidak terbedakan.</li><li style="margin:0 0 8px;">Tab "Lainnya" terlalu umum dan rancu bila disebut di kalimat.</li></ul><span style="font-size:12px;line-height:18px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-muted);">Diganti dengan</span><span style="font-size:14px;line-height:21px;">Lonceng di sebelah logo dengan lembar perhatian (latar digelapkan), donut tanpa rail dengan grup "Sisanya", tombol zakat per status, tab "Alat".</span></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

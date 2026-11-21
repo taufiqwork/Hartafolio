@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Splash</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<a href="01-Setup-1-Akun.dc.html" aria-label="Buka Hartafolio" data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans); text-decoration: none; position: relative;">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding: 0 32px;">
+<svg viewBox="0 0 48 48" width="96" height="96" aria-hidden="true"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+<h1 class="title" style="margin: 0;">Hartafolio</h1>
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Harta keluarga, tercatat rapi.</p>
+</div>
+</div>
+<div style="position: absolute; left: 0; right: 0; bottom: calc(var(--safe-bottom) + 24px); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+<div class="hf-track" style="width: 96px;" aria-hidden="true"><span style="width: 100%; background: var(--brand);"></span></div>
+<span style="font-size: 12px; line-height: 18px; color: var(--ink-muted);">Menyiapkan data Anda</span>
+</div>
+</a>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

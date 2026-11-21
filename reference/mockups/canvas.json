@@ -1,0 +1,3009 @@
+{
+ "attachments": {},
+ "boards": {
+  "00-Splash.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "00 · Splash",
+   "w": 390,
+   "x": -470,
+   "y": 1300
+  },
+  "01-Setup-1-Akun.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.a · Setup · 1 Akun",
+   "w": 390,
+   "x": 0,
+   "y": 1300
+  },
+  "01-Setup-2a-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.b · Setup · 2 Anggota, awal (kosong)",
+   "w": 390,
+   "x": 470,
+   "y": 1300
+  },
+  "01-Setup-2b-Hubungan-Terbuka.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.d · Setup · Menu hubungan terbuka",
+   "w": 390,
+   "x": 470,
+   "y": 3108
+  },
+  "01-Setup-3-Lokasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.f · Setup · Lokasi sudah terisi",
+   "w": 390,
+   "x": 940,
+   "y": 2204
+  },
+  "01-Setup-3a-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.e · Setup · 3 Lokasi, awal (kosong)",
+   "w": 390,
+   "x": 940,
+   "y": 1300
+  },
+  "01-Setup-3b-Ubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.g · Setup · Ikon pensil ditekan",
+   "w": 390,
+   "x": 940,
+   "y": 3108
+  },
+  "01-Setup-3c-Pintasan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.h · Setup · Pintasan ditekan",
+   "w": 390,
+   "x": 940,
+   "y": 4012
+  },
+  "01-Setup-3d-Lokasi-Lain.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.i · Setup · \"Lokasi lain\" ditekan",
+   "w": 390,
+   "x": 940,
+   "y": 4916
+  },
+  "01-Setup-3e-Jenis-Terbuka.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.j · Setup · Menu jenis lokasi terbuka",
+   "w": 390,
+   "x": 940,
+   "y": 5820
+  },
+  "01-Setup-4-Import.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.l · Setup · File template terpilih",
+   "w": 390,
+   "x": 1410,
+   "y": 2204
+  },
+  "01-Setup-4a-Belum-Pilih.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.k · Setup · 4 Import, awal (opsional, bisa dilewati)",
+   "w": 390,
+   "x": 1410,
+   "y": 1300
+  },
+  "01-Setup-4c-Periksa.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.m · Setup · Periksa, 1 aset perlu dilengkapi",
+   "w": 390,
+   "x": 1410,
+   "y": 3108
+  },
+  "01-Setup-4d-Periksa-Siap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.o · Setup · Periksa, siap disimpan",
+   "w": 390,
+   "x": 1410,
+   "y": 4916
+  },
+  "01-Setup-4e-Selesai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.p · Setup · Simpan, import selesai",
+   "w": 390,
+   "x": 1410,
+   "y": 5820
+  },
+  "01-Setup-4f-Lengkapi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.n · Setup · Tombol \"Lengkapi\" ditekan (form Aset manual bersama)",
+   "w": 390,
+   "x": 1410,
+   "y": 4012
+  },
+  "01-Setup-4g-File-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.r · Setup · Import · Gagal · File kosong",
+   "w": 390,
+   "x": 1410,
+   "y": 7628
+  },
+  "01-Setup-4h-Bukan-Template.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.s · Setup · Import · Gagal · Bukan template Hartafolio",
+   "w": 390,
+   "x": 1410,
+   "y": 8532
+  },
+  "01-Setup-4i-Tidak-Terbaca.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.t · Setup · Import · Gagal · File tidak bisa dibaca",
+   "w": 390,
+   "x": 1410,
+   "y": 9436
+  },
+  "01-Setup-4j-Banyak-Dilengkapi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.u · Setup · Import · Periksa · Lebih dari satu hal perlu dilengkapi",
+   "w": 390,
+   "x": 1410,
+   "y": 10340
+  },
+  "01-Setup-4k-Anggota-Tak-Dikenal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.v · Setup · Import · Lengkapi · Anggota atau lokasi tidak dikenal",
+   "w": 390,
+   "x": 1410,
+   "y": 11244
+  },
+  "01-Setup-4l-Baris-Dilewati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.w · Setup · Import · Periksa · Transaksi dan nilai bulanan dilewati",
+   "w": 390,
+   "x": 1410,
+   "y": 12148
+  },
+  "01-Setup-4m-Rincian-Dilewati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.x · Setup · Import · Rincian baris yang dilewati",
+   "w": 390,
+   "x": 1410,
+   "y": 13052
+  },
+  "01-Setup-4n-Tidak-Ada-Yang-Siap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.y · Setup · Import · Periksa · Semua baris dilewati",
+   "w": 390,
+   "x": 1410,
+   "y": 13956
+  },
+  "01-Setup-4o-Gagal-Simpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.z · Setup · Import · Simpan · Gagal menyimpan ke Google Sheet",
+   "w": 390,
+   "x": 1410,
+   "y": 14860
+  },
+  "01-Setup-4p-Konfirmasi-Keluar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.aa · Setup · Import · Periksa · Konfirmasi keluar tanpa menyimpan",
+   "w": 390,
+   "x": 1410,
+   "y": 15764
+  },
+  "01-Setup-4q-Sudah-Ada.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.ab · Setup · Import · Periksa · Transaksi sudah ada di Sheet",
+   "w": 390,
+   "x": 1410,
+   "y": 16668
+  },
+  "01-Setup-4r-Gabungkan-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.ac · Setup · Import · Lengkapi · Gabungkan ke anggota yang ada",
+   "w": 390,
+   "x": 1410,
+   "y": 17572
+  },
+  "01-Setup-4s-Sudah-Digabung.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.ad · Setup · Import · Periksa · Setelah \"Fulan\" digabung ke Al Ghafiqi",
+   "w": 390,
+   "x": 1410,
+   "y": 18476
+  },
+  "01-Setup-4t-Tambah-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.ae · Setup · Import · Lengkapi · Tambah \"Fulan\" (form Tambah anggota bersama)",
+   "w": 390,
+   "x": 1410,
+   "y": 19380
+  },
+  "01-Setup-4u-Diurungkan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.q · Setup · Import · Selesai · Import diurungkan",
+   "w": 390,
+   "x": 1410,
+   "y": 6724
+  },
+  "01-Setup.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "01.c · Setup · Anggota sudah terisi",
+   "w": 390,
+   "x": 470,
+   "y": 2204
+  },
+  "03-Aset-2a-Satu-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "03.b · Aset · Satu anggota dipilih",
+   "w": 390,
+   "x": 2350,
+   "y": 2204
+  },
+  "03-Aset-2b-Lokasi-Menu.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "03.c · Aset · Filter lokasi terbuka",
+   "w": 390,
+   "x": 2350,
+   "y": 3108
+  },
+  "03-Aset-2c-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "03.d · Aset · Aset kosong (dari nol)",
+   "w": 390,
+   "x": 2350,
+   "y": 4012
+  },
+  "03-Aset-2d-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "03.e · Aset · Transaksi tersimpan (toast)",
+   "w": 390,
+   "x": 2350,
+   "y": 4916
+  },
+  "03-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "03.a · Aset · Utama",
+   "w": 390,
+   "x": 2350,
+   "y": 1300
+  },
+  "04-Catat-2a-Jual.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.i · Catat · Jual, hasil masuk ke USD",
+   "w": 390,
+   "x": 3290,
+   "y": 8532
+  },
+  "04-Catat-2b-Masuk.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.j · Catat · Masuk (dari luar, tanpa beli)",
+   "w": 390,
+   "x": 3290,
+   "y": 9436
+  },
+  "04-Catat-2c-Pindah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.l · Catat · Pindah antar lokasi",
+   "w": 390,
+   "x": 3290,
+   "y": 11244
+  },
+  "04-Catat-2d-Saldo-Awal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.o · Catat · Saldo awal (dari Beranda kosong)",
+   "w": 390,
+   "x": 3290,
+   "y": 13956
+  },
+  "04-Catat-2e-Pindah-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.m · Catat · Pindah antar anggota (lokasi sama)",
+   "w": 390,
+   "x": 3290,
+   "y": 12148
+  },
+  "04-Catat-2f-Pindah-Anggota-Beda-Lokasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.n · Catat · Pindah antar anggota, beda lokasi, ada biaya",
+   "w": 390,
+   "x": 3290,
+   "y": 13052
+  },
+  "04-Catat-2g-Saldo-Awal-Lanjut.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.p · Catat · Saldo awal, aset berikutnya",
+   "w": 390,
+   "x": 3290,
+   "y": 14860
+  },
+  "04-Catat-2h-Cari-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.q · Catat · \"Cari aset lain\" ditekan",
+   "w": 390,
+   "x": 3290,
+   "y": 15764
+  },
+  "04-Catat-2i-Lokasi-Baru.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.r · Catat · \"+ Lokasi\" ditekan",
+   "w": 390,
+   "x": 3290,
+   "y": 16668
+  },
+  "04-Catat-2j-Aset-Manual.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.s · Catat · \"Tambah aset manual\"",
+   "w": 390,
+   "x": 3290,
+   "y": 17572
+  },
+  "04-Catat-2k-Keluar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.k · Catat · Keluar (sedekah)",
+   "w": 390,
+   "x": 3290,
+   "y": 10340
+  },
+  "04-Catat-2l-Ubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.t · Catat · Ubah transaksi (dari Riwayat)",
+   "w": 390,
+   "x": 3290,
+   "y": 18476
+  },
+  "04-Catat-2m-Beli-Dari-Luar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.b · Catat · Beli, dibayar dari luar Hartafolio",
+   "w": 390,
+   "x": 3290,
+   "y": 2204
+  },
+  "04-Catat-2n-Pilih-Tanggal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.f · Catat · Pilih tanggal dan jam",
+   "w": 390,
+   "x": 3290,
+   "y": 5820
+  },
+  "04-Catat-2o-Pilih-Alat-Bayar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.c · Catat · Pilih alat bayar lain (sheet)",
+   "w": 390,
+   "x": 3290,
+   "y": 3108
+  },
+  "04-Catat-2p-Bayar-Dengan-BTC.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.d · Catat · Bayar dengan BTC, harga dalam BTC",
+   "w": 390,
+   "x": 3290,
+   "y": 4012
+  },
+  "04-Catat-2q-Bayar-Dari-Bybit.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.e · Catat · Bayar USDT dari lokasi lain",
+   "w": 390,
+   "x": 3290,
+   "y": 4916
+  },
+  "04-Catat-2r-Tanggal-Lalu.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.g · Catat · Tanggal lalu, kurs rata-rata harian",
+   "w": 390,
+   "x": 3290,
+   "y": 6724
+  },
+  "04-Catat-2s-Kurs-Manual.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.h · Catat · Kurs diisi manual, bisa di-reset",
+   "w": 390,
+   "x": 3290,
+   "y": 7628
+  },
+  "04-Catat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.a · Catat · Beli, dibayar USDT",
+   "w": 390,
+   "x": 3290,
+   "y": 1300
+  },
+  "05-Riwayat-2a-Filter.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.b · Riwayat · Filter terbuka",
+   "w": 390,
+   "x": 3760,
+   "y": 2204
+  },
+  "05-Riwayat-2b-Detail.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.c · Riwayat · Detail transaksi",
+   "w": 390,
+   "x": 3760,
+   "y": 3108
+  },
+  "05-Riwayat-2c-Terhapus.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.i · Riwayat · Transaksi dihapus (toast sementara)",
+   "w": 390,
+   "x": 3760,
+   "y": 8532
+  },
+  "05-Riwayat-2d-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.j · Riwayat · Kosong (dari nol)",
+   "w": 390,
+   "x": 3760,
+   "y": 9436
+  },
+  "05-Riwayat-2e-Daftar-Terhapus.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.k · Riwayat · Daftar terhapus (pulihkan kapan saja)",
+   "w": 390,
+   "x": 3760,
+   "y": 10340
+  },
+  "05-Riwayat-2f-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.l · Riwayat · Transaksi tersimpan (toast)",
+   "w": 390,
+   "x": 3760,
+   "y": 11244
+  },
+  "05-Riwayat-2g-Diubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.m · Riwayat · Perubahan disimpan (toast)",
+   "w": 390,
+   "x": 3760,
+   "y": 12148
+  },
+  "05-Riwayat-2h-Detail-Zakat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.d · Riwayat · Detail transaksi Zakat (tautan ke haul)",
+   "w": 390,
+   "x": 3760,
+   "y": 4012
+  },
+  "05-Riwayat-2i-Detail-Pinjamkan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.e · Riwayat · Detail transaksi Pinjamkan",
+   "w": 390,
+   "x": 3760,
+   "y": 4916
+  },
+  "05-Riwayat-2j-Detail-Cicilan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.f · Riwayat · Detail transaksi Cicilan diterima",
+   "w": 390,
+   "x": 3760,
+   "y": 5820
+  },
+  "05-Riwayat-2k-Detail-Pelunasan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.g · Riwayat · Detail transaksi Pelunasan diterima",
+   "w": 390,
+   "x": 3760,
+   "y": 6724
+  },
+  "05-Riwayat-2l-Detail-Pindah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.h · Riwayat · Detail transaksi Pindah",
+   "w": 390,
+   "x": 3760,
+   "y": 7628
+  },
+  "05-Riwayat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "06.a · Riwayat · Utama",
+   "w": 390,
+   "x": 3760,
+   "y": 1300
+  },
+  "07-Export-Data-Lengkap-2a-Aset.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.h · Hasil export · Data lengkap (.xlsx) · sheet Aset",
+   "w": 1670,
+   "x": 6685,
+   "y": 1840
+  },
+  "07-Export-Data-Lengkap-2b-Anggota-Lokasi.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.i · Hasil export · Data lengkap (.xlsx) · sheet Anggota (tersembunyi)",
+   "w": 1670,
+   "x": 6685,
+   "y": 2380
+  },
+  "07-Export-Data-Lengkap-2c-Nilai-Bulanan.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.k · Hasil export · Data lengkap (.xlsx) · sheet Nilai bulanan",
+   "w": 1670,
+   "x": 6685,
+   "y": 3460
+  },
+  "07-Export-Data-Lengkap-2d-Pengaturan.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.l · Hasil export · Data lengkap (.xlsx) · sheet Pengaturan (tersembunyi)",
+   "w": 1670,
+   "x": 6685,
+   "y": 4000
+  },
+  "07-Export-Data-Lengkap-2e-Lokasi.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.j · Hasil export · Data lengkap (.xlsx) · sheet Lokasi (tersembunyi)",
+   "w": 1670,
+   "x": 6685,
+   "y": 2920
+  },
+  "07-Export-Data-Lengkap.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.g · Hasil export · Data lengkap (.xlsx) · sheet Transaksi",
+   "w": 1670,
+   "x": 6685,
+   "y": 1300
+  },
+  "07-Export-Excel-2a-Per-Aset.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.e · Hasil export · Ringkasan Excel · sheet Per aset",
+   "w": 760,
+   "x": 5845,
+   "y": 2380
+  },
+  "07-Export-Excel-2b-Transaksi.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.f · Hasil export · Ringkasan Excel · sheet Transaksi",
+   "w": 760,
+   "x": 5845,
+   "y": 2920
+  },
+  "07-Export-Excel-2c-Per-Anggota.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.d · Hasil export · Ringkasan Excel · sheet Per anggota",
+   "w": 760,
+   "x": 5845,
+   "y": 1840
+  },
+  "07-Export-Excel.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.c · Hasil export · Ringkasan Excel · sheet Ringkasan",
+   "w": 760,
+   "x": 5845,
+   "y": 1300
+  },
+  "07-Export-PDF-2-Hal-2.dc.html": {
+   "h": 842,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.b · Hasil export · Ringkasan PDF halaman 2",
+   "w": 595,
+   "x": 5170,
+   "y": 2202
+  },
+  "07-Export-PDF.dc.html": {
+   "h": 842,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "09.a · Hasil export · Ringkasan PDF halaman 1",
+   "w": 595,
+   "x": 5170,
+   "y": 1300
+  },
+  "07-Laporan-2a-Triwulan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.b · Laporan · Triwulan",
+   "w": 390,
+   "x": 4700,
+   "y": 2204
+  },
+  "07-Laporan-2b-Menu-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.c · Laporan · Menu Anggota",
+   "w": 390,
+   "x": 4700,
+   "y": 3108
+  },
+  "07-Laporan-2c-Satu-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.d · Laporan · Satu Anggota",
+   "w": 390,
+   "x": 4700,
+   "y": 4012
+  },
+  "07-Laporan-2d-USD.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.e · Laporan · USD",
+   "w": 390,
+   "x": 4700,
+   "y": 4916
+  },
+  "07-Laporan-2e-Export.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.f · Laporan · Export",
+   "w": 390,
+   "x": 4700,
+   "y": 5820
+  },
+  "07-Laporan-2f-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.h · Laporan · Kosong",
+   "w": 390,
+   "x": 4700,
+   "y": 7628
+  },
+  "07-Laporan-2g-Dari-Beranda.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.i · Laporan · Dibuka dari Beranda",
+   "w": 390,
+   "x": 4700,
+   "y": 8532
+  },
+  "07-Laporan-2h-Export-Data-Lengkap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.g · Laporan · Export data lengkap",
+   "w": 390,
+   "x": 4700,
+   "y": 6724
+  },
+  "07-Laporan-3-Bulan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.j · Laporan · Rincian bulan (dari Riwayat bulanan)",
+   "w": 390,
+   "x": 4700,
+   "y": 9436
+  },
+  "07-Laporan-3a-Bulan-Import.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.k · Laporan · Rincian bulan dari import",
+   "w": 390,
+   "x": 4700,
+   "y": 10340
+  },
+  "07-Laporan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "08.a · Laporan · Utama",
+   "w": 390,
+   "x": 4700,
+   "y": 1300
+  },
+  "08-Zakat-2a-Belum-Nisab.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.b · Zakat mal · Belum nishob",
+   "w": 390,
+   "x": 8435,
+   "y": 2204
+  },
+  "08-Zakat-2b-Jatuh-Tempo.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.c · Zakat mal · Jatuh Tempo",
+   "w": 390,
+   "x": 8435,
+   "y": 3108
+  },
+  "08-Zakat-2c-Dibayar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.d · Zakat mal · Dibayar",
+   "w": 390,
+   "x": 8435,
+   "y": 4012
+  },
+  "08-Zakat-2d-Riwayat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.e · Zakat mal · Riwayat",
+   "w": 390,
+   "x": 8435,
+   "y": 4916
+  },
+  "08-Zakat-2e-Info.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.f · Zakat mal · Info",
+   "w": 390,
+   "x": 8435,
+   "y": 5820
+  },
+  "08-Zakat-2f-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.g · Zakat mal · Kosong",
+   "w": 390,
+   "x": 8435,
+   "y": 6724
+  },
+  "08-Zakat-2g-Mendekati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.h · Zakat mal · Mendekati jatuh tempo",
+   "w": 390,
+   "x": 8435,
+   "y": 7628
+  },
+  "08-Zakat-2h-Terlambat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.i · Zakat mal · Terlambat",
+   "w": 390,
+   "x": 8435,
+   "y": 8532
+  },
+  "08-Zakat-2i-Pengingat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.j · Zakat mal · Pengingat",
+   "w": 390,
+   "x": 8435,
+   "y": 9436
+  },
+  "08-Zakat-2j-Catat-Pembayaran.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.k · Zakat mal · Catat pembayaran",
+   "w": 390,
+   "x": 8435,
+   "y": 10340
+  },
+  "08-Zakat-2k-Dibayar-Toast.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.l · Zakat mal · Pembayaran dicatat",
+   "w": 390,
+   "x": 8435,
+   "y": 11244
+  },
+  "08-Zakat-2l-Bayar-Dari-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.m · Zakat mal · Dibayar dari aset",
+   "w": 390,
+   "x": 8435,
+   "y": 12148
+  },
+  "08-Zakat-2m-Pilih-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.n · Zakat mal · Pilih aset",
+   "w": 390,
+   "x": 8435,
+   "y": 13052
+  },
+  "08-Zakat-2n-Dibayar-Dari-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.o · Zakat mal · Dibayar dari aset dicatat",
+   "w": 390,
+   "x": 8435,
+   "y": 13956
+  },
+  "08-Zakat-2o-Pilih-Aset-Bawah-Nishob.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.p · Zakat mal · Pilih aset, sisa di bawah nishob",
+   "w": 390,
+   "x": 8435,
+   "y": 14860
+  },
+  "08-Zakat-2p-Bayar-Aset-Bawah-Nishob.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.q · Zakat mal · Bayar dari aset, peringatan di bawah nishob",
+   "w": 390,
+   "x": 8435,
+   "y": 15764
+  },
+  "08-Zakat-2q-Dibayar-Haul-Menunggu.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.r · Zakat mal · Dibayar, haul menunggu nishob",
+   "w": 390,
+   "x": 8435,
+   "y": 16668
+  },
+  "08-Zakat-2r-Nishob-Tercapai-Lagi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.s · Zakat mal · Nishob tercapai lagi, haul mulai",
+   "w": 390,
+   "x": 8435,
+   "y": 17572
+  },
+  "08-Zakat-2s-Dari-Beranda.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.t · Zakat mal · Dibuka dari Beranda",
+   "w": 390,
+   "x": 8435,
+   "y": 18476
+  },
+  "08-Zakat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "10.a · Zakat mal · Utama",
+   "w": 390,
+   "x": 8435,
+   "y": 1300
+  },
+  "09-Lainnya-2a-Mata-Uang.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "07.b · Alat · Mata uang",
+   "w": 390,
+   "x": 4230,
+   "y": 2204
+  },
+  "09-Lainnya-2c-Pasang-Di-HP.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "07.c · Alat · Pasang di layar HP",
+   "w": 390,
+   "x": 4230,
+   "y": 3108
+  },
+  "09-Lainnya-2d-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "07.d · Alat · Transaksi tersimpan (toast)",
+   "w": 390,
+   "x": 4230,
+   "y": 4012
+  },
+  "09-Lainnya.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "07.a · Alat · Utama",
+   "w": 390,
+   "x": 4230,
+   "y": 1300
+  },
+  "10-Import-2a-File-Dipilih.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.c · Import / Export · Import · file template dipilih",
+   "w": 390,
+   "x": 9845,
+   "y": 3108
+  },
+  "10-Import-2b-Membaca-File.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.d · Import / Export · Import · membaca file",
+   "w": 390,
+   "x": 9845,
+   "y": 4012
+  },
+  "10-Import-2e-Periksa.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.e · Import / Export · Import · periksa, 1 aset perlu dilengkapi",
+   "w": 390,
+   "x": 9845,
+   "y": 4916
+  },
+  "10-Import-2f-Lengkapi-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.f · Import / Export · Import · lengkapi aset (form Aset manual bersama)",
+   "w": 390,
+   "x": 9845,
+   "y": 5820
+  },
+  "10-Import-2g-Periksa-Lengkap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.g · Import / Export · Import · periksa, siap disimpan",
+   "w": 390,
+   "x": 9845,
+   "y": 6724
+  },
+  "10-Import-2h-Menyimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.h · Import / Export · Import · menyimpan",
+   "w": 390,
+   "x": 9845,
+   "y": 7628
+  },
+  "10-Import-2i-Selesai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.i · Import / Export · Import · selesai",
+   "w": 390,
+   "x": 9845,
+   "y": 8532
+  },
+  "10-Import-2j-Diurungkan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.j · Import / Export · Import · diurungkan",
+   "w": 390,
+   "x": 9845,
+   "y": 9436
+  },
+  "10-Import-2k-Template.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.b · Import / Export · Import · template diunduh",
+   "w": 390,
+   "x": 9845,
+   "y": 2204
+  },
+  "10-Import-3a-Export.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.k · Import / Export · Export · data lengkap",
+   "w": 390,
+   "x": 9845,
+   "y": 10340
+  },
+  "10-Import-3b-Export-Selesai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.n · Import / Export · Export · berhasil, data lengkap",
+   "w": 390,
+   "x": 9845,
+   "y": 13052
+  },
+  "10-Import-3c-Export-Ringkasan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.l · Import / Export · Export · ringkasan",
+   "w": 390,
+   "x": 9845,
+   "y": 11244
+  },
+  "10-Import-3d-Export-Berhasil.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.o · Import / Export · Export · berhasil, ringkasan PDF",
+   "w": 390,
+   "x": 9845,
+   "y": 13956
+  },
+  "10-Import-3e-Export-Membuat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.m · Import / Export · Export · membuat file",
+   "w": 390,
+   "x": 9845,
+   "y": 12148
+  },
+  "10-Import-3f-Export-Gagal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.p · Import / Export · Export · file belum tersimpan",
+   "w": 390,
+   "x": 9845,
+   "y": 14860
+  },
+  "10-Import-4g-File-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.q · Import / Export · Alat · Gagal · File kosong",
+   "w": 390,
+   "x": 10315,
+   "y": 1300
+  },
+  "10-Import-4h-Bukan-Template.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.r · Import / Export · Alat · Gagal · Bukan template Hartafolio",
+   "w": 390,
+   "x": 10315,
+   "y": 2204
+  },
+  "10-Import-4i-Tidak-Terbaca.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.s · Import / Export · Alat · Gagal · File tidak bisa dibaca",
+   "w": 390,
+   "x": 10315,
+   "y": 3108
+  },
+  "10-Import-4j-Banyak-Dilengkapi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.t · Import / Export · Alat · Periksa · Lebih dari satu hal perlu dilengkapi",
+   "w": 390,
+   "x": 10315,
+   "y": 4012
+  },
+  "10-Import-4k-Anggota-Tak-Dikenal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.u · Import / Export · Alat · Lengkapi · Anggota atau lokasi tidak dikenal",
+   "w": 390,
+   "x": 10315,
+   "y": 4916
+  },
+  "10-Import-4l-Baris-Dilewati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.v · Import / Export · Alat · Periksa · Transaksi dan nilai bulanan dilewati",
+   "w": 390,
+   "x": 10315,
+   "y": 5820
+  },
+  "10-Import-4m-Rincian-Dilewati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.w · Import / Export · Alat · Rincian baris yang dilewati",
+   "w": 390,
+   "x": 10315,
+   "y": 6724
+  },
+  "10-Import-4n-Tidak-Ada-Yang-Siap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.x · Import / Export · Alat · Periksa · Semua baris dilewati",
+   "w": 390,
+   "x": 10315,
+   "y": 7628
+  },
+  "10-Import-4o-Gagal-Simpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.y · Import / Export · Alat · Simpan · Gagal menyimpan ke Google Sheet",
+   "w": 390,
+   "x": 10315,
+   "y": 8532
+  },
+  "10-Import-4p-Konfirmasi-Keluar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.z · Import / Export · Alat · Periksa · Konfirmasi keluar tanpa menyimpan",
+   "w": 390,
+   "x": 10315,
+   "y": 9436
+  },
+  "10-Import-4q-Sudah-Ada.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.aa · Import / Export · Alat · Periksa · Transaksi sudah ada di Sheet",
+   "w": 390,
+   "x": 10315,
+   "y": 10340
+  },
+  "10-Import-4r-Gabungkan-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.ab · Import / Export · Alat · Lengkapi · Gabungkan ke anggota yang ada",
+   "w": 390,
+   "x": 10315,
+   "y": 11244
+  },
+  "10-Import-4s-Sudah-Digabung.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.ac · Import / Export · Alat · Periksa · Setelah \"Fulan\" digabung ke Al Ghafiqi",
+   "w": 390,
+   "x": 10315,
+   "y": 12148
+  },
+  "10-Import-4t-Tambah-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.ad · Import / Export · Alat · Lengkapi · Tambah \"Fulan\" (form Tambah anggota bersama)",
+   "w": 390,
+   "x": 10315,
+   "y": 13052
+  },
+  "10-Import-Template-2a-Petunjuk.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "13.ae · Import / Export · Import · Template Excel (.xlsx) · sheet Petunjuk",
+   "w": 1670,
+   "x": 10785,
+   "y": 1300
+  },
+  "10-Import-Template-2b-Aset.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "13.ag · Import / Export · Import · Template Excel (.xlsx) · sheet Aset",
+   "w": 1670,
+   "x": 10785,
+   "y": 2380
+  },
+  "10-Import-Template-2c-Nilai-Bulanan.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "13.ah · Import / Export · Import · Template Excel (.xlsx) · sheet Nilai bulanan",
+   "w": 1670,
+   "x": 10785,
+   "y": 2920
+  },
+  "10-Import-Template.dc.html": {
+   "h": 480,
+   "is_interactive": true,
+   "radius": 8,
+   "title": "13.af · Import / Export · Import · Template Excel (.xlsx) · sheet Transaksi",
+   "w": 1670,
+   "x": 10785,
+   "y": 1840
+  },
+  "10-Import.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "13.a · Import / Export · Import · belum pilih file (layar awal)",
+   "w": 390,
+   "x": 9845,
+   "y": 1300
+  },
+  "11-Harga-2a-Crypto.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.b · Harga terkini · Crypto",
+   "w": 390,
+   "x": 9375,
+   "y": 2204
+  },
+  "11-Harga-2b-Dimiliki.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.c · Harga terkini · Yang dimiliki",
+   "w": 390,
+   "x": 9375,
+   "y": 3108
+  },
+  "11-Harga-2c-Offline.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.d · Harga terkini · Tidak terhubung",
+   "w": 390,
+   "x": 9375,
+   "y": 4012
+  },
+  "11-Harga-2d-Dari-Beranda.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.e · Harga terkini · Dibuka dari Beranda",
+   "w": 390,
+   "x": 9375,
+   "y": 4916
+  },
+  "11-Harga-2e-Dari-Zakat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.f · Harga terkini · Dibuka dari Zakat",
+   "w": 390,
+   "x": 9375,
+   "y": 5820
+  },
+  "11-Harga.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "12.a · Harga terkini · Utama",
+   "w": 390,
+   "x": 9375,
+   "y": 1300
+  },
+  "12-Anggota-2a-Tambah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.b · Anggota · Tambah",
+   "w": 390,
+   "x": 12535,
+   "y": 2204
+  },
+  "12-Anggota-2b-Ubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.c · Anggota · Ubah nama",
+   "w": 390,
+   "x": 12535,
+   "y": 3108
+  },
+  "12-Anggota-2c-Hapus-Ditolak.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.d · Anggota · Hapus ditolak",
+   "w": 390,
+   "x": 12535,
+   "y": 4012
+  },
+  "12-Anggota-2d-Hapus-Konfirmasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.e · Anggota · Hapus konfirmasi",
+   "w": 390,
+   "x": 12535,
+   "y": 4916
+  },
+  "12-Anggota-2e-Tambah-Selesai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.f · Anggota · Sudah ditambah",
+   "w": 390,
+   "x": 12535,
+   "y": 5820
+  },
+  "12-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "14.a · Anggota · Utama",
+   "w": 390,
+   "x": 12535,
+   "y": 1300
+  },
+  "13-Lokasi-2a-Tambah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.b · Lokasi · Tambah",
+   "w": 390,
+   "x": 13005,
+   "y": 2204
+  },
+  "13-Lokasi-2b-Ubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.c · Lokasi · Ubah",
+   "w": 390,
+   "x": 13005,
+   "y": 3108
+  },
+  "13-Lokasi-2c-Hapus-Ditolak.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.d · Lokasi · Hapus ditolak",
+   "w": 390,
+   "x": 13005,
+   "y": 4012
+  },
+  "13-Lokasi-2d-Hapus-Konfirmasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.e · Lokasi · Hapus konfirmasi",
+   "w": 390,
+   "x": 13005,
+   "y": 4916
+  },
+  "13-Lokasi-2e-Tambah-Selesai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.f · Lokasi · Sudah ditambah",
+   "w": 390,
+   "x": 13005,
+   "y": 5820
+  },
+  "13-Lokasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "15.a · Lokasi · Utama",
+   "w": 390,
+   "x": 13005,
+   "y": 1300
+  },
+  "14-Aset-2a-Ubah-Otomatis.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.b · Kelola aset · Ubah, harga otomatis",
+   "w": 390,
+   "x": 2820,
+   "y": 2204
+  },
+  "14-Aset-2b-Ubah-Manual.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.c · Kelola aset · Pilih harga manual",
+   "w": 390,
+   "x": 2820,
+   "y": 3108
+  },
+  "14-Aset-2c-Isi-Harga.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.d · Kelola aset · Isi harga manual",
+   "w": 390,
+   "x": 2820,
+   "y": 4012
+  },
+  "14-Aset-2d-Harga-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.e · Kelola aset · Harga tersimpan",
+   "w": 390,
+   "x": 2820,
+   "y": 4916
+  },
+  "14-Aset-2e-Tambah-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.f · Kelola aset · Tambah dari katalog",
+   "w": 390,
+   "x": 2820,
+   "y": 5820
+  },
+  "14-Aset-2f-Tambah-Manual.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.g · Kelola aset · Tambah aset manual",
+   "w": 390,
+   "x": 2820,
+   "y": 6724
+  },
+  "14-Aset-2g-Tanya-Saldo-Awal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.h · Kelola aset · Aset ditambahkan, tawarkan saldo awal",
+   "w": 390,
+   "x": 2820,
+   "y": 7628
+  },
+  "14-Aset-2h-Dari-Lainnya.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.i · Kelola aset · Dibuka dari Alat",
+   "w": 390,
+   "x": 2820,
+   "y": 8532
+  },
+  "14-Aset-2i-Isi-Harga-Dari-Beranda.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.j · Kelola aset · Isi harga, dibuka dari Beranda",
+   "w": 390,
+   "x": 2820,
+   "y": 9436
+  },
+  "14-Aset-2j-Hapus-Ditolak.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.k · Kelola aset · Hapus ditolak, masih dimiliki",
+   "w": 390,
+   "x": 2820,
+   "y": 10340
+  },
+  "14-Aset-2k-Hapus-Konfirmasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.l · Kelola aset · Hapus aset belum dimiliki",
+   "w": 390,
+   "x": 2820,
+   "y": 11244
+  },
+  "14-Aset-2l-Sembunyikan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.m · Kelola aset · Terjual habis, disembunyikan",
+   "w": 390,
+   "x": 2820,
+   "y": 12148
+  },
+  "14-Aset-2m-Aset-Tersembunyi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.n · Kelola aset · Daftar aset tersembunyi",
+   "w": 390,
+   "x": 2820,
+   "y": 13052
+  },
+  "14-Aset-2n-Ditampilkan-Lagi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.o · Kelola aset · Aset ditampilkan lagi",
+   "w": 390,
+   "x": 2820,
+   "y": 13956
+  },
+  "14-Aset-2o-Tambah-Emas-Digital.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.p · Kelola aset · Emas digital, setara gram",
+   "w": 390,
+   "x": 2820,
+   "y": 14860
+  },
+  "14-Aset-2p-Saldo-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.q · Kelola aset · Saldo awal tersimpan (toast)",
+   "w": 390,
+   "x": 2820,
+   "y": 15764
+  },
+  "14-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.a · Kelola aset · Utama",
+   "w": 390,
+   "x": 2820,
+   "y": 1300
+  },
+  "16-Nishob-2a-Ubah-Emas.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "11.b · Nishob · Ubah emas",
+   "w": 390,
+   "x": 8905,
+   "y": 2204
+  },
+  "16-Nishob-2b-Ubah-Perak.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "11.c · Nishob · Ubah perak",
+   "w": 390,
+   "x": 8905,
+   "y": 3108
+  },
+  "16-Nishob-2c-Diubah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "11.d · Nishob · Sudah diubah",
+   "w": 390,
+   "x": 8905,
+   "y": 4012
+  },
+  "16-Nishob-2d-Dari-Zakat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "11.e · Nishob · Dibuka dari Zakat",
+   "w": 390,
+   "x": 8905,
+   "y": 4916
+  },
+  "16-Nishob.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "11.a · Nishob · Utama",
+   "w": 390,
+   "x": 8905,
+   "y": 1300
+  },
+  "17-Google-Sheet-2a-Ganti-Sheet.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.b · Google Sheet · Ganti sheet",
+   "w": 390,
+   "x": 13945,
+   "y": 2204
+  },
+  "17-Google-Sheet-2b-Buat-Sheet-Baru.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.c · Google Sheet · Buat sheet baru",
+   "w": 390,
+   "x": 13945,
+   "y": 3108
+  },
+  "17-Google-Sheet-2c-Sheet-Baru-Dibuat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.d · Google Sheet · Sheet baru dibuat",
+   "w": 390,
+   "x": 13945,
+   "y": 4012
+  },
+  "17-Google-Sheet-2d-Keluar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.e · Google Sheet · Keluar dari akun",
+   "w": 390,
+   "x": 13945,
+   "y": 4916
+  },
+  "17-Google-Sheet-2f-Terputus.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.f · Google Sheet · Terputus",
+   "w": 390,
+   "x": 13945,
+   "y": 5820
+  },
+  "17-Google-Sheet-2g-Hubungkan-Ulang.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.g · Google Sheet · Hubungkan ulang",
+   "w": 390,
+   "x": 13945,
+   "y": 6724
+  },
+  "17-Google-Sheet-2h-Unduh-Data-Lengkap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.h · Google Sheet · Unduh data lengkap",
+   "w": 390,
+   "x": 13945,
+   "y": 7628
+  },
+  "17-Google-Sheet.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "17.a · Google Sheet · Utama",
+   "w": 390,
+   "x": 13945,
+   "y": 1300
+  },
+  "18-Piutang-2a-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.b · Piutang · Belum ada",
+   "w": 390,
+   "x": 13475,
+   "y": 2204
+  },
+  "18-Piutang-2b-Lunas.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.c · Piutang · Filter Lunas",
+   "w": 390,
+   "x": 13475,
+   "y": 3108
+  },
+  "18-Piutang-2c-Catat-Sekali-Bayar.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.d · Piutang · Catat, sekali bayar",
+   "w": 390,
+   "x": 13475,
+   "y": 4012
+  },
+  "18-Piutang-2d-Catat-Cicilan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.f · Piutang · Catat, cicilan",
+   "w": 390,
+   "x": 13475,
+   "y": 5820
+  },
+  "18-Piutang-2e-Detail.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.g · Piutang · Detail dan jadwal cicilan",
+   "w": 390,
+   "x": 13475,
+   "y": 6724
+  },
+  "18-Piutang-2f-Terima-Cicilan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.h · Piutang · Catat cicilan diterima",
+   "w": 390,
+   "x": 13475,
+   "y": 7628
+  },
+  "18-Piutang-2g-Cicilan-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.i · Piutang · Cicilan tersimpan",
+   "w": 390,
+   "x": 13475,
+   "y": 8532
+  },
+  "18-Piutang-2k-Terlambat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.j · Piutang · Terlambat",
+   "w": 390,
+   "x": 13475,
+   "y": 9436
+  },
+  "18-Piutang-2l-Catat-Mulai-Melunasi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.k · Piutang · Catat, pilihan 1 tahun lagi",
+   "w": 390,
+   "x": 13475,
+   "y": 10340
+  },
+  "18-Piutang-2m-Ubah-Rencana.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.m · Piutang · Ubah rencana pelunasan",
+   "w": 390,
+   "x": 13475,
+   "y": 12148
+  },
+  "18-Piutang-2n-Ubah-Rencana-Terlambat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.n · Piutang · Ubah rencana · piutang terlambat",
+   "w": 390,
+   "x": 13475,
+   "y": 13052
+  },
+  "18-Piutang-2o-Pilih-Tanggal-Mulai.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.l · Piutang · Kalender tanggal mulai",
+   "w": 390,
+   "x": 13475,
+   "y": 11244
+  },
+  "18-Piutang-2p-Catat-Pilih-Pemberi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.e · Piutang · Catat, pilih pemberi pinjaman",
+   "w": 390,
+   "x": 13475,
+   "y": 4916
+  },
+  "18-Piutang.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "16.a · Piutang · Utama",
+   "w": 390,
+   "x": 13475,
+   "y": 1300
+  },
+  "Alur-1-Sitemap.dc.html": {
+   "h": 2580,
+   "page": "alur",
+   "title": "A1 · Sitemap · arsitektur informasi",
+   "w": 2400,
+   "x": 0,
+   "y": 0
+  },
+  "Alur-2-Userflow.dc.html": {
+   "h": 3340,
+   "page": "alur",
+   "title": "A2 · Userflow · tugas utama",
+   "w": 2400,
+   "x": 0,
+   "y": 2680
+  },
+  "Alur-3-Temuan.dc.html": {
+   "h": 1190,
+   "page": "alur",
+   "title": "A3 · Temuan · rusak, tidak jelas, ganda",
+   "w": 2400,
+   "x": 2560,
+   "y": 0
+  },
+  "Alur-4-Audit-Input.dc.html": {
+   "h": 1640,
+   "page": "alur",
+   "title": "A4 · Audit · cara data masuk",
+   "w": 2400,
+   "x": 2560,
+   "y": 1290
+  },
+  "Alur-5-Template.dc.html": {
+   "h": 2180,
+   "page": "alur",
+   "title": "A5 · Template Hartafolio · format baku",
+   "w": 2400,
+   "x": 2560,
+   "y": 3030
+  },
+  "Alur-6-Audit-Copy.dc.html": {
+   "h": 2250,
+   "page": "alur",
+   "title": "A6 · Audit · copy semua layar",
+   "w": 2400,
+   "x": 5120,
+   "y": 0
+  },
+  "Alur-7-Audit-Komponen.dc.html": {
+   "h": 2080,
+   "page": "alur",
+   "title": "A7 · Audit · komponen dan interaksi",
+   "w": 2400,
+   "x": 5120,
+   "y": 2350
+  },
+  "Alur-8-Import-Aturan.dc.html": {
+   "h": 1560,
+   "page": "alur",
+   "title": "A8 · Import · aturan semua kondisi",
+   "w": 2400,
+   "x": 5120,
+   "y": 4530
+  },
+  "Arsip-0-Pengantar.dc.html": {
+   "h": 200,
+   "page": "arsip",
+   "title": "R0 · Arsip · pengantar",
+   "w": 1500,
+   "x": 0,
+   "y": 0
+  },
+  "Arsip-Alasan-Beranda-Lama.dc.html": {
+   "h": 640,
+   "page": "arsip",
+   "title": "R4 · Alasan ditolak · Beranda lama",
+   "w": 390,
+   "x": 560,
+   "y": 1204
+  },
+  "Arsip-Alasan-Setup-4.dc.html": {
+   "h": 560,
+   "page": "arsip",
+   "title": "R2 · Alasan ditolak · Langkah 4 segmented",
+   "w": 390,
+   "x": 0,
+   "y": 1204
+  },
+  "Arsip-Alasan-WD-Setup-4.dc.html": {
+   "h": 420,
+   "page": "arsip",
+   "title": "R6 · Alasan ditolak · Desktop langkah 4 segmented",
+   "w": 1440,
+   "x": 1120,
+   "y": 1260
+  },
+  "Arsip-Beranda-Lama.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "arsip",
+   "radius": 36,
+   "title": "R3 · Arsip · Beranda lama",
+   "w": 390,
+   "x": 560,
+   "y": 300
+  },
+  "Arsip-Setup-4-Segmented.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "page": "arsip",
+   "radius": 36,
+   "title": "R1 · Arsip · Langkah 4 dengan segmented control",
+   "w": 390,
+   "x": 0,
+   "y": 300
+  },
+  "Arsip-WD-Setup-4-Segmented.dc.html": {
+   "h": 900,
+   "page": "arsip",
+   "title": "R5 · Arsip · Desktop langkah 4 dengan segmented control",
+   "w": 1440,
+   "x": 1120,
+   "y": 300
+  },
+  "Logo-Bentuk-Unik.dc.html": {
+   "h": 1230,
+   "page": "logo",
+   "title": "L2 · Logo bentuk unik · 8 arah",
+   "w": 1500,
+   "x": 1500,
+   "y": 0
+  },
+  "Logo-Hartafolio.dc.html": {
+   "h": 1270,
+   "page": "logo",
+   "title": "L1 · Logo Hartafolio · 6 arah",
+   "w": 1400,
+   "x": 0,
+   "y": 0
+  },
+  "Main-2a-Per-Aset.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.b · Beranda · Per jenis aset",
+   "w": 390,
+   "x": 1880,
+   "y": 2204
+  },
+  "Main-2b-Menu-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.c · Beranda · Menu anggota terbuka",
+   "w": 390,
+   "x": 1880,
+   "y": 3108
+  },
+  "Main-2c-Satu-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.d · Beranda · Satu anggota dipilih",
+   "w": 390,
+   "x": 1880,
+   "y": 4012
+  },
+  "Main-2d-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.e · Beranda · Beranda kosong (dari nol)",
+   "w": 390,
+   "x": 1880,
+   "y": 4916
+  },
+  "Main-2e-Zakat-Hari-H.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.f · Beranda · Zakat jatuh tempo hari ini",
+   "w": 390,
+   "x": 1880,
+   "y": 5820
+  },
+  "Main-2f-Zakat-Terlambat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.g · Beranda · Zakat terlambat",
+   "w": 390,
+   "x": 1880,
+   "y": 6724
+  },
+  "Main-2g-Zakat-Mendekati.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.h · Beranda · Zakat mendekati",
+   "w": 390,
+   "x": 1880,
+   "y": 7628
+  },
+  "Main-2h-Tersimpan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.l · Beranda · Transaksi tersimpan (toast)",
+   "w": 390,
+   "x": 1880,
+   "y": 11244
+  },
+  "Main-2i-Perhatian.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.m · Beranda · Lonceng terbuka",
+   "w": 390,
+   "x": 1880,
+   "y": 12148
+  },
+  "Main-2j-Perhatian-Kosong.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.n · Beranda · Lonceng, tidak ada yang perlu perhatian",
+   "w": 390,
+   "x": 1880,
+   "y": 13052
+  },
+  "Main-2k-Banyak-Anggota.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.p · Beranda · 9 anggota, donut 4 + Sisanya",
+   "w": 390,
+   "x": 1880,
+   "y": 14860
+  },
+  "Main-2l-Banyak-Sisanya.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.q · Beranda · Sisanya terbuka",
+   "w": 390,
+   "x": 1880,
+   "y": 15764
+  },
+  "Main-2m-Satu-Anggota-Pilih.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.r · Beranda · Azlan, Emas dipilih",
+   "w": 390,
+   "x": 1880,
+   "y": 16668
+  },
+  "Main-2n-Per-Aset-Pilih.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.s · Beranda · Per jenis aset, Emas dipilih",
+   "w": 390,
+   "x": 1880,
+   "y": 17572
+  },
+  "Main-2o-Piutang-Hari-H.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.i · Beranda · Piutang jatuh tempo hari ini (banner piutang)",
+   "w": 390,
+   "x": 1880,
+   "y": 8532
+  },
+  "Main-2p-Piutang-Terlambat.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.j · Beranda · Piutang terlambat (banner piutang)",
+   "w": 390,
+   "x": 1880,
+   "y": 9436
+  },
+  "Main-2q-Zakat-Dan-Piutang.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.k · Beranda · Zakat dan piutang bersamaan (banner zakat, piutang di lonceng)",
+   "w": 390,
+   "x": 1880,
+   "y": 10340
+  },
+  "Main-2r-Perhatian-Zakat-Piutang.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.o · Beranda · Lonceng terbuka, zakat dan piutang",
+   "w": 390,
+   "x": 1880,
+   "y": 13956
+  },
+  "Main.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.a · Beranda · Utama",
+   "w": 390,
+   "x": 1880,
+   "y": 1300
+  },
+  "WD-Anggota.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D14 · Anggota",
+   "w": 1440,
+   "x": 0,
+   "y": 16589
+  },
+  "WD-Aset.dc.html": {
+   "h": 1196,
+   "page": "desktop",
+   "title": "D03 · Aset",
+   "w": 1440,
+   "x": 0,
+   "y": 4367
+  },
+  "WD-Beranda-Kosong.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D02.b · Beranda · Kosong",
+   "w": 1440,
+   "x": 1560,
+   "y": 2820
+  },
+  "WD-Beranda-Perhatian.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D02.e · Beranda · Lonceng terbuka",
+   "w": 1440,
+   "x": 6240,
+   "y": 2820
+  },
+  "WD-Beranda-Toast.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D02.d · Beranda · Tersimpan, baris disorot",
+   "w": 1440,
+   "x": 4680,
+   "y": 2820
+  },
+  "WD-Beranda-Zakat.dc.html": {
+   "h": 1307,
+   "page": "desktop",
+   "title": "D02.c · Beranda · Zakat hari H",
+   "w": 1440,
+   "x": 3120,
+   "y": 2820
+  },
+  "WD-Beranda.dc.html": {
+   "h": 1307,
+   "page": "desktop",
+   "title": "D02.a · Beranda · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 2820
+  },
+  "WD-Catat-Kurs.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D05.c · Catat · Kurs manual",
+   "w": 1440,
+   "x": 3120,
+   "y": 7169
+  },
+  "WD-Catat-Tanggal.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D05.b · Catat · Pilih tanggal",
+   "w": 1440,
+   "x": 1560,
+   "y": 7169
+  },
+  "WD-Catat.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D05.a · Catat · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 7169
+  },
+  "WD-GSheet.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D17 · Google Sheet",
+   "w": 1440,
+   "x": 0,
+   "y": 17729
+  },
+  "WD-Harga.dc.html": {
+   "h": 933,
+   "page": "desktop",
+   "title": "D12 · Harga terkini",
+   "w": 1440,
+   "x": 0,
+   "y": 14208
+  },
+  "WD-Import-Periksa.dc.html": {
+   "h": 968,
+   "page": "desktop",
+   "title": "D13.b · Import / Export · Periksa",
+   "w": 1440,
+   "x": 1560,
+   "y": 15381
+  },
+  "WD-Import.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D13.a · Import / Export · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 15381
+  },
+  "WD-Kelola-Ubah.dc.html": {
+   "h": 1058,
+   "page": "desktop",
+   "title": "D04.b · Kelola aset · Isi harga",
+   "w": 1440,
+   "x": 1560,
+   "y": 5803
+  },
+  "WD-Kelola.dc.html": {
+   "h": 1126,
+   "page": "desktop",
+   "title": "D04.a · Kelola aset · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 5803
+  },
+  "WD-Lainnya.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D07 · Alat",
+   "w": 1440,
+   "x": 0,
+   "y": 9527
+  },
+  "WD-Laporan-Export.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D08.b · Laporan · Export",
+   "w": 1440,
+   "x": 1560,
+   "y": 10667
+  },
+  "WD-Laporan.dc.html": {
+   "h": 1021,
+   "page": "desktop",
+   "title": "D08.a · Laporan · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 10667
+  },
+  "WD-Nishob.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D11 · Nishob",
+   "w": 1440,
+   "x": 0,
+   "y": 13068
+  },
+  "WD-Riwayat-Detail.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D06.b · Riwayat · Rincian",
+   "w": 1440,
+   "x": 1560,
+   "y": 8309
+  },
+  "WD-Riwayat.dc.html": {
+   "h": 978,
+   "page": "desktop",
+   "title": "D06.a · Riwayat · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 8309
+  },
+  "WD-Setup-2-Hubungan.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D01.b · Setup · 2 · Hubungan terbuka",
+   "w": 1440,
+   "x": 1560,
+   "y": 1340
+  },
+  "WD-Setup-2.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D01.a · Setup · 2 · Anggota",
+   "w": 1440,
+   "x": 0,
+   "y": 1340
+  },
+  "WD-Setup-4-Lengkapi.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D01.e · Setup · 4 · Lengkapi aset",
+   "w": 1440,
+   "x": 6240,
+   "y": 1340
+  },
+  "WD-Setup-4-Periksa.dc.html": {
+   "h": 1240,
+   "page": "desktop",
+   "title": "D01.d · Setup · 4 · Periksa",
+   "w": 1440,
+   "x": 4680,
+   "y": 1340
+  },
+  "WD-Setup-4.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D01.c · Setup · 4 · Import (opsional)",
+   "w": 1440,
+   "x": 3120,
+   "y": 1340
+  },
+  "WD-Splash.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D00 · Splash",
+   "w": 1440,
+   "x": 0,
+   "y": 200
+  },
+  "WD-Zakat-Bayar.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D10.b · Zakat mal · Catat pembayaran",
+   "w": 1440,
+   "x": 1560,
+   "y": 11928
+  },
+  "WD-Zakat.dc.html": {
+   "h": 900,
+   "page": "desktop",
+   "title": "D10.a · Zakat mal · Utama",
+   "w": 1440,
+   "x": 0,
+   "y": 11928
+  },
+  "WT-Anggota.dc.html": {
+   "h": 952,
+   "page": "tablet",
+   "title": "T14 · Anggota",
+   "w": 1024,
+   "x": 0,
+   "y": 15795
+  },
+  "WT-Aset.dc.html": {
+   "h": 1156,
+   "page": "tablet",
+   "title": "T03 · Aset",
+   "w": 1024,
+   "x": 0,
+   "y": 4664
+  },
+  "WT-Beranda-Kosong.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T02.b · Beranda · Kosong",
+   "w": 1024,
+   "x": 1144,
+   "y": 2768
+  },
+  "WT-Beranda-Perhatian.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T02.c · Beranda · Lonceng terbuka",
+   "w": 1024,
+   "x": 2288,
+   "y": 2768
+  },
+  "WT-Beranda.dc.html": {
+   "h": 1656,
+   "page": "tablet",
+   "title": "T02.a · Beranda · Utama",
+   "w": 1024,
+   "x": 0,
+   "y": 2768
+  },
+  "WT-Catat.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T05 · Catat",
+   "w": 1024,
+   "x": 0,
+   "y": 7394
+  },
+  "WT-Harga.dc.html": {
+   "h": 917,
+   "page": "tablet",
+   "title": "T12 · Harga terkini",
+   "w": 1024,
+   "x": 0,
+   "y": 13470
+  },
+  "WT-Import.dc.html": {
+   "h": 928,
+   "page": "tablet",
+   "title": "T13 · Import / Export",
+   "w": 1024,
+   "x": 0,
+   "y": 14627
+  },
+  "WT-Kelola.dc.html": {
+   "h": 1094,
+   "page": "tablet",
+   "title": "T04 · Kelola aset",
+   "w": 1024,
+   "x": 0,
+   "y": 6060
+  },
+  "WT-Lainnya.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T07 · Alat",
+   "w": 1024,
+   "x": 0,
+   "y": 9588
+  },
+  "WT-Laporan.dc.html": {
+   "h": 1353,
+   "page": "tablet",
+   "title": "T08 · Laporan",
+   "w": 1024,
+   "x": 0,
+   "y": 10596
+  },
+  "WT-Riwayat-Detail.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T06.b · Riwayat · Rincian",
+   "w": 1024,
+   "x": 1144,
+   "y": 8402
+  },
+  "WT-Riwayat.dc.html": {
+   "h": 946,
+   "page": "tablet",
+   "title": "T06.a · Riwayat · Utama",
+   "w": 1024,
+   "x": 0,
+   "y": 8402
+  },
+  "WT-Setup-2-Hubungan.dc.html": {
+   "h": 900,
+   "page": "tablet",
+   "title": "T01.b · Setup · 2 · Hubungan terbuka",
+   "w": 1024,
+   "x": 1144,
+   "y": 1208
+  },
+  "WT-Setup-2.dc.html": {
+   "h": 900,
+   "page": "tablet",
+   "title": "T01.a · Setup · 2 · Anggota",
+   "w": 1024,
+   "x": 0,
+   "y": 1208
+  },
+  "WT-Setup-4-Lengkapi.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T01.e · Setup · 4 · Lengkapi aset",
+   "w": 1024,
+   "x": 4576,
+   "y": 1208
+  },
+  "WT-Setup-4-Periksa.dc.html": {
+   "h": 1320,
+   "page": "tablet",
+   "title": "T01.d · Setup · 4 · Periksa",
+   "w": 1024,
+   "x": 3432,
+   "y": 1208
+  },
+  "WT-Setup-4.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T01.c · Setup · 4 · Import (opsional)",
+   "w": 1024,
+   "x": 2288,
+   "y": 1208
+  },
+  "WT-Splash.dc.html": {
+   "h": 768,
+   "page": "tablet",
+   "title": "T00 · Splash",
+   "w": 1024,
+   "x": 0,
+   "y": 200
+  },
+  "WT-Zakat.dc.html": {
+   "h": 1041,
+   "page": "tablet",
+   "title": "T10 · Zakat mal",
+   "w": 1024,
+   "x": 0,
+   "y": 12189
+  }
+ },
+ "createdOnFiles": {
+  "at": "2026-11-06T10:00:00Z",
+  "v": 1
+ },
+ "designSystems": [
+  {
+   "artifact": "https://claude.ai/artifact/RLygUek1tq98GXvtuegirr",
+   "copiedAt": "2026-11-06T15:00:00Z",
+   "namespace": "hartafolio",
+   "title": "Hartafolio · Design System",
+   "version": "1795077740-69e1"
+  }
+ ],
+ "launch": {
+  "view": "canvas"
+ },
+ "noteOrder": [
+  "setup",
+  "export",
+  "template"
+ ],
+ "notes": {
+  "export": {
+   "kind": "title1",
+   "maxW": 3000,
+   "text": "09 Hasil export · contoh isi file PDF (2 halaman: ringkasan, transaksi) dan Excel (ringkasan 4 sheet; data lengkap 6 sheet). Kolom kiri ke kanan: PDF, Excel ringkasan, Excel data lengkap.",
+   "w": 240,
+   "x": 5170,
+   "y": 1000
+  },
+  "setup": {
+   "kind": "title1",
+   "maxW": 8000,
+   "text": "Penomoran mengikuti sitemap: 00 Splash, 01 Setup, 02 Beranda, 03 Aset, 04 Kelola aset, 05 Catat, 06 Riwayat, 07 Alat, 08 Laporan, 09 Hasil export, 10 Zakat mal, 11 Nishob, 12 Harga terkini, 13 Import / Export, 14 Anggota, 15 Lokasi, 16 Piutang, 17 Google Sheet. Satu bagian = satu kolom (Setup dan Import / Export punya beberapa kolom, satu per langkah atau jenis). Huruf di belakang angka mengikuti urutan baca: dari atas ke bawah, lalu kolom berikutnya. Menambah atau menyisipkan board: edit tools/flow.json lalu jalankan renumber.py. Huruf, judul, dan posisi dihitung ulang otomatis. Desktop memakai awalan D dan tablet T; di sana satu baris = satu bagian, dibaca kiri ke kanan.",
+   "w": 240,
+   "x": 0,
+   "y": 1000
+  },
+  "template": {
+   "kind": "title1",
+   "maxW": 3000,
+   "text": "13 Import / Export · isi file template Excel (.xlsx) yang diunduh dari Import: Petunjuk, Transaksi, Aset, Nilai bulanan",
+   "w": 240,
+   "x": 10785,
+   "y": 1000
+  }
+ },
+ "order": [
+  "00-Splash.dc.html",
+  "01-Setup-1-Akun.dc.html",
+  "01-Setup-2a-Kosong.dc.html",
+  "01-Setup.dc.html",
+  "01-Setup-2b-Hubungan-Terbuka.dc.html",
+  "01-Setup-3a-Kosong.dc.html",
+  "01-Setup-3-Lokasi.dc.html",
+  "01-Setup-3b-Ubah.dc.html",
+  "01-Setup-3c-Pintasan.dc.html",
+  "01-Setup-3d-Lokasi-Lain.dc.html",
+  "01-Setup-3e-Jenis-Terbuka.dc.html",
+  "01-Setup-4a-Belum-Pilih.dc.html",
+  "01-Setup-4-Import.dc.html",
+  "01-Setup-4c-Periksa.dc.html",
+  "01-Setup-4f-Lengkapi.dc.html",
+  "01-Setup-4d-Periksa-Siap.dc.html",
+  "01-Setup-4e-Selesai.dc.html",
+  "01-Setup-4u-Diurungkan.dc.html",
+  "01-Setup-4g-File-Kosong.dc.html",
+  "01-Setup-4h-Bukan-Template.dc.html",
+  "01-Setup-4i-Tidak-Terbaca.dc.html",
+  "01-Setup-4j-Banyak-Dilengkapi.dc.html",
+  "01-Setup-4k-Anggota-Tak-Dikenal.dc.html",
+  "01-Setup-4l-Baris-Dilewati.dc.html",
+  "01-Setup-4m-Rincian-Dilewati.dc.html",
+  "01-Setup-4n-Tidak-Ada-Yang-Siap.dc.html",
+  "01-Setup-4o-Gagal-Simpan.dc.html",
+  "01-Setup-4p-Konfirmasi-Keluar.dc.html",
+  "01-Setup-4q-Sudah-Ada.dc.html",
+  "01-Setup-4r-Gabungkan-Anggota.dc.html",
+  "01-Setup-4s-Sudah-Digabung.dc.html",
+  "01-Setup-4t-Tambah-Anggota.dc.html",
+  "Main.dc.html",
+  "Main-2a-Per-Aset.dc.html",
+  "Main-2b-Menu-Anggota.dc.html",
+  "Main-2c-Satu-Anggota.dc.html",
+  "Main-2d-Kosong.dc.html",
+  "Main-2e-Zakat-Hari-H.dc.html",
+  "Main-2f-Zakat-Terlambat.dc.html",
+  "Main-2g-Zakat-Mendekati.dc.html",
+  "Main-2o-Piutang-Hari-H.dc.html",
+  "Main-2p-Piutang-Terlambat.dc.html",
+  "Main-2q-Zakat-Dan-Piutang.dc.html",
+  "Main-2h-Tersimpan.dc.html",
+  "Main-2i-Perhatian.dc.html",
+  "Main-2j-Perhatian-Kosong.dc.html",
+  "Main-2r-Perhatian-Zakat-Piutang.dc.html",
+  "Main-2k-Banyak-Anggota.dc.html",
+  "Main-2l-Banyak-Sisanya.dc.html",
+  "Main-2m-Satu-Anggota-Pilih.dc.html",
+  "Main-2n-Per-Aset-Pilih.dc.html",
+  "03-Aset.dc.html",
+  "03-Aset-2a-Satu-Anggota.dc.html",
+  "03-Aset-2b-Lokasi-Menu.dc.html",
+  "03-Aset-2c-Kosong.dc.html",
+  "03-Aset-2d-Tersimpan.dc.html",
+  "14-Aset.dc.html",
+  "14-Aset-2a-Ubah-Otomatis.dc.html",
+  "14-Aset-2b-Ubah-Manual.dc.html",
+  "14-Aset-2c-Isi-Harga.dc.html",
+  "14-Aset-2d-Harga-Tersimpan.dc.html",
+  "14-Aset-2e-Tambah-Aset.dc.html",
+  "14-Aset-2f-Tambah-Manual.dc.html",
+  "14-Aset-2g-Tanya-Saldo-Awal.dc.html",
+  "14-Aset-2h-Dari-Lainnya.dc.html",
+  "14-Aset-2i-Isi-Harga-Dari-Beranda.dc.html",
+  "14-Aset-2j-Hapus-Ditolak.dc.html",
+  "14-Aset-2k-Hapus-Konfirmasi.dc.html",
+  "14-Aset-2l-Sembunyikan.dc.html",
+  "14-Aset-2m-Aset-Tersembunyi.dc.html",
+  "14-Aset-2n-Ditampilkan-Lagi.dc.html",
+  "14-Aset-2o-Tambah-Emas-Digital.dc.html",
+  "14-Aset-2p-Saldo-Tersimpan.dc.html",
+  "04-Catat.dc.html",
+  "04-Catat-2m-Beli-Dari-Luar.dc.html",
+  "04-Catat-2o-Pilih-Alat-Bayar.dc.html",
+  "04-Catat-2p-Bayar-Dengan-BTC.dc.html",
+  "04-Catat-2q-Bayar-Dari-Bybit.dc.html",
+  "04-Catat-2n-Pilih-Tanggal.dc.html",
+  "04-Catat-2r-Tanggal-Lalu.dc.html",
+  "04-Catat-2s-Kurs-Manual.dc.html",
+  "04-Catat-2a-Jual.dc.html",
+  "04-Catat-2b-Masuk.dc.html",
+  "04-Catat-2k-Keluar.dc.html",
+  "04-Catat-2c-Pindah.dc.html",
+  "04-Catat-2e-Pindah-Anggota.dc.html",
+  "04-Catat-2f-Pindah-Anggota-Beda-Lokasi.dc.html",
+  "04-Catat-2d-Saldo-Awal.dc.html",
+  "04-Catat-2g-Saldo-Awal-Lanjut.dc.html",
+  "04-Catat-2h-Cari-Aset.dc.html",
+  "04-Catat-2i-Lokasi-Baru.dc.html",
+  "04-Catat-2j-Aset-Manual.dc.html",
+  "04-Catat-2l-Ubah.dc.html",
+  "05-Riwayat.dc.html",
+  "05-Riwayat-2a-Filter.dc.html",
+  "05-Riwayat-2b-Detail.dc.html",
+  "05-Riwayat-2h-Detail-Zakat.dc.html",
+  "05-Riwayat-2i-Detail-Pinjamkan.dc.html",
+  "05-Riwayat-2j-Detail-Cicilan.dc.html",
+  "05-Riwayat-2k-Detail-Pelunasan.dc.html",
+  "05-Riwayat-2l-Detail-Pindah.dc.html",
+  "05-Riwayat-2c-Terhapus.dc.html",
+  "05-Riwayat-2d-Kosong.dc.html",
+  "05-Riwayat-2e-Daftar-Terhapus.dc.html",
+  "05-Riwayat-2f-Tersimpan.dc.html",
+  "05-Riwayat-2g-Diubah.dc.html",
+  "09-Lainnya.dc.html",
+  "09-Lainnya-2a-Mata-Uang.dc.html",
+  "09-Lainnya-2c-Pasang-Di-HP.dc.html",
+  "09-Lainnya-2d-Tersimpan.dc.html",
+  "07-Laporan.dc.html",
+  "07-Laporan-2a-Triwulan.dc.html",
+  "07-Laporan-2b-Menu-Anggota.dc.html",
+  "07-Laporan-2c-Satu-Anggota.dc.html",
+  "07-Laporan-2d-USD.dc.html",
+  "07-Laporan-2e-Export.dc.html",
+  "07-Laporan-2h-Export-Data-Lengkap.dc.html",
+  "07-Laporan-2f-Kosong.dc.html",
+  "07-Laporan-2g-Dari-Beranda.dc.html",
+  "07-Laporan-3-Bulan.dc.html",
+  "07-Laporan-3a-Bulan-Import.dc.html",
+  "07-Export-PDF.dc.html",
+  "07-Export-PDF-2-Hal-2.dc.html",
+  "07-Export-Excel.dc.html",
+  "07-Export-Excel-2c-Per-Anggota.dc.html",
+  "07-Export-Excel-2a-Per-Aset.dc.html",
+  "07-Export-Excel-2b-Transaksi.dc.html",
+  "07-Export-Data-Lengkap.dc.html",
+  "07-Export-Data-Lengkap-2a-Aset.dc.html",
+  "07-Export-Data-Lengkap-2b-Anggota-Lokasi.dc.html",
+  "07-Export-Data-Lengkap-2e-Lokasi.dc.html",
+  "07-Export-Data-Lengkap-2c-Nilai-Bulanan.dc.html",
+  "07-Export-Data-Lengkap-2d-Pengaturan.dc.html",
+  "08-Zakat.dc.html",
+  "08-Zakat-2a-Belum-Nisab.dc.html",
+  "08-Zakat-2b-Jatuh-Tempo.dc.html",
+  "08-Zakat-2c-Dibayar.dc.html",
+  "08-Zakat-2d-Riwayat.dc.html",
+  "08-Zakat-2e-Info.dc.html",
+  "08-Zakat-2f-Kosong.dc.html",
+  "08-Zakat-2g-Mendekati.dc.html",
+  "08-Zakat-2h-Terlambat.dc.html",
+  "08-Zakat-2i-Pengingat.dc.html",
+  "08-Zakat-2j-Catat-Pembayaran.dc.html",
+  "08-Zakat-2k-Dibayar-Toast.dc.html",
+  "08-Zakat-2l-Bayar-Dari-Aset.dc.html",
+  "08-Zakat-2m-Pilih-Aset.dc.html",
+  "08-Zakat-2n-Dibayar-Dari-Aset.dc.html",
+  "08-Zakat-2o-Pilih-Aset-Bawah-Nishob.dc.html",
+  "08-Zakat-2p-Bayar-Aset-Bawah-Nishob.dc.html",
+  "08-Zakat-2q-Dibayar-Haul-Menunggu.dc.html",
+  "08-Zakat-2r-Nishob-Tercapai-Lagi.dc.html",
+  "08-Zakat-2s-Dari-Beranda.dc.html",
+  "16-Nishob.dc.html",
+  "16-Nishob-2a-Ubah-Emas.dc.html",
+  "16-Nishob-2b-Ubah-Perak.dc.html",
+  "16-Nishob-2c-Diubah.dc.html",
+  "16-Nishob-2d-Dari-Zakat.dc.html",
+  "11-Harga.dc.html",
+  "11-Harga-2a-Crypto.dc.html",
+  "11-Harga-2b-Dimiliki.dc.html",
+  "11-Harga-2c-Offline.dc.html",
+  "11-Harga-2d-Dari-Beranda.dc.html",
+  "11-Harga-2e-Dari-Zakat.dc.html",
+  "10-Import.dc.html",
+  "10-Import-2k-Template.dc.html",
+  "10-Import-2a-File-Dipilih.dc.html",
+  "10-Import-2b-Membaca-File.dc.html",
+  "10-Import-2e-Periksa.dc.html",
+  "10-Import-2f-Lengkapi-Aset.dc.html",
+  "10-Import-2g-Periksa-Lengkap.dc.html",
+  "10-Import-2h-Menyimpan.dc.html",
+  "10-Import-2i-Selesai.dc.html",
+  "10-Import-2j-Diurungkan.dc.html",
+  "10-Import-3a-Export.dc.html",
+  "10-Import-3c-Export-Ringkasan.dc.html",
+  "10-Import-3e-Export-Membuat.dc.html",
+  "10-Import-3b-Export-Selesai.dc.html",
+  "10-Import-3d-Export-Berhasil.dc.html",
+  "10-Import-3f-Export-Gagal.dc.html",
+  "10-Import-4g-File-Kosong.dc.html",
+  "10-Import-4h-Bukan-Template.dc.html",
+  "10-Import-4i-Tidak-Terbaca.dc.html",
+  "10-Import-4j-Banyak-Dilengkapi.dc.html",
+  "10-Import-4k-Anggota-Tak-Dikenal.dc.html",
+  "10-Import-4l-Baris-Dilewati.dc.html",
+  "10-Import-4m-Rincian-Dilewati.dc.html",
+  "10-Import-4n-Tidak-Ada-Yang-Siap.dc.html",
+  "10-Import-4o-Gagal-Simpan.dc.html",
+  "10-Import-4p-Konfirmasi-Keluar.dc.html",
+  "10-Import-4q-Sudah-Ada.dc.html",
+  "10-Import-4r-Gabungkan-Anggota.dc.html",
+  "10-Import-4s-Sudah-Digabung.dc.html",
+  "10-Import-4t-Tambah-Anggota.dc.html",
+  "10-Import-Template-2a-Petunjuk.dc.html",
+  "10-Import-Template.dc.html",
+  "10-Import-Template-2b-Aset.dc.html",
+  "10-Import-Template-2c-Nilai-Bulanan.dc.html",
+  "12-Anggota.dc.html",
+  "12-Anggota-2a-Tambah.dc.html",
+  "12-Anggota-2b-Ubah.dc.html",
+  "12-Anggota-2c-Hapus-Ditolak.dc.html",
+  "12-Anggota-2d-Hapus-Konfirmasi.dc.html",
+  "12-Anggota-2e-Tambah-Selesai.dc.html",
+  "13-Lokasi.dc.html",
+  "13-Lokasi-2a-Tambah.dc.html",
+  "13-Lokasi-2b-Ubah.dc.html",
+  "13-Lokasi-2c-Hapus-Ditolak.dc.html",
+  "13-Lokasi-2d-Hapus-Konfirmasi.dc.html",
+  "13-Lokasi-2e-Tambah-Selesai.dc.html",
+  "18-Piutang.dc.html",
+  "18-Piutang-2a-Kosong.dc.html",
+  "18-Piutang-2b-Lunas.dc.html",
+  "18-Piutang-2c-Catat-Sekali-Bayar.dc.html",
+  "18-Piutang-2p-Catat-Pilih-Pemberi.dc.html",
+  "18-Piutang-2d-Catat-Cicilan.dc.html",
+  "18-Piutang-2e-Detail.dc.html",
+  "18-Piutang-2f-Terima-Cicilan.dc.html",
+  "18-Piutang-2g-Cicilan-Tersimpan.dc.html",
+  "18-Piutang-2k-Terlambat.dc.html",
+  "18-Piutang-2l-Catat-Mulai-Melunasi.dc.html",
+  "18-Piutang-2o-Pilih-Tanggal-Mulai.dc.html",
+  "18-Piutang-2m-Ubah-Rencana.dc.html",
+  "18-Piutang-2n-Ubah-Rencana-Terlambat.dc.html",
+  "17-Google-Sheet.dc.html",
+  "17-Google-Sheet-2a-Ganti-Sheet.dc.html",
+  "17-Google-Sheet-2b-Buat-Sheet-Baru.dc.html",
+  "17-Google-Sheet-2c-Sheet-Baru-Dibuat.dc.html",
+  "17-Google-Sheet-2d-Keluar.dc.html",
+  "17-Google-Sheet-2f-Terputus.dc.html",
+  "17-Google-Sheet-2g-Hubungkan-Ulang.dc.html",
+  "17-Google-Sheet-2h-Unduh-Data-Lengkap.dc.html",
+  "Logo-Hartafolio.dc.html",
+  "Logo-Bentuk-Unik.dc.html",
+  "Alur-1-Sitemap.dc.html",
+  "Alur-2-Userflow.dc.html",
+  "Alur-3-Temuan.dc.html",
+  "Alur-4-Audit-Input.dc.html",
+  "Alur-5-Template.dc.html",
+  "Alur-6-Audit-Copy.dc.html",
+  "Alur-7-Audit-Komponen.dc.html",
+  "Alur-8-Import-Aturan.dc.html",
+  "WD-Splash.dc.html",
+  "WD-Setup-2.dc.html",
+  "WD-Setup-2-Hubungan.dc.html",
+  "WD-Setup-4.dc.html",
+  "WD-Setup-4-Periksa.dc.html",
+  "WD-Setup-4-Lengkapi.dc.html",
+  "WD-Beranda.dc.html",
+  "WD-Beranda-Kosong.dc.html",
+  "WD-Beranda-Zakat.dc.html",
+  "WD-Beranda-Toast.dc.html",
+  "WD-Beranda-Perhatian.dc.html",
+  "WD-Aset.dc.html",
+  "WD-Kelola.dc.html",
+  "WD-Kelola-Ubah.dc.html",
+  "WD-Catat.dc.html",
+  "WD-Catat-Tanggal.dc.html",
+  "WD-Catat-Kurs.dc.html",
+  "WD-Riwayat.dc.html",
+  "WD-Riwayat-Detail.dc.html",
+  "WD-Lainnya.dc.html",
+  "WD-Laporan.dc.html",
+  "WD-Laporan-Export.dc.html",
+  "WD-Zakat.dc.html",
+  "WD-Zakat-Bayar.dc.html",
+  "WD-Nishob.dc.html",
+  "WD-Harga.dc.html",
+  "WD-Import.dc.html",
+  "WD-Import-Periksa.dc.html",
+  "WD-Anggota.dc.html",
+  "WD-GSheet.dc.html",
+  "WT-Splash.dc.html",
+  "WT-Setup-2.dc.html",
+  "WT-Setup-2-Hubungan.dc.html",
+  "WT-Setup-4.dc.html",
+  "WT-Setup-4-Periksa.dc.html",
+  "WT-Setup-4-Lengkapi.dc.html",
+  "WT-Beranda.dc.html",
+  "WT-Beranda-Kosong.dc.html",
+  "WT-Beranda-Perhatian.dc.html",
+  "WT-Aset.dc.html",
+  "WT-Kelola.dc.html",
+  "WT-Catat.dc.html",
+  "WT-Riwayat.dc.html",
+  "WT-Riwayat-Detail.dc.html",
+  "WT-Lainnya.dc.html",
+  "WT-Laporan.dc.html",
+  "WT-Zakat.dc.html",
+  "WT-Harga.dc.html",
+  "WT-Import.dc.html",
+  "WT-Anggota.dc.html",
+  "Arsip-0-Pengantar.dc.html",
+  "Arsip-Setup-4-Segmented.dc.html",
+  "Arsip-Alasan-Setup-4.dc.html",
+  "Arsip-Beranda-Lama.dc.html",
+  "Arsip-Alasan-Beranda-Lama.dc.html",
+  "Arsip-WD-Setup-4-Segmented.dc.html",
+  "Arsip-Alasan-WD-Setup-4.dc.html"
+ ],
+ "pages": [
+  {
+   "id": "layar",
+   "name": "Phone"
+  },
+  {
+   "id": "logo",
+   "name": "Logo"
+  },
+  {
+   "id": "alur",
+   "name": "Alur & IA"
+  },
+  {
+   "id": "desktop",
+   "name": "Desktop 1440"
+  },
+  {
+   "id": "tablet",
+   "name": "Tablet 1024"
+  },
+  {
+   "id": "arsip",
+   "name": "Arsip"
+  }
+ ],
+ "title": "Hartafolio · Hi-fi",
+ "v": 3
+}

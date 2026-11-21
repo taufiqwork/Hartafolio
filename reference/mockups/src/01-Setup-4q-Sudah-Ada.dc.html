@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Setup awal · periksa, transaksi sudah ada di Sheet</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;" aria-hidden="true"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px;"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span></span></div>
+<div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">Langkah 4 dari 4 · Periksa (2/3)</span><a class="hf-tap" href="01-Setup-4-Import.dc.html" style="display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 20px; font-weight: 600; text-decoration: none; min-height: 32px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="m15 18-6-6 6-6"></path></svg>Kembali</a></div>
+</div></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 20px;">
+
+<div style="display: flex; flex-direction: column; gap: 8px;"><h1 class="title" style="margin: 0;">Periksa sebelum disimpan</h1></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 20px; background: var(--surface-sunken);">
+<span style="width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 11px; font-weight: 600; line-height: 16px;">XLSX</span>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Hartafolio-Export-Azlan-2026.xlsx</span><span class="caption" style="color: var(--ink-muted);">Template dikenali · 88 baris</span></div>
+</div>
+<section class="hf-card" style="gap: 12px;" aria-label="Hasil pemeriksaan">
+<div style="display: flex; justify-content: space-between; align-items: baseline;"><span class="heading">Hasil pemeriksaan</span><span class="caption" style="color: var(--ink-muted);">88 baris</span></div>
+<div style="display: flex; gap: 2px; height: 8px; border-radius: 999px; overflow: hidden;" role="img" aria-label="12 siap disimpan, 0 perlu dilengkapi, 76 dilewati"><span style="flex: 12 1 0; background: var(--brand);"></span><span style="flex: 76 1 0; background: var(--line-strong);"></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: var(--brand);"></span><span style="font-size: 14px; line-height: 20px;">Siap disimpan</span><span style="font-size: 14px; line-height: 20px; font-weight: 600;">12</span></div><div style="display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: var(--gold-fill);"></span><span style="font-size: 14px; line-height: 20px;">Perlu dilengkapi</span><span style="font-size: 14px; line-height: 20px; font-weight: 600;">0</span></div><div style="display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: var(--line-strong);"></span><span style="font-size: 14px; line-height: 20px;">Dilewati</span><span style="font-size: 14px; line-height: 20px; font-weight: 600;">76</span></div></div>
+</section>
+<section class="hf-card" style="gap: 12px;" aria-label="Sudah ada di Sheet · 76 baris">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Sudah ada di Sheet · 76 baris</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">No. referensi sama dengan transaksi yang sudah tersimpan, jadi dianggap file yang pernah diimpor. Tidak dicatat dua kali.</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 8px 12px; border-radius: 8px; background: var(--surface-sunken); font-size: 13px; line-height: 20px;"><span style="font-weight: 600;">Baris 3</span><span style="color: var(--ink-muted);">Beli PAXG · 2024-03-02 · 22738838984383614976</span></div>
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 8px 12px; border-radius: 8px; background: var(--surface-sunken); font-size: 13px; line-height: 20px;"><span style="font-weight: 600;">Baris 4</span><span style="color: var(--ink-muted);">Beli BTC · 2024-03-09 · 0x9f2c…b81e</span></div>
+<span class="caption" style="color: var(--ink-muted);">Dan 74 baris lainnya.</span></div>
+</section>
+<section class="hf-card" style="gap: 12px;" aria-label="Yang akan disimpan · 12 baris">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Yang akan disimpan · 12 baris</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Baris tanpa No. referensi tidak bisa dicocokkan, jadi dianggap baru. Periksa tanggal dan jumlahnya sebelum menyimpan.</span></div>
+</section>
+</main>
+
+<footer style="position: relative; padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);">
+<button class="hf-btn hf-btn-primary hf-btn-block" type="button">Simpan 12 baris</button>
+<button class="hf-btn hf-btn-ghost hf-btn-block" type="button">Batal, jangan simpan apa pun</button>
+<span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">Belum ada yang tersimpan sampai Anda menekan Simpan</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

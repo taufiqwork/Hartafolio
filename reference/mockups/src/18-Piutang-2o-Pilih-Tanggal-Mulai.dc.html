@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Catat piutang · pilih tanggal mulai</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="position: relative; width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head">
+<sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}"><a href="09-Lainnya.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; text-decoration: none; line-height: 22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Alat</a><header style="display: flex; justify-content: space-between; align-items: center; gap: 12px;"><h1 class="title" style="margin: 0;">Piutang</h1><button class="hf-btn hf-btn-sm" type="button" aria-label="Catat piutang baru" onClick="{{ openAdd }}" style="flex: none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Catat</button></header></sc-if>
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ backList }}" style="font: inherit; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer; line-height: 22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Piutang</button><h1 class="title" style="margin: 0;">{{ d.n }}</h1></sc-if>
+</div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 16px;">
+
+<sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+<section class="hf-card" style="gap: 4px;" aria-label="Total piutang"><span class="label" style="color: var(--ink-muted);">Piutang aktif · {{ activeN }} peminjam</span><span style="font-size: 28px; line-height: 36px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ total }}</span><span class="caption" style="color: var(--ink-muted);">{{ totCap }}</span><sc-if value="{{ topLate }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--loss); font-weight: 600;">{{ topLateT }}</span></sc-if></section>
+<div style="display: flex; gap: 8px;" role="group" aria-label="Status"><sc-for list="{{ filters }}" as="p" hint-placeholder-count="2"><button class="hf-chip" type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.on }}">{{ p.l }}</button></sc-for></div>
+<sc-if value="{{ hasRows }}" hint-placeholder-val="{{ true }}"><div class="hf-card" style="padding: 0 16px; gap: 0;"><sc-for list="{{ rows }}" as="r" hint-placeholder-count="3"><button type="button" class="hf-detail" onClick="{{ r.on }}" style="font: inherit; color: var(--ink); background: transparent; text-align: left; cursor: pointer; width: 100%; align-items: center; grid-template-columns: minmax(0, 1fr) auto 16px; min-height: 64px; box-sizing: border-box; border: 0; border-top: {{ r.bt }};"><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ r.n }}</span><span class="caption" style="color: var(--ink-muted);">{{ r.sub }}</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600; font-variant-numeric: tabular-nums;">{{ r.v }}</span><span class="{{ r.bcls }}">{{ r.b }}</span></span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></button></sc-for></div></sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}"><section class="hf-card" style="padding: 24px 16px; gap: 12px; justify-items: center; text-align: center;" aria-label="Belum ada piutang"><span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M11 17h2"></path><path d="M3 5h18v14H3z"></path><path d="M7 9h10"></path></svg></span><span class="heading">{{ emptyT }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ emptyD }}</span><sc-if value="{{ emptyCta }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ openAdd }}">Catat piutang pertama</button></sc-if></section></sc-if>
+<p style="margin: 0; font-size: 13px; line-height: 20px; color: var(--ink-muted); text-align: center;">Piutang dicatat untuk aset yang dipinjamkan ke orang lain. Ditagih dalam aset yang sama dengan yang dipinjamkan.</p>
+</sc-if>
+
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+<section class="hf-card" style="gap: 4px;" aria-label="Nilai sisa"><span class="label" style="color: var(--ink-muted);">{{ d.valLabel }}</span><span style="font-size: 28px; line-height: 36px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ d.val }}</span><span class="caption" style="color: var(--ink-muted);">{{ d.valCap }}</span><div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;"><span class="{{ d.bcls }}">{{ d.b }}</span><span class="caption" style="color: var(--ink-muted);">{{ d.bNote }}</span></div></section>
+<sc-if value="{{ d.hasLate }}" hint-placeholder-val="{{ false }}"><section class="hf-card" style="gap: 4px; background: var(--loss-soft); border-color: transparent;" aria-label="Tunggakan"><span class="label" style="color: var(--loss);">{{ d.lateT }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink);">{{ d.lateD }}</span></section></sc-if>
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="Rincian"><span class="label" style="color: var(--ink-muted);">Rincian</span><div class="hf-card" style="padding: 4px 16px; gap: 0;"><sc-for list="{{ d.facts }}" as="f" hint-placeholder-count="6"><div class="hf-detail" style="grid-template-columns: minmax(0, 1fr) auto; border-top: {{ f.bt }};"><div class="hf-detail-main"><span class="hf-detail-name" style="font-weight: 500;">{{ f.k }}</span></div><div class="hf-detail-figs"><span class="hf-detail-amount" style="font-weight: 600;">{{ f.v }}</span></div></div></sc-for></div></section>
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="Jadwal"><span class="label" style="color: var(--ink-muted);">{{ d.schedT }}</span><div class="hf-card" style="padding: 4px 16px; gap: 0;"><sc-for list="{{ d.sched }}" as="s" hint-placeholder-count="5"><div class="hf-detail" style="grid-template-columns: minmax(0, 1fr) auto; border-top: {{ s.bt }};"><div class="hf-detail-main"><span class="hf-detail-name">{{ s.d }}</span><span class="hf-detail-meta">{{ s.q }}</span></div><div class="hf-detail-figs"><span class="{{ s.bcls }}">{{ s.b }}</span></div></div></sc-for></div></section>
+<p style="margin: 0; font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ d.zakat }}</p>
+</sc-if>
+</main>
+<sc-if value="{{ showCta }}" hint-placeholder-val="{{ false }}"><footer style="flex: none; padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface-raised); border-top: 1px solid var(--line);"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ openPay }}">Catat cicilan diterima</button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ openPlan }}">Ubah rencana pelunasan</button></footer></sc-if>
+
+<sc-if value="{{ sheetOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ scrimClick }}"></div>
+<sc-if value="{{ formOn }}" hint-placeholder-val="{{ true }}"><section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="{{ sTitle }}">
+<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">{{ sTitle }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ sDesc }}</span></div>
+<sc-for list="{{ fields }}" as="f" hint-placeholder-count="3"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span>
+<sc-if value="{{ f.isIn }}" hint-placeholder-val="{{ true }}"><input class="{{ f.cls }}" type="text" inputmode="{{ f.im }}" value="{{ f.v }}" placeholder="{{ f.ph }}" aria-label="{{ f.l }}" onInput="{{ f.onIn }}"></sc-if>
+<sc-if value="{{ f.isSel }}" hint-placeholder-val="{{ false }}"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="{{ f.openStr }}" onClick="{{ f.open }}" style="min-height: 48px; font-size: 16px;"><span style="color: {{ f.vc }};">{{ f.sv }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<div class="hf-collapse" data-open="{{ f.openStr }}"><div class="hf-collapse-in"><div role="listbox" aria-label="{{ f.l }}" style="display: flex; flex-direction: column; gap: 2px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-raised);"><sc-for list="{{ f.opts }}" as="o" hint-placeholder-count="4"><button type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}" style="font: inherit; display: grid; grid-template-columns: minmax(0, 1fr) 24px; gap: 12px; align-items: center; min-height: 48px; padding: 4px 12px; border: 0; border-radius: 8px; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="display: flex; flex-direction: column;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><span class="caption" style="color: var(--ink-muted);">{{ o.sub }}</span></span><span style="color: var(--brand); display: grid; visibility: {{ o.vis }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span></button></sc-for></div></div></div></sc-if>
+<sc-if value="{{ f.isStart }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-wrap: wrap; gap: 8px;" role="group" aria-label="{{ f.l }}"><sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="5"><button class="hf-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="gap: 6px;"><sc-if value="{{ c.cal }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg></sc-if>{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.isSeg }}" hint-placeholder-val="{{ false }}"><div class="hf-toggle" role="group" aria-label="{{ f.l }}" style="display: grid; grid-template-columns: 1fr 1fr; width: 100%; box-sizing: border-box;"><sc-for list="{{ f.segs }}" as="c" hint-placeholder-count="2"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ f.hint }}</span></sc-if>
+</div></sc-for>
+<sc-if value="{{ hasAfter }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: 12px; background: var(--brand-soft);"><span class="label">Setelah disimpan</span><sc-for list="{{ afterLines }}" as="l" hint-placeholder-count="3"><span style="font-size: 13px; line-height: 20px;">{{ l }}</span></sc-for></div></sc-if>
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);">
+<sc-if value="{{ sOk }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ sSave }}">{{ sPrimary }}</button></sc-if>
+<sc-if value="{{ sNotOk }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">{{ sPrimary }}</button></sc-if>
+</div>
+</section></sc-if>
+<sc-if value="{{ calOn }}" hint-placeholder-val="{{ false }}"><section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="{{ cal.title }}">
+<div class="hf-scroll" style="overflow-y: auto; min-height: 0; padding: 8px 16px 12px; display: flex; flex-direction: column; gap: 12px;">
+<span aria-hidden="true" class="hf-sheet-handle"></span>
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">{{ cal.title }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ cal.desc }}</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center;"><button type="button" aria-label="Bulan sebelumnya" disabled="{{ cal.prevOff }}" onClick="{{ cal.prev }}" style="width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="m15 18-6-6 6-6"></path></svg></button><span style="font-size: 15px; font-weight: 600; line-height: 22px;">{{ cal.month }}</span><button type="button" aria-label="Bulan berikutnya" disabled="{{ cal.nextOff }}" onClick="{{ cal.next }}" style="width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="m9 18 6-6-6-6"></path></svg></button></div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; text-align: center;"><sc-for list="{{ cal.wdays }}" as="w" hint-placeholder-count="7"><span class="caption" style="color: var(--ink-muted); font-weight: 600; padding-bottom: 4px;">{{ w.l }}</span></sc-for><sc-for list="{{ cal.days }}" as="d" hint-placeholder-count="42"><button class="hf-day" type="button" aria-pressed="{{ d.on }}" disabled="{{ d.off }}" onClick="{{ d.pick }}" style="visibility: {{ d.vis }}; box-shadow: {{ d.ring }};">{{ d.n }}</button></sc-for></div>
+<span class="caption" style="color: var(--ink-muted);">{{ cal.note }}</span>
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="{{ cal.btnOff }}" onClick="{{ cal.use }}">{{ cal.btn }}</button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ cal.back }}">Kembali</button></div>
+</section></sc-if>
+</sc-if>
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 16px);"><span>{{ toast }}</span><a class="hf-btn hf-btn-sm hf-btn-on-ink" href="05-Riwayat-2b-Detail.dc.html" style="flex: none;">Lihat</a></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["daftar","kosong","lunas","tambah","tambah-cicil","detail","cicilan","cicilan-tersimpan","terlambat","ubah-rencana","ubah-rencana-terlambat","tambah-mulai","tambah-tanggal","tambah-pemilik"],"default":"tambah-tanggal"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() { if ((this.props.mulai ?? 'tambah-tanggal') === 'tambah-mulai') setTimeout(() => { const e = document.querySelector('.hf-sheet > div'); if (e) e.scrollTop = e.scrollHeight; }, 80); }
+  renderVals() {
+    const st = this.state || {};
+    const m = this.props.mulai ?? 'tambah-tanggal';
+    const GOLD = 2380000, SILV = 46600, USDT = 16420;
+    const rp = v => 'Rp ' + Math.round(v).toLocaleString('id-ID');
+    const nf = (v, u) => String(+v.toFixed(u === 'BTC' ? 4 : 3)).replace('.', ',') + (u === 'g' ? ' g' : ' ' + u);
+    const PRICE = { 'Emas fisik': GOLD, 'Perak fisik': SILV, 'USDT': USDT, 'PAXG': 72658500, 'BTC': 1683050000 };
+    const UNIT = { 'Emas fisik': 'g', 'Perak fisik': 'g', 'USDT': 'USDT', 'PAXG': 'PAXG', 'BTC': 'BTC' };
+    const ZAKAT = { 'Emas fisik': 1, 'Perak fisik': 1, 'PAXG': 1 };
+    const MEM = ['Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'];
+    const OWN = { 'Azlan': [['Emas fisik', 'Brankas', 8], ['Perak fisik', 'Brankas', 612], ['USDT', 'Binance', 312.4], ['USDT', 'Bybit', 150], ['PAXG', 'Binance', 0.52], ['BTC', 'Bybit', 0.0219]], 'Al Ghafiqi': [['USDT', 'Binance', 140], ['PAXG', 'Binance', 0.105], ['BTC', 'Bybit', 0.0019]], 'M. Yahya': [['PAXG', 'Binance', 0.102], ['BTC', 'Bybit', 0.0013]], 'Yumna': [['USDT', 'Binance', 24], ['PAXG', 'Binance', 0.011], ['BTC', 'Bybit', 0.0001]] };
+    const LOK = ['Brankas', 'Binance', 'Bybit', 'Pluang'];
+    const seed = () => [
+      { id: 'rina', own: 'Azlan', lok: 'Brankas', n: 'Bu Rina', note: '', a: 'Perak fisik', qty: 90, start: '20 Agu 2026', sched: [['20 Sep 2026', 30, 0, 56], ['20 Okt 2026', 30, 0, 26], ['20 Nov 2026', 30, 0, 0]], due: 5 },
+      { id: 'rahman', own: 'Azlan', lok: 'Brankas', n: 'Pak Rahman', note: 'Tetangga, untuk modal usaha', a: 'Emas fisik', qty: 5, start: '3 Okt 2026', sched: [['3 Nov 2026', 1, 1], ['3 Des 2026', 1, 0], ['3 Jan 2027', 1, 0], ['3 Feb 2027', 1, 0], ['3 Mar 2027', 1, 0]], due: 18 },
+      { id: 'sari', own: 'Azlan', lok: 'Brankas', n: 'Bu Sari', note: '', a: 'Perak fisik', qty: 100, start: '20 Sep 2026', sched: [['20 Okt 2026', 50, 1], ['20 Nov 2026', 50, 0]], due: 5 },
+      { id: 'hendra', own: 'Azlan', lok: 'Binance', n: 'Pak Hendra', note: 'Rekan kerja', a: 'USDT', qty: 200, start: '1 Nov 2026', sched: [['1 Des 2026', 200, 0]], due: 16 },
+      { id: 'dedi', own: 'Azlan', lok: 'Brankas', n: 'Mas Dedi', note: 'Saudara jauh', a: 'Emas fisik', qty: 2, start: '1 Sep 2026', sched: [['3 Nov 2026', 2, 1]], due: 0, closed: true }
+    ];
+    const base = seed(); if (m === 'cicilan-tersimpan') base[0].sched[1][2] = 1;
+    const items = st.items || (m === 'kosong' ? [] : m === 'lunas' ? base.filter(x => x.closed) : base);
+    const view = st.view || (['detail', 'cicilan', 'cicilan-tersimpan', 'terlambat', 'ubah-rencana', 'ubah-rencana-terlambat'].includes(m) ? 'detail' : 'list');
+    const sel = st.sel || (['terlambat', 'ubah-rencana-terlambat'].includes(m) ? 'rina' : 'rahman');
+    const sheet = st.sheet === undefined ? ({ 'tambah': 'add', 'tambah-cicil': 'add', 'tambah-mulai': 'add', 'tambah-tanggal': 'add', 'tambah-pemilik': 'add', 'cicilan': 'pay', 'ubah-rencana': 'plan', 'ubah-rencana-terlambat': 'plan' })[m] || null : st.sheet;
+    const filter = st.filter || (m === 'lunas' ? 'lunas' : 'aktif');
+    const addM = ['tambah', 'tambah-cicil', 'tambah-mulai', 'tambah-tanggal', 'tambah-pemilik'].includes(m);
+    const F = Object.assign({ nama: ['tambah', 'tambah-cicil', 'tambah-mulai', 'tambah-tanggal', 'tambah-pemilik'].includes(m) ? 'Pak Rahman' : '', note: ['tambah-mulai', 'tambah-tanggal'].includes(m) ? 'Tetangga, untuk modal usaha' : '', st: m === 'tambah-mulai' ? 3 : m === 'tambah-tanggal' ? 'x' : 0, std: [2027, 0, 20], pm: m === 'ubah-rencana-terlambat' ? 'sekali' : 'cicil', pn: m === 'ubah-rencana' ? '4' : '2', pst: m === 'ubah-rencana' ? 1 : 0, pstd: [2027, 0, 20], pnote: m === 'ubah-rencana' ? 'Tetangga, untuk modal usaha' : '', a: 0, qty: addM ? '5' : '', mode: ['tambah-cicil', 'tambah-mulai', 'tambah-tanggal'].includes(m) ? 'cicil' : 'sekali', n: m === 'tambah-mulai' || m === 'tambah-tanggal' ? '3' : '5', lok: null, own: 0, pk: null, got: '1' }, st.F || {});
+    const toast = st.toast === undefined ? (m === 'cicilan-tersimpan' ? 'Cicilan 1 g dicatat · Sisa piutang 3 g' : null) : st.toast;
+    const rem = it => it.qty - it.sched.filter(s => s[2]).reduce((x, s) => x + s[1], 0);
+    const val = it => rem(it) * PRICE[it.a];
+    const late = r => (!r[2] && r[3]) || 0;
+    const arrears = it => it.sched.reduce((x, r) => x + (late(r) ? r[1] : 0), 0);
+    const lateN = it => it.sched.filter(late).length;
+    const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const MF = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const TODAY = [2026, 10, 11];
+    const dim = (y, mo) => new Date(y, mo + 1, 0).getDate();
+    const plusM = (sd, i) => { const t = sd[1] + i, y = sd[0] + Math.floor(t / 12), mo = ((t % 12) + 12) % 12; return [y, mo, Math.min(sd[2], dim(y, mo))]; };
+    const fmtD = a => a[2] + ' ' + MN[a[1]] + ' ' + a[0];
+    const CH = [['Bulan depan', 1], ['3 bulan lagi', 3], ['6 bulan lagi', 6], ['1 tahun lagi', 12]];
+    const startOf = key => F[key] === 'x' ? F[key + 'd'] : plusM([2026, 10, 15], CH[F[key]][1]);
+    const open = items.filter(x => !x.closed && rem(x) > 0.0001);
+    const bOf = it => it.closed || rem(it) <= 0.0001 ? ['Lunas', 'hf-badge hf-badge-brand'] : arrears(it) > 0 ? ['Terlambat', 'hf-badge hf-badge-loss'] : it.due <= 7 ? ['Jatuh tempo ' + it.due + ' hari', 'hf-badge hf-badge-gold'] : ['Aktif', 'hf-badge'];
+    const setS = o => this.setState(o);
+    const pk = st.pk === undefined ? (m === 'tambah-pemilik' ? 'own' : null) : st.pk;
+    const putF = o => setS({ F: Object.assign({}, F, o) });
+    const filters = [['aktif', 'Aktif'], ['lunas', 'Lunas']].map(([k, l]) => ({ l, pressed: String(filter === k), on: () => setS({ filter: k }) }));
+    const shown = items.filter(x => filter === 'lunas' ? (x.closed || rem(x) <= 0.0001) : !(x.closed || rem(x) <= 0.0001));
+    const rows = shown.map((it, i) => { const b = bOf(it); return { n: it.n, sub: 'Dari ' + it.own + ' · ' + it.a + ' · sisa ' + nf(rem(it), UNIT[it.a]) + (arrears(it) > 0 ? ' · tunggakan ' + nf(arrears(it), UNIT[it.a]) : ''), v: rp(val(it)), b: b[0], bcls: b[1], bt: i ? '1px solid var(--line)' : '0', on: () => setS({ view: 'detail', sel: it.id }) }; });
+    const cur = items.find(x => x.id === sel) || items[0] || seed()[0];
+    const U = UNIT[cur.a];
+    const nextI = cur.sched.findIndex(s => !s[2]);
+    const done = cur.closed || nextI < 0;
+    const b = bOf(cur);
+    const d = {
+      n: cur.n, valLabel: done ? 'Sudah lunas' : 'Nilai sisa hari ini', val: done ? rp(cur.qty * PRICE[cur.a]) : rp(val(cur)),
+      valCap: done ? 'Seluruh ' + nf(cur.qty, U) + ' sudah kembali.' : nf(rem(cur), U) + ' × ' + rp(PRICE[cur.a]) + (U === 'g' ? ' per gram' : '') + '. Mengikuti harga terbaru, dinilai ulang saat dicicil atau dilunasi.',
+      b: b[0], bcls: b[1], bNote: done ? '' : arrears(cur) > 0 ? 'Tanpa denda' : 'Pengingat 3 hari sebelum jatuh tempo',
+      facts: [['Peminjam', cur.n], ['Pemberi pinjaman', cur.own], cur.note ? ['Catatan', cur.note] : null, ['Aset dipinjamkan', cur.a + ' · ' + cur.lok], ['Jumlah dipinjamkan', nf(cur.qty, U) + ' · ' + cur.start], ['Rencana pelunasan', cur.sched.filter(r => !r[2]).length > 1 || cur.sched.length > 1 ? cur.sched.length + ' cicilan · mulai ' + cur.sched[0][0] : 'Sekali bayar · ' + cur.sched[0][0]], ['Sudah diterima', nf(cur.qty - rem(cur), U)], ['Sisa', nf(rem(cur), U)], arrears(cur) > 0 ? ['Tunggakan', nf(arrears(cur), U)] : null].filter(Boolean).map(([k, v], i) => ({ k, v, bt: i ? '1px solid var(--line)' : '0' })),
+      hasLate: arrears(cur) > 0 && !done, lateT: 'Tunggakan ' + nf(arrears(cur), U) + ' · ' + rp(arrears(cur) * PRICE[cur.a]), lateD: lateN(cur) + ' cicilan lewat jatuh tempo, ' + (lateN(cur) > 1 ? 'dan cicilan berikutnya ikut terlambat bila belum dibayar. ' : '') + 'Tidak ada denda. Pembayaran yang masuk melunasi cicilan paling lama lebih dulu.',
+      schedT: cur.sched.length > 1 ? 'Jadwal cicilan' : 'Jatuh tempo',
+      sched: cur.sched.map((s, i) => ({ d: s[0], q: nf(s[1], U), b: s[2] ? 'Diterima' : late(s) ? 'Terlambat ' + s[3] + ' hari' : (i === nextI ? 'Berikutnya' : 'Menunggu'), bcls: s[2] ? 'hf-badge hf-badge-brand' : late(s) ? 'hf-badge hf-badge-loss' : (i === nextI ? 'hf-badge hf-badge-gold' : 'hf-badge'), bt: i ? '1px solid var(--line)' : '0' })),
+      zakat: !ZAKAT[cur.a] ? cur.a + ' tidak dihitung zakat mal, jadi piutang ini tidak memengaruhi zakat.' : 'Selama dipinjamkan, ' + cur.a + ' ini tidak dihitung zakat dan mengurangi harta zakat ' + cur.own + '. Setelah diterima kembali, otomatis dihitung lagi.'
+    };
+    // sheet: catat piutang
+    const own = MEM[F.own] || MEM[0], HOLD = OWN[own];
+    const ai = Math.min(F.a, HOLD.length - 1), an = HOLD[ai][0], al = HOLD[ai][1], au = UNIT[an], qn = parseFloat(String(F.qty).replace(',', '.')) || 0, nc = Math.max(1, parseInt(F.n, 10) || 1);
+    const bal = HOLD[ai][2], over = qn > bal;
+    const selField = (key, l, ph, vtxt, opts) => ({ l, isSel: true, isIn: false, isSeg: false, sv: vtxt || ph, vc: vtxt ? 'var(--ink)' : 'var(--ink-muted)', openStr: String(pk === key), open: () => setS({ pk: pk === key ? null : key }), opts, hasHint: false, hint: '' });
+    const inField = (l, v, ph, im, cls, onIn, hint) => ({ l, isIn: true, isSel: false, isSeg: false, v, ph, im, cls, onIn, hasHint: !!hint, hint: hint || '' });
+    const startField = (key, l, hint) => {
+      const v = F[key], sd = startOf(key);
+      const chips = CH.map(([cl], i) => ({ l: cl, cal: false, pressed: String(v === i), on: () => setS({ F: Object.assign({}, F, { [key]: i }), pk: null }) }));
+      chips.push({ l: v === 'x' ? fmtD(sd) : 'Pilih tanggal', cal: true, pressed: String(v === 'x'), on: () => setS({ cal: { key, y: sd[0], m: sd[1], pick: v === 'x' ? sd : null }, pk: null }) });
+      return { l, isStart: true, isIn: false, isSel: false, isSeg: false, chips, hasHint: true, hint };
+    };
+    let fields = [], sTitle = '', sDesc = '', sPrimary = '', sOk = true, afterLines = [], sSave = () => {};
+    if (sheet === 'add') {
+      sTitle = 'Catat piutang'; sDesc = 'Aset milik anggota yang dipinjamkan ke orang lain. Ditagih dalam aset yang sama dan kembali ke anggota itu.'; sPrimary = 'Simpan piutang';
+      const sd = startOf('st');
+      fields = [
+        inField('Nama peminjam', F.nama, 'Contoh: Pak Rahman', 'text', 'hf-input', e => putF({ nama: e.target.value })),
+        Object.assign(selField('own', 'Pemberi pinjaman (pemilik aset)', 'Pilih anggota', own, MEM.map((x, i) => ({ l: x, sub: OWN[x].length + ' aset bisa dipinjamkan', sel: String(own === x), vis: own === x ? 'visible' : 'hidden', bg: own === x ? 'var(--brand-soft)' : 'transparent', on: () => setS({ F: Object.assign({}, F, { own: i, a: 0 }), pk: null }) }))), { hasHint: true, hint: 'Aset anggota ini yang keluar, dan cicilannya kembali ke anggota ini.' }),
+        selField('a', 'Aset milik ' + own, 'Pilih aset', an + ' · ' + al, HOLD.map((h, i) => ({ l: h[0] + ' · ' + h[1], sub: 'Saldo ' + nf(h[2], UNIT[h[0]]), sel: String(ai === i), vis: ai === i ? 'visible' : 'hidden', bg: ai === i ? 'var(--brand-soft)' : 'transparent', on: () => setS({ F: Object.assign({}, F, { a: i }), pk: null }) }))),
+        inField('Jumlah (' + au + ')', F.qty, 'Contoh: 5', 'decimal', 'hf-input hf-input-num', e => putF({ qty: e.target.value }), over ? 'Melebihi saldo ' + own + ' di ' + al + ': ' + nf(bal, au) + '.' : 'Saldo ' + an + ' milik ' + own + ' di ' + al + ': ' + nf(bal, au) + '.'),
+        { l: 'Cara pelunasan', isSeg: true, isIn: false, isSel: false, isStart: false, segs: [['sekali', 'Sekali bayar'], ['cicil', 'Cicilan']].map(([k, l]) => ({ l, pressed: String(F.mode === k), on: () => putF({ mode: k }) })), hasHint: false, hint: '' }
+      ];
+      if (F.mode === 'cicil') fields.push(inField('Jumlah cicilan (bulanan)', F.n, 'Contoh: 5', 'numeric', 'hf-input hf-input-num', e => putF({ n: e.target.value }), qn ? 'Tiap cicilan ' + nf(qn / nc, au) + ', jatuh tempo tiap bulan.' : 'Jumlah per cicilan dihitung otomatis.'));
+      fields.push(startField('st', F.mode === 'cicil' ? 'Mulai melunasi' : 'Jatuh tempo', F.mode === 'cicil' ? 'Cicilan pertama jatuh tempo ' + fmtD(sd) + ', lalu tiap bulan di tanggal yang sama.' : 'Tanggal peminjam membayar sekaligus: ' + fmtD(sd) + '.'));
+      fields.push(inField('Catatan (opsional)', F.note, 'Contoh: tetangga, untuk modal usaha', 'text', 'hf-input', e => putF({ note: e.target.value }), 'Hanya untuk Anda. Tidak memengaruhi hitungan.'));
+      sOk = !!F.nama.trim() && qn > 0 && !over;
+      afterLines = ['1. ' + an + ' milik ' + own + ' di ' + al + ' berkurang ' + nf(qn, au) + ' (' + nf(bal, au) + ' → ' + nf(Math.max(0, bal - qn), au) + ').', '2. Piutang ' + nf(qn, au) + ' tercatat, dinilai ' + rp(qn * PRICE[an]) + ' dengan harga hari ini. Total harta tidak berubah.', (!ZAKAT[an] ? '3. ' + an + ' tidak dihitung zakat mal.' : '3. ' + nf(qn, au) + ' tidak dihitung dalam zakat ' + own + ' selama dipinjamkan.'), '4. Pengingat 3 hari sebelum tiap jatuh tempo.', '5. Jatuh tempo pertama ' + fmtD(sd) + (F.mode === 'cicil' ? ', lalu tiap bulan.' : '.')];
+      sSave = () => {
+        const k = F.mode === 'cicil' ? Math.min(nc, 8) : 1;
+        const sch = Array.from({ length: k }, (_, i) => [fmtD(plusM(sd, i)), +(qn / k).toFixed(3), 0, 0]);
+        const it = { id: 'baru', own, lok: al, n: F.nama.trim(), note: F.note.trim(), a: an, qty: qn, start: '11 Nov 2026', sched: sch, due: 30 };
+        setS({ items: [it].concat(items.filter(x => x.id !== 'baru')), sheet: null, pk: null, F: null, toast: 'Piutang ' + it.n + ' ' + nf(qn, au) + ' dari aset ' + own + ' tercatat', filter: 'aktif' });
+      };
+    } else if (sheet === 'pay') {
+      const s = cur.sched[nextI < 0 ? 0 : nextI];
+      const gq = parseFloat(String(F.got).replace(',', '.')) || 0, def = s[1];
+      sTitle = 'Catat cicilan diterima'; sDesc = cur.n + ' · jadwal ' + s[0] + ' · ' + nf(def, U) + ' · kembali ke aset ' + cur.own; sPrimary = 'Catat cicilan';
+      const li = F.lok == null ? Math.max(0, LOK.indexOf(cur.lok)) : F.lok, toL = LOK[li];
+      fields = [
+        inField('Jumlah diterima (' + U + ')', F.got, String(def), 'decimal', 'hf-input hf-input-num', e => putF({ got: e.target.value }), 'Sesuai jadwal ' + nf(def, U) + '. Ubah bila jumlahnya berbeda.'),
+        selField('lok', 'Masuk ke lokasi', 'Pilih lokasi', toL, LOK.map((x, i) => ({ l: x, sub: '', sel: String(li === i), vis: li === i ? 'visible' : 'hidden', bg: li === i ? 'var(--brand-soft)' : 'transparent', on: () => setS({ F: Object.assign({}, F, { lok: i }), pk: null }) })))
+      ];
+      const g2 = gq;
+      sOk = g2 > 0 && g2 <= rem(cur) + 0.0001;
+      afterLines = ['1. ' + cur.a + ' milik ' + cur.own + ' di ' + toL + ' bertambah ' + nf(g2, U) + '.', '2. Sisa piutang ' + nf(Math.max(0, rem(cur) - g2), U) + ' (' + rp(Math.max(0, rem(cur) - g2) * PRICE[cur.a]) + ' dengan harga hari ini).', '3. Tercatat di Riwayat sebagai "Cicilan diterima", dinilai ' + rp(PRICE[cur.a]) + (U === 'g' ? ' per gram' : '') + ', tanpa biaya.', (U === 'g' ? '4. ' + nf(g2, U) + ' kembali dihitung untuk zakat mal.' : '4. Pengingat berikutnya diatur otomatis.')];
+      if (arrears(cur) > 0) afterLines.push((afterLines.length + 1) + '. Dipakai melunasi cicilan paling lama dulu. Tunggakan jadi ' + nf(Math.max(0, arrears(cur) - g2), U) + '. Tidak ada denda.');
+      sSave = () => {
+        let left = g2; const sch = cur.sched.map(r => r.slice());
+        for (let i = 0; i < sch.length && left > 0.0001; i++) { if (!sch[i][2]) { if (left >= sch[i][1] - 0.0001) { left -= sch[i][1]; sch[i][2] = 1; } else { sch[i][1] = +(sch[i][1] - left).toFixed(3); sch.splice(i, 0, [sch[i][0], +left.toFixed(3), 1, 0]); left = 0; } } }
+        const nxt = items.map(x => x.id === cur.id ? Object.assign({}, x, { sched: sch }) : x);
+        const nrem = Math.max(0, rem(cur) - g2);
+        setS({ items: nxt, sheet: null, pk: null, F: null, toast: nrem <= 0.0001 ? 'Lunas · ' + cur.n + ' sudah membayar semua' : 'Cicilan ' + nf(g2, U) + ' dicatat · Sisa piutang ' + nf(nrem, U) });
+      };
+    }
+    if (sheet === 'plan') {
+      const got = cur.qty - rem(cur), r0 = rem(cur), pn = Math.max(1, Math.min(8, parseInt(F.pn, 10) || 1)), k = F.pm === 'cicil' ? pn : 1;
+      sTitle = 'Ubah rencana pelunasan'; sDesc = cur.n + ' · yang sudah diterima ' + nf(got, U) + ' tidak berubah. Perubahan hanya untuk sisa ' + nf(r0, U) + '.'; sPrimary = 'Simpan perubahan';
+      fields = [
+        { l: 'Cara pelunasan', isSeg: true, isIn: false, isSel: false, segs: [['sekali', 'Sekali bayar'], ['cicil', 'Cicilan']].map(([kk, l]) => ({ l, pressed: String(F.pm === kk), on: () => putF({ pm: kk }) })), hasHint: false, hint: '' }
+      ];
+      if (F.pm === 'cicil') fields.push(inField('Jumlah cicilan sisa (bulanan)', F.pn, 'Contoh: 4', 'numeric', 'hf-input hf-input-num', e => putF({ pn: e.target.value }), 'Tiap cicilan ' + nf(r0 / k, U) + '.'));
+      const psd = startOf('pst');
+      fields.push(startField('pst', F.pm === 'cicil' ? 'Mulai melunasi' : 'Jatuh tempo', F.pm === 'cicil' ? 'Cicilan pertama jatuh tempo ' + fmtD(psd) + ', lalu tiap bulan di tanggal yang sama.' : 'Tanggal peminjam membayar sekaligus: ' + fmtD(psd) + '.'));
+      fields.push(inField('Catatan (opsional)', F.pnote, 'Contoh: tetangga', 'text', 'hf-input', e => putF({ pnote: e.target.value }), ''));
+      sOk = r0 > 0.0001;
+      afterLines = ['1. Sisa ' + nf(r0, U) + ' dijadwalkan ulang: ' + (k > 1 ? k + ' cicilan @ ' + nf(r0 / k, U) + ', mulai ' + fmtD(psd) + '.' : 'sekali bayar pada ' + fmtD(psd) + '.'), '2. ' + nf(got, U) + ' yang sudah diterima dan Riwayat tidak berubah.'];
+      if (arrears(cur) > 0) afterLines.push('3. Tunggakan ' + nf(arrears(cur), U) + ' ikut dijadwalkan ulang dan status terlambat hilang. Tidak ada denda.');
+      afterLines.push((afterLines.length + 1) + '. Perubahan tercatat di riwayat piutang ini.');
+      sSave = () => {
+        const paid = cur.sched.filter(r => r[2]);
+        const nw = Array.from({ length: k }, (_, i) => [fmtD(plusM(psd, i)), +(r0 / k).toFixed(3), 0, 0]);
+        const nxt = items.map(x => x.id === cur.id ? Object.assign({}, x, { sched: paid.concat(nw), note: F.pnote.trim() }) : x);
+        setS({ items: nxt, sheet: null, pk: null, F: null, toast: 'Rencana pelunasan diubah · sisa ' + nf(r0, U) + ', ' + (k > 1 ? k + ' cicilan' : 'sekali bayar') });
+      };
+    }
+    const sheetOn = !!sheet;
+    const calS = st.cal === undefined ? (m === 'tambah-tanggal' ? { key: 'st', y: 2027, m: 0, pick: [2027, 0, 20] } : null) : st.cal;
+    let calV = {};
+    if (calS) {
+      const cy = calS.y, cm = calS.m, lead = (new Date(cy, cm, 1).getDay() + 6) % 7, nd = dim(cy, cm);
+      const cic = calS.key === 'st' ? F.mode === 'cicil' : F.pm === 'cicil';
+      const pk2 = calS.pick, isP = n => pk2 && pk2[0] === cy && pk2[1] === cm && pk2[2] === n;
+      const isPast = n => new Date(cy, cm, n) <= new Date(TODAY[0], TODAY[1], TODAY[2]);
+      const go = d2 => { const t = cm + d2; setS({ cal: Object.assign({}, calS, { y: cy + Math.floor(t / 12), m: ((t % 12) + 12) % 12 }) }); };
+      calV = {
+        title: cic ? 'Pilih tanggal mulai melunasi' : 'Pilih tanggal jatuh tempo',
+        desc: cic ? 'Cicilan pertama jatuh tempo di tanggal ini, lalu tiap bulan di tanggal yang sama.' : 'Tanggal peminjam membayar sekaligus.',
+        month: MF[cm] + ' ' + cy, wdays: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(l => ({ l })),
+        prevOff: cy === TODAY[0] && cm === TODAY[1], nextOff: cy >= TODAY[0] + 5,
+        prev: () => go(-1), next: () => go(1),
+        days: Array.from({ length: 42 }, (_, k) => { const n = k - lead + 1, real = n >= 1 && n <= nd; return { n: real ? n : '', vis: real ? 'visible' : 'hidden', on: String(real && isP(n)), off: !real || isPast(n), ring: real && cy === TODAY[0] && cm === TODAY[1] && n === TODAY[2] ? 'inset 0 0 0 1.5px var(--brand)' : 'none', pick: () => setS({ cal: Object.assign({}, calS, { pick: [cy, cm, n] }) }) }; }),
+        note: cic && pk2 && pk2[2] > 28 ? 'Di bulan yang lebih pendek, jatuh tempo mundur ke tanggal terakhir bulan itu.' : 'Hari ini 11 Nov 2026. Pilih tanggal setelahnya.',
+        btnOff: !pk2, btn: pk2 ? 'Pakai ' + fmtD(pk2) : 'Pilih satu tanggal',
+        use: () => setS({ F: Object.assign({}, F, { [calS.key]: 'x', [calS.key + 'd']: pk2 }), cal: null }),
+        back: () => setS({ cal: null })
+      };
+    }
+    return {
+      theme: this.props.theme ?? 'light',
+      isList: view === 'list', isDetail: view === 'detail', d,
+      total: rp(sum(open.map(val))), totCap: 'Dinilai dengan harga aset hari ini, jadi ikut naik turun. Tetap masuk total harta, tidak dihitung zakat.', activeN: open.length, filters, rows, hasRows: rows.length > 0,
+      isEmpty: rows.length === 0, emptyCta: filter === 'aktif', emptyT: filter === 'aktif' ? 'Belum ada piutang' : 'Belum ada yang lunas', emptyD: filter === 'aktif' ? 'Catat aset yang Anda pinjamkan ke orang lain, lalu terima cicilannya di sini.' : 'Piutang yang sudah dibayar penuh muncul di sini.',
+      openAdd: () => setS({ sheet: 'add', F: null, pk: null }), openPlan: () => setS({ sheet: 'plan', F: { pm: cur.sched.filter(r => !r[2]).length > 1 ? 'cicil' : 'sekali', pn: String(Math.max(1, cur.sched.filter(r => !r[2]).length)), pst: 0, pnote: cur.note || '' }, pk: null }), openPay: () => setS({ sheet: 'pay', F: { got: String(cur.sched[nextI < 0 ? 0 : nextI][1]).replace('.', ','), lok: 0 }, pk: null }),
+      backList: () => setS({ view: 'list' }), showCta: view === 'detail' && !done && !sheetOn,
+      sheetOn, formOn: !calS, calOn: !!calS, cal: calV, scrimClick: () => calS ? setS({ cal: null }) : setS({ sheet: null, pk: null, cal: null }), closeSheet: () => setS({ sheet: null, pk: null }), sTitle, sDesc, fields, sPrimary, sOk, sNotOk: !sOk, sSave, hasAfter: afterLines.length > 0, afterLines,
+      topLate: open.some(x => arrears(x) > 0), topLateT: open.filter(x => arrears(x) > 0).length + ' peminjam terlambat · tunggakan ' + rp(sum(open.map(x => arrears(x) * PRICE[x.a]))) + '. Tanpa denda.',
+      hasToast: !!toast, toast: toast || ''
+    };
+    function sum(a) { return a.reduce((x, y) => x + y, 0); }
+  }
+}
+</script>
+</body>
+</html>

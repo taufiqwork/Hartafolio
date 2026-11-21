@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Riwayat · detail transaksi Zakat</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; position: relative; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<sc-if value="{{ listView }}" hint-placeholder-val="{{ true }}"><div class="hf-head"><h1 class="title" style="margin: 0;">Riwayat</h1><sc-if value="{{ hasAny }}" hint-placeholder-val="{{ true }}"><label for="cari" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input id="cari" type="search" placeholder="Cari aset, catatan, bukti" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); outline-offset: 4px; line-height: 24px;"></label><div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><div class="hf-select" style="position: relative; z-index: {{ c.z }}; flex: none;"><button class="hf-chip" type="button" aria-haspopup="listbox" aria-expanded="{{ c.openStr }}" aria-pressed="{{ c.active }}" onClick="{{ c.toggle }}">{{ c.label }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button><sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}"><ul class="hf-select-menu" role="listbox" aria-label="{{ c.name }}" style="min-width: 180px;"><sc-for list="{{ c.opts }}" as="o" hint-placeholder-count="4"><li><button class="hf-select-opt" type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}"><span>{{ o.l }}</span></button></li></sc-for></ul></sc-if></div></sc-for>
+</div></sc-if></div></sc-if><sc-if value="{{ delView }}" hint-placeholder-val="{{ false }}"><div class="hf-head"><button type="button" onClick="{{ backList }}" style="font: inherit; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer; line-height: 22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Riwayat</button><h1 class="title" style="margin: 0;">Terhapus</h1></div></sc-if>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 16px;">
+<sc-if value="{{ listView }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ hasAny }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ hasDel }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ openDel }}" style="font: inherit; align-self: stretch; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 2px; border: 0; background: transparent; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; line-height: 22px;"><span style="width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-sunken); color: var(--ink-muted);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></span><span style="flex: 1;">{{ delLabel }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></button></sc-if></sc-if>
+<sc-for list="{{ days }}" as="d" hint-placeholder-count="3">
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="{{ d.d }}">
+<span class="label" style="color: var(--ink-muted);">{{ d.d }}</span>
+<div class="hf-card" style="padding: 4px 16px; gap: 0;">
+<sc-for list="{{ d.rows }}" as="r" hint-placeholder-count="2"><div class="hf-detail" role="button" tabindex="0" onClick="{{ r.open }}" style="grid-template-columns: 36px minmax(0, 1fr) auto; cursor: pointer;">
+<span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: {{ r.ibg }}; color: {{ r.ifg }};" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><sc-for list="{{ r.paths }}" as="pd" hint-placeholder-count="2"><path d="{{ pd }}"></path></sc-for></svg></span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ r.j }} · {{ r.a }}</span><span class="hf-detail-meta">{{ r.o }}</span></div>
+<div class="hf-detail-figs"><span class="hf-detail-amount">{{ r.q }}</span><sc-if value="{{ r.imp }}" hint-placeholder-val="{{ false }}"><span class="hf-badge">import</span></sc-if><sc-if value="{{ r.hasV }}" hint-placeholder-val="{{ true }}"><span class="hf-share">{{ r.v }}</span></sc-if></div>
+</div></sc-for>
+</div>
+</section>
+</sc-for>
+<sc-if value="{{ noMatch }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px 0; text-align: center; font-size: 14px; color: var(--ink-muted); line-height: 20px;">Tidak ada transaksi yang cocok dengan filter ini.</p></sc-if>
+<sc-if value="{{ kosong }}" hint-placeholder-val="{{ false }}">
+<section class="hf-card" style="padding: 24px 16px; gap: 12px; justify-items: center; text-align: center;" aria-label="Belum ada transaksi">
+<span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path d="M14 8H8"></path><path d="M16 12H8"></path><path d="M13 16H8"></path></svg></span>
+<span class="heading">Belum ada transaksi</span>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Semua transaksi akan muncul di sini.</span>
+<a class="hf-btn hf-btn-primary hf-btn-block" href="04-Catat.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Catat transaksi</a>
+</section></sc-if>
+<sc-if value="{{ hasAny }}" hint-placeholder-val="{{ true }}"><p class="caption" style="margin: 0; color: var(--ink-muted); text-align: center;">Atas: jumlah aset. Bawah: nilai saat transaksi. Ketuk untuk ubah atau hapus.</p></sc-if>
+</sc-if>
+<sc-if value="{{ delView }}" hint-placeholder-val="{{ false }}">
+
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: -6px;"><p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--ink-muted);">Tidak dihitung dalam total. Pulihkan untuk mengembalikan.</p></div>
+<sc-if value="{{ delEmpty }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 32px 0; text-align: center; font-size: 14px; color: var(--ink-muted); line-height: 20px;">Tidak ada transaksi terhapus.</p></sc-if>
+<sc-if value="{{ hasDelRows }}" hint-placeholder-val="{{ true }}"><div class="hf-card" style="padding: 4px 16px; gap: 0;">
+<sc-for list="{{ delRows }}" as="r" hint-placeholder-count="2"><div class="hf-detail" style="grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center;">
+<span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: {{ r.ibg }}; color: {{ r.ifg }};" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><sc-for list="{{ r.paths }}" as="pd" hint-placeholder-count="2"><path d="{{ pd }}"></path></sc-for></svg></span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ r.j }} · {{ r.a }}</span><span class="hf-detail-meta">{{ r.mem }} · {{ r.d }}</span></div>
+<button class="hf-btn hf-btn-ghost" type="button" onClick="{{ r.restore }}">Pulihkan</button>
+</div></sc-for>
+</div></sc-if>
+</sc-if>
+</main>
+<nav class="hf-nav" aria-label="Menu utama">
+<a href="Main.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path class="hf-ico-cut" d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path></svg>Beranda</a>
+<a href="03-Aset.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="hf-ico-fill" width="7" height="7" x="3" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="14" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="3" y="14" rx="1"></rect></svg>Aset</a>
+<a class="hf-add" href="04-Catat.dc.html" aria-label="Catat transaksi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></a>
+<a href="05-Riwayat.dc.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path class="hf-ico-cut" d="M14 8H8"></path><path class="hf-ico-cut" d="M16 12H8"></path><path class="hf-ico-cut" d="M13 16H8"></path></svg>Riwayat</a>
+<a href="09-Lainnya.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>Alat</a>
+</nav>
+<sc-if value="{{ scrim }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ closeAll }}"></div></sc-if>
+<sc-if value="{{ sh }}" hint-placeholder-val="{{ false }}"><section class="hf-sheet" role="dialog" aria-label="Detail transaksi">
+<span aria-hidden="true" class="hf-sheet-handle"></span>
+<div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: {{ shIbg }}; color: {{ shIfg }};" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><sc-for list="{{ shPaths }}" as="pd" hint-placeholder-count="2"><path d="{{ pd }}"></path></sc-for></svg></span><span class="heading">{{ shTitle }}</span><span class="amount" style="font-size: 20px; font-variant-numeric: tabular-nums; line-height: 28px; font-weight: 700;">{{ shQ }}</span></div>
+<div style="display: flex; flex-direction: column;"><sc-for list="{{ shDet }}" as="d" hint-placeholder-count="5"><div style="display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 20px;"><span style="color: var(--ink-muted);">{{ d.k }}</span><sc-if value="{{ d.isLink }}" hint-placeholder-val="{{ false }}"><a href="{{ d.href }}" style="font-weight: 600; text-align: right; color: var(--brand); text-decoration: none; display: inline-flex; align-items: center; gap: 2px;">{{ d.v }}<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></sc-if><sc-if value="{{ d.notLink }}" hint-placeholder-val="{{ true }}"><span style="font-weight: 600; text-align: right; font-variant-numeric: tabular-nums;">{{ d.v }}</span></sc-if></div></sc-for></div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><a class="hf-btn hf-btn-primary hf-btn-block" href="04-Catat-2l-Ubah.dc.html" style="justify-content: center;">Ubah</a><button class="hf-btn hf-btn-block hf-btn-danger" type="button" onClick="{{ doDelete }}">Hapus</button></div>
+</section></sc-if>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 83px);"><span>{{ toastTxt }}</span><button class="hf-btn hf-btn-sm hf-btn-on-ink" type="button" onClick="{{ undo }}" style="flex: none;">Pulihkan</button></div></sc-if>
+<sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 83px);"><span>{{ savedToast }}</span><sc-if value="{{ savedAct }}" hint-placeholder-val="{{ true }}"><a class="hf-btn hf-btn-sm hf-btn-on-ink" href="05-Riwayat-2b-Detail.dc.html" style="flex: none;">Lihat</a></sc-if></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["default","filter","detail","detail-zakat","detail-pinjam","detail-cicilan","detail-lunas","detail-pindah","terhapus","daftar-terhapus","kosong"],"default":"detail-pinjam"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const __t = ({'tersimpan': ['Beli PAXG 0,0225 tersimpan', false], 'diubah': ['Perubahan disimpan · saldo dihitung ulang', false]})[this.props.mulai] || null;
+    return Object.assign({}, this.renderVals0(), { hasSaved: !!__t, savedToast: __t ? __t[0] : '', savedAct: !!(__t && __t[1]) });
+  }
+  renderVals0() {
+    const st = this.state || {};
+    const mulai = this.props.mulai ?? 'detail';
+    const T = {
+      'Beli': [['M5 12h14', 'M12 5v14'], 'var(--brand-soft)', 'var(--brand)'],
+      'Jual': [['M5 12h14'], 'var(--loss-soft)', 'var(--loss)'],
+      'Masuk': [['M12 17V3', 'm6 11 6 6 6-6', 'M19 21H5'], 'var(--gold-soft)', 'var(--gold)'],
+      'Saldo awal': [['M12 17V3', 'm6 11 6 6 6-6', 'M19 21H5'], 'var(--gold-soft)', 'var(--gold)'],
+      'Keluar': [['M12 7v14', 'm6 13 6-6 6 6', 'M19 3H5'], 'var(--loss-soft)', 'var(--loss)'],
+      'Zakat': [['M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'], 'var(--gold-soft)', 'var(--gold)'],
+      'Pindah lokasi': [['M8 3 4 7l4 4', 'M4 7h16', 'm16 21 4-4-4-4', 'M20 17H4'], 'var(--surface-sunken)', 'var(--ink-muted)'],
+      'Pindah anggota': [['M8 3 4 7l4 4', 'M4 7h16', 'm16 21 4-4-4-4', 'M20 17H4'], 'var(--surface-sunken)', 'var(--ink-muted)'],
+      'Pinjamkan': [['M7 7h10v10', 'M7 17 17 7'], 'var(--surface-sunken)', 'var(--ink-muted)'],
+      'Cicilan diterima': [['M17 7 7 17', 'M17 17H7V7'], 'var(--brand-soft)', 'var(--brand)'],
+      'Pelunasan diterima': [['M20 6 9 17l-5-5'], 'var(--brand-soft)', 'var(--brand)']
+    };
+    let nid = 0;
+    const R = (j, a, q, o, v, imp) => { const [mem, ...rest] = o.split(' · '); return { id: ++nid, j, a, q, o, v, hasV: !!v, imp: !!imp, mem, loc: rest.join(' · ').replace(' → ', ' → '), paths: T[j][0], ibg: T[j][1], ifg: T[j][2] }; };
+    const ZK = Object.assign(R('Zakat', 'Perak fisik', '−15,3 g', 'Azlan · Brankas', 'Rp 0,71 jt'), { id: 99 });
+    const DAYS = [
+      { d: 'Hari ini · 9 Nov', full: '9 Nov 2026', mo: 'Nov 2026', rows: [ZK] },
+      { d: '4 Nov', full: '4 Nov 2026', mo: 'Nov 2026', rows: [R('Beli', 'PAXG', '+0,0225', 'Azlan · Binance', 'Rp 1,56 jt')] },
+      { d: '3 Nov', full: '3 Nov 2026', mo: 'Nov 2026', rows: [R('Pindah anggota', 'PAXG', '0,0225', 'Azlan → Al Ghafiqi · Binance', 'Rp 1,63 jt'), R('Cicilan diterima', 'Emas fisik', '+1 g', 'Azlan · Brankas · dari Pak Rahman', 'Rp 2,38 jt')] },
+      { d: '2 Nov', full: '2 Nov 2026', mo: 'Nov 2026', rows: [R('Beli', 'Emas fisik', '+1 g', 'Azlan · Brankas', 'Rp 2,24 jt'), R('Pindah lokasi', 'BTC', '0,002', 'Azlan · Binance → Bybit', 'Rp 2,69 jt')] },
+      { d: '28 Okt', full: '28 Okt 2026', mo: 'Okt 2026', rows: [R('Jual', 'BBCA', '−1 lot', 'Al Ghafiqi · Pluang', 'Rp 0,98 jt')] },
+      { d: '20 Okt', full: '20 Okt 2026', mo: 'Okt 2026', rows: [R('Cicilan diterima', 'Perak fisik', '+50 g', 'Azlan · Brankas · dari Bu Sari', 'Rp 2,33 jt')] },
+      { d: '3 Okt', full: '3 Okt 2026', mo: 'Okt 2026', rows: [Object.assign(R('Pinjamkan', 'Emas fisik', '−5 g', 'Azlan · Brankas · ke Pak Rahman', 'Rp 11,9 jt'), { id: 98 })] },
+      { d: '20 Sep', full: '20 Sep 2026', mo: 'Sep 2026', rows: [R('Pinjamkan', 'Perak fisik', '−100 g', 'Azlan · Brankas · ke Bu Sari', 'Rp 4,66 jt')] },
+      { d: '20 Mei 2026', full: '20 Mei 2026', mo: 'Mei 2026', rows: [R('Saldo awal', 'PAXG', '+0,1739', 'M. Yahya · Binance', 'Rp 16,9 jt · saldo awal', true), R('Saldo awal', 'BTC', '+0,0013', 'Yumna · Bybit', 'Rp 1,75 jt · saldo awal', true)] }
+    ];
+    const PL = Object.assign(R('Pelunasan diterima', 'USDT', '+50', 'Azlan · Binance · dari Mas Dedi', 'Rp 0,82 jt'), { id: 97 });
+    DAYS.splice(1, 0, { d: '6 Nov', full: '6 Nov 2026', mo: 'Nov 2026', rows: [PL] });
+    const kosong = mulai === 'kosong';
+    const sel = Object.assign({}, st.sel || {});
+    const fOpen = st.fOpen === undefined ? (mulai === 'filter' ? 'Jenis' : null) : st.fOpen;
+    const sheetId = st.sheet === undefined ? ({ 'detail': 3, 'detail-zakat': 99, 'detail-pinjam': 98, 'detail-cicilan': 5, 'detail-lunas': 97, 'detail-pindah': 4 })[mulai] ?? null : st.sheet;
+    const del = st.del === undefined ? (mulai === 'terhapus' ? [3] : (mulai === 'daftar-terhapus' ? [3, 4] : [])) : st.del;
+    const view = st.view || (mulai === 'daftar-terhapus' ? 'del' : 'list');
+    const toastId = st.toast === undefined ? (mulai === 'terhapus' ? 3 : null) : st.toast;
+    const OPT = { 'Anggota': ['Semua', 'Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'], 'Jenis': ['Semua', 'Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah', 'Piutang', 'Zakat', 'Saldo awal'], 'Bulan': ['Semua', 'Nov 2026', 'Okt 2026', 'Sep 2026', 'Mei 2026'] };
+    const ok = (r, d) => !del.includes(r.id) && (!sel.Anggota || r.mem.includes(sel.Anggota)) && (!sel.Jenis || (sel.Jenis === 'Piutang' ? ['Pinjamkan', 'Cicilan diterima', 'Pelunasan diterima'].includes(r.j) : r.j.startsWith(sel.Jenis))) && (!sel.Bulan || d.mo === sel.Bulan);
+    const all = [];
+    const days = kosong ? [] : DAYS.map(d => ({ d: d.d, rows: d.rows.filter(r => ok(r, d)).map(r => { const o = Object.assign({}, r); o.open = () => this.setState({ sheet: r.id, fOpen: null }); all.push([r, d]); return o; }) })).filter(d => d.rows.length);
+    const flat = []; DAYS.forEach(d => d.rows.forEach(r => flat.push([r, d])));
+    const cur = flat.find(([r]) => r.id === sheetId);
+    const chips = ['Anggota', 'Jenis', 'Bulan'].map(name => ({
+      name, open: fOpen === name, openStr: String(fOpen === name), z: fOpen === name ? 30 : 1,
+      label: sel[name] ? name + ': ' + sel[name] : name, active: String(!!sel[name]),
+      toggle: () => this.setState({ fOpen: fOpen === name ? null : name, sheet: null }),
+      opts: OPT[name].map(l => ({ l, sel: String((sel[name] || 'Semua') === l), on: () => this.setState({ sel: Object.assign({}, sel, { [name]: l === 'Semua' ? null : l }), fOpen: null }) }))
+    }));
+    const delRow = flat.find(([r]) => r.id === toastId);
+    const base = { theme: this.props.theme ?? 'light', days, chips, kosong, hasAny: !kosong, noMatch: !kosong && days.length === 0, scrim: !!fOpen || !!cur, closeAll: () => this.setState({ fOpen: null, sheet: null }), listView: view === 'list', delView: view === 'del', hasDel: del.length > 0, delLabel: 'Terhapus (' + del.length + ')', openDel: () => this.setState({ view: 'del', toast: null, fOpen: null }), backList: () => this.setState({ view: 'list' }), delEmpty: del.length === 0, hasDelRows: del.length > 0, delRows: flat.filter(([r]) => del.includes(r.id)).map(([r, d]) => Object.assign({}, r, { d: 'dihapus hari ini', restore: () => this.setState({ del: del.filter(x => x !== r.id) }) })), sh: !!cur, toast: !!delRow && !cur && view === 'list', toastTxt: delRow ? 'Transaksi dihapus' : '', undo: () => this.setState({ del: del.filter(x => x !== toastId), toast: null }) };
+    if (cur) {
+      const [r, d] = cur;
+      Object.assign(base, { shTitle: r.j + ' · ' + r.a, shQ: r.q, shIbg: r.ibg, shIfg: r.ifg, shPaths: r.paths,
+        shDet: [],
+        doDelete: () => { this.setState({ del: [...del, r.id], sheet: null, toast: r.id }); setTimeout(() => this.setState({ toast: null }), 6000); } });
+    } else { Object.assign(base, { shTitle: '', shQ: '', shIbg: '', shIfg: '', shPaths: [], shDet: [], doDelete: () => {} }); }
+    if (cur) {
+      const [r, d] = cur; const nilai = r.v.split(' · ')[0]; const aw = r.o.split(' · ');
+      const imp = r.imp ? [{ k: 'Sumber', v: 'Import .xlsx' }, { k: 'No. referensi', v: '2273…4976' }] : [];
+      const tgl = { k: 'Tanggal', v: d.full };
+      const D = {
+        'Beli': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Harga satuan', v: 'Rp 69,3 jt' }, { k: 'Nilai saat itu', v: nilai }, { k: 'Bukti', v: 'Belum ada' }],
+        'Jual': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Harga satuan', v: 'Rp 9.800' }, { k: 'Nilai saat itu', v: nilai }, { k: 'Bukti', v: 'Belum ada' }],
+        'Masuk': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Nilai saat itu', v: nilai }].concat(imp),
+        'Saldo awal': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Nilai saat itu', v: nilai }].concat(imp),
+        'Keluar': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Nilai saat itu', v: nilai }, { k: 'Catatan', v: 'Tidak diisi' }],
+        'Pindah lokasi': [{ k: 'Anggota', v: r.mem }, { k: 'Dari lokasi', v: (r.loc.split(' → ')[0] || '') }, { k: 'Ke lokasi', v: (r.loc.split(' → ')[1] || '') }, tgl, { k: 'Nilai saat itu', v: nilai }],
+        'Pindah anggota': [{ k: 'Dari anggota', v: r.mem.split(' → ')[0] }, { k: 'Ke anggota', v: (r.mem.split(' → ')[1] || '') }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Nilai saat itu', v: nilai }],
+        'Zakat': [{ k: 'Anggota', v: r.mem }, { k: 'Lokasi', v: r.loc }, tgl, { k: 'Nilai saat itu', v: nilai }, { k: 'Untuk haul', v: 'Perak · Azlan', href: '08-Zakat-2d-Riwayat.dc.html' }, { k: 'Sumber', v: 'Pembayaran zakat' }],
+        'Pinjamkan': [{ k: 'Pemberi', v: r.mem }, { k: 'Peminjam', v: r.o.split('ke ')[1] || 'Peminjam' }, { k: 'Lokasi', v: aw[1] }, tgl, { k: 'Nilai saat itu', v: nilai }, { k: 'Rencana', v: 'Cicilan 1 g per bulan' }, { k: 'Piutang', v: 'Lihat detail', href: '18-Piutang-2e-Detail.dc.html' }],
+        'Cicilan diterima': [{ k: 'Dari', v: r.o.split('dari ')[1] }, { k: 'Diterima oleh', v: r.mem }, { k: 'Lokasi', v: aw[1] }, tgl, { k: 'Nilai saat itu', v: nilai }, { k: 'Cicilan ke', v: '1 dari 5' }, { k: 'Sisa piutang', v: '4 g' }, { k: 'Piutang', v: 'Lihat detail', href: '18-Piutang-2e-Detail.dc.html' }],
+        'Pelunasan diterima': [{ k: 'Dari', v: 'Mas Dedi' }, { k: 'Diterima oleh', v: r.mem }, { k: 'Lokasi', v: aw[1] }, tgl, { k: 'Nilai saat itu', v: nilai }, { k: 'Cara bayar', v: 'Sekali bayar, lunas' }, { k: 'Sisa piutang', v: '0' }, { k: 'Piutang', v: 'Lihat detail', href: '18-Piutang-2b-Lunas.dc.html' }]
+      };
+      base.shDet = D[r.j] || [];
+    }
+    base.shDet = (base.shDet || []).map(x => Object.assign({ isLink: false, notLink: true, href: '' }, x, x.href ? { isLink: true, notLink: false } : {}));
+    return base;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Import / Export · file terpilih</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+<script>try{parent.postMessage({hfScreen:location.pathname.split("/").pop(),title:document.title},"*")}catch(e){}</script>
+<script>/* Hartafolio motion: animasi keluar untuk sheet dan scrim yang dilepas dari DOM. Murni tampilan, tidak mengubah state. */
+(function () {
+  if (window.__hfMotion) return; window.__hfMotion = 1;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var T = 200;
+  function ghost(node, parent, next) {
+    if (!(node instanceof HTMLElement)) return;
+    var isSheet = node.getAttribute('role') === 'dialog' || node.classList.contains('hf-sheet');
+    var isScrim = node.classList.contains('hf-scrim');
+    var isMenu = node.classList.contains('hf-select-menu');
+    var isToast = node.classList.contains('hf-toast') || (node.getAttribute('role') === 'status' && (node.getAttribute('style') || '').indexOf('absolute') > -1);
+    if (!isSheet && !isScrim && !isMenu && !isToast) return;
+    if (!parent || !parent.isConnected) return;
+    var g = node.cloneNode(true);
+    g.setAttribute('aria-hidden', 'true'); g.style.pointerEvents = 'none';
+    g.removeAttribute('role');
+    g.style.animation = (isSheet ? 'hfSheetOut ' : isScrim ? 'hfScrimOut ' : isMenu ? 'hfMenuOut ' : 'hfToastOut ') + (isMenu ? 140 : T) + 'ms cubic-bezier(.4,0,1,1) both';
+    g.setAttribute('data-hf-ghost', '1');
+    parent.appendChild(g);
+    setTimeout(function () { g.remove(); }, T + 40);
+  }
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      m.removedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.getAttribute && n.getAttribute('data-hf-ghost')) return;
+        ghost(n, m.target, m.nextSibling);
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><sc-if value="{{ notS1 }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;" aria-hidden="true"><sc-for list="{{ ticks }}" as="t" hint-placeholder-count="3"><span style="height: 4px; border-radius: 999px; background: {{ t.c }};"></span></sc-for></div>
+<div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">{{ stageLabel }}</span><sc-if value="{{ hasBack }}" hint-placeholder-val="{{ true }}"><a class="hf-tap" href="{{ backHref }}" style="display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 20px; font-weight: 600; text-decoration: none; min-height: 32px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="m15 18-6-6 6-6"></path></svg>Kembali</a></sc-if></div>
+</div></sc-if><sc-if value="{{ isS1 }}" hint-placeholder-val="{{ true }}"><a href="09-Lainnya.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: -4px; font-size: 15px; font-weight: 600; text-decoration: none; line-height: 22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Alat</a>
+<h1 class="title" style="margin: -8px 0 0;">Import / Export</h1>
+<div class="hf-toggle" role="group" aria-label="Arah" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; box-sizing: border-box;"><button type="button" aria-pressed="{{ impP }}" onClick="{{ goImp }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">Import</button><button type="button" aria-pressed="{{ expP }}" onClick="{{ goExp }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">Export</button></div></sc-if></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 20px;">
+
+<!-- ============ Tahap 1: pilih file ============ -->
+<sc-if value="{{ isImp1 }}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Pindahkan catatan lama sekaligus lewat template Hartafolio. Yang sudah ada tidak dicatat dua kali.</p>
+<sc-if value="{{ noFile }}" hint-placeholder-val="{{ false }}"><section class="hf-card" style="gap: 16px; padding: 16px;" aria-label="Import dengan template">
+<div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; font-weight: 600; line-height: 20px;">1</span><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Unduh template</span><span class="caption" style="color: var(--ink-muted);">Anggota, lokasi, dan aset Anda sudah jadi pilihan.</span></div><button class="hf-btn hf-btn-block" type="button" onClick="{{ dlTpl }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>Template tabel Hartafolio</button></div></div>
+<div style="height: 1px; background: var(--line); margin-left: 40px;"></div>
+<div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; font-weight: 600; line-height: 20px;">2</span><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Isi, lalu unggah</span><span class="caption" style="color: var(--ink-muted);">Cukup sheet Transaksi, simpan sebagai .xlsx.</span></div><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ pickFile }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg><span>Pilih file template</span></button></div></div>
+</section></sc-if>
+<sc-if value="{{ hasFile }}" hint-placeholder-val="{{ true }}">
+<section class="hf-card" style="gap: 12px;" aria-label="File terpilih">
+<div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center;">
+<span style="width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M8 13h2"></path><path d="M14 13h2"></path><path d="M8 17h2"></path><path d="M14 17h2"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Hartafolio-Template-Azlan.xlsx</span><span class="caption" style="color: var(--ink-muted);">{{ fileMeta }}</span></span>
+<button class="hf-btn hf-btn-ghost" type="button" onClick="{{ clearFile }}">Ganti</button>
+</div>
+</section>
+<sc-if value="{{ reading }}" hint-placeholder-val="{{ false }}"><section class="hf-card" style="gap: 12px;" aria-label="Membaca file"><span class="heading">Membaca file…</span><div style="height: 6px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden;" role="progressbar" aria-label="Membaca file" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"><span style="display: block; width: 40%; height: 100%; background: var(--brand);"></span></div><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Mengenali sheet Transaksi, Aset, dan Nilai bulanan. Belum ada yang disimpan.</span></section></sc-if>
+<sc-if value="{{ readDone }}" hint-placeholder-val="{{ true }}"><section class="hf-card" style="gap: 0; padding: 4px 16px;" aria-label="Isi file">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="3"><div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto;">
+<span style="width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><sc-for list="{{ r.icon }}" as="ic" hint-placeholder-count="2"><path d="{{ ic.d }}"></path></sc-for></svg></span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ r.n }}</span><span class="hf-detail-meta" style="white-space: normal;">{{ r.d }}</span></div>
+<span class="{{ r.cls }}">{{ r.badge }}</span>
+</div></sc-for>
+</section></sc-if>
+</sc-if>
+</sc-if>
+
+<!-- ============ Tahap 2: periksa ============ -->
+<sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}">
+<h1 class="title" style="margin: 0;">Periksa sebelum disimpan</h1>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 20px; background: var(--surface-sunken);">
+<span style="width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 11px; font-weight: 600; line-height: 16px;">XLSX</span>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px;">Hartafolio-Template-Azlan.xlsx</span><span class="caption" style="color: var(--ink-muted);">Template dikenali · 88 baris</span></div>
+</div>
+<section class="hf-card" style="gap: 12px;" aria-label="Hasil pemeriksaan">
+<div style="display: flex; justify-content: space-between; align-items: baseline;"><span class="heading">Hasil pemeriksaan</span><span class="caption" style="color: var(--ink-muted);">88 baris</span></div>
+<div style="display: flex; gap: 2px; height: 8px; border-radius: 999px; overflow: hidden;" role="img" aria-label="{{ barAria }}"><sc-for list="{{ segs }}" as="g" hint-placeholder-count="3"><span style="flex: {{ g.n }} 1 0; background: {{ g.c }};"></span></sc-for></div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<sc-for list="{{ legend }}" as="g" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: {{ g.c }};"></span><span style="font-size: 14px; line-height: 20px; color: {{ g.fg }};">{{ g.l }}</span><span style="font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{ g.fg }};">{{ g.n }}</span></div></sc-for>
+</div>
+</section>
+<sc-if value="{{ needBlock }}" hint-placeholder-val="{{ true }}"><section class="hf-card" style="gap: 12px; background: var(--gold-soft); border-color: transparent;" aria-label="Perlu dilengkapi">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Perlu dilengkapi · 1 aset</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Nama ini tidak ada di katalog maupun sheet Aset. Tanpa jenis dan satuan, baris-barisnya belum bisa disimpan.</span></div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px;">Emas perhiasan</span><span class="caption" style="color: var(--ink-muted);">Dipakai di 5 baris</span></span><button class="hf-btn hf-btn-sm hf-btn-gold" type="button" onClick="{{ openSheet }}">Lengkapi</button></div>
+</section></sc-if>
+<sc-if value="{{ doneBlock }}" hint-placeholder-val="{{ false }}"><section class="hf-card" style="gap: 12px;" aria-label="Sudah dilengkapi">
+<span class="heading">Sudah dilengkapi</span>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px;">Emas perhiasan</span><span class="caption" style="color: var(--ink-muted);">{{ doneMeta }}</span></span><span style="color: var(--brand); display: grid;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span></div>
+<button class="hf-btn hf-btn-ghost" type="button" onClick="{{ openSheet }}" style="justify-self: start;">Ubah</button>
+</section></sc-if>
+<sc-if value="{{ hasSkip }}" hint-placeholder-val="{{ true }}"><section class="hf-card" style="gap: 12px;" aria-label="Dilewati">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Dilewati · {{ legend.2.n }} baris</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Tidak ikut disimpan. Perbaiki di template, lalu import lagi dari menu Alat. Data tidak akan dobel.</span></div>
+<sc-for list="{{ errs }}" as="e" hint-placeholder-count="2"><div style="display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; padding: 8px 12px; border-radius: 8px; background: var(--surface-sunken); font-size: 13px; line-height: 20px;"><span style="font-weight: 700;">{{ e.r }}</span><span>{{ e.t }}</span></div></sc-for>
+</section></sc-if>
+<section class="hf-card" style="gap: 8px;" aria-label="Dikenali otomatis">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center;"><span class="heading">Dikenali otomatis · 8 aset</span><span style="color: var(--brand); display: grid;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span></div>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">PAXG, BTC, USDT, Emas fisik, Perak fisik, GFI, BBCA, USD. Ada di katalog, jadi harganya terisi otomatis.</span>
+</section>
+</sc-if>
+
+<!-- ============ Tahap 3: selesai ============ -->
+<sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-top: 8px;">
+<span style="width: 64px; height: 64px; border-radius: 999px; display: grid; place-items: center; background: {{ s3Bg }}; color: {{ s3Fg }};"><sc-if value="{{ undone }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="32" height="32"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></sc-if><sc-if value="{{ notUndone }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="32" height="32"><path d="M20 6 9 17l-5-5"></path></svg></sc-if></span>
+<h1 class="title" style="margin: 0;">{{ s3Title }}</h1>
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">{{ s3Desc }}</p>
+</div>
+<sc-if value="{{ notUndone }}" hint-placeholder-val="{{ true }}"><section class="hf-card" style="gap: 0; padding: 4px 16px;" aria-label="Yang tersimpan">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="3"><div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto;">
+<span style="width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><sc-for list="{{ r.icon }}" as="ic" hint-placeholder-count="2"><path d="{{ ic.d }}"></path></sc-for></svg></span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ r.n }}</span><span class="hf-detail-meta" style="white-space: normal;">{{ r.d }}</span></div>
+<span class="{{ r.cls }}">{{ r.badge }}</span>
+</div></sc-for>
+</section></sc-if>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ doneNote }}</span>
+</sc-if>
+<sc-if value="{{ isExp }}" hint-placeholder-val="{{ false }}">
+<!-- ===== hfExport body (satu sumber) ===== -->
+<sc-if value="{{ exForm }}" hint-placeholder-val="{{ true }}">
+<div class="hf-toggle" role="group" aria-label="Jenis export" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; box-sizing: border-box; flex: none;"><sc-for list="{{ exJenis }}" as="c" hint-placeholder-count="2"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted); margin-top: -4px;">{{ exJenisDesc }}</span>
+<sc-for list="{{ exSels }}" as="f" hint-placeholder-count="2"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span><button class="hf-select-btn" type="button" aria-haspopup="dialog" aria-expanded="{{ f.openStr }}" onClick="{{ f.open }}" style="min-height: 48px; font-size: 16px;"><span>{{ f.v }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></div></sc-for>
+<div role="radiogroup" aria-label="Format" style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">Format</span>
+<sc-for list="{{ exFmts }}" as="o" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="font: inherit; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 16px; border-radius: 12px; border: 1.5px solid {{ o.bd }}; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="width: 22px; height: 22px; min-width: 22px; margin-top: 1px; border-radius: 999px; border: 2px solid {{ o.ring }}; box-sizing: border-box; display: grid; place-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: {{ o.dot }};"></span></span><span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ o.d }}</span></span></button></sc-for>
+</div>
+<span class="caption" style="color: var(--ink-muted);">{{ exScope }}</span>
+</sc-if>
+<sc-if value="{{ exDone }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-top: 4px;"><span style="width: 56px; height: 56px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="28" height="28"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="title" style="margin: 0;">Export berhasil</span><span style="font-size: 15px; line-height: 24px; color: var(--ink-muted);">{{ exDoneDesc }}</span></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 20px; background: var(--surface-sunken);"><span style="width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 11px; font-weight: 600; line-height: 16px;">{{ exExt }}</span><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><span style="font-size: 15px; font-weight: 600; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ exFile }}</span><span class="caption" style="color: var(--ink-muted);">{{ exFileMeta }}</span></div></div>
+<section class="hf-card" style="gap: 8px;" aria-label="Isi file"><span class="heading">Isi file</span><sc-for list="{{ exIsi }}" as="r" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 14px; line-height: 20px; color: {{ r.c }};"><span>{{ r.a }}</span><span class="hf-badge">{{ r.b }}</span></div></sc-for><sc-if value="{{ exHasHidden }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted); padding-top: 4px; border-top: 1px solid var(--line);">{{ exHidden }}</span></sc-if></section>
+</sc-if>
+<sc-if value="{{ exFail }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start; padding-top: 4px;"><span style="width: 56px; height: 56px; border-radius: 999px; display: grid; place-items: center; background: var(--loss-soft); color: var(--loss);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="28" height="28"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span><span class="title" style="margin: 0;">File belum tersimpan</span><span style="font-size: 15px; line-height: 24px; color: var(--ink-muted);">Data Anda aman dan tidak berubah. Yang gagal hanya menyimpan file ke perangkat.</span></div>
+<section class="hf-card" style="gap: 12px;" aria-label="Penyebab"><span class="heading">Penyebab yang umum</span>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Penyimpanan perangkat penuh</span><span style="color: var(--ink-muted);">Kosongkan sedikit ruang, lalu coba lagi.</span></div>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Unduhan diblokir browser</span><span style="color: var(--ink-muted);">Izinkan unduhan untuk Hartafolio di pengaturan browser.</span></div>
+<div style="display: grid; font-size: 14px; line-height: 20px;"><span style="font-weight: 600;">Koneksi terputus</span><span style="color: var(--ink-muted);">Data diambil dari Google Sheet Anda. Sambungkan internet, lalu coba lagi.</span></div>
+</section>
+</sc-if>
+<!-- ===== /hfExport body ===== -->
+</sc-if>
+</main>
+
+<sc-if value="{{ hasFooter }}" hint-placeholder-val="{{ true }}"><footer style="position: relative; padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);">
+<sc-if value="{{ isExp }}" hint-placeholder-val="{{ false }}"><!-- ===== hfExport footer ===== -->
+<sc-if value="{{ exForm }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ exIdle }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ exGo }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path><path d="M12 15V3"></path></svg><span>{{ exCta }}</span></button></sc-if><sc-if value="{{ exBusy }}" hint-placeholder-val="{{ false }}"><div style="height: 4px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden;" role="progressbar" aria-label="Membuat file" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><span style="display: block; width: 60%; height: 100%; background: var(--brand);"></span></div><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">Membuat file…</button></sc-if><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">{{ exFootNote }}</span></sc-if>
+<sc-if value="{{ exDone }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg><span>Buka file</span></button><button class="hf-btn hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="m16 6-4-4-4 4"></path><path d="M12 2v13"></path></svg><span>Bagikan</span></button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ exFinish }}">Selesai</button></sc-if>
+<sc-if value="{{ exFail }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ exRetry }}">Coba lagi</button><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ exFinish }}">Batal</button></sc-if>
+<!-- ===== /hfExport footer ===== -->
+</sc-if>
+<sc-if value="{{ f1yes }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="10-Import-2e-Periksa.dc.html">Periksa 88 baris</a></sc-if>
+<sc-if value="{{ f1read }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">Membaca file…</button></sc-if>
+<sc-if value="{{ f2need }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">Lengkapi 1 aset dulu</button></sc-if>
+<sc-if value="{{ f2ok }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="10-Import-2i-Selesai.dc.html">{{ saveLabel }}</a></sc-if>
+<sc-if value="{{ f2save }}" hint-placeholder-val="{{ false }}"><div style="height: 4px; border-radius: 999px; background: var(--surface-sunken); overflow: hidden;" role="progressbar" aria-label="Menyimpan" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"><span style="display: block; width: 70%; height: 100%; background: var(--brand);"></span></div><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">Menyimpan 86 baris…</button></sc-if>
+<sc-if value="{{ isS2 }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">{{ s2Note }}</span></sc-if>
+<sc-if value="{{ s3ok }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="09-Lainnya.dc.html">Selesai</a></sc-if>
+<sc-if value="{{ s3ok }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-ghost hf-btn-block" href="10-Import-2j-Diurungkan.dc.html">Urungkan import ini</a></sc-if>
+<sc-if value="{{ undone }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="10-Import.dc.html">Pilih file lagi</a></sc-if>
+<sc-if value="{{ isS3 }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">{{ s3Note }}</span></sc-if>
+<sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(100% + 17px);">{{ toastTxt }}</div></sc-if>
+</footer></sc-if>
+<sc-if value="{{ toastFree }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 16px);">{{ toastTxt }}</div></sc-if>
+
+
+<!-- ===== hfExport picker ===== -->
+<sc-if value="{{ exPkOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ exPkClose }}" style="z-index: 22;"></div>
+<div class="hf-sheet" role="dialog" aria-label="{{ exPkTitle }}" style="z-index: 23; gap: 4px; padding-left: 8px; padding-right: 8px;">
+<span class="hf-sheet-handle" style="margin-bottom: 8px;" aria-hidden="true"></span>
+<span class="heading" style="padding: 0 8px 6px;">{{ exPkTitle }}</span>
+<sc-for list="{{ exPkOpts }}" as="o" hint-placeholder-count="5"><button type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}" style="font: inherit; display: grid; grid-template-columns: minmax(0, 1fr) 20px; gap: 12px; align-items: center; min-height: 48px; padding: 4px 12px; border: 0; border-radius: 12px; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="display: flex; flex-direction: column;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><sc-if value="{{ o.hasSub }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ o.sub }}</span></sc-if></span><span style="color: var(--brand); display: grid; visibility: {{ o.vis }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span></button></sc-for>
+</div></sc-if>
+<!-- ===== /hfExport picker ===== -->
+<!-- ===== hfForm: form bersama tambah/ubah anggota, lokasi, aset manual (satu sumber) ===== -->
+<sc-if value="{{ fmOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ fmClose }}"></div>
+<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="{{ fmTitle }}">
+<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">{{ fmTitle }}</span><sc-if value="{{ fmHasDesc }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ fmDesc }}</span></sc-if></div>
+<sc-for list="{{ fmFields }}" as="f" hint-placeholder-count="2"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span>
+<sc-if value="{{ f.isIn }}" hint-placeholder-val="{{ true }}"><input class="hf-input" type="text" inputmode="{{ f.im }}" value="{{ f.v }}" placeholder="{{ f.ph }}" aria-label="{{ f.l }}" onInput="{{ f.onIn }}"></sc-if>
+<sc-if value="{{ f.isRo }}" hint-placeholder-val="{{ false }}"><span style="min-height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); font-size: 16px; line-height: 24px;">{{ f.v }}</span></sc-if>
+<sc-if value="{{ f.isSel }}" hint-placeholder-val="{{ false }}"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="{{ f.openStr }}" onClick="{{ f.open }}" style="min-height: 48px; font-size: 16px;"><span style="color: {{ f.vc }};">{{ f.sv }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<div class="hf-collapse" data-open="{{ f.openStr }}"><div class="hf-collapse-in"><div role="listbox" aria-label="{{ f.l }}" style="display: flex; flex-direction: column; gap: 2px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-raised);">
+<sc-for list="{{ f.selOpts }}" as="o" hint-placeholder-count="5"><button type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}" style="font: inherit; display: grid; grid-template-columns: {{ o.cols }}; gap: 12px; align-items: center; min-height: 48px; padding: 4px {{ o.px }}; border: 0; border-radius: 8px; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;">
+<sc-if value="{{ o.hasIcon }}" hint-placeholder-val="{{ true }}"><span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: {{ o.ibg }}; color: {{ o.ifg }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><sc-for list="{{ o.icon }}" as="ic" hint-placeholder-count="2"><path d="{{ ic.d }}"></path></sc-for></svg></span></sc-if>
+<span style="display: flex; flex-direction: column; gap: 0; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><sc-if value="{{ o.hasSub }}" hint-placeholder-val="{{ true }}"><span class="caption" style="color: var(--ink-muted);">{{ o.sub }}</span></sc-if></span>
+<span style="color: var(--brand); display: grid; visibility: {{ o.vis }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span>
+</button></sc-for>
+</div></div></div></sc-if>
+<sc-if value="{{ f.isSeg }}" hint-placeholder-val="{{ false }}"><div class="hf-toggle" role="group" aria-label="{{ f.l }}" style="display: grid; grid-template-columns: {{ f.segCols }}; width: 100%; box-sizing: border-box;"><sc-for list="{{ f.opts }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ f.hint }}</span></sc-if>
+</div></sc-for>
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);">
+<sc-if value="{{ fmOk }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ fmSave }}">{{ fmPrimary }}</button></sc-if>
+<sc-if value="{{ fmNotOk }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">{{ fmPrimary }}</button></sc-if>
+<sc-if value="{{ fmHasSec }}" hint-placeholder-val="{{ false }}"><button class="{{ fmSecCls }}" type="button" onClick="{{ fmSecOn }}">{{ fmSec }}</button></sc-if>
+</div>
+</section></sc-if>
+<!-- ===== /hfForm ===== -->
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["belum","template","file","membaca","periksa","lengkapi","siap","menyimpan","selesai","diurungkan","export","export-ringkasan","export-membuat","export-berhasil","export-berhasil-ringkasan","export-gagal"],"default":"file"},"$preview":{"width":390,"height":844}}'>
+/* ===== hfForm: satu sumber untuk form tambah/ubah anggota, lokasi, aset manual ===== */
+const HF_IC = {
+  exchange: ['M3 3v16a2 2 0 0 0 2 2h16', 'm19 9-5 5-4-4-3 3'],
+  wallet: ['M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z', 'M16.5 7.5h.01'],
+  sekuritas: ['M16 7h6v6', 'm22 7-8.5 8.5-5-5L2 17'],
+  app: ['M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z', 'M12 18h.01'],
+  coin: ['M13.744 17.736a6 6 0 1 1-7.48-7.48', 'M15 6h1v4', 'm6.134 14.768.866-.5 2 3.464', 'M22 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0'],
+  bank: ['M10 18v-7', 'M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z', 'M14 18v-7', 'M18 18v-7', 'M3 22h18', 'M6 18v-7'],
+  ewallet: ['M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1', 'M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'],
+  vault: ['M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2', 'M15.5 12a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0', 'M7 7h.01', 'M17 7h.01', 'M7 17h.01', 'M17 17h.01'],
+  btc: ['M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727'],
+  pie: ['M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z', 'M21.21 15.89A10 10 0 1 1 8 2.83'],
+  cash: ['M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2', 'M14 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0', 'M6 12h.01', 'M18 12h.01'],
+  home: ['M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8', 'M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'],
+  dots: ['M12 12h.01', 'M19 12h.01', 'M5 12h.01']
+};
+const HF_LOK = [['exchange', 'Exchange crypto', 'Binance, Indodax'], ['wallet', 'Wallet crypto', 'Ledger, MetaMask'], ['sekuritas', 'Sekuritas saham', 'Ajaib, IPOT'], ['app', 'Aplikasi investasi', 'Pluang, Bibit'], ['coin', 'Emas digital', 'Pegadaian, Treasury'], ['bank', 'Bank atau deposito', 'Rekening, deposito, safe deposit'], ['ewallet', 'Dompet digital', 'GoPay, OVO'], ['vault', 'Simpanan fisik', 'Brankas, laci, lemari di rumah'], ['dots', 'Lainnya', 'Tempat lain yang tidak ada di daftar']];
+const HF_LOK_GOLD = ['coin', 'vault'];
+const HF_REL = ['Pasangan', 'Anak', 'Orang tua', 'Saudara', 'Lainnya'];
+const HF_JA = [['coin', 'Emas', 'Zakat mal, nishob 85 g · logam mulia, perhiasan, token emas'], ['coin', 'Perak', 'Zakat mal, nishob 595 g · fisik maupun digital'], ['btc', 'Crypto', 'BTC, ETH, stablecoin'], ['sekuritas', 'Saham', 'Saham dan ETF'], ['pie', 'Reksa dana', 'Pasar uang, obligasi, saham'], ['cash', 'Mata uang', 'Tunai dan tabungan valas'], ['home', 'Properti', 'Rumah, tanah, ruko'], ['dots', 'Lainnya', 'Aset lain dengan harga sendiri']];
+const HF_MU = { 'Emas': ['gram', 'oz', 'token', 'lembar'], 'Perak': ['gram', 'oz', 'token', 'lembar'], 'Crypto': ['koin', 'token'], 'Saham': ['lot', 'lembar'], 'Reksa dana': ['unit'], 'Mata uang': ['nominal'], 'Properti': ['unit', 'm²'], 'Lainnya': ['unit', 'gram', 'lot', 'lembar'] };
+function hfForm(self, F) {
+  const off = { fmOn: false, fmTitle: '', fmHasDesc: false, fmDesc: '', fmFields: [], fmOk: false, fmNotOk: false, fmPrimary: '', fmSave: undefined, fmHasSec: false, fmSec: '', fmSecCls: '', fmSecOn: undefined, fmClose: undefined, pkOn: false, pkTitle: '', pkOpts: [], pkClose: undefined };
+  if (!F) return off;
+  const st = self.state || {};
+  const id = F.id || (F.k + '-' + F.mode);
+  const V = Object.assign({}, F.val || {}, (st.fmv && st.fmv.id === id) ? st.fmv.v : {});
+  const put = (patch, extra) => self.setState(Object.assign({ fmv: { id, v: Object.assign({}, V, patch) } }, extra || {}));
+  const pk = (st.fmPk && st.fmPk.id === id) ? st.fmPk.f : (F.pk || null);
+  const ubah = F.mode === 'ubah';
+  const B = { l: '', v: '', ph: '', im: 'text', onIn: undefined, isIn: false, isRo: false, isSel: false, isOpenSel: false, selOpts: [], k: '', isSeg: false, sv: '', vc: 'var(--ink)', open: undefined, openStr: 'false', opts: [], segCols: '', hint: '', hasHint: false };
+  const H = h => ({ hint: h || '', hasHint: !!h });
+  const inF = (key, l, ph, h, im) => Object.assign({}, B, { l, isIn: true, v: V[key] == null ? '' : V[key], ph: ph || '', im: im || 'text', onIn: e => put({ [key]: e.target.value }) }, H(h));
+  const roF = (l, v, h) => Object.assign({}, B, { l, isRo: true, v }, H(h));
+  const selF = (key, l, ph, h) => Object.assign({}, B, { l, isSel: true, k: key, sv: V[key] || ph, vc: V[key] ? 'var(--ink)' : 'var(--ink-muted)', open: () => self.setState({ fmPk: { id, f: pk === key ? null : key } }), openStr: String(pk === key) }, H(h));
+  const segF = (key, l, opts, cur, h) => Object.assign({}, B, { l, isSeg: true, segCols: 'repeat(' + opts.length + ', minmax(0, 1fr))', opts: opts.map(o => ({ l: o, pressed: String(o === cur), on: () => put({ [key]: o }) })) }, H(h));
+  let title = '', desc = '', primary = 'Simpan', fields = [], ok = true, pkTitle = '', pkList = [];
+  const nama = String(V.nama == null ? '' : V.nama).trim();
+  if (F.k === 'anggota') {
+    title = ubah ? 'Ubah ' + (F.name || nama) : (F.owner ? 'Tambah diri Anda' : 'Tambah anggota');
+    desc = ubah ? '' : (F.owner ? 'Anda pengelola akun ini. Anggota lain ditambahkan setelah ini.' : 'Mulai tanpa aset. Saldo awalnya bisa dicatat setelah ini.');
+    primary = ubah ? 'Simpan' : 'Tambah anggota';
+    fields = [inF('nama', 'Nama', 'Nama panggilan', ubah ? 'Mengganti nama tidak mengubah riwayat. Nama baru muncul di semua laporan.' : '')];
+    fields.push(F.owner ? roF('Hubungan dengan Anda', 'Diri sendiri', ubah ? 'Pengelola akun selalu Diri sendiri.' : '') : selF('rel', 'Hubungan dengan Anda', 'Pilih hubungan', ubah ? 'Hanya label. Tidak mengubah aset maupun riwayat.' : ''));
+    ok = !!nama && (F.owner || !!V.rel);
+    pkTitle = 'Hubungan dengan Anda';
+    pkList = HF_REL.map(l => ({ l, sub: '', icon: null, gold: false }));
+  } else if (F.k === 'lokasi') {
+    title = ubah ? 'Ubah ' + (F.name || nama) : 'Tambah lokasi';
+    desc = ubah ? '' : 'Lokasi baru langsung bisa dipilih saat mencatat transaksi.';
+    primary = ubah ? 'Simpan' : 'Tambah lokasi';
+    fields = [inF('nama', 'Nama lokasi', 'Contoh: Tokopedia Emas', ubah ? 'Mengganti nama tidak mengubah riwayat.' : ''), selF('jenis', 'Jenis', 'Pilih jenis lokasi', ubah ? 'Hanya pengelompokan. Bisa diubah kapan saja.' : '')];
+    ok = !!nama && !!V.jenis;
+    pkTitle = 'Jenis lokasi';
+    pkList = HF_LOK.map(([k, l, sub]) => ({ l, sub, icon: HF_IC[k], gold: HF_LOK_GOLD.includes(k) }));
+  } else {
+    const j = V.jenis || null, units = j ? HF_MU[j] : [], sat = units.includes(V.sat) ? V.sat : (units[0] || null);
+    const zak = j === 'Emas' || j === 'Perak';
+    title = F.title || 'Aset manual';
+    desc = F.desc || 'Untuk aset tanpa harga pasar, misalnya emas perhiasan. Harganya Anda isi sendiri.';
+    primary = F.primary || 'Tambah aset';
+    fields = [inF('nama', 'Nama', 'Misalnya Emas perhiasan'),
+      selF('jenis', 'Jenis', 'Pilih jenis aset', !j ? 'Menentukan cara aset ini dihitung untuk zakat mal.' : (zak ? j + ' dihitung untuk zakat mal dengan nishob ' + (j === 'Emas' ? '85' : '595') + ' g, fisik maupun digital.' : 'Tidak dihitung untuk zakat mal. Zakat hanya dari emas dan perak.'))];
+    if (j) fields.push(segF('sat', 'Satuan', units, sat, 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.'));
+    if (zak && sat !== 'gram') fields.push(inF('gram', 'Setara gram per satuan', 'Contoh: 31,1035', 'Untuk nishob zakat. Contoh: 1 oz atau 1 token PAXG = 31,1035 g.', 'decimal'));
+    fields.push(inF('harga', 'Harga per satuan (Rp)', '0', 'Harga per ' + (sat || 'satuan') + ' hari ini. Bisa diubah kapan saja.', 'decimal'));
+    ok = !!nama && !!j;
+    pkTitle = 'Jenis aset';
+    pkList = HF_JA.map(([k, l, sub]) => ({ l, sub, icon: HF_IC[k], gold: k === 'coin' }));
+    V.sat = sat;
+  }
+  if (F.title) title = F.title;
+  if (F.desc !== undefined) desc = F.desc;
+  if (F.primary) primary = F.primary;
+  const pkKey = F.k === 'anggota' ? 'rel' : 'jenis';
+  const selOpts = pkList.map(o => {
+    const on = V[pkKey] === o.l;
+    return { l: o.l, sub: o.sub, hasSub: !!o.sub, hasIcon: !!o.icon, icon: (o.icon || []).map(d => ({ d })), ibg: o.gold ? 'var(--gold-soft)' : 'var(--brand-soft)', ifg: o.gold ? 'var(--gold)' : 'var(--brand)',
+      cols: o.icon ? '36px minmax(0, 1fr) 20px' : 'minmax(0, 1fr) 20px', px: o.icon ? '8px' : '12px',
+      sel: String(on), vis: on ? 'visible' : 'hidden', bg: on ? 'var(--brand-soft)' : 'transparent',
+      on: () => put(pkKey === 'jenis' && F.k === 'aset' ? { jenis: o.l, sat: null } : { [pkKey]: o.l }, { fmPk: { id, f: null } }) };
+  });
+  /* Pilihan terbuka INLINE di bawah field (bukan sheet kedua di atas sheet form). */
+  fields = fields.map(f => f.isSel ? Object.assign({}, f, { selOpts }) : f);
+  return {
+    fmOn: true, fmTitle: title, fmHasDesc: !!desc, fmDesc: desc, fmFields: fields,
+    fmOk: ok, fmNotOk: !ok, fmPrimary: primary,
+    fmSave: () => { if (F.onSave) F.onSave(Object.assign({}, V, { nama })); },
+    fmHasSec: !!F.sec, fmSec: F.sec ? F.sec.l : '', fmSecCls: 'hf-btn hf-btn-ghost hf-btn-block' + (F.sec && F.sec.danger ? ' hf-btn-danger' : ''), fmSecOn: F.sec ? F.sec.on : undefined,
+    fmClose: F.onClose,
+    pkOn: false, pkTitle, pkClose: undefined, pkOpts: []
+  };
+}
+/* ===== /hfForm ===== */
+
+
+/* ===== hfExport: satu sumber untuk export (menu Alat, Laporan, Google Sheet) ===== */
+function hfExport(self, X) {
+  const off = { exOn: false, exForm: false, exDone: false, exFail: false, exIdle: false, exBusy: false, exJenis: [], exJenisDesc: '', exSels: [], exFmts: [], exScope: '', exCta: '', exGo: undefined, exFootNote: '', exCtx: '', exDoneDesc: '', exExt: '', exFile: '', exFileMeta: '', exIsi: [], exHasHidden: false, exHidden: '', exFinish: undefined, exRetry: undefined, exClose: undefined, exPkOn: false, exPkTitle: '', exPkOpts: [], exPkClose: undefined };
+  if (!X) return off;
+  const st = self.state || {};
+  const E = Object.assign({ jenis: X.jenis || 'ringkasan', fmt: null, view: X.view || 'form', pk: X.pk || null, periode: X.periode || 'November 2026', anggota: X.anggota || 'Semua anggota' }, (st.ex && st.ex.id === X.id) ? st.ex : {});
+  const put = p => self.setState({ ex: Object.assign({}, E, p, { id: X.id }) });
+  const ring = E.jenis === 'ringkasan';
+  const FM = ring ? [['pdf', 'PDF', '2 halaman: grafik, per jenis aset, per anggota, transaksi terbaru.'], ['xlsx', 'Excel (.xlsx)', 'Angka tanpa pembulatan, 4 sheet: Ringkasan, Per anggota, Per aset, Transaksi.']]
+    : [['xlsx', 'Excel (.xlsx)', 'Format template Hartafolio. Bisa di-import kembali untuk memulihkan.'], ['csv', 'CSV (.zip)', 'Satu file CSV per sheet, untuk aplikasi lain.']];
+  const fmt = FM.some(f => f[0] === E.fmt) ? E.fmt : FM[0][0];
+  const per = { 'November 2026': 'Nov-2026', 'Oktober 2026': 'Okt-2026', 'Triwulan 4 2026': 'Q4-2026', 'Triwulan 3 2026': 'Q3-2026', 'Tahun 2026': '2026' }[E.periode] || 'Nov-2026';
+  const ext = fmt === 'pdf' ? 'PDF' : (fmt === 'csv' ? 'ZIP' : 'XLSX');
+  const file = ring ? 'Hartafolio-Ringkasan-' + per + '.' + ext.toLowerCase() : 'Hartafolio-Data-lengkap-12-Nov-2026.' + ext.toLowerCase();
+  const PK = { periode: ['November 2026', 'Oktober 2026', 'Triwulan 4 2026', 'Triwulan 3 2026', 'Tahun 2026'], anggota: ['Semua anggota', 'Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'] };
+  const PKS = { 'November 2026': 'Sampai 9 Nov', 'Triwulan 4 2026': 'Okt sampai 9 Nov' };
+  const isi = ring
+    ? (fmt === 'pdf' ? [{ a: 'Halaman 1 · grafik dan per jenis aset', b: '1 hal' }, { a: 'Halaman 2 · per anggota dan transaksi', b: '1 hal' }] : [{ a: 'Ringkasan', b: '1 sheet' }, { a: 'Per anggota', b: '4 baris' }, { a: 'Per aset', b: '11 baris' }, { a: 'Transaksi', b: '23 baris' }])
+    : [{ a: 'Transaksi', b: '91 baris' }, { a: 'Aset', b: '11 aset' }, { a: 'Nilai bulanan', b: '18 bulan' }];
+  return {
+    exOn: true, exCtx: ring ? (X.ctx || '') : (X.ctxLengkap !== undefined ? X.ctxLengkap : (X.ctx || '')),
+    exForm: E.view === 'form' || E.view === 'busy', exIdle: E.view === 'form', exBusy: E.view === 'busy', exDone: E.view === 'done', exFail: E.view === 'fail',
+    exJenis: [['ringkasan', 'Ringkasan'], ['lengkap', 'Data lengkap']].map(([k, l]) => ({ l, pressed: String(E.jenis === k), on: () => put({ jenis: k, fmt: null }) })),
+    exJenisDesc: ring ? 'Untuk dibaca, dicetak, atau dibagikan. Tidak bisa di-import.' : 'Salinan semua data sejak awal. Bisa di-import kembali untuk memulihkan.',
+    exSels: ring ? [['periode', 'Periode'], ['anggota', 'Anggota']].map(([k, l]) => ({ l, v: E[k], openStr: String(E.pk === k), open: () => put({ pk: k }) })) : [],
+    exFmts: FM.map(([k, l, d]) => ({ l, d, on: String(fmt === k), bd: fmt === k ? 'var(--brand)' : 'var(--line)', bg: fmt === k ? 'var(--brand-soft)' : 'var(--surface-raised)', ring: fmt === k ? 'var(--brand)' : 'var(--line-strong)', dot: fmt === k ? 'var(--brand)' : 'transparent', pick: () => put({ fmt: k }) })),
+    exScope: ring ? 'Dalam IDR. Mata uang kedua ikut bila aktif.' : 'Selalu semua data sejak awal: 91 transaksi, 11 aset, 4 anggota, 5 lokasi, 18 bulan nilai. Tidak ikut filter.',
+    exCta: ring ? 'Unduh ringkasan ' + (fmt === 'pdf' ? 'PDF' : 'Excel') : 'Unduh data lengkap',
+    exGo: () => put({ view: 'busy' }), exFootNote: E.view === 'busy' ? 'Mengambil data dari Google Sheet Anda' : file,
+    exDoneDesc: ring ? 'Tersimpan di folder Unduhan. Siap dibuka, dicetak, atau dibagikan.' : 'Tersimpan di folder Unduhan. Simpan sebagai cadangan; file ini bisa di-import lagi kapan saja.',
+    exExt: ext, exFile: file, exFileMeta: (ring ? 'Ringkasan · ' + E.periode + ' · ' + E.anggota : 'Data lengkap · semua data') + ' · ' + (fmt === 'pdf' ? '412 KB' : '214 KB'),
+    exIsi: isi.map(r => Object.assign({ c: 'var(--ink)' }, r)),
+    exHasHidden: !ring && fmt === 'xlsx', exHidden: 'Sheet Anggota, Lokasi, Pengaturan, dan Daftar disembunyikan. Isinya dipakai untuk dropdown dan import, tetap bisa dibuka lewat Unhide di Excel.',
+    exFinish: () => { put({ view: 'form' }); if (X.onClose) X.onClose(); }, exRetry: () => put({ view: 'busy' }), exClose: X.onClose,
+    exPkOn: !!E.pk, exPkTitle: E.pk === 'anggota' ? 'Anggota' : 'Periode',
+    exPkOpts: E.pk ? PK[E.pk].map(l => ({ l, sub: E.pk === 'periode' ? (PKS[l] || '') : '', hasSub: E.pk === 'periode' && !!PKS[l], sel: String(E[E.pk] === l), vis: E[E.pk] === l ? 'visible' : 'hidden', bg: E[E.pk] === l ? 'var(--brand-soft)' : 'transparent', on: () => put({ [E.pk]: l, pk: null }) })) : [],
+    exPkClose: () => put({ pk: null })
+  };
+}
+/* ===== /hfExport ===== */
+
+
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const mulai = this.props.mulai ?? 'file';
+    const ALAT = true;
+    const EXP = { 'export': ['lengkap', 'form', 'xlsx'], 'export-ringkasan': ['ringkasan', 'form', 'pdf'], 'export-membuat': ['lengkap', 'busy', 'xlsx'], 'export-berhasil': ['lengkap', 'done', 'xlsx'], 'export-berhasil-ringkasan': ['ringkasan', 'done', 'pdf'], 'export-gagal': ['lengkap', 'fail', 'xlsx'] }[mulai];
+    const tab = st.tab ?? (EXP ? 'exp' : 'imp');
+    const m = EXP ? 'belum' : mulai;
+    const stage = { belum: 1, template: 1, file: 1, membaca: 1, periksa: 2, lengkapi: 2, siap: 2, menyimpan: 2, selesai: 3, diurungkan: 3 }[m];
+    const file = st.file ?? (m !== 'belum' && m !== 'template');
+    const reading = m === 'membaca' && st.file === undefined;
+    const fix = st.fix === undefined ? ({ siap: 'done', menyimpan: 'done', selesai: 'done', diurungkan: 'done' }[m] || null) : st.fix;
+    const sheet = st.sheet === undefined ? m === 'lengkapi' : st.sheet;
+    const toast = st.toast !== undefined ? st.toast : (m === 'siap' ? 'Emas perhiasan dilengkapi · 5 baris siap' : (m === 'template' ? 'Hartafolio-Template-Azlan.xlsx diunduh' : ''));
+    const IC = {
+      trx: ['M8 3 4 7l4 4', 'M4 7h16', 'm16 21 4-4-4-4', 'M20 17H4'],
+      cal: ['M8 2v4', 'M16 2v4', 'M3 10h18', 'M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2'],
+      aset: ['M13.744 17.736a6 6 0 1 1-7.48-7.48', 'M15 6h1v4', 'm6.134 14.768.866-.5 2 3.464', 'M22 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0']
+    };
+    const ic = k => IC[k].map(d => ({ d }));
+    const N = fix === 'done' ? { ok: 86, need: 0, skip: 2 } : (fix === 'skip' ? { ok: 81, need: 0, skip: 7 } : { ok: 81, need: 5, skip: 2 });
+    const legend = [
+      { l: 'Siap disimpan', n: N.ok, c: 'var(--brand)', fg: 'var(--ink)' },
+      { l: 'Perlu dilengkapi', n: N.need, c: 'var(--gold-fill)', fg: N.need ? 'var(--ink)' : 'var(--ink-muted)' },
+      { l: 'Dilewati', n: N.skip, c: 'var(--line-strong)', fg: 'var(--ink)' }
+    ];
+    const errs = [
+      { r: 'Baris 31', t: 'Sheet Transaksi · anggota "Fulan" belum ada. Tambahkan di Anggota, atau pilih dari dropdown di template.' },
+      { r: 'Baris 57', t: 'Sheet Transaksi · jumlah bukan angka ("0,05 oz"). Tulis angkanya saja; satuan ada di sheet Aset.' }
+    ].concat(fix === 'skip' ? [{ r: '5 baris', t: 'Emas perhiasan · belum dilengkapi, jadi tidak ikut disimpan.' }] : []);
+    const BR = 'hf-badge hf-badge-brand', NE = 'hf-badge';
+    const rows = stage === 3 ? [
+      { n: 'Transaksi', d: (fix === 'skip' ? '74' : '79') + ' baris · termasuk 11 saldo awal', badge: 'Tersimpan', cls: BR, icon: ic('trx') },
+      { n: 'Nilai bulanan', d: '7 bulan tersimpan', badge: 'Tersimpan', cls: BR, icon: ic('cal') },
+      { n: 'Aset baru', d: (fix === 'skip' ? '8' : '9') + ' aset dibuat otomatis', badge: 'Tersimpan', cls: BR, icon: ic('aset') }
+    ] : [
+      { n: 'Transaksi', d: '81 baris · termasuk 11 saldo awal', badge: 'Terbaca', cls: BR, icon: ic('trx') },
+      { n: 'Nilai bulanan', d: '7 baris · total harta per bulan', badge: 'Terbaca', cls: BR, icon: ic('cal') },
+      { n: 'Aset', d: 'Tidak diisi · aset dikenali dari katalog', badge: 'Kosong', cls: NE, icon: ic('aset') }
+    ];
+    const need = fix === null;
+    const saving = m === 'menyimpan';
+    const undone = m === 'diurungkan';
+    const imp = tab === 'imp';
+    const label = { 1: 'Pilih file (1/3)', 2: 'Periksa (2/3)', 3: undone ? 'Diurungkan' : 'Selesai (3/3)' }[stage];
+    const F = sheet && stage === 2 ? {
+      id: 'imp-lengkapi', k: 'aset', mode: 'tambah', title: 'Aset manual',
+      desc: 'Emas perhiasan muncul di 5 baris sheet Transaksi, tapi tidak ada di katalog maupun sheet Aset. Lengkapi agar barisnya bisa disimpan.',
+      val: { nama: 'Emas perhiasan', jenis: 'Emas', sat: 'gram', harga: '' }, primary: 'Tambah aset',
+      onSave: () => this.setState({ fix: 'done', sheet: false, toast: 'Emas perhiasan dilengkapi · 5 baris siap' }),
+      onClose: () => this.setState({ sheet: false }),
+      sec: { l: 'Lewati 5 baris', on: () => this.setState({ fix: 'skip', sheet: false, toast: '' }) }
+    } : null;
+    const X = !ALAT || imp ? null : { id: 'alat-export', ctx: '', jenis: EXP ? EXP[0] : 'lengkap', view: EXP ? EXP[1] : 'form', fmt: EXP ? EXP[2] : null, onClose: () => {} };
+    const exv = ALAT ? hfExport(this, X) : {};
+    const isS1 = stage === 1 && imp;
+    return {
+      theme: this.props.theme ?? 'light',
+      ticks: [1, 2, 3].map(i => ({ c: i <= stage ? 'var(--brand)' : 'var(--surface-sunken)' })),
+      stageLabel: (ALAT ? 'Import · ' : 'Langkah 4 dari 4 · ') + label,
+      hasBack: stage < 3,
+      backHref: stage === 1 ? (ALAT ? '09-Lainnya.dc.html' : (mulai === 'belum' ? '01-Setup-3a-Kosong.dc.html' : '01-Setup-3-Lokasi.dc.html')) : (ALAT ? '10-Import-2a-File-Dipilih.dc.html' : '01-Setup-4-Import.dc.html'),
+      isS1: ALAT ? stage === 1 : stage === 1, notS1: stage > 1, isImp1: isS1,
+      isS2: stage === 2 && imp, isS3: stage === 3 && imp,
+      impP: String(imp), expP: String(!imp), isExp: !imp,
+      goImp: () => this.setState({ tab: 'imp' }), goExp: () => this.setState({ tab: 'exp', toast: '' }),
+      noFile: stage === 1 && !file, hasFile: stage === 1 && file,
+      reading, readDone: !reading, fileMeta: reading ? 'Membaca file…' : 'Template dikenali · 88 baris',
+      f1no: isS1 && !file, f1yes: isS1 && file && !reading, f1read: isS1 && reading, f1yesAny: isS1 && file,
+      hasFooter: !(isS1 && !file),
+      pickFile: () => this.setState({ file: true, toast: '' }), clearFile: () => this.setState({ file: false }),
+      dlTpl: () => this.setState({ toast: 'Hartafolio-Template-Azlan.xlsx diunduh' }),
+      rows,
+      segs: legend.filter(g => g.n > 0), legend, errs,
+      barAria: N.ok + ' siap disimpan, ' + N.need + ' perlu dilengkapi, ' + N.skip + ' dilewati',
+      needBlock: need, doneBlock: fix === 'done', hasSkip: true,
+      doneMeta: 'Emas · gram · harga diisi sendiri · 5 baris siap',
+      f2need: stage === 2 && imp && need, f2ok: stage === 2 && imp && !need && !saving, f2save: stage === 2 && imp && saving,
+      s2Note: saving ? 'Jangan tutup halaman ini sampai selesai' : 'Belum ada yang tersimpan sampai Anda menekan Simpan',
+      saveLabel: 'Simpan ' + N.ok + ' baris',
+      s3ok: stage === 3 && imp && !undone, undone: undone && imp, notUndone: !undone,
+      s3Title: undone ? 'Import diurungkan' : 'Import selesai',
+      s3Desc: undone ? '86 baris dari file ini sudah dihapus lagi dari Google Sheet Anda. Data lain tidak berubah.' : 'Catatan lama sudah masuk ke Google Sheet Anda dan siap dipakai.',
+      s3Bg: undone ? 'var(--surface-sunken)' : 'var(--brand-soft)', s3Fg: undone ? 'var(--ink-muted)' : 'var(--brand)',
+      s3Note: undone ? 'Perbaiki file bila perlu, lalu import lagi' : (ALAT ? 'Bisa diurungkan selama 7 hari dari halaman ini' : 'Import berikutnya ada di menu Alat'),
+      doneNote: (fix === 'skip' ? '7' : '2') + ' baris dilewati, tidak ada yang berubah di Sheet Anda. Perbaiki di template, lalu import lagi' + (ALAT ? '.' : ' dari menu Alat.'),
+      sheetOn: false, toastTxt: toast,
+      toastOn: !!toast && imp && !(isS1 && !file), toastFree: !!toast && imp && isS1 && !file,
+      openSheet: () => this.setState({ sheet: true, toast: '' }), closeSheet: () => this.setState({ sheet: false }),
+      ...hfForm(this, F),
+      ...exv
+    };
+  }
+}
+</script>
+</body>
+</html>

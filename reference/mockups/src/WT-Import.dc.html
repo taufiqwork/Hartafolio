@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Import / Export</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}
+.wx{position:relative;overflow:hidden;background:var(--surface);color:var(--ink);font-family:var(--font-sans);box-sizing:border-box;display:grid}
+.wx *{box-sizing:border-box}
+.wd{grid-template-columns:248px minmax(0,1fr)}
+.wt{grid-template-columns:88px minmax(0,1fr)}
+.wd-side{display:flex;flex-direction:column;gap:16px;padding:24px 16px 16px;background:var(--surface-raised);border-right:1px solid var(--line);min-height:0}
+.wd-logo{display:flex;align-items:center;gap:8px;padding:0 8px;font-size:20px;line-height:28px;font-weight:700;letter-spacing:-.01em}
+.wd-logo b{color:var(--brand);font-weight:700}
+.wd-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.wd-nav-a{display:flex;align-items:center;gap:12px;min-height:40px;padding:0 12px;border-radius:var(--radius-md);font-size:14px;line-height:20px;font-weight:500;color:var(--ink-muted);text-decoration:none;transition:background-color .18s ease,color .18s ease}
+.wd-nav-a:hover{background:var(--surface-sunken);color:var(--ink)}
+.wd-nav-a[aria-current="page"]{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.wd-nav-a[aria-current="page"] .hf-ico-fill{fill:var(--brand-soft)}
+.wd-nav-a svg{flex:none}
+.wd-sec{padding:16px 12px 4px;font-size:12px;line-height:18px;font-weight:500;color:var(--ink-muted)}
+.wd-acct{display:flex;align-items:center;gap:12px;padding:12px 8px 0;border-top:1px solid var(--line)}
+.wd-av{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;flex:none;background:var(--brand-soft);color:var(--brand);font-weight:600;font-size:14px}
+.wt-rail{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 8px;background:var(--surface-raised);border-right:1px solid var(--line)}
+.wt-rail-a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:var(--radius-md);font-size:11px;line-height:16px;font-weight:500;color:var(--ink-muted);text-decoration:none}
+.wt-rail-a svg{width:44px;height:28px;padding:2px 10px;border-radius:999px;box-sizing:border-box;transition:background-color .18s ease}
+.wt-rail-a[aria-current="page"]{color:var(--brand);font-weight:600}
+.wt-rail-a[aria-current="page"] svg{background:var(--brand-soft)}
+.wt-rail-a[aria-current="page"] .hf-ico-fill{fill:var(--brand-soft)}
+.wt-add{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:var(--on-brand);background:linear-gradient(160deg,color-mix(in srgb,var(--brand) 78%,#fff) 0%,var(--brand) 70%);box-shadow:0 6px 16px color-mix(in srgb,var(--brand) 32%,transparent);margin-bottom:8px}
+.wx-main{overflow:auto;min-height:0;scrollbar-width:none}
+.wd .wx-main{padding:0 40px 40px}/* Round 9: header lengket */.wx-stick{position:sticky;top:0;z-index:8;display:flex;flex-direction:column;gap:16px;background:var(--surface);border-bottom:1px solid var(--line);padding:32px 40px 12px;margin:0 -40px}.wt .wx-stick{padding:24px 24px 12px;margin:0 -24px}
+.wt .wx-main{padding:0 24px 32px}
+.wx-in{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+.wt .wx-in{gap:16px}
+.wx-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.wx-head-act{display:flex;align-items:center;gap:8px;flex:none}
+.wx-sub{margin:0;font-size:15px;line-height:24px;color:var(--ink-muted);max-width:640px}
+.wx-back{display:inline-flex;align-items:center;gap:2px;font-size:13px;line-height:20px;font-weight:600;text-decoration:none}
+.wx-g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:start}
+.wt .wx-g{gap:16px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.wx-chips{display:flex;flex-wrap:wrap;gap:8px}
+.wx-field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.wx-label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;line-height:20px;font-weight:500;color:var(--ink-muted)}
+.wx-help{font-size:12px;line-height:18px;color:var(--ink-muted);display:flex;align-items:center;gap:6px}
+.wx-row{display:grid;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.wx-row:first-child{border-top:0}
+.wx-th{display:grid;align-items:center;gap:16px;padding:0 0 8px;font-size:12px;line-height:18px;font-weight:500;color:var(--ink-muted);border-bottom:1px solid var(--line)}
+.wx-th + .wx-row{border-top:0}
+.wx-name{font-size:15px;line-height:22px;font-weight:600}
+.wx-meta{font-size:12px;line-height:18px;color:var(--ink-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wx-num{font-size:15px;line-height:22px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.wx-r{text-align:right;justify-self:end}
+.wx-tr{transition:background-color .18s ease}
+.wx-tr:hover{background:color-mix(in srgb,var(--surface-sunken) 60%,transparent)}
+.wx-hero{background:linear-gradient(155deg,color-mix(in srgb,var(--brand-soft) 85%,var(--surface-raised)),var(--surface-raised) 62%)}
+.wx-donut .wx-dc-l{font-size:13px;line-height:18px;color:var(--ink);font-weight:600}
+.wx-donut .wx-dc-c{font-size:12px;line-height:16px;color:var(--ink-muted);font-weight:500}
+.wx-donut .wx-dc-v{font-size:20px;line-height:28px;font-weight:700;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.wx-donut .wx-share{justify-self:center;margin-top:4px;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;line-height:18px;font-weight:600;white-space:nowrap}
+.wx-donut circle{fill:none;stroke-linecap:round}
+.wx-donut svg{animation:wxSweep 1.1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes wxSweep{from{opacity:0;transform:rotate(-150deg)}}
+.wx-line{stroke-dasharray:100;animation:wxDraw 1.1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes wxDraw{from{stroke-dashoffset:100}}
+.wx-area-fill{animation:wxFade .9s .3s ease both}
+@keyframes wxFade{from{opacity:0}}
+.wx-rise{animation:wxRise .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes wxRise{from{opacity:0;transform:translateY(8px)}}
+.wx-bars{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:12px}
+.wx-zero{position:absolute;left:0;right:0;height:1px;background:var(--line-strong)}
+.wx-barcol{all:unset;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:opacity .2s ease}
+.wx-bar-up{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;width:100%}
+.wx-bar-dn{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:4px;width:100%}
+.wx-bar-v{font-size:11px;line-height:16px;font-variant-numeric:tabular-nums}
+.wx-bar-m{font-size:12px;line-height:18px;margin-top:6px}
+.hf-bar{display:block;width:min(44px,70%);border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,color-mix(in srgb,var(--brand) 62%,var(--surface-raised)),var(--brand));transform-origin:bottom;animation:wxGrow .7s cubic-bezier(.2,.8,.2,1) both}
+.hf-bar-neg{border-radius:4px 4px 8px 8px;background:linear-gradient(0deg,color-mix(in srgb,var(--loss) 55%,var(--surface-raised)),color-mix(in srgb,var(--loss) 80%,var(--surface-raised)));transform-origin:top}
+@keyframes wxGrow{from{transform:scaleY(0)}}
+.wx-live{display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--brand);box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 40%,transparent);animation:wxPulse 2s infinite}
+@keyframes wxPulse{70%{box-shadow:0 0 0 6px transparent}}
+.wx-dialog{position:absolute;inset:0;margin:auto;height:fit-content;max-height:86%;z-index:21;display:flex;flex-direction:column;background:var(--surface-raised);border-radius:var(--radius-lg);box-shadow:var(--shadow-menu);overflow:hidden}
+.wx-dialog-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 24px 12px}
+.wx-dialog-b{overflow:auto;padding:4px 24px 24px;display:flex;flex-direction:column;gap:20px}
+.wx-dialog-f{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 24px;border-top:1px solid var(--line);background:var(--surface-raised)}
+.wx-x{width:40px;height:40px;border-radius:999px;border:0;display:grid;place-items:center;background:var(--surface-sunken);color:var(--ink);cursor:pointer}
+.wx-panel{position:absolute;top:0;right:0;bottom:0;z-index:21;display:flex;flex-direction:column;background:var(--surface-raised);border-left:1px solid var(--line);box-shadow:var(--shadow-menu)}
+.wx-pop{position:absolute;z-index:22;background:var(--surface-raised);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-menu);padding:16px;display:flex;flex-direction:column;gap:12px}
+.wx-cal{display:grid;grid-template-columns:repeat(7,40px);gap:2px;justify-content:space-between}
+.wx-cal span{height:36px;display:grid;place-items:center;border-radius:10px;font-size:14px;line-height:20px;font-variant-numeric:tabular-nums}
+.wx-pill-l{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;line-height:18px;font-weight:600}
+.wx-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:32px 24px}
+.wx-kv{display:flex;justify-content:space-between;gap:16px;font-size:14px;line-height:20px;padding:8px 0}
+.wx-kv span:first-child{color:var(--ink-muted)}
+.wx-kv span:last-child{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+@media (prefers-reduced-motion: reduce){.wx *{animation:none!important}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" class="wx wt" style="width: 1024px; height: 928px;">
+<aside class="wt-rail" aria-label="Menu utama"><span style="padding: 4px 0 8px;"><svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg></span><a class="hf-nav-add wt-add" href="WT-Catat.dc.html" aria-label="Catat transaksi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></a><nav style="display: flex; flex-direction: column; gap: 4px; width: 100%;"><a class="wt-rail-a" href="WT-Beranda.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path class="hf-ico-fill" d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path class="hf-ico-cut" d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path></svg><span>Beranda</span></a><a class="wt-rail-a" href="WT-Aset.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><rect class="hf-ico-fill" width="7" height="7" x="3" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="14" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="3" y="14" rx="1"></rect></svg><span>Aset</span></a><a class="wt-rail-a" href="WT-Riwayat.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path class="hf-ico-fill" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path class="hf-ico-cut" d="M14 8H8"></path><path class="hf-ico-cut" d="M16 12H8"></path><path class="hf-ico-cut" d="M13 16H8"></path></svg><span>Riwayat</span></a><a class="wt-rail-a" href="WT-Laporan.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><rect class="hf-ico-fill" width="18" height="18" x="3" y="3" rx="2"></rect><path class="hf-ico-cut" d="M8 17v-3"></path><path class="hf-ico-cut" d="M12 17V9"></path><path class="hf-ico-cut" d="M16 17v-6"></path></svg><span>Laporan</span></a><a class="wt-rail-a" href="WT-Zakat.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><circle class="hf-ico-fill" cx="8" cy="8" r="6"></circle><path class="hf-ico-fill" d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path class="hf-ico-cut" d="M7 6h1v4"></path><path class="hf-ico-cut" d="m16.71 13.88.7.71-2.82 2.82"></path></svg><span>Zakat</span></a><a class="wt-rail-a" href="WT-Lainnya.dc.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path class="hf-ico-fill" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg><span>Alat</span></a></nav></aside>
+<main class="wx-main"><div class="wx-in"><div class="wx-stick"><header class="wx-head"><div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;"><h1 class="title" style="margin: 0;">Import / Export</h1><p class="wx-sub">Pindahkan catatan lama sekaligus, atau unduh data Anda.</p></div><div class="wx-head-act"><div class="hf-toggle" role="group" style="display: inline-grid; grid-auto-flow: column;"><button type="button" aria-pressed="true" style="width: auto; height: 36px; padding: 0 16px;">Import</button><button type="button" aria-pressed="false" style="width: auto; height: 36px; padding: 0 16px;">Export</button></div></div></header></div><div class="wx-g"><div class="s12"><section class="hf-card" style="gap: 20px; padding: 24px;"><div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; line-height: 20px; font-weight: 600;">1</span><div style="display: flex; flex-direction: column; gap: 12px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Unduh template</span><span style="font-size: 14px; line-height: 20px; color: var(--ink-muted);">Anggota, lokasi, dan aset Anda sudah jadi pilihan.</span></div><button class="hf-btn hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>Template tabel Hartafolio</button></div></div><div style="height: 1px; background: var(--line); margin-left: 40px;"></div><div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; line-height: 20px; font-weight: 600;">2</span><div style="display: flex; flex-direction: column; gap: 12px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">Isi, lalu unggah</span><span style="font-size: 14px; line-height: 20px; color: var(--ink-muted);">Cukup sheet Transaksi. Simpan sebagai .xlsx.</span></div><div style="border: 1.5px dashed var(--line-strong); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; background: var(--surface-sunken);"><span style="width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex: none; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M8 13h2"></path><path d="M14 13h2"></path><path d="M8 17h2"></path><path d="M14 17h2"></path></svg></span><span style="font-size: 14px; line-height: 20px;">Tarik file .xlsx ke sini, atau</span><button class="hf-btn hf-btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M12 3v12"></path><path d="m17 8-5-5-5 5"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg>Pilih file template</button></div></div></div></section></div><div class="s12"><section class="hf-card" style="gap: 4px;"><div class="hf-card-head"><h2 class="hf-card-title">Kolom sheet Transaksi</h2></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Tanggal</span><span style="font-weight: 500; max-width: 60%;">Wajib</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Jenis</span><span style="font-weight: 500; max-width: 60%;">Saldo awal, Beli, Jual, Masuk, Keluar, Pindah, Zakat</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Anggota · Aset · Jumlah · Lokasi</span><span style="font-weight: 500; max-width: 60%;">Wajib</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Harga per satuan · Mata uang</span><span style="font-weight: 500; max-width: 60%;">Wajib untuk Beli dan Jual</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Biaya · Kurs</span><span style="font-weight: 500; max-width: 60%;">Opsional. Kurs kosong = rata-rata harian</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>Dibayar dengan · Lokasi bayar</span><span style="font-weight: 500; max-width: 60%;">Aset yang berkurang atau bertambah</span></div><div class="wx-kv" style="border-top: 1px solid var(--line);"><span>No. referensi</span><span style="font-weight: 500; max-width: 60%;">Opsional. Nomor order atau hash transaksi; mencegah dobel</span></div></section></div></div></div></main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1024,"height":928}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

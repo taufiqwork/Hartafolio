@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Setup awal · anggota</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+<script>try{parent.postMessage({hfScreen:location.pathname.split("/").pop(),title:document.title},"*")}catch(e){}</script>
+<script>/* Hartafolio motion: animasi keluar untuk sheet dan scrim yang dilepas dari DOM. Murni tampilan, tidak mengubah state. */
+(function () {
+  if (window.__hfMotion) return; window.__hfMotion = 1;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var T = 200;
+  function ghost(node, parent, next) {
+    if (!(node instanceof HTMLElement)) return;
+    var isSheet = node.getAttribute('role') === 'dialog' || node.classList.contains('hf-sheet');
+    var isScrim = node.classList.contains('hf-scrim');
+    var isMenu = node.classList.contains('hf-select-menu');
+    var isToast = node.classList.contains('hf-toast') || (node.getAttribute('role') === 'status' && (node.getAttribute('style') || '').indexOf('absolute') > -1);
+    if (!isSheet && !isScrim && !isMenu && !isToast) return;
+    if (!parent || !parent.isConnected) return;
+    var g = node.cloneNode(true);
+    g.setAttribute('aria-hidden', 'true'); g.style.pointerEvents = 'none';
+    g.removeAttribute('role');
+    g.style.animation = (isSheet ? 'hfSheetOut ' : isScrim ? 'hfScrimOut ' : isMenu ? 'hfMenuOut ' : 'hfToastOut ') + (isMenu ? 140 : T) + 'ms cubic-bezier(.4,0,1,1) both';
+    g.setAttribute('data-hf-ghost', '1');
+    parent.appendChild(g);
+    setTimeout(function () { g.remove(); }, T + 40);
+  }
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      m.removedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.getAttribute && n.getAttribute('data-hf-ghost')) return;
+        ghost(n, m.target, m.nextSibling);
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;" aria-hidden="true"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span></div>
+<div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">Langkah 2 dari 4 · Anggota</span><a class="hf-tap" href="01-Setup-1-Akun.dc.html" style="display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 20px; font-weight: 600; text-decoration: none; min-height: 32px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="m15 18-6-6 6-6"></path></svg>Kembali</a></div>
+</div></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 20px;">
+
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<h1 class="title" style="margin: 0;">Siapa saja anggota keluarganya?</h1>
+<p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Tambahkan Anda dan keluarga yang hartanya Anda kelola. Mereka tidak perlu punya akun.</p>
+</div>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+<section class="hf-card" style="padding: 24px 16px; gap: 8px; justify-items: center; text-align: center; box-shadow: none;" aria-label="Belum ada anggota">
+<span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.128a4 4 0 0 1 0 7.744"></path></svg></span>
+<span class="heading">Belum ada anggota</span>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Mulai dari Anda sendiri.</span>
+</section>
+</sc-if>
+<sc-if value="{{ hasMembers }}" hint-placeholder-val="{{ true }}">
+<div class="hf-card" style="padding: 4px 16px; gap: 0;" aria-label="Anggota">
+<sc-for list="{{ members }}" as="m" hint-placeholder-count="3"><div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span style="width: 40px; height: 40px; border-radius: 999px; background: {{ m.bg }}; color: {{ m.fg }}; display: grid; place-items: center; font-weight: 700;">{{ m.i }}</span><div class="hf-detail-main"><span class="hf-detail-name">{{ m.n }}</span><span class="hf-detail-meta">{{ m.r }}</span></div><span style="display: inline-flex; align-items: center; gap: 4px;"><sc-if value="{{ m.mgr }}" hint-placeholder-val="{{ false }}"><span class="hf-badge hf-badge-brand">Pengelola</span></sc-if><button type="button" aria-label="Ubah {{ m.n }}" onClick="{{ m.onEdit }}" style="width: 44px; height: 44px; margin: -4px -8px -4px 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg></button></span></div></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ showAdd }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-block" type="button" onClick="{{ openAdd }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg><span>{{ addLabel }}</span></button></sc-if>
+</main>
+<footer style="padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);">
+<sc-if value="{{ canNext }}" hint-placeholder-val="{{ true }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="{{ nextHref }}">Lanjut ke Lokasi</a></sc-if>
+<sc-if value="{{ cannot }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Tambah minimal 1 anggota</button></sc-if>
+<sc-if value="{{ canNext }}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">{{ foot }}</span></sc-if>
+</footer>
+
+<!-- ===== hfForm: form bersama tambah/ubah anggota, lokasi, aset manual (satu sumber) ===== -->
+<sc-if value="{{ fmOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ fmClose }}"></div>
+<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="{{ fmTitle }}">
+<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">{{ fmTitle }}</span><sc-if value="{{ fmHasDesc }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ fmDesc }}</span></sc-if></div>
+<sc-for list="{{ fmFields }}" as="f" hint-placeholder-count="2"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span>
+<sc-if value="{{ f.isIn }}" hint-placeholder-val="{{ true }}"><input class="hf-input" type="text" inputmode="{{ f.im }}" value="{{ f.v }}" placeholder="{{ f.ph }}" aria-label="{{ f.l }}" onInput="{{ f.onIn }}"></sc-if>
+<sc-if value="{{ f.isRo }}" hint-placeholder-val="{{ false }}"><span style="min-height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); font-size: 16px; line-height: 24px;">{{ f.v }}</span></sc-if>
+<sc-if value="{{ f.isSel }}" hint-placeholder-val="{{ false }}"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="{{ f.openStr }}" onClick="{{ f.open }}" style="min-height: 48px; font-size: 16px;"><span style="color: {{ f.vc }};">{{ f.sv }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<div class="hf-collapse" data-open="{{ f.openStr }}"><div class="hf-collapse-in"><div role="listbox" aria-label="{{ f.l }}" style="display: flex; flex-direction: column; gap: 2px; padding: 4px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-raised);">
+<sc-for list="{{ f.selOpts }}" as="o" hint-placeholder-count="5"><button type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}" style="font: inherit; display: grid; grid-template-columns: {{ o.cols }}; gap: 12px; align-items: center; min-height: 48px; padding: 4px {{ o.px }}; border: 0; border-radius: 8px; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;">
+<sc-if value="{{ o.hasIcon }}" hint-placeholder-val="{{ true }}"><span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: {{ o.ibg }}; color: {{ o.ifg }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><sc-for list="{{ o.icon }}" as="ic" hint-placeholder-count="2"><path d="{{ ic.d }}"></path></sc-for></svg></span></sc-if>
+<span style="display: flex; flex-direction: column; gap: 0; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><sc-if value="{{ o.hasSub }}" hint-placeholder-val="{{ true }}"><span class="caption" style="color: var(--ink-muted);">{{ o.sub }}</span></sc-if></span>
+<span style="color: var(--brand); display: grid; visibility: {{ o.vis }};"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M20 6 9 17l-5-5"></path></svg></span>
+</button></sc-for>
+</div></div></div></sc-if>
+<sc-if value="{{ f.isSeg }}" hint-placeholder-val="{{ false }}"><div class="hf-toggle" role="group" aria-label="{{ f.l }}" style="display: grid; grid-template-columns: {{ f.segCols }}; width: 100%; box-sizing: border-box;"><sc-for list="{{ f.opts }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ f.hint }}</span></sc-if>
+</div></sc-for>
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);">
+<sc-if value="{{ fmOk }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ fmSave }}">{{ fmPrimary }}</button></sc-if>
+<sc-if value="{{ fmNotOk }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled="">{{ fmPrimary }}</button></sc-if>
+<sc-if value="{{ fmHasSec }}" hint-placeholder-val="{{ false }}"><button class="{{ fmSecCls }}" type="button" onClick="{{ fmSecOn }}">{{ fmSec }}</button></sc-if>
+</div>
+</section></sc-if>
+<!-- ===== /hfForm ===== -->
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["kosong", "terisi", "hubungan"],"default":"terisi"},"$preview":{"width":390,"height":844}}'>
+/* ===== hfForm: satu sumber untuk form tambah/ubah anggota, lokasi, aset manual ===== */
+const HF_IC = {
+  exchange: ['M3 3v16a2 2 0 0 0 2 2h16', 'm19 9-5 5-4-4-3 3'],
+  wallet: ['M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z', 'M16.5 7.5h.01'],
+  sekuritas: ['M16 7h6v6', 'm22 7-8.5 8.5-5-5L2 17'],
+  app: ['M7 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z', 'M12 18h.01'],
+  coin: ['M13.744 17.736a6 6 0 1 1-7.48-7.48', 'M15 6h1v4', 'm6.134 14.768.866-.5 2 3.464', 'M22 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0'],
+  bank: ['M10 18v-7', 'M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z', 'M14 18v-7', 'M18 18v-7', 'M3 22h18', 'M6 18v-7'],
+  ewallet: ['M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1', 'M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'],
+  vault: ['M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2', 'M15.5 12a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0', 'M7 7h.01', 'M17 7h.01', 'M7 17h.01', 'M17 17h.01'],
+  btc: ['M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727'],
+  pie: ['M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z', 'M21.21 15.89A10 10 0 1 1 8 2.83'],
+  cash: ['M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2', 'M14 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0', 'M6 12h.01', 'M18 12h.01'],
+  home: ['M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8', 'M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'],
+  dots: ['M12 12h.01', 'M19 12h.01', 'M5 12h.01']
+};
+const HF_LOK = [['exchange', 'Exchange crypto', 'Binance, Indodax'], ['wallet', 'Wallet crypto', 'Ledger, MetaMask'], ['sekuritas', 'Sekuritas saham', 'Ajaib, IPOT'], ['app', 'Aplikasi investasi', 'Pluang, Bibit'], ['coin', 'Emas digital', 'Pegadaian, Treasury'], ['bank', 'Bank atau deposito', 'Rekening, deposito, safe deposit'], ['ewallet', 'Dompet digital', 'GoPay, OVO'], ['vault', 'Simpanan fisik', 'Brankas, laci, lemari di rumah'], ['dots', 'Lainnya', 'Tempat lain yang tidak ada di daftar']];
+const HF_LOK_GOLD = ['coin', 'vault'];
+const HF_REL = ['Pasangan', 'Anak', 'Orang tua', 'Saudara', 'Lainnya'];
+const HF_JA = [['coin', 'Emas', 'Zakat mal, nishob 85 g · logam mulia, perhiasan, token emas'], ['coin', 'Perak', 'Zakat mal, nishob 595 g · fisik maupun digital'], ['btc', 'Crypto', 'BTC, ETH, stablecoin'], ['sekuritas', 'Saham', 'Saham dan ETF'], ['pie', 'Reksa dana', 'Pasar uang, obligasi, saham'], ['cash', 'Mata uang', 'Tunai dan tabungan valas'], ['home', 'Properti', 'Rumah, tanah, ruko'], ['dots', 'Lainnya', 'Aset lain dengan harga sendiri']];
+const HF_MU = { 'Emas': ['gram', 'oz', 'token', 'lembar'], 'Perak': ['gram', 'oz', 'token', 'lembar'], 'Crypto': ['koin', 'token'], 'Saham': ['lot', 'lembar'], 'Reksa dana': ['unit'], 'Mata uang': ['nominal'], 'Properti': ['unit', 'm²'], 'Lainnya': ['unit', 'gram', 'lot', 'lembar'] };
+function hfForm(self, F) {
+  const off = { fmOn: false, fmTitle: '', fmHasDesc: false, fmDesc: '', fmFields: [], fmOk: false, fmNotOk: false, fmPrimary: '', fmSave: undefined, fmHasSec: false, fmSec: '', fmSecCls: '', fmSecOn: undefined, fmClose: undefined, pkOn: false, pkTitle: '', pkOpts: [], pkClose: undefined };
+  if (!F) return off;
+  const st = self.state || {};
+  const id = F.id || (F.k + '-' + F.mode);
+  const V = Object.assign({}, F.val || {}, (st.fmv && st.fmv.id === id) ? st.fmv.v : {});
+  const put = (patch, extra) => self.setState(Object.assign({ fmv: { id, v: Object.assign({}, V, patch) } }, extra || {}));
+  const pk = (st.fmPk && st.fmPk.id === id) ? st.fmPk.f : (F.pk || null);
+  const ubah = F.mode === 'ubah';
+  const B = { l: '', v: '', ph: '', im: 'text', onIn: undefined, isIn: false, isRo: false, isSel: false, isOpenSel: false, selOpts: [], k: '', isSeg: false, sv: '', vc: 'var(--ink)', open: undefined, openStr: 'false', opts: [], segCols: '', hint: '', hasHint: false };
+  const H = h => ({ hint: h || '', hasHint: !!h });
+  const inF = (key, l, ph, h, im) => Object.assign({}, B, { l, isIn: true, v: V[key] == null ? '' : V[key], ph: ph || '', im: im || 'text', onIn: e => put({ [key]: e.target.value }) }, H(h));
+  const roF = (l, v, h) => Object.assign({}, B, { l, isRo: true, v }, H(h));
+  const selF = (key, l, ph, h) => Object.assign({}, B, { l, isSel: true, k: key, sv: V[key] || ph, vc: V[key] ? 'var(--ink)' : 'var(--ink-muted)', open: () => self.setState({ fmPk: { id, f: pk === key ? null : key } }), openStr: String(pk === key) }, H(h));
+  const segF = (key, l, opts, cur, h) => Object.assign({}, B, { l, isSeg: true, segCols: 'repeat(' + opts.length + ', minmax(0, 1fr))', opts: opts.map(o => ({ l: o, pressed: String(o === cur), on: () => put({ [key]: o }) })) }, H(h));
+  let title = '', desc = '', primary = 'Simpan', fields = [], ok = true, pkTitle = '', pkList = [];
+  const nama = String(V.nama == null ? '' : V.nama).trim();
+  if (F.k === 'anggota') {
+    title = ubah ? 'Ubah ' + (F.name || nama) : (F.owner ? 'Tambah diri Anda' : 'Tambah anggota');
+    desc = ubah ? '' : (F.owner ? 'Anda pengelola akun ini. Anggota lain ditambahkan setelah ini.' : 'Mulai tanpa aset. Saldo awalnya bisa dicatat setelah ini.');
+    primary = ubah ? 'Simpan' : 'Tambah anggota';
+    fields = [inF('nama', 'Nama', 'Nama panggilan', ubah ? 'Mengganti nama tidak mengubah riwayat. Nama baru muncul di semua laporan.' : '')];
+    fields.push(F.owner ? roF('Hubungan dengan Anda', 'Diri sendiri', ubah ? 'Pengelola akun selalu Diri sendiri.' : '') : selF('rel', 'Hubungan dengan Anda', 'Pilih hubungan', ubah ? 'Hanya label. Tidak mengubah aset maupun riwayat.' : ''));
+    ok = !!nama && (F.owner || !!V.rel);
+    pkTitle = 'Hubungan dengan Anda';
+    pkList = HF_REL.map(l => ({ l, sub: '', icon: null, gold: false }));
+  } else if (F.k === 'lokasi') {
+    title = ubah ? 'Ubah ' + (F.name || nama) : 'Tambah lokasi';
+    desc = ubah ? '' : 'Lokasi baru langsung bisa dipilih saat mencatat transaksi.';
+    primary = ubah ? 'Simpan' : 'Tambah lokasi';
+    fields = [inF('nama', 'Nama lokasi', 'Contoh: Tokopedia Emas', ubah ? 'Mengganti nama tidak mengubah riwayat.' : ''), selF('jenis', 'Jenis', 'Pilih jenis lokasi', ubah ? 'Hanya pengelompokan. Bisa diubah kapan saja.' : '')];
+    ok = !!nama && !!V.jenis;
+    pkTitle = 'Jenis lokasi';
+    pkList = HF_LOK.map(([k, l, sub]) => ({ l, sub, icon: HF_IC[k], gold: HF_LOK_GOLD.includes(k) }));
+  } else {
+    const j = V.jenis || null, units = j ? HF_MU[j] : [], sat = units.includes(V.sat) ? V.sat : (units[0] || null);
+    const zak = j === 'Emas' || j === 'Perak';
+    title = F.title || 'Aset manual';
+    desc = F.desc || 'Untuk aset tanpa harga pasar, misalnya emas perhiasan. Harganya Anda isi sendiri.';
+    primary = F.primary || 'Tambah aset';
+    fields = [inF('nama', 'Nama', 'Misalnya Emas perhiasan'),
+      selF('jenis', 'Jenis', 'Pilih jenis aset', !j ? 'Menentukan cara aset ini dihitung untuk zakat mal.' : (zak ? j + ' dihitung untuk zakat mal dengan nishob ' + (j === 'Emas' ? '85' : '595') + ' g, fisik maupun digital.' : 'Tidak dihitung untuk zakat mal. Zakat hanya dari emas dan perak.'))];
+    if (j) fields.push(segF('sat', 'Satuan', units, sat, 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.'));
+    if (zak && sat !== 'gram') fields.push(inF('gram', 'Setara gram per satuan', 'Contoh: 31,1035', 'Untuk nishob zakat. Contoh: 1 oz atau 1 token PAXG = 31,1035 g.', 'decimal'));
+    fields.push(inF('harga', 'Harga per satuan (Rp)', '0', 'Harga per ' + (sat || 'satuan') + ' hari ini. Bisa diubah kapan saja.', 'decimal'));
+    ok = !!nama && !!j;
+    pkTitle = 'Jenis aset';
+    pkList = HF_JA.map(([k, l, sub]) => ({ l, sub, icon: HF_IC[k], gold: k === 'coin' }));
+    V.sat = sat;
+  }
+  if (F.title) title = F.title;
+  if (F.desc !== undefined) desc = F.desc;
+  if (F.primary) primary = F.primary;
+  const pkKey = F.k === 'anggota' ? 'rel' : 'jenis';
+  const selOpts = pkList.map(o => {
+    const on = V[pkKey] === o.l;
+    return { l: o.l, sub: o.sub, hasSub: !!o.sub, hasIcon: !!o.icon, icon: (o.icon || []).map(d => ({ d })), ibg: o.gold ? 'var(--gold-soft)' : 'var(--brand-soft)', ifg: o.gold ? 'var(--gold)' : 'var(--brand)',
+      cols: o.icon ? '36px minmax(0, 1fr) 20px' : 'minmax(0, 1fr) 20px', px: o.icon ? '8px' : '12px',
+      sel: String(on), vis: on ? 'visible' : 'hidden', bg: on ? 'var(--brand-soft)' : 'transparent',
+      on: () => put(pkKey === 'jenis' && F.k === 'aset' ? { jenis: o.l, sat: null } : { [pkKey]: o.l }, { fmPk: { id, f: null } }) };
+  });
+  /* Pilihan terbuka INLINE di bawah field (bukan sheet kedua di atas sheet form). */
+  fields = fields.map(f => f.isSel ? Object.assign({}, f, { selOpts }) : f);
+  return {
+    fmOn: true, fmTitle: title, fmHasDesc: !!desc, fmDesc: desc, fmFields: fields,
+    fmOk: ok, fmNotOk: !ok, fmPrimary: primary,
+    fmSave: () => { if (F.onSave) F.onSave(Object.assign({}, V, { nama })); },
+    fmHasSec: !!F.sec, fmSec: F.sec ? F.sec.l : '', fmSecCls: 'hf-btn hf-btn-ghost hf-btn-block' + (F.sec && F.sec.danger ? ' hf-btn-danger' : ''), fmSecOn: F.sec ? F.sec.on : undefined,
+    fmClose: F.onClose,
+    pkOn: false, pkTitle, pkClose: undefined, pkOpts: []
+  };
+}
+/* ===== /hfForm ===== */
+
+
+
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.state || {};
+    const PRE = [['Azlan', 'Diri sendiri'], ['M. Yahya', 'Anak'], ['Al Ghafiqi', 'Anak'], ['Yumna', 'Anak']];
+    const mulai = this.props.mulai ?? 'terisi';
+    const n = st.n ?? (mulai === 'kosong' ? 0 : 3);
+    const form = st.form !== undefined ? st.form : (mulai === 'hubungan' ? { mode: 'tambah' } : null);
+    const nx = PRE[Math.min(n, 3)];
+    const close = () => this.setState({ form: null, fmPk: null });
+    const F = !form ? null : (form.mode === 'tambah'
+      ? { id: 'setup-agt-tambah-' + n, k: 'anggota', mode: 'tambah', owner: n === 0, pk: mulai === 'hubungan' && st.form === undefined ? 'rel' : null,
+          val: { nama: n === 0 ? 'Azlan' : nx[0], rel: n === 0 ? 'Diri sendiri' : (mulai === 'hubungan' ? 'Anak' : '') },
+          onSave: () => this.setState({ n: Math.min(n + 1, 4), form: null, fmv: null, fmPk: null }), onClose: close }
+      : { id: 'setup-agt-ubah-' + form.i, k: 'anggota', mode: 'ubah', owner: form.i === 0, name: PRE[form.i][0],
+          val: { nama: PRE[form.i][0], rel: PRE[form.i][1] },
+          onSave: close, onClose: close,
+          sec: form.i === 0 ? null : { l: 'Hapus anggota', danger: true, on: () => this.setState({ n: Math.max(n - 1, 0), form: null }) } });
+    const members = PRE.slice(0, n).map(([nm, r], i) => ({ n: nm, r, i: nm[0], mgr: i === 0, bg: i === 0 ? 'var(--brand-soft)' : 'var(--surface-sunken)', fg: i === 0 ? 'var(--brand)' : 'var(--ink-muted)', onEdit: () => this.setState({ form: { mode: 'ubah', i } }) }));
+    return {
+      theme: this.props.theme ?? 'light',
+      members, hasMembers: n > 0, empty: n === 0, showAdd: n < 4,
+      addLabel: n === 0 ? 'Tambah diri Anda' : 'Tambah anggota',
+      openAdd: () => this.setState({ form: { mode: 'tambah' }, fmPk: null }),
+      canNext: n > 0, cannot: n === 0,
+      nextHref: mulai === 'kosong' ? '01-Setup-3a-Kosong.dc.html' : '01-Setup-3-Lokasi.dc.html',
+      foot: n + ' anggota · bisa ditambah kapan saja',
+      ...hfForm(this, F)
+    };
+  }
+}
+</script>
+</body>
+</html>

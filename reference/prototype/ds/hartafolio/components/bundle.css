@@ -1,0 +1,322 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+/* Base for previews and consumers */
+body { margin: 0; font-family: var(--font-sans); background: var(--surface); color: var(--ink); font-size: 15px; line-height: 24px; }
+.hf-num { font-variant-numeric: tabular-nums; }
+.hf-stack { display: grid; gap: var(--space-3); padding: var(--space-4); }
+.hf-row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; padding: var(--space-4); }
+.hf-card { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: var(--space-4); display: grid; gap: var(--space-3); }
+.hf-card-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.hf-card-title { font-size: 16px; line-height: 24px; font-weight: 600; margin: 0; }
+:where(.hf-btn, .hf-chip, .hf-toggle button, .hf-select-btn, .hf-select-opt, .hf-nav a, .hf-attn a, .hf-detail[role="button"]):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Button */
+.hf-btn { font: inherit; font-size: 15px; font-weight: 600; min-height: 48px; padding: 0 var(--space-5); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); }
+.hf-btn-primary { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.hf-btn-ghost { background: transparent; border-color: transparent; color: var(--brand); padding: 0 var(--space-3); }
+.hf-btn[disabled] { background: var(--surface-sunken); border-color: var(--surface-sunken); color: var(--ink-muted); cursor: not-allowed; }
+.hf-btn-block { width: 100%; }
+
+/* Chip */
+.hf-chip { font: inherit; font-size: 13px; line-height: 20px; font-weight: 500; min-height: 32px; padding: 0 var(--space-3); display: inline-flex; align-items: center; gap: var(--space-1); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.hf-chip svg { width: 16px; height: 16px; flex: none; color: var(--ink-muted); }
+.hf-chip[aria-pressed="true"] svg { color: inherit; }
+.hf-chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+
+/* Icon toggle (mode switch) */
+.hf-toggle { display: inline-flex; padding: 2px; gap: 2px; border-radius: var(--radius-sm); background: var(--surface-sunken); border: 1px solid var(--line); }
+.hf-toggle button { width: 36px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; }
+.hf-toggle button[aria-pressed="true"] { background: var(--surface-raised); color: var(--brand); box-shadow: var(--shadow-card); }
+.hf-toggle svg { width: 18px; height: 18px; }
+
+/* Select (dropdown) */
+.hf-select { position: relative; }
+.hf-select-btn { font: inherit; width: 100%; min-height: 44px; display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); font-size: 15px; font-weight: 500; cursor: pointer; }
+.hf-select-btn svg { width: 18px; height: 18px; flex: none; color: var(--ink-muted); }
+.hf-select-menu { position: absolute; left: 0; right: 0; top: calc(100% + var(--space-1)); z-index: 5; margin: 0; padding: var(--space-1); list-style: none; background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-menu); }
+.hf-select-opt { font: inherit; width: 100%; min-height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 var(--space-3); border: 0; border-radius: 8px; background: transparent; color: var(--ink); font-size: 15px; text-align: left; cursor: pointer; }
+.hf-select-opt[aria-selected="true"] { background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+.hf-select-opt .hf-sub { font-size: 12px; color: var(--ink-muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+
+/* Total header */
+.hf-total { display: grid; grid-template-columns: minmax(0,1fr) 112px; gap: var(--space-3); align-items: end; }
+.hf-total-label { font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted); }
+.hf-total-amount { font-size: 32px; line-height: 38px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.hf-total-sub { font-size: 13px; line-height: 20px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.hf-spark { display: grid; gap: 2px; color: inherit; text-decoration: none; }
+.hf-spark svg { width: 100%; height: 48px; display: block; }
+.hf-spark .area { fill: var(--brand-soft); }
+.hf-spark .line { fill: none; stroke: var(--brand); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+.hf-spark .dot { fill: var(--surface-raised); stroke: var(--brand); stroke-width: 2; }
+.hf-spark-axis { display: flex; justify-content: space-between; font-size: 11px; line-height: 16px; color: var(--ink-muted); }
+
+/* Delta (gain / loss) */
+.hf-delta { font-size: 12px; line-height: 18px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hf-delta-up { color: var(--gain); }
+.hf-delta-down { color: var(--loss); }
+.hf-delta-flat { color: var(--ink-muted); font-weight: 500; }
+
+/* Donut */
+.hf-donut { position: relative; width: 168px; height: 168px; justify-self: center; }
+.hf-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.hf-donut circle { fill: none; stroke-width: 22; }
+.hf-donut .s1 { stroke: var(--chart-1); } .hf-donut .s2 { stroke: var(--chart-2); } .hf-donut .s3 { stroke: var(--chart-3); } .hf-donut .s4 { stroke: var(--chart-4); } .hf-donut .s5 { stroke: var(--chart-5); }
+.hf-donut-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.hf-donut-center span:first-child { font-size: 12px; line-height: 18px; color: var(--ink-muted); }
+.hf-donut-center span:last-child { font-size: 17px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Detail row */
+.hf-details { display: grid; }
+.hf-detail { display: grid; grid-template-columns: 12px minmax(0,1fr) auto; gap: var(--space-2) var(--space-3); align-items: start; padding: calc(var(--space-3) + 2px) 0; border-top: 1px solid var(--line); }
+.hf-detail:first-child { border-top: 0; }
+.hf-swatch { width: 12px; height: 12px; border-radius: 3px; margin-top: 5px; }
+.hf-detail-main { display: grid; gap: var(--space-1); min-width: 0; }
+.hf-detail-name { font-size: 15px; line-height: 22px; font-weight: 600; }
+.hf-detail-meta { font-size: 12px; line-height: 18px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hf-detail-figs { display: grid; gap: var(--space-1); justify-items: end; }
+.hf-detail-amount { font-size: 15px; line-height: 22px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hf-share { font-size: 12px; line-height: 18px; color: var(--ink-muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* Badge */
+.hf-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; line-height: 18px; font-weight: 600; letter-spacing: 0.02em; padding: 1px 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); color: var(--ink-muted); }
+.hf-badge-brand { background: var(--brand-soft); color: var(--brand); }
+.hf-badge-gold { background: var(--gold-soft); color: var(--gold); }
+.hf-badge-loss { background: var(--loss-soft); color: var(--loss); }
+
+/* Attention list */
+.hf-attn { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
+.hf-attn-head { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) var(--space-4); font-size: 15px; font-weight: 600; }
+.hf-attn-count { font-size: 12px; font-weight: 700; box-sizing: border-box; min-width: 22px; height: 22px; padding: 0 5px; line-height: 1; border-radius: var(--radius-pill); background: var(--gold-fill); color: var(--on-gold); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+.hf-attn-item { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--line); }
+.hf-attn-item.is-urgent { background: var(--gold-soft); }
+.hf-attn-title { font-size: 14px; line-height: 22px; font-weight: 600; }
+.hf-attn-desc { font-size: 12px; line-height: 18px; color: var(--ink-muted); }
+.hf-attn a { font-size: 13px; font-weight: 600; color: var(--brand); text-decoration: none; padding: var(--space-2) 0; }
+
+/* Bottom navigation */
+.hf-nav { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; background: var(--surface-raised); border-top: 1px solid var(--line); padding: var(--space-2) var(--space-1) calc(var(--space-2) + var(--safe-bottom, env(safe-area-inset-bottom, 0px))); }
+.hf-nav a { display: grid; justify-items: center; gap: 2px; font-size: 11px; line-height: 16px; font-weight: 500; color: var(--ink-muted); text-decoration: none; padding: var(--space-1) 0; }
+.hf-nav a svg { width: 24px; height: 24px; }
+/* Active tab: duotone. Outer shape filled brand-soft, every line stays brand. */
+.hf-nav a[aria-current="page"] .hf-ico-fill { fill: var(--brand-soft); }
+.hf-nav a[aria-current="page"] .hf-ico-cut { stroke: currentColor; }
+.hf-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
+.hf-nav .hf-add { box-sizing: border-box; padding: 0; width: 52px; height: 52px; flex: none; border-radius: var(--radius-pill); background: var(--brand); color: var(--on-brand); display: grid; place-items: center; justify-self: center; margin-top: -18px; box-shadow: 0 6px 16px color-mix(in srgb, var(--brand) 38%, transparent), 0 2px 4px color-mix(in srgb, var(--brand) 24%, transparent); }
+.hf-nav .hf-add svg { width: 24px; height: 24px; }
+
+/* Native select with a Lucide chevron */
+.hf-field-select { position: relative; display: block; }
+.hf-field-select select { font: inherit; font-size: 15px; width: 100%; min-height: 44px; padding: 0 44px 0 var(--space-3); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); color: var(--ink); appearance: none; -webkit-appearance: none; cursor: pointer; }
+.hf-field-select svg { position: absolute; right: var(--space-3); top: 50%; width: 18px; height: 18px; margin-top: -9px; color: var(--ink-muted); pointer-events: none; }
+
+/* Scroll areas: no fixed scrollbar gutter; phones show their own floating indicator while scrolling */
+.hf-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+/* Children of a scrolling column keep their natural height instead of being squeezed */
+.hf-scroll > * { flex-shrink: 0; }
+.hf-scroll::-webkit-scrollbar { display: none; }
+
+/* Device safe areas: set --safe-top / --safe-bottom on a mockup frame; real devices fall back to env() */
+.hf-safe-top { padding-top: var(--safe-top, env(safe-area-inset-top, 0px)); }
+
+/* Progress track: visible on white cards and on tinted surfaces */
+.hf-track { height: 8px; border-radius: var(--radius-pill); background: var(--line); overflow: hidden; }
+.hf-track > span { display: block; height: 100%; border-radius: var(--radius-pill); }
+
+/* Motion and finish (12 Nov 2026). Short, calm, never bouncy. All of it switches off under reduced motion. */
+.hf-btn, .hf-chip, .hf-toggle button, .hf-select-btn, .hf-select-opt, .hf-nav a { transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .12s ease; }
+.hf-btn:active, .hf-chip:active, .hf-select-opt:active, .hf-nav .hf-add:active { transform: scale(.97); }
+.hf-btn-primary:not([disabled]) { background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 86%, #fff) 0%, var(--brand) 100%); }
+.hf-nav .hf-add { background: linear-gradient(160deg, color-mix(in srgb, var(--brand) 78%, #fff) 0%, var(--brand) 70%); }
+.hf-attn-item.is-urgent { background: linear-gradient(90deg, var(--gold-soft) 0%, color-mix(in srgb, var(--gold-soft) 45%, var(--surface-raised)) 100%); }
+.hf-track > span { transform-origin: left center; animation: hfGrowX .9s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hfGrowX { from { transform: scaleX(0); } }
+[role="dialog"] { animation: hfSheetIn .32s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hfSheetIn { from { transform: translateY(24px); opacity: 0; } }
+[role="status"][style*="position: absolute"] { animation: hfToastIn .3s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hfToastIn { from { transform: translateY(12px); opacity: 0; } }
+.hf-select-menu { animation: hfMenuIn .16s ease-out both; transform-origin: top; }
+@keyframes hfMenuIn { from { transform: scaleY(.96); opacity: 0; } }
+input::placeholder, textarea::placeholder { font-weight: 400; color: var(--ink-muted); opacity: .75; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* Components v2 (12 Nov 2026): one spec per component. Inline styles on screens may only add layout (grid placement, width), never size, padding or radius. */
+/* Type additions to the scale: body-sm 14/20 and amount-lg 24/32, amount-md 20/28. Input text is 16/24 so iOS never zooms. */
+.body-sm { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.amount-lg { font-family: var(--font-sans); font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.amount-md { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Button: two sizes. md 48 for every action in a footer or a card; sm 36 for header actions, row actions and toasts. */
+.hf-btn { box-sizing: border-box; min-height: 48px; padding: 0 20px; gap: 8px; border-radius: var(--radius-md); font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; }
+.hf-btn svg { width: 20px; height: 20px; flex: none; }
+.hf-btn-sm { min-height: 36px; padding: 0 12px; gap: 6px; border-radius: 10px; font-size: 14px; line-height: 20px; }
+.hf-btn-sm svg { width: 16px; height: 16px; }
+.hf-btn-ghost:not(.hf-btn-block) { min-height: 36px; padding: 0; font-size: 14px; line-height: 20px; }
+.hf-btn-ghost:not(.hf-btn-block) svg { width: 16px; height: 16px; }
+.hf-btn-danger { color: var(--loss); }
+.hf-btn-on-ink { background: transparent; border-color: var(--gold-fill); color: var(--gold-fill); }
+.hf-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: var(--space-2); }
+.hf-btn { white-space: nowrap; }
+
+/* Segmented control: outer radius 12, inset 3, inner radius 9, so the corners stay concentric. */
+.hf-toggle { border-radius: var(--radius-md); padding: 3px; gap: 3px; }
+.hf-toggle button { border-radius: 9px; font-size: 14px; line-height: 20px; font-weight: 600; }
+
+/* Input: one field for text, numbers, dates and pickers. */
+.hf-input { font: inherit; font-size: 16px; line-height: 24px; box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-raised); color: var(--ink); }
+.hf-input-num { font-weight: 600; font-variant-numeric: tabular-nums; }
+button.hf-input { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); text-align: left; cursor: pointer; }
+.hf-input[aria-invalid="true"] { border-color: var(--loss); }
+.hf-select-btn, .hf-field-select select { min-height: 48px; font-size: 16px; }
+
+/* Bottom sheet and scrim. */
+.hf-scrim { position: absolute; inset: 0; z-index: 20; background: color-mix(in srgb, var(--ink) 42%, transparent); }
+.hf-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 21; max-height: 88%; box-sizing: border-box; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-2) var(--space-4) calc(var(--safe-bottom, 0px) + var(--space-3)); background: var(--surface-raised); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-menu); }
+.hf-sheet-flush { padding: var(--space-2) 0 0; gap: 0; overflow: hidden; }
+.hf-sheet-handle { align-self: center; flex: none; width: 40px; height: 4px; border-radius: var(--radius-pill); background: var(--line-strong); }
+
+/* Toast: always 16 px above the bottom bar or the sticky footer (--toast-bottom is set by the screen). */
+.hf-toast { position: absolute; left: var(--space-4); right: var(--space-4); bottom: var(--toast-bottom, calc(var(--safe-bottom, 0px) + 16px)); z-index: 30; box-sizing: border-box; min-height: 52px; display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); border-radius: var(--radius-md); background: var(--ink); color: var(--surface); font-size: 14px; line-height: 20px; }
+.hf-toast .hf-btn { flex: none; }
+
+/* Dashed "add" chip: one size (32), plus icon, muted. */
+.hf-chip-add { background: transparent; border-style: dashed; border-color: var(--line-strong); color: var(--ink-muted); }
+.hf-toast { animation: hfToastIn .3s cubic-bezier(.2,.8,.2,1) both; }
+
+/* Button states (13 Nov 2026). Text colour is locked per variant for every state, so a page-level `a:hover` can never turn label text dark on a green button. Hover only where a pointer exists; touch uses :active. */
+.hf-btn, .hf-btn:visited { text-decoration: none; }
+.hf-btn-primary.hf-btn:visited, .hf-btn-primary.hf-btn:focus, .hf-btn-primary.hf-btn:active { color: var(--on-brand); }
+@media (hover: hover) {
+  .hf-btn.hf-btn-primary:not([disabled]):hover { background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 94%, #000) 0%, color-mix(in srgb, var(--brand) 82%, #000) 100%); border-color: color-mix(in srgb, var(--brand) 82%, #000); color: var(--on-brand); }
+  [data-theme="dark"] .hf-btn.hf-btn-primary:not([disabled]):hover { background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 92%, #fff) 0%, color-mix(in srgb, var(--brand) 80%, #fff) 100%); border-color: color-mix(in srgb, var(--brand) 80%, #fff); }
+  .hf-btn:not(.hf-btn-primary):not(.hf-btn-ghost):not(.hf-btn-on-ink):not(.hf-btn-danger):not(.hf-btn-gold):not(.hf-btn-loss):not(.hf-btn-gold-line):not([disabled]):hover { background: var(--surface-sunken); border-color: var(--ink-muted); color: var(--ink); }
+  .hf-btn.hf-btn-ghost:not([disabled]):hover { background: var(--brand-soft); color: var(--brand); }
+  .hf-btn.hf-btn-danger:not([disabled]):hover { background: var(--loss-soft); color: var(--loss); }
+  .hf-btn.hf-btn-danger:not(.hf-btn-ghost):not([disabled]):hover { border-color: var(--loss); }
+  .hf-btn.hf-btn-on-ink:not([disabled]):hover { background: color-mix(in srgb, var(--gold-fill) 16%, transparent); color: var(--gold-fill); }
+  .hf-chip:not([aria-pressed="true"]):hover { background: var(--surface-sunken); }
+}
+.hf-btn:not(.hf-btn-primary):not(.hf-btn-ghost):not(.hf-btn-on-ink):not(.hf-btn-danger):not(.hf-btn-gold):not(.hf-btn-loss):not(.hf-btn-gold-line):not([disabled]):active { background: color-mix(in srgb, var(--surface-sunken) 75%, var(--line)); border-color: var(--ink); color: var(--ink); }
+.hf-btn.hf-btn-ghost:not([disabled]):active { background: color-mix(in srgb, var(--brand-soft) 75%, var(--brand)); color: var(--brand); }
+.hf-btn.hf-btn-danger:not([disabled]):active { background: color-mix(in srgb, var(--loss-soft) 75%, var(--loss)); color: var(--loss); }
+.hf-btn.hf-btn-on-ink:not([disabled]):active { background: color-mix(in srgb, var(--gold-fill) 28%, transparent); color: var(--gold-fill); }
+
+/* Gold action (attention items, "Lengkapi"). Same state logic as primary; text stays dark on gold in every state. */
+.hf-btn.hf-btn-gold { background: var(--gold-fill); border-color: var(--gold-fill); color: var(--on-gold); }
+@media (hover: hover) { .hf-btn.hf-btn-gold:not([disabled]):hover { background: color-mix(in srgb, var(--gold-fill) 88%, #000); border-color: color-mix(in srgb, var(--gold-fill) 88%, #000); color: var(--on-gold); } }
+
+/* Round 3 (13 Nov 2026) */
+:root, [data-theme="light"] { --on-loss: #ffffff; --chart-3: #4fa883; --chart-5: #a8946a; --chart-more: #8a9690; }
+[data-theme="dark"] { --on-loss: #2a0d04; --chart-3: #2f9873; --chart-5: #8d7a52; --chart-more: #6f7d76; }
+.hf-donut .s6 { stroke: var(--chart-more); }
+
+/* Filled buttons for tinted attention cards: gold (needs action today) and loss (overdue). Gradient like primary, text locked. */
+.hf-btn.hf-btn-gold { background: linear-gradient(180deg, color-mix(in srgb, var(--gold-fill) 82%, #fff) 0%, var(--gold-fill) 100%); border-color: color-mix(in srgb, var(--gold-fill) 84%, #000); color: var(--on-gold); }
+.hf-btn.hf-btn-loss { background: linear-gradient(180deg, color-mix(in srgb, var(--loss) 86%, #fff) 0%, var(--loss) 100%); border-color: color-mix(in srgb, var(--loss) 84%, #000); color: var(--on-loss); }
+@media (hover: hover) {
+  .hf-btn.hf-btn-gold:not([disabled]):hover { background: linear-gradient(180deg, color-mix(in srgb, var(--gold-fill) 92%, #000) 0%, color-mix(in srgb, var(--gold-fill) 80%, #000) 100%); border-color: color-mix(in srgb, var(--gold-fill) 72%, #000); color: var(--on-gold); }
+  .hf-btn.hf-btn-loss:not([disabled]):hover { background: linear-gradient(180deg, color-mix(in srgb, var(--loss) 92%, #000) 0%, color-mix(in srgb, var(--loss) 80%, #000) 100%); border-color: color-mix(in srgb, var(--loss) 72%, #000); color: var(--on-loss); }
+}
+
+/* Icon button (header bell). 44 touch target, active while the panel it opens is open. */
+.hf-iconbtn { position: relative; box-sizing: border-box; width: 44px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface-raised); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; font: inherit; text-decoration: none; }
+.hf-iconbtn svg { width: 22px; height: 22px; }
+@media (hover: hover) { .hf-iconbtn:hover { background: var(--surface-sunken); border-color: var(--ink-muted); color: var(--ink); } }
+.hf-iconbtn:active { background: var(--surface-sunken); border-color: var(--ink-muted); transform: scale(.96); }
+.hf-iconbtn[aria-expanded="true"] { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.hf-iconbtn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.hf-countbadge { position: absolute; top: -5px; right: -5px; box-sizing: border-box; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; border: 2px solid var(--surface); background: var(--gold-fill); color: var(--on-gold); font-size: 11px; line-height: 16px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+.hf-countbadge.is-loss { background: var(--loss); color: var(--on-loss); }
+
+/* Notification row (inside the "Perlu perhatian" sheet): whole row is the link. */
+.hf-notif { display: grid; grid-template-columns: 36px minmax(0, 1fr) 20px; gap: 12px; align-items: center; min-height: 56px; box-sizing: border-box; padding: 8px 12px 8px 8px; border-radius: 12px; color: var(--ink); text-decoration: none; }
+.hf-notif:hover { color: var(--ink); }
+@media (hover: hover) { .hf-notif:hover { background: var(--surface-sunken); } }
+.hf-notif:active { background: var(--surface-sunken); }
+.hf-notif:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.hf-notif-tile { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--gold-soft); color: var(--gold); }
+.hf-notif-tile.is-loss { background: var(--loss-soft); color: var(--loss); }
+.hf-notif-tile.is-info { background: var(--surface-sunken); color: var(--ink-muted); }
+.hf-notif-title { font-size: 15px; line-height: 22px; font-weight: 600; }
+.hf-notif-desc { font-size: 12px; line-height: 18px; color: var(--ink-muted); }
+
+/* Round 3b: hollow buttons and text links never get a background; feedback is underline + colour */
+.hf-btn.hf-btn-ghost:not([disabled]):active,
+.hf-btn.hf-btn-ghost.hf-btn-danger:not([disabled]):active { background: transparent; text-decoration: underline; text-underline-offset: 3px; color: color-mix(in srgb, var(--brand) 78%, var(--ink)); }
+.hf-btn.hf-btn-ghost.hf-btn-danger:not([disabled]):active { color: color-mix(in srgb, var(--loss) 78%, var(--ink)); }
+@media (hover: hover) {
+  .hf-btn.hf-btn-ghost:not([disabled]):hover,
+  .hf-btn.hf-btn-ghost.hf-btn-danger:not([disabled]):hover { background: transparent; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* Round 4 */
+:root, [data-theme="light"] { --badge-gold: #8a5f0c; --on-badge-gold: #ffffff; }
+[data-theme="dark"] { --badge-gold: #e2b65a; --on-badge-gold: #1d1405; }
+.hf-countbadge { top: -7px; right: -7px; min-width: 22px; height: 22px; padding: 0 5px; background: var(--badge-gold); color: var(--on-badge-gold); font-size: 12px; line-height: 18px; }
+.hf-countbadge.is-loss { background: var(--loss); color: var(--on-loss); }
+.hf-attn-count { background: var(--badge-gold); color: var(--on-badge-gold); }
+.hf-btn.hf-btn-gold-line { background: var(--surface-raised); border-color: var(--gold); color: var(--ink); }
+@media (hover: hover) { .hf-btn.hf-btn-gold-line:not([disabled]):hover { background: color-mix(in srgb, var(--gold-soft) 70%, var(--surface-raised)); border-color: var(--gold); color: var(--ink); } }
+.hf-btn.hf-btn-gold-line:not([disabled]):active { background: var(--gold-soft); border-color: var(--gold); color: var(--ink); }
+
+/* Round 7: hit area. Visual size may stay compact, touch target is always >= 44px (pseudo-element extends it). */
+.hf-btn-sm, .hf-btn-ghost:not(.hf-btn-block), .hf-chip, .hf-tap { position: relative; }
+.hf-btn-sm::after, .hf-btn-ghost:not(.hf-btn-block)::after, .hf-chip::after, .hf-tap::after { content: ""; position: absolute; top: 50%; left: -6px; right: -6px; height: 44px; transform: translateY(-50%); }
+
+/* Round 8: sticky header. Judul, segmented control, atau filter utama tetap di atas saat konten bergulir. */
+.hf-head { flex: none; position: relative; z-index: 8; display: flex; flex-direction: column; gap: var(--space-2); padding: calc(var(--safe-top, 0px) + 4px) var(--space-4) var(--space-3); background: var(--surface); border-bottom: 1px solid var(--line); }
+
+/* Round 9: tekan tombol tanpa berkedip.
+   Tombol terisi memakai gradien (background-image) yang tidak bisa dianimasikan; mengganti warna latar saat :active
+   membuat gradien "loncat" sementara warna teks/border memudar, dan itulah yang terlihat berkedip.
+   Sekarang: latar tidak diganti saat ditekan, cukup redup (filter) + skala; tanpa transisi saat ditekan. */
+.hf-btn, .hf-chip, .hf-toggle button, .hf-select-btn, .hf-select-opt, .hf-nav a, .hf-tap, a { -webkit-tap-highlight-color: transparent; }
+.hf-btn:is(.hf-btn-primary, .hf-btn-gold, .hf-btn-loss):not([disabled]):active { filter: brightness(.9); }
+[data-theme="dark"] .hf-btn:is(.hf-btn-primary, .hf-btn-gold, .hf-btn-loss):not([disabled]):active { filter: brightness(1.12); }
+.hf-btn:active, .hf-chip:active, .hf-select-opt:active, .hf-toggle button:active { transition-duration: 0s; }
+/* Round 9: aturan pemisah baris `a+a` bocor ke bilah navigasi (garis di atas Aset, Riwayat, Alat). Navigasi tidak memakai pemisah. */
+nav a, .hf-nav a, .hf-nav > a + a { border-top: 0; }
+/* Round 9: menu dropdown yang hidup di dalam header lengket ikut tertutup scrim (z 20) karena header z 8. Saat menu terbuka, header naik di atas scrim. */
+.hf-head:has(.hf-select-menu, [role="listbox"], [role="menu"]) { z-index: 22; }
+
+/* Round 10: gerak halus untuk buka/tutup. Tinggi daftar pilihan beranimasi (grid 0fr -> 1fr), chevron berputar, scrim memudar. Tenang, tidak memantul. */
+.hf-collapse { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; margin-top: -8px; transition: grid-template-rows .28s cubic-bezier(.2,.8,.2,1), opacity .2s ease, margin-top .28s cubic-bezier(.2,.8,.2,1), visibility 0s linear .28s; }
+.hf-collapse[data-open="true"] { grid-template-rows: 1fr; opacity: 1; visibility: visible; margin-top: 0; transition-delay: 0s; }
+.hf-collapse-in { min-height: 0; overflow: hidden; }
+.hf-select-btn svg { transition: transform .24s cubic-bezier(.2,.8,.2,1); }
+.hf-select-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.hf-scrim { animation: hfScrimIn .24s ease-out both; }
+@keyframes hfScrimIn { from { opacity: 0; } }
+@keyframes hfSheetOut { to { transform: translateY(24px); opacity: 0; } }
+@keyframes hfScrimOut { to { opacity: 0; } }
+@keyframes hfMenuOut { to { transform: scaleY(.96); opacity: 0; } }
+@keyframes hfToastOut { to { transform: translateY(12px); opacity: 0; } }
+/* Isi layar memudar masuk saat pindah layar; header dan menu bawah tetap diam. */
+main.hf-scroll { animation: hfPageIn .24s cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes hfPageIn { from { opacity: 0; transform: translateY(6px); } }
+
+/* Round 11 · judul layar setinggi tombol aksi.
+   Judul di .hf-head tingginya 36px, sama dengan .hf-btn-sm (Kelola, Riwayat haul, Export).
+   Dengan begitu baris judul tidak berubah tinggi saat ada atau tidak ada tombol di sebelahnya,
+   dan jarak ke tombol Kembali di atasnya selalu sama. */
+.hf-head .title { min-height: 36px; display: flex; align-items: center; }
+
+/* Round 13 · jarak header sticky ke konten: garis bawah header selalu 16px dari konten pertama.
+   Di dalam header, elemen terakhir berjarak 12px dari garis (padding-bottom header). */
+.hf-scroll{padding-top:16px}
+
+/* Round 14 · angka dalam badge: satu digit = lingkaran 22px (bukan lonjong), digit di tengah. */
+.hf-attn-count, .hf-countbadge { font-variant-numeric: tabular-nums; }
+/* Baris judul sheet + badge: tepi kanan badge sejajar dengan tepi kanan ikon chevron di baris daftar (padding baris 12px), tepi kiri sejajar ikon (8px). */
+.hf-sheet-headrow { display: flex; justify-content: space-between; align-items: center; min-height: 24px; padding: 0 12px 6px 8px; }
+/* Pemilih tanggal dan jam (kalender + roda), dipakai Catat dan Piutang */
+.hf-day{font:inherit;font-size:15px;font-variant-numeric:tabular-nums;height:40px;border:0;border-radius:12px;background:transparent;color:var(--ink);cursor:pointer}.hf-day[aria-pressed="true"]{background:var(--brand);color:var(--on-brand);font-weight:700}.hf-day[disabled]{color:var(--line-strong);cursor:default}
+.hf-wheel{font:inherit;font-size:16px;font-variant-numeric:tabular-nums;height:34px;border:0;background:transparent;color:var(--ink-muted);cursor:pointer;border-radius:10px}.hf-wheel[aria-pressed="true"]{color:var(--ink);font-weight:700;background:var(--surface-raised);box-shadow:var(--shadow-card)}
+
+/* Baris tautan redup di kartu total Beranda (Round 15): "Termasuk piutang Rp X" */
+.hf-total-link{display:inline-flex;align-items:center;gap:2px;align-self:flex-start;min-height:24px;font-size:13px;line-height:20px;color:var(--ink-muted);font-variant-numeric:tabular-nums;text-decoration:none}.hf-total-link:hover{color:var(--ink)}
+.hf-total-with-link{align-items:stretch}
+.hf-total-with-link .hf-spark{grid-template-rows:minmax(0,1fr) auto;padding-top:24px}
+.hf-total-with-link .hf-spark>span:first-child{height:100%;min-height:48px}
+.hf-total-with-link .hf-spark svg{height:100%}
+.hf-total-with-link .hf-spark-axis{min-height:24px;align-items:center}

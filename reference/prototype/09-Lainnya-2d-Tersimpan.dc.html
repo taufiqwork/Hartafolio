@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Alat · transaksi tersimpan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+<script>try{parent.postMessage({hfScreen:location.pathname.split("/").pop(),title:document.title},"*")}catch(e){}</script>
+<script>/* Hartafolio motion: animasi keluar untuk sheet dan scrim yang dilepas dari DOM. Murni tampilan, tidak mengubah state. */
+(function () {
+  if (window.__hfMotion) return; window.__hfMotion = 1;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var T = 200;
+  function ghost(node, parent, next) {
+    if (!(node instanceof HTMLElement)) return;
+    var isSheet = node.getAttribute('role') === 'dialog' || node.classList.contains('hf-sheet');
+    var isScrim = node.classList.contains('hf-scrim');
+    var isMenu = node.classList.contains('hf-select-menu');
+    var isToast = node.classList.contains('hf-toast') || (node.getAttribute('role') === 'status' && (node.getAttribute('style') || '').indexOf('absolute') > -1);
+    if (!isSheet && !isScrim && !isMenu && !isToast) return;
+    if (!parent || !parent.isConnected) return;
+    var g = node.cloneNode(true);
+    g.setAttribute('aria-hidden', 'true'); g.style.pointerEvents = 'none';
+    g.removeAttribute('role');
+    g.style.animation = (isSheet ? 'hfSheetOut ' : isScrim ? 'hfScrimOut ' : isMenu ? 'hfMenuOut ' : 'hfToastOut ') + (isMenu ? 140 : T) + 'ms cubic-bezier(.4,0,1,1) both';
+    g.setAttribute('data-hf-ghost', '1');
+    parent.appendChild(g);
+    setTimeout(function () { g.remove(); }, T + 40);
+  }
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      m.removedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.getAttribute && n.getAttribute('data-hf-ghost')) return;
+        ghost(n, m.target, m.nextSibling);
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+.hf-row-btn{font:inherit;color:inherit;background:transparent;border:0;text-align:left;cursor:pointer;width:100%}
+.hf-row-btn+.hf-row-btn,.hf-row-btn+a,a+.hf-row-btn,a+a{border-top:1px solid var(--line)}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="position: relative; width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><h1 class="title" style="margin: 0;">{{ title }}</h1></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px {{ mainPb }}; display: flex; flex-direction: column; gap: 16px;">
+
+<sc-if value="{{ hasIntro }}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--ink-muted);">{{ intro }}</p></sc-if>
+<sc-if value="{{ hasNotice }}" hint-placeholder-val="{{ false }}"><div role="status" style="font-size: 14px; line-height: 20px; padding: 12px 16px; border-radius: 12px; background: {{ noticeBg }}; color: var(--ink);">{{ noticeTxt }}</div></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+<a href="07-Laporan.dc.html" class="hf-card" style="text-decoration: none; color: var(--ink); gap: 8px; padding: 14px 12px;"><span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg></span><span class="label" style="font-weight: 600;">Laporan</span></a>
+<a href="08-Zakat.dc.html" class="hf-card" style="text-decoration: none; color: var(--ink); gap: 8px; padding: 14px 12px;"><span style="width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; background: var(--gold-soft); color: var(--gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><circle cx="8" cy="8" r="6"></circle><path d="M18.09 10.37A6 6 0 1 1 10.34 18"></path><path d="M7 6h1v4"></path><path d="m16.71 13.88.7.71-2.82 2.82"></path></svg></span><span class="label" style="font-weight: 600;">Zakat mal</span></a>
+</div>
+
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+<section style="display: flex; flex-direction: column; gap: 8px;" aria-label="{{ g.t }}">
+<sc-if value="{{ g.hasT }}" hint-placeholder-val="{{ true }}"><span class="label" style="color: var(--ink-muted);">{{ g.t }}</span></sc-if>
+<div class="hf-card" style="padding: 0 16px; gap: 0;">
+<sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="3"><div style="border-top: {{ r.bt }};"><sc-if value="{{ r.isLink }}" hint-placeholder-val="{{ false }}"><a href="{{ r.href }}" class="hf-detail" style="align-items: center; grid-template-columns: minmax(0, 1fr) auto 16px; text-decoration: none; color: var(--ink); min-height: 56px; box-sizing: border-box; border: 0;"><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 500; color: {{ r.tone }};">{{ r.a }}</span><sc-if value="{{ r.hasSub }}" hint-placeholder-val="{{ true }}"><span class="caption" style="color: var(--ink-muted);">{{ r.sub }}</span></sc-if></span><span class="{{ r.bcls }}">{{ r.b }}</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></a></sc-if><sc-if value="{{ r.isBtn }}" hint-placeholder-val="{{ true }}"><button type="button" class="hf-detail" onClick="{{ r.on }}" style="font: inherit; color: var(--ink); background: transparent; text-align: left; cursor: pointer; width: 100%; align-items: center; grid-template-columns: minmax(0, 1fr) auto 16px; min-height: 56px; box-sizing: border-box; border: 0;"><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 500; color: {{ r.tone }};">{{ r.a }}</span><sc-if value="{{ r.hasSub }}" hint-placeholder-val="{{ true }}"><span class="caption" style="color: var(--ink-muted);">{{ r.sub }}</span></sc-if></span><span class="{{ r.bcls }}">{{ r.b }}</span><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></button></sc-if></div></sc-for>
+</div>
+</section>
+</sc-for>
+
+<sc-if value="{{ hasFoot }}" hint-placeholder-val="{{ false }}"><p class="caption" style="margin: 0; color: var(--ink-muted); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;"><svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg><span>Hartafolio · data tersimpan di Google Sheet milik Anda</span></p></sc-if>
+</main>
+<sc-if value="{{ hasFooter }}" hint-placeholder-val="{{ false }}"><footer style="flex: none; padding: 12px 16px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface-raised); border-top: 1px solid var(--line);"><sc-if value="{{ hasCta }}" hint-placeholder-val="{{ false }}"><sc-if value="{{ ctaLink }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="{{ ctaHref }}">{{ ctaLabel }}</a></sc-if><sc-if value="{{ ctaBtn }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ ctaOn }}">{{ ctaLabel }}</button></sc-if></sc-if></footer></sc-if>
+<nav class="hf-nav" aria-label="Menu utama">
+<a href="Main.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path class="hf-ico-cut" d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path></svg>Beranda</a>
+<a href="03-Aset.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="hf-ico-fill" width="7" height="7" x="3" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="14" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="3" y="14" rx="1"></rect></svg>Aset</a>
+<a class="hf-add" href="04-Catat-3c-Dari-Lainnya.dc.html" aria-label="Catat transaksi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></a>
+<a href="05-Riwayat.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path class="hf-ico-cut" d="M14 8H8"></path><path class="hf-ico-cut" d="M16 12H8"></path><path class="hf-ico-cut" d="M13 16H8"></path></svg>Riwayat</a>
+<a href="09-Lainnya.dc.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>Alat</a>
+</nav>
+<sc-if value="{{ sheetOn }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ closeSheet }}"></div>
+<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="{{ sTitle }}">
+<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>
+<div style="flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 12px; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">{{ sTitle }}</span><sc-if value="{{ sHasDesc }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ sDesc }}</span></sc-if></div>
+<sc-if value="{{ sPick }}" hint-placeholder-val="{{ false }}"><label style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); flex: none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input type="search" value="{{ pkQ }}" placeholder="{{ pkPh }}" aria-label="{{ pkPh }}" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); line-height: 24px;"></label>
+<div style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; flex: none; margin: 0 -16px; padding: 0 16px;"><sc-for list="{{ pkChips }}" as="p" hint-placeholder-count="5"><button class="hf-chip" type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.on }}" style="flex: none;">{{ p.l }}</button></sc-for></div>
+<div style="display: flex; flex-direction: column;"><sc-for list="{{ pkSecs }}" as="sc" hint-placeholder-count="1"><span class="label" style="color: var(--ink-muted); padding: 8px 0 4px;">{{ sc.t }}</span><sc-for list="{{ sc.items }}" as="k" hint-placeholder-count="4"><button type="button" onClick="{{ k.on }}" style="font: inherit; color: var(--ink); text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; min-height: 48px; border: 0; border-top: 1px solid var(--line); background: transparent; cursor: pointer;"><span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; font-weight: 600; line-height: 22px;">{{ k.n }}</span><span class="caption" style="color: var(--ink-muted);">{{ k.f }}</span></span><span class="hf-badge">{{ k.c }}</span></button></sc-for></sc-for></div></sc-if>
+<sc-for list="{{ sFields }}" as="f" hint-placeholder-count="1"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span>
+<sc-if value="{{ f.isIn }}" hint-placeholder-val="{{ true }}"><input class="hf-input hf-input-num" type="text" value="{{ f.v }}" aria-label="{{ f.l }}"></sc-if>
+<sc-if value="{{ f.isRo }}" hint-placeholder-val="{{ false }}"><span style="min-height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); font-size: 16px; line-height: 24px;">{{ f.v }}</span></sc-if>
+<sc-if value="{{ f.isChips }}" hint-placeholder-val="{{ false }}"><div role="group" aria-label="{{ f.l }}" style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 2px;"><sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="6"><button class="hf-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="flex: none;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.isSeg }}" hint-placeholder-val="{{ false }}"><div class="hf-toggle" role="group" aria-label="{{ f.l }}" style="display: grid; grid-template-columns: {{ f.segCols }}; width: 100%; box-sizing: border-box;"><sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ f.hint }}</span></sc-if></div></sc-for>
+<sc-if value="{{ sHasOpts }}" hint-placeholder-val="{{ false }}"><div role="radiogroup" aria-label="{{ sOptLabel }}" style="display: flex; flex-direction: column; gap: 8px;"><sc-if value="{{ sHasOptLabel }}" hint-placeholder-val="{{ false }}"><span class="label" style="color: var(--ink-muted);">{{ sOptLabel }}</span></sc-if>
+<sc-for list="{{ sOpts }}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="font: inherit; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 16px; border-radius: 12px; border: 1.5px solid {{ o.bd }}; background: {{ o.bg }}; color: var(--ink); text-align: left; cursor: pointer;"><span style="width: 22px; height: 22px; min-width: 22px; flex: none; aspect-ratio: 1 / 1; margin-top: 1px; border-radius: 999px; border: 2px solid {{ o.ring }}; box-sizing: border-box; display: grid; place-items: center;"><span style="width: 10px; height: 10px; border-radius: 999px; background: {{ o.dot }};"></span></span><span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ o.l }}</span><sc-if value="{{ o.hasD }}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ o.d }}</span></sc-if></span></button></sc-for></div></sc-if>
+<sc-for list="{{ sFields2 }}" as="f" hint-placeholder-count="1"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ f.l }}</span>
+<sc-if value="{{ f.isIn }}" hint-placeholder-val="{{ true }}"><input class="hf-input hf-input-num" type="text" value="{{ f.v }}" aria-label="{{ f.l }}"></sc-if>
+<sc-if value="{{ f.isRo }}" hint-placeholder-val="{{ false }}"><span style="min-height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); font-size: 16px; line-height: 24px;">{{ f.v }}</span></sc-if>
+<sc-if value="{{ f.isChips }}" hint-placeholder-val="{{ false }}"><div role="group" aria-label="{{ f.l }}" style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 2px;"><sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="6"><button class="hf-chip" type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="flex: none;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.isSeg }}" hint-placeholder-val="{{ false }}"><div class="hf-toggle" role="group" aria-label="{{ f.l }}" style="display: grid; grid-template-columns: {{ f.segCols }}; width: 100%; box-sizing: border-box;"><sc-for list="{{ f.chips }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">{{ c.l }}</button></sc-for></div></sc-if>
+<sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: var(--ink-muted);">{{ f.hint }}</span></sc-if></div></sc-for>
+<sc-if value="{{ sIsPwa }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 342 132" width="100%" role="img" aria-label="Letak ikon Bagikan di Safari iPhone dan menu titik tiga di Chrome Android" style="display: block;"><g style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 11px;"><text x="8" y="16" style="fill: var(--ink); font-weight: 600;">Safari (iPhone)</text><text x="8" y="30" style="fill: var(--ink-muted);">bilah bawah</text><rect x="8" y="48" width="154" height="44" rx="14" style="fill: var(--surface-sunken);"/><g style="fill: none; stroke: var(--ink-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;"><path d="M27 64l-6 6 6 6"/><path d="M50 64l6 6-6 6"/><path d="M93 76v-14M88 66l5-5 5 5M88 70h-3v10h16V70h-3"/><path d="M121 62h10a2 2 0 0 1 2 2v12H123a2 2 0 0 1-2-2z"/><rect x="141" y="62" width="10" height="12" rx="2"/></g><circle cx="93" cy="70" r="17" style="fill: none; stroke: var(--brand); stroke-width: 2;"/><path d="M93 76v-14M88 66l5-5 5 5M88 70h-3v10h16V70h-3" style="fill: none; stroke: var(--brand); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;"/><text x="93" y="112" text-anchor="middle" style="fill: var(--brand); font-weight: 600;">Bagikan</text><text x="180" y="16" style="fill: var(--ink); font-weight: 600;">Chrome (Android)</text><text x="180" y="30" style="fill: var(--ink-muted);">pojok kanan atas</text><rect x="180" y="48" width="154" height="44" rx="14" style="fill: var(--surface-sunken);"/><rect x="188" y="56" width="98" height="28" rx="14" style="fill: var(--surface-raised);"/><text x="200" y="74" style="fill: var(--ink-muted);">hartafolio.app</text><circle cx="312" cy="70" r="17" style="fill: none; stroke: var(--brand); stroke-width: 2;"/><g style="fill: var(--brand);"><circle cx="312" cy="62" r="2.2"/><circle cx="312" cy="70" r="2.2"/><circle cx="312" cy="78" r="2.2"/></g><text x="312" y="112" text-anchor="middle" style="fill: var(--brand); font-weight: 600;">Menu</text></g></svg></sc-if>
+<sc-if value="{{ sHasLines }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden;"><sc-for list="{{ sLines }}" as="l" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: {{ l.c }}; gap: 12px; padding: 12px; border-top: 1px solid var(--line);"><sc-if value="{{ l.hasH }}" hint-placeholder-val="{{ true }}"><span class="label" style="color: var(--ink);">{{ l.h }}</span></sc-if><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">{{ l.t }}</span></div></sc-for></div></sc-if>
+</div>
+<div style="flex: none; padding: 10px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised);"><sc-if value="{{ sPick }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="caption" style="color: var(--ink-muted);">{{ pkNote }}</span><button class="hf-btn hf-btn-ghost" type="button" onClick="{{ pkLinkOn }}" style="align-self: flex-start;">{{ pkLink }}</button></div></sc-if><sc-if value="{{ pIsBtn }}" hint-placeholder-val="{{ true }}"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" onClick="{{ pOn }}" style="{{ pStyle }}">{{ pLabel }}</button></sc-if><sc-if value="{{ pIsLink }}" hint-placeholder-val="{{ false }}"><a class="hf-btn hf-btn-primary hf-btn-block" href="{{ pHref }}" style="{{ pStyle }}">{{ pLabel }}</a></sc-if>
+<sc-if value="{{ sHasSec }}" hint-placeholder-val="{{ false }}"><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" onClick="{{ secOn }}" style="color: {{ secColor }};">{{ secLabel }}</button></sc-if>
+</div>
+</section></sc-if>
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: {{ toastB }};">{{ toast }}</div></sc-if>
+<sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 83px);"><span>{{ savedToast }}</span><sc-if value="{{ savedAct }}" hint-placeholder-val="{{ true }}"><a class="hf-btn hf-btn-sm hf-btn-on-ink" href="05-Riwayat-2b-Detail.dc.html" style="flex: none;">Lihat</a></sc-if></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["default","sheet-mata-uang","sheet-pwa"],"default":"tersimpan"},"$preview":{"width":390,"height":844}}'>
+function CFG(m) {
+  const R = (a, b, href, bcls, sheet) => ({ a, b, href, bcls, sheet });
+  const S0 = { 'sheet-mata-uang': 'mata-uang', 'sheet-pwa': 'pwa' };
+  return {
+    title: 'Alat', foot: true, sheet0: S0[m] || null,
+    groups: [
+      { t: 'Pasar', rows: [R('Harga terkini', 'Live', '11-Harga.dc.html', 'hf-badge hf-badge-brand')] },
+      { t: 'Catatan', rows: [R('Piutang', '4 aktif', '18-Piutang.dc.html')] },
+      { t: 'Data', rows: [R('Kelola aset', '1 perlu harga', '14-Aset-2h-Dari-Lainnya.dc.html', 'hf-badge hf-badge-loss'), R('Anggota', '4', '12-Anggota.dc.html'), R('Lokasi', '4', '13-Lokasi.dc.html')] },
+      { t: 'Perhitungan', rows: [R('Mata uang utama / kedua', 'IDR / USD', null, null, 'mata-uang'), R('Nishob emas / perak', '85 / 595 g', '16-Nishob.dc.html'), R('Pengingat zakat', 'Aktif', '08-Zakat-2i-Pengingat.dc.html', 'hf-badge hf-badge-brand')] },
+      { t: 'Data & akun', rows: [R('Import / Export', '', '10-Import.dc.html'), R('Google Sheet', 'Terhubung', '17-Google-Sheet.dc.html', 'hf-badge hf-badge-brand'), R('Pasang di layar HP', '', null, null, 'pwa')] }
+    ],
+    sheets: {
+      'mata-uang': () => ({ title: 'Mata uang', desc: 'Mata uang utama dipakai untuk semua total. Mata uang kedua muncul pada tombol "Tampilkan dalam USD".', fields: [{ l: 'Mata uang utama', v: 'IDR · Rupiah', kind: 'readonly', hint: 'Mengganti mata uang utama menghitung ulang semua nilai bulanan.' }], optLabel: 'Mata uang kedua', opts: [{ l: 'USD · Dolar AS' }, { l: 'SGD · Dolar Singapura' }, { l: 'EUR · Euro' }, { l: 'GBP · Poundsterling' }, { l: 'JPY · Yen Jepang' }, { l: 'Tanpa mata uang kedua' }], optDef: 0, primary: { l: 'Simpan', toast: 'Mata uang kedua disimpan' } }),
+      'pwa': () => ({ title: 'Pasang di layar HP', desc: 'Buka Hartafolio langsung dari layar utama, tanpa mengetik alamat.', lines: [['iPhone (Safari)', 'Buka alamat Hartafolio di Safari, ketuk Bagikan di bilah bawah, gulir, lalu pilih "Tambahkan ke Layar Utama".'], ['Android (Chrome)', 'Buka alamat Hartafolio di Chrome, ketuk menu ⋮ di pojok kanan atas, lalu pilih "Instal aplikasi".'], ['Data Anda', 'Tetap di Google Sheet Anda. Memasang tidak mengubah apa pun.']], primary: { l: 'Mengerti' } })
+    }
+  };
+}
+class Component extends DCLogic {
+  renderVals() {
+    const __t = ({'tersimpan': ['Beli PAXG 0,0225 tersimpan', true]})[this.props.mulai] || null;
+    return Object.assign({}, this.renderVals0(), { hasSaved: !!__t, savedToast: __t ? __t[0] : '', savedAct: !!(__t && __t[1]) });
+  }
+  renderVals0() {
+    const st = this.state || {};
+    const mulai = this.props.mulai ?? 'tersimpan';
+    const C = CFG(mulai);
+    const sheetId = st.sheet === undefined ? (C.sheet0 || null) : st.sheet;
+    const sel = st.sel === undefined ? (C.sel0 || 0) : st.sel;
+    const toast = st.toast === undefined ? (C.toast0 || '') : st.toast;
+    const S0 = sheetId && C.sheets && C.sheets[sheetId] ? C.sheets[sheetId](sel, undefined) : null;
+    const oKey = 'opt_' + sheetId;
+    const optI = st[oKey] === undefined ? ((S0 && S0.optDef) || 0) : st[oKey];
+    const S = sheetId && C.sheets && C.sheets[sheetId] ? C.sheets[sheetId](sel, optI) : null;
+    const hasFooter = !!C.cta;
+    const tones = { brand: 'var(--brand-soft)', gold: 'var(--gold-soft)', loss: 'var(--loss-soft)' };
+    const P = (S && S.primary) || { l: 'Simpan' };
+    const Q = S && S.secondary;
+    const fval = {};
+    const fmapAll = fs => fs.map(f => [f, fmap1(f)]).filter(([f]) => !f.when || f.when(fval)).map(x => x[1]);
+    const fmap1 = f => {
+      const key = 'fv_' + sheetId + '_' + f.l;
+      const opts = f.optsBy ? (f.optsBy[fval[f.by]] || f.optsBy._) : (f.opts || []);
+      let cur = st[key] === undefined ? f.v : st[key];
+      if ((f.kind === 'chips' || f.kind === 'seg') && !opts.includes(cur)) cur = opts[0];
+      fval[f.l] = cur;
+      const h = typeof f.hint === 'function' ? f.hint(cur, fval) : f.hint;
+      return { l: f.l, v: cur, isIn: !f.kind, isRo: f.kind === 'readonly', isChips: f.kind === 'chips', isSeg: f.kind === 'seg', segCols: 'repeat(' + opts.length + ', minmax(0, 1fr))', chips: opts.map(o => ({ l: o, pressed: String(cur === o), on: () => this.setState({ [key]: o }) })), hint: h || '', hasHint: !!h };
+    };
+    const go = (id, t, s2) => () => this.setState({ sheet: id, toast: t || '', sel: s2 === undefined ? sel : s2 });
+    const PK = S && S.picker;
+    const pkCat = st['pk_' + sheetId] || 'Semua';
+    const pkVals = PK ? {
+      sPick: true, pkPh: PK.ph, pkQ: PK.q || '', pkNote: PK.note, pkLink: PK.link.l, pkLinkOn: go(PK.link.next, ''),
+      pkChips: PK.chips.map(l => ({ l, pressed: String(pkCat === l), on: () => this.setState({ ['pk_' + sheetId]: l }) })),
+      pkSecs: PK.sections.map(sc => ({ t: sc.t, items: sc.items.filter(k => pkCat === 'Semua' || k.c === pkCat).map(k => ({ n: k.n, f: k.f, c: k.c, on: go(k.next === undefined ? null : k.next, k.toast || '') })) })).filter(sc => sc.items.length)
+    } : { sPick: false, pkPh: '', pkQ: '', pkNote: '', pkLink: '', pkLinkOn: undefined, pkChips: [], pkSecs: [] };
+    return {
+      theme: this.props.theme ?? 'light',
+      title: C.title, hasIntro: !!C.intro, intro: C.intro || '',
+      hasNotice: !!C.notice, noticeTxt: C.notice ? C.notice.t : '', noticeBg: C.notice ? tones[C.notice.tone || 'brand'] : '',
+      groups: C.groups.map(g => ({ t: g.t || '', hasT: !!g.t, rows: g.rows.map((r, i) => ({ a: r.a, sub: r.sub || '', hasSub: !!r.sub, b: r.b || '', bcls: r.b ? (r.bcls || 'hf-share') : 'hf-share', href: r.href || '#', isLink: !!r.href, isBtn: !r.href, tone: r.danger ? 'var(--loss)' : 'var(--ink)', bt: i ? '1px solid var(--line)' : 'none', on: go(r.sheet || null, '', r.sel || 0) })) })),
+      hasCta: !!C.cta, ctaLabel: C.cta ? C.cta.l : '', ctaLink: !!(C.cta && C.cta.href), ctaBtn: !!(C.cta && !C.cta.href), ctaHref: C.cta && C.cta.href ? C.cta.href : '#', ctaOn: C.cta ? go(C.cta.sheet || null, '', 0) : undefined,
+      hasFoot: !!C.foot, hasFooter, mainPb: hasFooter || true ? '24px' : 'calc(var(--safe-bottom) + 24px)', toastB: hasFooter || true ? 'calc(var(--safe-bottom) + 89px)' : 'calc(var(--safe-bottom) + 16px)',
+      ...pkVals,
+      sheetOn: !!S, closeSheet: go(null, ''),
+      sTitle: S ? S.title : '', sHasDesc: !!(S && S.desc), sDesc: S && S.desc ? S.desc : '',
+      sFields: fmapAll((S && S.fields) || []),
+      sFields2: fmapAll((S && S.fields2) || []),
+      sHasOpts: !!(S && S.opts), sOptLabel: S && S.optLabel ? S.optLabel : '', sHasOptLabel: !!(S && S.optLabel),
+      sOpts: ((S && S.opts) || []).map((o, i) => ({ l: o.l, d: o.d || '', hasD: !!o.d, on: String(optI === i), bd: optI === i ? 'var(--brand)' : 'var(--line)', bg: optI === i ? 'var(--brand-soft)' : 'var(--surface-raised)', ring: optI === i ? 'var(--brand)' : 'var(--line-strong)', dot: optI === i ? 'var(--brand)' : 'transparent', pick: () => this.setState({ [oKey]: i }) })),
+      sIsPwa: sheetId === 'pwa', sHasLines: !!(S && S.lines), sLines: ((S && S.lines) || []).map(l => Array.isArray(l) ? ({ h: l[0], hasH: true, t: l[1], c: '84px minmax(0, 1fr)' }) : ({ h: '', hasH: false, t: l, c: 'minmax(0, 1fr)' })),
+      pLabel: P.l, pIsBtn: !P.href && !(S && S.picker), pIsLink: !!P.href, pHref: P.href || '#', pOn: go(P.next || null, P.toast || '', P.sel), pStyle: P.danger ? 'background: var(--loss); border-color: var(--loss); color: var(--surface);' : '',
+      sHasSec: !!Q, secLabel: Q ? Q.l : '', secColor: Q && Q.danger ? 'var(--loss)' : 'var(--brand)', secOn: Q ? go(Q.next || null, Q.toast || '', Q.sel) : undefined,
+      hasToast: !!toast, toast,
+      ...(C.extra ? C.extra.call(this, st, mulai, sel) : {})
+    };
+  }
+}
+</script>
+</body>
+</html>
