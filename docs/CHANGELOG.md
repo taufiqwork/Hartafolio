@@ -13,3 +13,23 @@
 ## 21 Nov 2026 · Perbaikan font dan teks
 - Font Plus Jakarta Sans (400 sampai 800, subset latin, SIL OFL) kini ditanam sebagai data URI oleh `tools/build.mjs` dari `src/web/fonts/`. Tidak lagi memakai Google Fonts: tampil walau jaringan terbatas dan di dalam sandbox HtmlService. Lisensi di `src/web/fonts/OFL-LICENSE.txt`.
 - `docs/design/design-system.md` diperbarui ke v82 (menu Alat menggantikan Lainnya di teks).
+
+## 21 Nov 2026 · Tahap 2 dan 3 (struktur Sheet dan engine)
+**Tahap 2: struktur Sheet**
+- `src/engine/schema.js`: 11 tab, urutan kolom, tipe, daftar pilihan, setelan awal (`versi_skema=1`, `haul_hari=354` ditambahkan), pemeriksaan header (kolom tambahan di kanan boleh), konversi baris ⇄ objek, ID baru (PM-001, TX-20261103-0007) tanpa pemakaian ulang.
+- `src/engine/catalog.js`: 13 aset bawaan (Emas, Perak, PAXG, XAUT, BTC, ETH, USDT, USD, IDR, BBRI, BBCA, ANTM, GFI). Zakat hanya Emas dan Perak; token emas memakai `gram_per_unit` 31,1035.
+- `src/gas/Setup.js`: menu Hartafolio › Siapkan sheet (membuat tab, header terkunci, format teks untuk tanggal dan ID, setelan awal, katalog; aman dijalankan ulang). `src/gas/Repo.js`: baca/tulis baris dengan pemeriksaan header, `apiState`, `apiTransaksiTambah` (idempoten menurut `trx_id`, validasi saldo, kunci dokumen), `apiTransaksiUbah` (jenis dan ID tidak berubah, hapus = status dihapus).
+
+**Tahap 3: engine (JS murni, diuji)**
+- `ledger.js`: saldo per anggota × aset × lokasi dari Transaksi aktif; Pindah satu baris (dua sisi dihitung engine); bayar dengan aset seperti swap; validasi (saldo tidak boleh minus, ID ganda, kurs wajib untuk mata uang asing); modal rata-rata dan untung terealisasi (Saldo awal tanpa harga = modal tidak diketahui; modal ikut pindah dan ikut pinjaman).
+- `kurs.js`: hari ini live, tanggal lampau rata-rata harian, manual menang, dibekukan saat simpan.
+- `valuation.js`: harga ke Rupiah, tiga tingkat total (anggota, pengelola, salinan), rincian per kelas, piutang masuk total pemberi, untung/rugi hanya bagian bermodal.
+- `zakat.js`: emas dan perak per anggota (nisab, haul 354 hari, turun di bawah nisab mengosongkan, bayar menutup haul dan haul baru mulai di tanggal bayar hanya bila sisa ≥ nisab, status berjalan/jatuh tempo/terlambat/dibayar, aset yang dipinjamkan tidak dihitung).
+- `piutang.js`: jadwal turunan (akhir bulan mundur), cicilan paling lama dilunasi dulu, status terlambat dihitung, jenis penerimaan, pembuat transaksi Pinjamkan dan penerimaan.
+- `queue.js`: antrean offline dan dedup idempoten sisi server.
+- `tests/`: 44 uji (termasuk lapisan Apps Script dengan Sheet tiruan di memori).
+
+**Keputusan dan bentrok untuk dibawa ke sesi desain**
+- Pindah disimpan **satu baris** (sesuai rekomendasi). Jadwal piutang **diturunkan** (tanpa tab Piutang_Jadwal). Biaya Pindah = transaksi Keluar sendiri (sesuai DATA_MODEL dan design-system.md), bukan kolom di baris Pindah.
+- Bentrok: DATA_MODEL.md menulis `kelas` = 5 nilai, sedangkan form "Aset manual" di mockup/design-system memakai 8 Jenis (Emas, Perak, Crypto, Saham, Reksa dana, Mata uang, Properti, Lainnya). Mengikuti mockup. Satuan mengikuti form: gram, oz, koin, token, lot, lembar, unit, nominal, m².
+- Bentrok: v1 menamai kolom `mata_uang`/`kurs_usdidr`; v2 memakai `harga_mata_uang`/`kurs`. Mengikuti v2. Aset mendapat kolom `status` (aktif|tersembunyi|dihapus) menggantikan `aktif`; `mata_uang_harga` ditambahkan (GFI dalam USD).
