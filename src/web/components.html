@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uji komponen · Hartafolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- @css -->
+<style>
+.t-wrap { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 28px; }
+.t-h { margin: 0 0 10px; font: 600 12px/16px var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
+.t-box { position: relative; height: 150px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.t-theme { display: flex; gap: 8px; }
+.t-wrap .hf-row, .t-wrap .hf-stack { padding: 0; }
+</style>
+</head>
+<body>
+<div class="t-wrap">
+  <div>
+    <h1 class="title" style="margin:0 0 4px;font-size:24px;line-height:32px;font-weight:700">Uji komponen</h1>
+    <p style="margin:0 0 12px;color:var(--ink-muted);font-size:14px;line-height:20px">Halaman pengembang untuk membandingkan komponen dengan Design System. Bukan layar aplikasi.</p>
+    <div class="t-theme"><button class="hf-chip" type="button" id="tLight" aria-pressed="true">Terang</button><button class="hf-chip" type="button" id="tDark" aria-pressed="false">Gelap</button></div>
+  </div>
+
+  <section><h2 class="t-h">Tombol</h2>
+    <div class="hf-stack" style="padding:0">
+      <button class="hf-btn hf-btn-primary hf-btn-block" type="button"><i data-icon="plus"></i>Catat transaksi</button>
+      <button class="hf-btn hf-btn-block" type="button">Batal</button>
+      <button class="hf-btn hf-btn-gold hf-btn-block" type="button">Catat pembayaran zakat</button>
+      <button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Simpan</button>
+      <div class="hf-row"><button class="hf-btn hf-btn-sm" type="button"><i data-icon="plus"></i>Catat</button><button class="hf-btn hf-btn-ghost" type="button">Lihat</button><button class="hf-btn hf-btn-ghost hf-btn-danger" type="button">Hapus</button></div>
+    </div>
+  </section>
+
+  <section><h2 class="t-h">Chip dan toggle</h2>
+    <div class="hf-row" style="margin-bottom:12px"><button class="hf-chip" type="button" aria-pressed="true">Semua</button><button class="hf-chip" type="button" aria-pressed="false">Emas</button><button class="hf-chip" type="button" aria-pressed="false">Perak</button><button class="hf-chip hf-chip-add" type="button">Aset lain…</button></div>
+    <div class="hf-toggle" role="group" aria-label="Tampilkan"><button type="button" aria-label="Per anggota" aria-pressed="true"><i data-icon="user"></i></button><button type="button" aria-label="Per jenis aset" aria-pressed="false"><i data-icon="grid"></i></button></div>
+  </section>
+
+  <section><h2 class="t-h">Select dan input</h2>
+    <div class="hf-stack" style="padding:0">
+      <div class="hf-select"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false"><span>Semua anggota</span><i data-icon="chevronDown"></i></button></div>
+      <input class="hf-input hf-input-num" value="2.380.000" aria-label="Jumlah">
+      <input class="hf-input" placeholder="Catatan (opsional)" aria-label="Catatan">
+      <input class="hf-input" value="Kurang dari saldo" aria-invalid="true" aria-label="Contoh salah">
+    </div>
+  </section>
+
+  <section><h2 class="t-h">Kartu total</h2>
+    <section class="hf-total" aria-label="Total harta">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <span class="hf-total-label">Total semua anggota</span>
+        <span class="hf-total-amount">Rp 174,2 jt</span>
+        <span class="hf-total-sub">$ 9.979 · <span class="hf-delta hf-delta-up">↑ +2,4% dari Okt</span></span>
+      </div>
+      <div class="hf-spark"><svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true"><polygon class="area" points="0,48 0,34 25,28 50,30 75,16 100,8 100,48"></polygon><polyline class="line" points="0,34 25,28 50,30 75,16 100,8"></polyline></svg><span class="hf-spark-axis"><span>Jun</span><span>6 bln</span><span>Nov</span></span></div>
+    </section>
+  </section>
+
+  <section><h2 class="t-h">Lencana dan perubahan nilai</h2>
+    <div class="hf-row"><span class="hf-badge hf-badge-brand">Aktif</span><span class="hf-badge hf-badge-gold">Jatuh tempo 5 hari</span><span class="hf-badge hf-badge-loss">Terlambat</span>
+    <span class="hf-delta hf-delta-up">+7,7%</span><span class="hf-delta hf-delta-down">−1,3%</span><span class="hf-delta hf-delta-flat">0,0%</span></div>
+  </section>
+
+  <section><h2 class="t-h">Rincian dan progres</h2>
+    <section class="hf-card"><div class="hf-details">
+      <div class="hf-detail"><span class="hf-swatch" style="background:var(--chart-1)"></span><div class="hf-detail-main"><span class="hf-detail-name">Emas</span><span class="hf-detail-meta">3 aset · Brankas, Pluang</span></div><div class="hf-detail-figs"><span class="hf-detail-amount">Rp 84,1 jt</span><span class="hf-delta hf-delta-up">+7,7%</span></div></div>
+      <div class="hf-detail"><span class="hf-swatch" style="background:var(--chart-2)"></span><div class="hf-detail-main"><span class="hf-detail-name">Crypto</span><span class="hf-detail-meta">2 aset · Binance</span></div><div class="hf-detail-figs"><span class="hf-detail-amount">Rp 52,0 jt</span><span class="hf-delta hf-delta-down">−1,3%</span></div></div>
+    </div></section>
+    <div class="hf-track" style="margin-top:12px"><span style="width:72%"></span></div>
+  </section>
+
+  <section><h2 class="t-h">Perlu perhatian</h2>
+    <section class="hf-attn"><div class="hf-attn-head"><span class="hf-card-title">Perlu perhatian</span><span class="hf-attn-count">2</span></div>
+      <div class="hf-attn-item is-urgent"><div><div class="hf-attn-title">Zakat perak jatuh tempo hari ini</div><div class="hf-attn-desc">Azlan · Rp 712.980</div></div><a href="#">Catat</a></div>
+      <div class="hf-attn-item"><div><div class="hf-attn-title">Harga PAXG belum diperbarui</div><div class="hf-attn-desc">Terakhir 2 hari lalu</div></div><a href="#">Isi</a></div>
+    </section>
+  </section>
+
+  <section><h2 class="t-h">Sheet dan toast</h2>
+    <div class="t-box"><div class="hf-scrim"></div><div class="hf-sheet" role="dialog" aria-label="Contoh"><span class="hf-sheet-handle" aria-hidden="true"></span><span style="font-weight:700">Bayar dengan aset lain</span></div></div>
+    <div class="t-box" style="height:90px;margin-top:12px"><div class="hf-toast"><span>Beli PAXG 0,0225 tersimpan</span><button class="hf-btn hf-btn-on-ink hf-btn-sm" type="button">Lihat</button></div></div>
+  </section>
+
+  <section><h2 class="t-h">Bottom bar</h2>
+    <nav class="hf-nav" aria-label="Contoh menu">
+      <a href="#" aria-current="page"><i data-icon="house" data-size="24"></i>Beranda</a>
+      <a href="#"><i data-icon="grid" data-size="24"></i>Aset</a>
+      <a class="hf-add" href="#" aria-label="Catat transaksi"><i data-icon="plus" data-size="24"></i></a>
+      <a href="#"><i data-icon="receipt" data-size="24"></i>Riwayat</a>
+      <a href="#"><i data-icon="wrench" data-size="24"></i>Alat</a>
+    </nav>
+  </section>
+</div>
+<!-- @js:engine/format.js,web/js/icons.js,web/js/components.js -->
+</body>
+</html>

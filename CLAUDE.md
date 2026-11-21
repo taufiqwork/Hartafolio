@@ -37,7 +37,7 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 **Bila ada bentrok, mockup hi-fi menang.** Di sanalah Ticon bereksperimen dan menetapkan apa yang dipakai. Urutan: (1) mockup hi-fi, (2) prototype, (3) design-system.md, (4) DATA_MODEL.md, (5) draf riset v1. Bila kamu menemukan bentrok antara mockup dan dokumen teks, ikuti mockup, lalu **laporkan** ke Ticon supaya dokumennya diperbaiki di sesi desain.
 - `reference/mockups/`: **299 board hi-fi, semua state tiap alur** (PNG + sumber). Indeks: `docs/MOCKUPS.md`. Lihat PNG layar terkait sebelum membangun tiap layar, termasuk state kosong, error, menu terbuka, toast, dan sheet.
 - `reference/prototype/`: prototype klik yang disetujui klien (hanya sebagian state; 69 layar). Jalankan lewat server statis (`python3 -m http.server`, buka `index.html`).
-- `docs/design/design-system.md`: **baca penuh sebelum membangun UI.** Token, tipografi, komponen, aturan perilaku, spek build (zakat, kurs, impor, Catat, piutang, notifikasi). `docs/design/bundle.css`: token dan komponen CSS (`.hf-*`).
+- `docs/design/design-system.md`: **baca penuh sebelum membangun UI.** Token, tipografi, komponen, aturan perilaku, spek build (zakat, kurs, impor, Catat, piutang, notifikasi). `docs/design/tokens.css` (token) dan `docs/design/bundle.css` (komponen `.hf-*`).
 - `docs/DATA_MODEL.md`: model data v2 (sudah disesuaikan dengan desain akhir). `docs/riset/struktur-data-v1.md`: draf awal 3 Nov, hanya pembanding.
 - `docs/SCREENS.md`: daftar layar phone. `docs/BUILD_PLAN.md`: urutan build. `docs/LINKS.md`: tautan desain online milik Ticon.
 
@@ -47,3 +47,7 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 - **Piutang** (Alat › Piutang): aset dipinjamkan ke orang luar, ditagih dalam aset yang sama; pemberi pinjaman = anggota pemilik aset (selalu disebut); sekali bayar atau cicilan; tanpa bunga/denda; piutang tidak mengurangi total harta; selama dipinjamkan emas/perak itu tidak dihitung zakat.
 - **Kurs ke Rupiah** dibekukan per transaksi (`kurs`, `kurs_sumber`, `kurs_tanggal`, `kurs_waktu`); ikuti spek "kurs ke Rupiah" di design-system.md persis.
 - **Import hanya dari template Hartafolio**; ekspor satu sheet, dua mode (Ringkasan | Data lengkap).
+
+## Perintah proyek
+- `npm test` uji engine (Node 20+). `npm run build` membangun `dist/`. `npm run dev` melayani `dist/` di localhost:8080.
+- Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `clasp login`, lalu `npm run push`.

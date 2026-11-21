@@ -1,0 +1,77 @@
+/* Hartafolio · Design System — compiled from tokens.json for this canvas */
+:root, [data-theme="light"] {
+  --surface: #f5f6f2;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ebeee8;
+  --line: #d9dfd8;
+  --line-strong: #7f8d86;
+  --ink: #14201b;
+  --ink-muted: #5f6e67;
+  --brand: #0f6b4f;
+  --brand-soft: #e2f1ea;
+  --on-brand: #ffffff;
+  --gold: #8a6114;
+  --gold-fill: #c9952e;
+  --on-gold: #1d1405;
+  --gold-soft: #f7ecd0;
+  --gain: var(--brand);
+  --loss: #b23c17;
+  --loss-soft: #fbe7df;
+  --chart-1: var(--brand);
+  --chart-2: var(--gold-fill);
+  --chart-3: #8cc9ad;
+  --chart-4: #4d5f57;
+  --chart-5: #e6dcc3;
+  --focus-ring: #0f6b4f;
+  --shadow-card: 0 1px 2px rgba(20,32,27,0.06), 0 4px 12px rgba(20,32,27,0.05);
+  --shadow-menu: 0 8px 24px rgba(20,32,27,0.16);
+}
+[data-theme="dark"] {
+  --surface: #0e1412;
+  --surface-raised: #17201c;
+  --surface-sunken: #0a0f0d;
+  --line: #2b3732;
+  --line-strong: #617269;
+  --ink: #e7ede9;
+  --ink-muted: #90a198;
+  --brand: #4cc49a;
+  --brand-soft: #123a2d;
+  --on-brand: #06231a;
+  --gold: #e2b65a;
+  --gold-fill: #e2b65a;
+  --on-gold: #1d1405;
+  --gold-soft: #3a2c10;
+  --gain: var(--brand);
+  --loss: #f08a64;
+  --loss-soft: #3d1b10;
+  --chart-1: var(--brand);
+  --chart-2: var(--gold-fill);
+  --chart-3: #2a7a5e;
+  --chart-4: #a4b4ac;
+  --chart-5: #5e5340;
+  --focus-ring: #7fe0bd;
+  --shadow-card: none;
+  --shadow-menu: 0 8px 24px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.amount-hero { font-family: var(--font-sans); font-size: 32px; line-height: 38px; font-weight: 700; letter-spacing: -0.02em; }
+.title { font-family: var(--font-sans); font-size: 22px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em; }
+.heading { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 600; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 24px; font-weight: 400; }
+.amount { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 600; }
+.label { font-family: var(--font-sans); font-size: 13px; line-height: 20px; font-weight: 500; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 18px; font-weight: 400; }
