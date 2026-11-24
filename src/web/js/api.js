@@ -35,6 +35,7 @@
 
   var dev = {
     apiState: function () { return Promise.resolve(JSON.parse(JSON.stringify(load()))); },
+    apiBootState: function () { return dev.apiState(); },
     apiAnggotaTambah: function (d) {
       var s = load(), nama = clean(d.nama);
       if (!nama) return fail('Nama anggota wajib diisi.');

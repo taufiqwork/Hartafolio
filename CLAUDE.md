@@ -79,6 +79,8 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 - **Tampilan dibangun jadi satu berkas `Index.html`** (CSS, JS, font ditanam). Gambar atau berkas statis terpisah tidak dilayani HtmlService.
 - **Ikon harus `<svg>` nyata, garis pemisah harus elemen nyata** (bukan CSS mask atau `border-top`), supaya bisa diukur terhadap mockup.
 - **Tracking huruf di spek desain adalah persen dari ukuran font, bukan piksel.**
+- **Google Apps Script lambat: tiap panggilan `google.script.run` ke Sheet butuh sekitar 1 sampai 5 detik**, dan `apiState` yang membaca semua tab lebih lambat lagi. Di `npm run dev` (localStorage) semuanya instan, jadi bug kecepatan tidak terlihat di sana. Aturan: tampilan berubah dulu (optimistik), server menyusul di belakang, gagal = batalkan dan tampilkan pesan. Jangan menunggu server untuk menutup sheet atau menampilkan baris, dan jangan memuat ulang seluruh data setelah tiap simpan. Gunakan endpoint ringan (`apiBootState`) untuk membuka aplikasi.
+- **Uji kecepatan:** bungkus `HF.api.call` dengan penundaan 4 detik (dan satu kasus gagal) lalu ukur waktu sampai tampilan berubah; harus di bawah 100 ms.
 
 ## Selesai berarti (Definition of Done)
 - [ ] `docs/REGRESSION.md` dijalankan dan lolos, dengan bukti.

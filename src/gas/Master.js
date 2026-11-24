@@ -111,3 +111,8 @@ function apiLokasiHapus(id) {
     return true;
   });
 }
+
+/** Data ringan untuk membuka aplikasi (3 tab, bukan 9): penanda Setup, anggota, lokasi. apiState lengkap dipakai layar yang butuh semuanya. */
+function apiBootState() {
+  return { pengaturan: Repo_settings_(), anggota: Repo_read_('Anggota'), lokasi: Repo_read_('Lokasi') };
+}
