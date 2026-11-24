@@ -33,3 +33,8 @@
 - Pindah disimpan **satu baris** (sesuai rekomendasi). Jadwal piutang **diturunkan** (tanpa tab Piutang_Jadwal). Biaya Pindah = transaksi Keluar sendiri (sesuai DATA_MODEL dan design-system.md), bukan kolom di baris Pindah.
 - Bentrok: DATA_MODEL.md menulis `kelas` = 5 nilai, sedangkan form "Aset manual" di mockup/design-system memakai 8 Jenis (Emas, Perak, Crypto, Saham, Reksa dana, Mata uang, Properti, Lainnya). Mengikuti mockup. Satuan mengikuti form: gram, oz, koin, token, lot, lembar, unit, nominal, m².
 - Bentrok: v1 menamai kolom `mata_uang`/`kurs_usdidr`; v2 memakai `harga_mata_uang`/`kurs`. Mengikuti v2. Aset mendapat kolom `status` (aktif|tersembunyi|dihapus) menggantikan `aktif`; `mata_uang_harga` ditambahkan (GFI dalam USD).
+
+## 24 Nov 2026 · Persiapan uji di Google Sheet sungguhan
+- Bug yang hanya muncul di Google: Sheet baru berukuran 1000 baris x 26 kolom, sedangkan Siapkan sheet memformat 2000 baris dan tab Transaksi punya 28 kolom. Menulis di luar grid melempar galat. Perbaikan: `Repo_ensureGrid_` menambah baris/kolom sebelum Setup menulis dan sebelum `Repo_append_` menambah baris.
+- Sheet tiruan di `tests/gas.test.js` sekarang meniru batas grid 1000 x 26 (sebelumnya tanpa batas, jadi bug ini lolos). Diuji dulu gagal 5 dari 5, lalu 44 uji lulus setelah perbaikan.
+- BELUM TERVERIFIKASI di Google: perilaku batas grid ditiru dari pengetahuan tentang Sheets, bukan dari uji nyata. `clasp` belum terpasang dan belum login di mesin ini; `clasp push` dan menu Siapkan sheet harus dijalankan Ticon.

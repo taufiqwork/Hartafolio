@@ -23,6 +23,13 @@ function Repo_checkHeader_(tab, sh) {
   if (!r.ok) throw new Error('Header tab "' + tab + '" berubah (kolom ' + r.mismatches[0].col + ': seharusnya "' + r.mismatches[0].want + '"). Kembalikan header atau jalankan Siapkan sheet.');
 }
 
+/** Sheet baru hanya 1000 baris x 26 kolom; menulis di luar grid melempar galat. Tambah baris/kolom bila kurang. */
+function Repo_ensureGrid_(sh, rows, cols) {
+  var r = sh.getMaxRows(), c = sh.getMaxColumns();
+  if (r < rows) sh.insertRowsAfter(r, rows - r);
+  if (c < cols) sh.insertColumnsAfter(c, cols - c);
+}
+
 /** Semua baris tab sebagai objek (baris tanpa ID dilewati). */
 function Repo_read_(tab) {
   var sh = Repo_sheet_(tab);
@@ -44,6 +51,7 @@ function Repo_append_(tab, objs) {
   Repo_checkHeader_(tab, sh);
   var rows = objs.map(function (o) { return HF.schema.objToRow(tab, o); });
   var start = Math.max(sh.getLastRow(), 1) + 1;
+  Repo_ensureGrid_(sh, start + rows.length - 1, rows[0].length);
   sh.getRange(start, 1, rows.length, rows[0].length).setValues(rows);
 }
 
