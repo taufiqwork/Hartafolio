@@ -82,3 +82,7 @@
 - **Terukur** dengan server dibuat lambat 4 detik: 41 ms (tambah cepat), 56 ms (simpan anggota), 62 ms (lewati); kasus gagal membatalkan dan menampilkan pesan. 48 uji lulus.
 - **Belum digambar mockup:** keadaan "menyimpan" dan pesan galat penyimpanan. Dibuat minimal (teks galat merah di footer/form). BELUM TERVERIFIKASI di Google sungguhan.
 - Baris yang baru dikirim (id sementara) belum bisa diketuk ubah sampai server menjawab.
+
+## 24 Nov 2026 · Board state menyimpan dan gagal (diminta Ticon, ditambahkan ke artifact mockup)
+- 5 board baru di kolom di kanan 17 Google Sheet (flow 18, file `19-Simpan*`). Dibuat tanpa membuka render (aturan tipe artifact), jadi BELUM DILIHAT: periksa tampilannya di artifact.
+- **Kode belum mengikuti board ini** (mockup menang): baris "Menyimpan…" dengan putar, tombol "Coba lagi", judul notice ("Belum tersimpan", "Nama sudah dipakai"), dan kartu notice di atas daftar/kartu import. Sekarang kode masih menampilkan teks galat merah di footer dan di form. Perlu satu putaran penyesuaian setelah Ticon menyetujui board.

@@ -307,3 +307,12 @@ Ukuran: phone 390x844, desktop 1440x900, tablet 1024x768, board Alur/Arsip lebar
 | R4 · Alasan ditolak · Beranda lama | `png/Arsip-Alasan-Beranda-Lama.png` | `src/Arsip-Alasan-Beranda-Lama.dc.html` |
 | R5 · Arsip · Desktop langkah 4 dengan segmented control | `png/Arsip-WD-Setup-4-Segmented.png` | `src/Arsip-WD-Setup-4-Segmented.dc.html` |
 | R6 · Alasan ditolak · Desktop langkah 4 segmented | `png/Arsip-Alasan-WD-Setup-4.png` | `src/Arsip-Alasan-WD-Setup-4.dc.html` |
+
+## Simpan ke Sheet (state menyimpan dan gagal, ditambahkan 24 Nov 2026, di sebelah kolom 17 Google Sheet)
+| Board | PNG | Sumber |
+|---|---|---|
+| 18.a · Simpan ke Sheet · Menyimpan (baris baru "Anak · Menyimpan…", tombol ubah redup) | belum diekspor | `19-Simpan.dc.html` |
+| 18.b · Gagal, form dibuka lagi (notice "Belum tersimpan", tombol "Coba lagi", isian tetap) | belum diekspor | `19-Simpan-2a-Gagal-Form.dc.html` |
+| 18.c · Nama ganda ("Nama sudah dipakai") | belum diekspor | `19-Simpan-2b-Nama-Ganda.dc.html` |
+| 18.d · Gagal, Tambah cepat lokasi (kartu notice di atas daftar) | belum diekspor | `19-Simpan-2c-Gagal-Tambah-Cepat.dc.html` |
+| 18.e · Gagal, "Lewati, mulai dari nol" (kartu notice di atas kartu import) | belum diekspor | `19-Simpan-2d-Gagal-Lewati.dc.html` |
