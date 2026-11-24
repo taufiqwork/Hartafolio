@@ -6,7 +6,15 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function fakeSheet(name) {
-  const g = { name, cells: [], protections: [], frozen: 0 };
+  // Sheet baru di Google: 1000 baris x 26 kolom. Menulis atau memformat di luar grid melempar galat.
+  const g = { name, cells: [], protections: [], frozen: 0, maxR: 1000, maxC: 26 };
+  const inGrid = (r, c, nr, nc) => {
+    if (r < 1 || c < 1 || r + nr - 1 > g.maxR || c + nc - 1 > g.maxC) throw new Error('The coordinates of the range are outside the dimensions of the sheet.');
+  };
+  g.getMaxRows = () => g.maxR;
+  g.getMaxColumns = () => g.maxC;
+  g.insertRowsAfter = (_, n) => { g.maxR += n; };
+  g.insertColumnsAfter = (_, n) => { g.maxC += n; };
   const get = (r, c) => (g.cells[r - 1] && g.cells[r - 1][c - 1] !== undefined ? g.cells[r - 1][c - 1] : '');
   const set = (r, c, v) => { (g.cells[r - 1] = g.cells[r - 1] || [])[c - 1] = v; };
   const chain = () => { const o = {}; ['setFontWeight', 'setBackground', 'setNumberFormat', 'setDescription', 'setWarningOnly'].forEach(k => { o[k] = () => o; }); return o; };
@@ -14,12 +22,12 @@ function fakeSheet(name) {
   g.getLastColumn = () => g.cells.reduce((m, row) => Math.max(m, row ? row.length : 0), 0);
   g.setFrozenRows = n => { g.frozen = n; };
   g.getProtections = () => g.protections;
-  g.getRange = (r, c, nr = 1, nc = 1) => Object.assign(chain(), {
+  g.getRange = (r, c, nr = 1, nc = 1) => (inGrid(r, c, nr, nc), Object.assign(chain(), {
     getValues: () => Array.from({ length: nr }, (_, i) => Array.from({ length: nc }, (_, j) => get(r + i, c + j))),
     setValues: vals => { vals.forEach((row, i) => row.forEach((v, j) => set(r + i, c + j, v))); },
     setValue: v => set(r, c, v),
     protect: () => { const p = Object.assign(chain(), { getDescription: () => 'Header Hartafolio' }); g.protections.push(p); return p; }
-  });
+  }));
   return g;
 }
 

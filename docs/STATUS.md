@@ -1,6 +1,6 @@
 # Status build (diperbarui 24 Nov 2026)
 
-Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, lalu `docs/BUILD_PLAN.md`.
+Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITECTURE.md`, `docs/REGRESSION.md`, lalu `docs/BUILD_PLAN.md`.
 
 ## Selesai (Tahap 0 sampai 3)
 - **0–1 Kerangka dan fondasi**: struktur folder, build ke `dist/` (HTML dengan CSS, JS, font base64 inline), shell 5 tab (Beranda, Aset, tombol Catat, Riwayat, Alat), halaman uji komponen (`?page=components`, atau `components.html` di `npm run dev`), `src/engine/format.js` (Rupiah, persen, gram, tanggal). Isi layar tab masih placeholder "Layar ini dibangun pada tahap berikutnya."

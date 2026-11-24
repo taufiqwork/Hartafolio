@@ -8,5 +8,8 @@
     "build": "node tools/build.mjs",
     "dev": "node tools/build.mjs && python3 -m http.server 8080 -d dist",
     "push": "node tools/build.mjs && clasp push"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.4.1"
   }
 }

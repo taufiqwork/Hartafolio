@@ -16,6 +16,7 @@ function setupHartafolio() {
     var sh = ss.getSheetByName(tab), baru = false;
     if (!sh) { sh = ss.insertSheet(tab, i); baru = true; }
     var names = S.colNames(tab);
+    Repo_ensureGrid_(sh, 2001, names.length);
     if (baru || sh.getLastRow() === 0) {
       sh.getRange(1, 1, 1, names.length).setValues([names]);
       laporan.push(tab + ': dibuat');
