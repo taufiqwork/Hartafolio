@@ -52,4 +52,4 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 
 ## Perintah proyek
 - `npm test` uji engine (Node 20+). `npm run build` membangun `dist/`. `npm run dev` melayani `dist/` di localhost:8080.
-- Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `clasp login`, lalu `npm run push`.
+- Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `npx clasp login`, lalu `npm run push` (clasp terpasang lokal; jangan pakai npm -g, /usr/local milik root).
