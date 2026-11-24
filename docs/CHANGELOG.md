@@ -75,3 +75,10 @@
 - `design-system.md`: baris Setup 4/4a/4b ditulis ulang sesuai board 4a (tanpa segmented, tanpa 4b); "Simpanan fisik di rumah" menjadi "Simpanan fisik".
 - Kode: `tanggal_snapshot` dihapus dari setelan awal (`schema.js`); uji Pengaturan 8 menjadi 7. Sheet uji yang sudah dibuat tetap punya baris itu; tidak berbahaya dan tidak dibaca.
 - **Belum dikerjakan karena itu keputusan desain, bukan perapian:** banner/lonceng/tautan piutang di Beranda tablet dan desktop, sitemap A1 yang belum memuat Piutang, Adendum 1. Dan belum disentuh: salinan online Design System dan mockup di claude.ai (perubahan di atas baru di berkas repo).
+
+## 24 Nov 2026 · Setup terasa lambat di Google (laporan Ticon, 3 kasus)
+- **Penyebab:** setelah tiap simpan, layar menunggu server lalu memuat ulang seluruh data (`apiState` membaca 9 tab). Di Google itu 3 sampai 5 detik; di `npm run dev` instan, jadi tidak terlihat sebelumnya. Kasus yang sama: simpan anggota, Tambah cepat lokasi, dan "Lewati, mulai dari nol".
+- **Perbaikan:** tampilan berubah dulu, server menyusul di belakang (baris langsung muncul, sheet langsung tutup, lanjut ke Beranda langsung). Bila server gagal: perubahan dibatalkan, form dibuka lagi dengan isian tetap dan pesan galat; untuk tambah cepat dan hapus, pesan tampil di baris bawah. Tidak ada lagi pemuatan ulang setelah simpan. Pembukaan aplikasi memakai `apiBootState` (3 tab, bukan 9).
+- **Terukur** dengan server dibuat lambat 4 detik: 41 ms (tambah cepat), 56 ms (simpan anggota), 62 ms (lewati); kasus gagal membatalkan dan menampilkan pesan. 48 uji lulus.
+- **Belum digambar mockup:** keadaan "menyimpan" dan pesan galat penyimpanan. Dibuat minimal (teks galat merah di footer/form). BELUM TERVERIFIKASI di Google sungguhan.
+- Baris yang baru dikirim (id sementara) belum bisa diketuk ubah sampai server menjawab.

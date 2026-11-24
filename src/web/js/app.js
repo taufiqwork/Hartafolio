@@ -42,9 +42,12 @@
   /* Pertama kali: splash, lalu Setup bila belum selesai, kalau sudah ke shell. */
   var app = document.getElementById('app');
   app.innerHTML = HF.setup.splash();
-  HF.api.call('apiState').then(function (s) {
+  function openSetup(s, err) {
+    HF.setup.mount(app, s, { err: err, onDone: startShell, onFail: function (m) { openSetup(s, m); } });
+  }
+  HF.api.call('apiBootState').then(function (s) {
     if (s.pengaturan && s.pengaturan.setup_selesai === 'ya') startShell();
-    else HF.setup.mount(app, s, { onDone: startShell });
+    else openSetup(s);
   }).catch(function (e) {
     app.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message);
   });

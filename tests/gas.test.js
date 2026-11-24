@@ -189,3 +189,11 @@ test('hapus anggota dan lokasi: aktif jadi tidak, ditolak bila pengelola atau su
   g.run('apiAnggotaTambah({nama:"Yahya", hubungan:"Anak"})');
   assert.equal(g.run('Repo_read_("Anggota").length'), 4);
 });
+
+test('apiBootState: hanya penanda Setup, anggota, lokasi', () => {
+  const g = boot();
+  g.run('setupHartafolio()'); g.run('apiAnggotaTambah({nama:"Azlan"})');
+  const b = JSON.parse(JSON.stringify(g.run('apiBootState()')));
+  assert.deepEqual(Object.keys(b).sort(), ['anggota', 'lokasi', 'pengaturan']);
+  assert.equal(b.anggota.length, 1);
+});

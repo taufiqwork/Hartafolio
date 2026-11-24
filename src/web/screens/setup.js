@@ -59,7 +59,7 @@
     return head(2, 'Anggota', true) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Siapa saja anggota keluarganya?</h1>' +
       '<p class="su-lead">Tambahkan Anda dan keluarga yang hartanya Anda kelola. Mereka tidak perlu punya akun.</p></div>' + list +
       '<button class="hf-btn hf-btn-block" type="button" data-act="add">' + svg(['M5 12h14', 'M12 5v14'], 18) + '<span>' + (n ? 'Tambah anggota' : 'Tambah diri Anda') + '</span></button></main>' +
-      foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Lokasi</button><span class="su-foot-note">' + n + ' anggota · bisa ditambah kapan saja</span>'
+      foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Lokasi</button><span class="' + (d.err ? 'su-err su-foot-note' : 'su-foot-note') + '">' + esc(d.err || (n + ' anggota · bisa ditambah kapan saja')) + '</span>'
         : '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Tambah minimal 1 anggota</button>');
   }
 
@@ -77,12 +77,12 @@
       '<p class="su-lead">Lokasi membantu memisahkan aset yang sama di tempat berbeda.</p></div>' + list +
       '<section class="su-quick" aria-label="Tambah cepat"><span class="label su-lbl">Tambah cepat</span><div class="su-chips">' + quick +
       '<button class="hf-chip hf-chip-add" type="button" data-act="add">' + plus + 'Lokasi lain</button></div></section></main>' +
-      foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Import</button><span class="su-foot-note">' + n + ' lokasi · bisa diubah nanti</span>'
+      foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Import</button><span class="' + (d.err ? 'su-err su-foot-note' : 'su-foot-note') + '">' + esc(d.err || (n + ' lokasi · bisa diubah nanti')) + '</span>'
         : '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Tambah minimal 1 lokasi</button>');
   }
 
   /* Langkah 4, tahap 1 "Pilih file". Unduh template dan Pilih file belum dibangun (Tahap 8): tombolnya mati. */
-  function import4() {
+  function import4(d) {
     var dl = svg(['M12 15V3', 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm7 10 5 5 5-5'], 18);
     var up = svg(['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm17 8-5-5-5 5', 'M12 3v12'], 18);
     return head(4, 'Pilih file (1/3)', true, 1) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Punya catatan lama?</h1>' +
@@ -93,53 +93,81 @@
       '<div class="su-imp-sep"></div>' +
       '<div class="su-imp-row"><span class="su-imp-n">2</span><div class="su-imp-col"><div class="su-imp-txt"><b>Isi, lalu unggah</b><span class="caption su-lbl">Cukup sheet Transaksi, simpan sebagai .xlsx.</span></div>' +
       '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>' + up + '<span>Pilih file template</span></button></div></div></section></main>' +
-      foot('<button class="hf-btn hf-btn-block" type="button" data-act="next">Lewati, mulai dari nol</button><span class="su-foot-note">Import juga bisa dilakukan nanti dari menu Alat</span>');
+      foot('<button class="hf-btn hf-btn-block" type="button" data-act="next">Lewati, mulai dari nol</button><span class="' + (d.err ? 'su-err su-foot-note' : 'su-foot-note') + '">' + esc(d.err || 'Import juga bisa dilakukan nanti dari menu Alat') + '</span>');
   }
 
-  /** Pasang Setup ke elemen. onDone dipanggil setelah Setup selesai. */
+  /** Pasang Setup ke elemen. opts: onDone() ke aplikasi, onFail(pesan) bila penanda selesai gagal, err (pesan awal). */
   function mount(el, data, opts) {
-    var st = { step: 1, anggota: data.anggota.filter(function (a) { return a.aktif; }), lokasi: data.lokasi.filter(function (a) { return a.aktif; }), fm: null, hl: null, busy: false };
+    opts = opts || {};
+    var st = { step: 1, anggota: data.anggota.filter(function (a) { return a.aktif; }), lokasi: data.lokasi.filter(function (a) { return a.aktif; }), fm: null, hl: null, err: opts.err || '', tmp: 0 };
     if (st.anggota.length && st.lokasi.length) st.step = 4;
     else if (st.anggota.length) st.step = 3;
-    else if (st.anggota.length === 0 && opts && opts.skipWelcome) st.step = 2;
 
     function paint() {
       var scr = [null, akun, anggota, function () { return lokasi(st, st.hl); }, import4][st.step];
       el.innerHTML = '<div class="su">' + scr(st) + (st.fm ? F.render(st.fm) : '') + '</div>';
     }
-    function reload(then) {
-      return root.HF.api.call('apiState').then(function (s) {
-        st.anggota = s.anggota.filter(function (a) { return a.aktif; });
-        st.lokasi = s.lokasi.filter(function (a) { return a.aktif; });
-        if (then) then(); paint();
-      });
+    function idKey(k) { return k === 'anggota' ? 'anggota_id' : 'lokasi_id'; }
+    function swap(k, id, rec) { // rec = null: buang; selain itu ganti catatan ber-id itu
+      st[k] = st[k].reduce(function (o, r) { if (r[idKey(k)] !== id) o.push(r); else if (rec) o.push(rec); return o; }, []);
     }
+    function pending(id) { return String(id).indexOf('tmp-') === 0; }
+    function oops(msg) { st.err = msg; paint(); }
+
+    /* Tampilan berubah SEGERA; server (Google Sheet, beberapa detik) menyusul di belakang.
+       Gagal: perubahan dibatalkan dan pesannya ditampilkan. */
     function openForm(k, mode, rec) {
       var anggotaMode = k === 'anggota';
+      st.err = '';
       st.fm = { k: k, mode: mode, owner: anggotaMode && (mode === 'tambah' ? st.anggota.length === 0 : !!rec.is_pengelola),
-        name: rec ? rec.nama : '', id: rec ? (anggotaMode ? rec.anggota_id : rec.lokasi_id) : null, pk: null, error: '', busy: false,
+        name: rec ? rec.nama : '', id: rec ? rec[idKey(k)] : null, old: rec || null, pk: null, error: '', busy: false,
         v: rec ? { nama: rec.nama, rel: rec.hubungan, jenis: rec.jenis } : { nama: '', rel: '', jenis: '' },
         sec: mode === 'ubah' && !(anggotaMode && rec.is_pengelola) ? (anggotaMode ? 'Hapus anggota' : 'Hapus lokasi') : null };
       paint();
     }
-    function failIn(e) { if (st.fm) { st.fm.busy = false; st.fm.error = e.message; } paint(); }
     function save() {
-      var fm = st.fm, api = root.HF.api.call, p;
-      fm.busy = true; fm.error = ''; paint();
-      if (fm.k === 'anggota') p = fm.mode === 'tambah' ? api('apiAnggotaTambah', { nama: fm.v.nama, hubungan: fm.v.rel }) : api('apiAnggotaUbah', fm.id, { nama: fm.v.nama, hubungan: fm.v.rel });
-      else p = fm.mode === 'tambah' ? api('apiLokasiTambah', { nama: fm.v.nama, jenis: fm.v.jenis }) : api('apiLokasiUbah', fm.id, { nama: fm.v.nama, jenis: fm.v.jenis });
-      p.then(function (r) { return reload(function () { st.fm = null; if (fm.k === 'lokasi' && fm.mode === 'tambah') st.hl = r.nama; }); }).catch(failIn);
+      var fm = st.fm, k = fm.k, call = root.HF.api.call, nama = fm.v.nama.trim(), rec, p;
+      if (fm.mode === 'tambah') {
+        rec = k === 'anggota' ? { anggota_id: 'tmp-' + (++st.tmp), nama: nama, hubungan: fm.owner ? 'Diri sendiri' : fm.v.rel, is_pengelola: fm.owner, aktif: true }
+          : { lokasi_id: 'tmp-' + (++st.tmp), nama: nama, jenis: fm.v.jenis, aktif: true };
+        st[k] = st[k].concat([rec]);
+        if (k === 'lokasi') st.hl = nama;
+        p = k === 'anggota' ? call('apiAnggotaTambah', { nama: nama, hubungan: fm.v.rel }) : call('apiLokasiTambah', { nama: nama, jenis: fm.v.jenis });
+      } else {
+        rec = Object.assign({}, fm.old, k === 'anggota' ? { nama: nama, hubungan: fm.old.is_pengelola ? fm.old.hubungan : fm.v.rel } : { nama: nama, jenis: fm.v.jenis });
+        swap(k, fm.id, rec);
+        p = k === 'anggota' ? call('apiAnggotaUbah', fm.id, { nama: nama, hubungan: fm.v.rel }) : call('apiLokasiUbah', fm.id, { nama: nama, jenis: fm.v.jenis });
+      }
+      st.fm = null; paint();
+      p.then(function (r) { swap(k, rec[idKey(k)], r); paint(); })
+        .catch(function (e) {
+          if (fm.mode === 'tambah') swap(k, rec[idKey(k)], null); else swap(k, fm.id, fm.old);
+          fm.busy = false; fm.error = e.message; st.fm = fm; paint();
+        });
     }
     function remove() {
-      var fm = st.fm, call = root.HF.api.call;
-      fm.busy = true; paint();
-      call(fm.k === 'anggota' ? 'apiAnggotaHapus' : 'apiLokasiHapus', fm.id).then(function () { return reload(function () { st.fm = null; }); }).catch(failIn);
+      var fm = st.fm, k = fm.k, at = st[k].map(function (r) { return r[idKey(k)]; }).indexOf(fm.id);
+      swap(k, fm.id, null); st.fm = null; paint();
+      root.HF.api.call(k === 'anggota' ? 'apiAnggotaHapus' : 'apiLokasiHapus', fm.id).catch(function (e) {
+        st[k].splice(at, 0, fm.old); oops(e.message);
+      });
+    }
+    function quick(nama, jenis) {
+      var tmp = { lokasi_id: 'tmp-' + (++st.tmp), nama: nama, jenis: jenis, aktif: true };
+      st.err = ''; st.lokasi = st.lokasi.concat([tmp]); st.hl = nama; paint();
+      root.HF.api.call('apiLokasiTambah', { nama: nama, jenis: jenis })
+        .then(function (r) { swap('lokasi', tmp.lokasi_id, r); paint(); })
+        .catch(function (e) { swap('lokasi', tmp.lokasi_id, null); oops(e.message); });
+    }
+    function finish() {
+      root.HF.api.call('apiSetupSelesai').catch(function (e) { if (opts.onFail) opts.onFail(e.message); });
+      if (opts.onDone) opts.onDone();
     }
 
     /* Pilihan di dalam form diperbarui di tempat, tanpa menggambar ulang sheet (animasi buka/tutup tetap jalan, ketikan tidak hilang). */
     function syncSave() {
       var v = st.fm.v, ok = !!String(v.nama).trim() && (st.fm.k === 'anggota' ? (st.fm.owner || !!v.rel) : !!v.jenis);
-      var btn = el.querySelector('[data-act="fm-save"]'); if (btn) btn.disabled = !ok || st.fm.busy;
+      var btn = el.querySelector('[data-act="fm-save"]'); if (btn) btn.disabled = !ok;
     }
     function syncSelect() {
       var fm = st.fm, key = fm.k === 'anggota' ? 'rel' : 'jenis', val = fm.v[key], b = el.querySelector('[data-act="sel"]');
@@ -156,17 +184,16 @@
       var t = e.target.closest('[data-act]'); if (!t) return;
       var act = t.getAttribute('data-act'), id = t.getAttribute('data-id');
       if (act === 'next') {
-        if (st.step === 4) { root.HF.api.call('apiSetupSelesai').then(function () { if (opts && opts.onDone) opts.onDone(); }); return; }
-        st.step += 1; st.hl = null; paint();
-      } else if (act === 'back') { st.step -= 1; st.hl = null; paint(); }
+        if (st.step === 4) { finish(); return; }
+        st.step += 1; st.hl = null; st.err = ''; paint();
+      } else if (act === 'back') { st.step -= 1; st.hl = null; st.err = ''; paint(); }
       else if (act === 'add') openForm(st.step === 2 ? 'anggota' : 'lokasi', 'tambah');
       else if (act === 'edit') {
-        var k = st.step === 2 ? 'anggota' : 'lokasi', rows = k === 'anggota' ? st.anggota : st.lokasi;
-        openForm(k, 'ubah', rows.filter(function (r) { return (r.anggota_id || r.lokasi_id) === id; })[0]);
-      } else if (act === 'quick') {
-        root.HF.api.call('apiLokasiTambah', { nama: t.getAttribute('data-nama'), jenis: t.getAttribute('data-jenis') })
-          .then(function (r) { return reload(function () { st.hl = r.nama; }); });
-      } else if (act === 'fm-close') { st.fm = null; paint(); }
+        if (pending(id)) return; // baru dikirim, tunggu server
+        var k = st.step === 2 ? 'anggota' : 'lokasi';
+        openForm(k, 'ubah', st[k].filter(function (r) { return r[idKey(k)] === id; })[0]);
+      } else if (act === 'quick') quick(t.getAttribute('data-nama'), t.getAttribute('data-jenis'));
+      else if (act === 'fm-close') { st.fm = null; paint(); }
       else if (act === 'fm-save') save();
       else if (act === 'fm-sec') remove();
       else if (act === 'sel') { var key = t.getAttribute('data-key'); st.fm.pk = st.fm.pk === key ? null : key; syncSelect(); }

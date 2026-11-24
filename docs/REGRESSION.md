@@ -63,6 +63,7 @@ Yang tidak bisa saya cek sendiri di Google Apps Script: tampilan di HP sungguhan
 Dijalankan di `npm run dev` (ukuran 390×844) dan dibandingkan dengan `reference/mockups/png/01-Setup-*.png`:
 - [ ] Langkah 1, 2 (kosong dan 3 anggota), 3 (kosong dan 4 lokasi) sama dengan mockup. Terukur 24 Nov 2026: posisi dan tinggi tiap elemen sama sampai piksel (bar, kartu, daftar, garis pemisah, chip, tombol, footer).
 - [ ] Form (tambah anggota, hubungan terbuka, ubah lokasi, jenis terbuka): sheet, kolom, daftar pilihan, tombol sama dengan mockup **setelah animasi selesai** (`document.getAnimations().forEach(a => a.finish())`; tanpa itu angka meleset 24px karena animasi masuk).
+- [ ] **Kecepatan:** dengan `HF.api.call` ditunda 4 detik, simpan anggota, tambah cepat lokasi, dan "Lewati, mulai dari nol" mengubah tampilan dalam <100 ms; kegagalan server membatalkan perubahan dan memunculkan pesan (form dibuka lagi dengan isian tetap). Terukur 24 Nov 2026: 41 sampai 62 ms.
 - [ ] Memilih hubungan/jenis tidak menggambar ulang sheet (nama yang diketik tidak hilang).
 - [ ] Nama ganda ditolak server; Pengelola tetap "Diri sendiri" dan tidak bisa dihapus; hapus = aktif "tidak"; muat ulang tetap melanjutkan dari langkah terakhir.
 - [ ] Langkah 4 (tahap Pilih file): kartu dua langkah, pemisah, footer, 3 tanda di bar sama dengan `01-Setup-4a-Belum-Pilih.png`; "Lewati, mulai dari nol" mengisi `setup_selesai` dan membuka shell.
