@@ -1,5 +1,7 @@
 # Hartafolio — panduan untuk Claude Code
 
+> **Mulai dari `docs/STATUS.md`** (apa yang sudah selesai, keputusan, langkah berikutnya). Tahap 0–3 selesai; lanjutkan dari Tahap 4.
+
 Kamu membangun **Hartafolio**: pelacak portofolio multi-aset untuk keluarga, UI berbahasa Indonesia. Klien: Irfan. Developer/desainer: Ticon (Rahmat Taufiqurrahman). **Selalu balas Ticon dalam bahasa Indonesia.** Desain sudah selesai dan disetujui klien; tugasmu membangun kode yang **identik dengan mockup dan prototype**.
 
 ## Arsitektur (sudah diputuskan, jangan tanya ulang)
@@ -23,7 +25,7 @@ docs/          Dokumen ini.
 Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login Google untuk dia). Pisahkan engine murni dari SpreadsheetApp supaya bisa diuji tanpa Google.
 
 ## Aturan kerja Ticon (wajib)
-1. **UI harus sama persis dengan mockup hi-fi** (lalu prototype). Tidak ada perbedaan kecil. Bila ada yang tidak jelas, lihat `reference/mockups/png/` dan `docs/design/design-system.md`, lalu tanya.
+1. **UI harus sama persis dengan mockup hi-fi** (lalu prototype). Tidak ada perbedaan kecil. Bila ada yang tidak jelas, lihat mockup di artifact (tautan di `docs/LINKS.md`; folder `reference/mockups/png/` hanya cadangan bila ada) dan `docs/design/design-system.md`, lalu tanya.
 2. **Perubahan UI masuk ke Design System.** Komponen baru atau aturan baru dicatat di `docs/design/design-system.md` dan CSS di `docs/design/bundle.css`; jangan menulis gaya inline per layar.
 3. **Pertanyaan adalah pertanyaan, bukan perintah.** Jawab/nilai dulu; jangan langsung membangun.
 4. Setiap putaran kerja dicatat singkat di `docs/CHANGELOG.md` (apa berubah, kenapa).
@@ -35,8 +37,8 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 
 ## Sumber kebenaran dan urutan prioritas
 **Bila ada bentrok, mockup hi-fi menang.** Di sanalah Ticon bereksperimen dan menetapkan apa yang dipakai. Urutan: (1) mockup hi-fi, (2) prototype, (3) design-system.md, (4) DATA_MODEL.md, (5) draf riset v1. Bila kamu menemukan bentrok antara mockup dan dokumen teks, ikuti mockup, lalu **laporkan** ke Ticon supaya dokumennya diperbaiki di sesi desain.
-- `reference/mockups/`: **299 board hi-fi, semua state tiap alur** (PNG + sumber). Indeks: `docs/MOCKUPS.md`. Lihat PNG layar terkait sebelum membangun tiap layar, termasuk state kosong, error, menu terbuka, toast, dan sheet.
-- `reference/prototype/`: prototype klik yang disetujui klien (hanya sebagian state; 69 layar). Jalankan lewat server statis (`python3 -m http.server`, buka `index.html`).
+- **Mockup hi-fi (artifact, tautan di `docs/LINKS.md`)**: 299 board, semua state tiap alur. Indeks nama board: `docs/MOCKUPS.md`. Buka artifact (Artifact read atau panel artifact) dan lihat board layar terkait sebelum membangun tiap layar, termasuk state kosong, error, menu terbuka, toast, dan sheet. `reference/mockups/` (PNG + sumber) hanya salinan cadangan dan boleh tidak ada.
+- **Prototype klik** (artifact, tautan di `docs/LINKS.md`): disetujui klien, hanya sebagian state (69 layar). Cadangan lokal di `reference/prototype/` bila ada.
 - `docs/design/design-system.md`: **baca penuh sebelum membangun UI.** Token, tipografi, komponen, aturan perilaku, spek build (zakat, kurs, impor, Catat, piutang, notifikasi). `docs/design/tokens.css` (token) dan `docs/design/bundle.css` (komponen `.hf-*`).
 - `docs/DATA_MODEL.md`: model data v2 (sudah disesuaikan dengan desain akhir). `docs/riset/struktur-data-v1.md`: draf awal 3 Nov, hanya pembanding.
 - `docs/SCREENS.md`: daftar layar phone. `docs/BUILD_PLAN.md`: urutan build. `docs/LINKS.md`: tautan desain online milik Ticon.

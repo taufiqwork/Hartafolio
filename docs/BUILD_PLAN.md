@@ -1,4 +1,5 @@
 # Urutan build (disepakati dengan Ticon, mulai dari nol)
+**Status: tahap 0–3 selesai (24 Nov 2026), lanjut tahap 4. Lihat `docs/STATUS.md`.**
 
 0. **Repo dan kerangka**: struktur folder, `clasp` terhubung ke Sheet uji, skrip uji Node, `CHANGELOG.md`.
 1. **Fondasi**: token + komponen CSS dari `docs/design/bundle.css`; shell aplikasi (bottom bar 5 tab, tombol tambah), halaman uji komponen untuk dibandingkan dengan Design System.
@@ -12,4 +13,4 @@
 9. Anggota/Lokasi, Google Sheet view, tablet dan desktop.
 10. Uji salin ke 2–3 akun Google, uji pembaruan via library, panduan setup, video, serah terima.
 
-Setiap tahap selesai: jalankan uji engine, buka layar di browser, bandingkan dengan PNG di `reference/mockups/png/` (identik), catat di CHANGELOG, commit.
+Setiap tahap selesai: jalankan uji engine, buka layar di browser, bandingkan dengan board mockup di artifact (identik), catat di CHANGELOG, commit.

@@ -1,4 +1,4 @@
-# Tautan desain (milik Ticon, buka di Claude)
+# Tautan desain (milik Ticon; bisa dibuka langsung dari Claude Code lewat Artifact read)
 - Mockup hi-fi: https://claude.ai/artifact/YVcyu6qKJmoTJemQ5dm7wE
 - Design System: https://claude.ai/artifact/RLygUek1tq98GXvtuegirr
 - Prototype klien: https://claude.ai/artifact/Vs2sK9feW8GApXg5vnW3Vh
