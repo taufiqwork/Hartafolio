@@ -386,7 +386,6 @@ main.hf-scroll { animation: hfPageIn .24s cubic-bezier(.2,.8,.2,1) backwards; }
 .su-opt-ck { color: var(--brand); display: grid; visibility: hidden; }
 .su-opt[aria-selected="true"] .su-opt-ck { visibility: visible; }
 .su-fm-foot { flex: none; padding: 10px 16px calc(var(--safe-bottom, 0px) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised); }
-.su-err { font-size: 13px; line-height: 20px; color: var(--loss); }
 /* Setup langkah 4 (Import): segmen keempat bar terbagi 3 tanda, kartu dua langkah (board 01-Setup-4a-Belum-Pilih) */
 .su-bar span.ticks { height: auto; background: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
 .su-bar span.ticks span { height: 4px; border-radius: 999px; background: var(--surface-sunken); }
@@ -398,3 +397,11 @@ main.hf-scroll { animation: hfPageIn .24s cubic-bezier(.2,.8,.2,1) backwards; }
 .su-imp-txt { display: flex; flex-direction: column; gap: 4px; }
 .su-imp-txt b { font-size: 15px; line-height: 22px; font-weight: 600; }
 .su-imp-sep { height: 1px; background: var(--line); margin-left: 40px; }
+/* Notice galat dan state menyimpan (board 19-Simpan*, flow 18) */
+.su-notice { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--loss-soft); }
+.su-notice-ico { color: var(--loss); display: grid; padding-top: 2px; }
+.su-notice-txt { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 20px; }
+.su-notice-txt b { font-size: 15px; line-height: 22px; font-weight: 600; }
+.su-spin { vertical-align: -2px; margin-right: 4px; animation: suSpin 1s linear infinite; }
+@keyframes suSpin { to { transform: rotate(360deg); } }
+.su-edit:disabled { opacity: 0.4; cursor: default; }

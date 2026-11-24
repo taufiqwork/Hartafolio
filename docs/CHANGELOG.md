@@ -86,3 +86,10 @@
 ## 24 Nov 2026 · Board state menyimpan dan gagal (diminta Ticon, ditambahkan ke artifact mockup)
 - 5 board baru di kolom di kanan 17 Google Sheet (flow 18, file `19-Simpan*`). Dibuat tanpa membuka render (aturan tipe artifact), jadi BELUM DILIHAT: periksa tampilannya di artifact.
 - **Kode belum mengikuti board ini** (mockup menang): baris "Menyimpan…" dengan putar, tombol "Coba lagi", judul notice ("Belum tersimpan", "Nama sudah dipakai"), dan kartu notice di atas daftar/kartu import. Sekarang kode masih menampilkan teks galat merah di footer dan di form. Perlu satu putaran penyesuaian setelah Ticon menyetujui board.
+
+## 25 Nov 2026 · Kode mengikuti board Simpan ke Sheet (18.a sampai 18.e)
+- Baris baru menampilkan "Anak · Menyimpan…" dengan ikon putar dan tombol ubah redup (nonaktif). Gagal: form dibuka lagi dengan kartu notice "Belum tersimpan", isian tetap, tombol "Coba lagi"; nama ganda: "Nama sudah dipakai" dengan tombol semula. Tambah cepat gagal: kartu "<nama> belum tersimpan" di atas daftar. "Lewati" gagal: kembali ke langkah 4 dengan kartu di atas kartu import. Teks galat merah lama di footer dihapus.
+- Bug yang ketahuan saat uji: bila "Lewati" gagal, Setup dibuka ulang dari langkah 1 dengan data kosong. Sekarang kembali ke langkah 4 dengan data yang sudah ada.
+- Terukur di DOM: notice padding 12/16, radius 12, gap 12, judul 15/22/600, latar `loss-soft`; urutan blok sama dengan board. PNG board belum diekspor, jadi belum dibandingkan piksel demi piksel.
+- Tidak digambar board dan dibuat sama polanya: baris lokasi yang menyimpan hanya redup (tanpa teks "Menyimpan…"), dan kegagalan hapus memakai notice umum "Belum tersimpan". Sebelumnya gagal dengan pesan server mentah; sekarang semua galat non-nama-ganda dianggap "Google Sheet tidak merespons" (belum membedakan penyebab lain).
+- BELUM TERVERIFIKASI di Google sungguhan.

@@ -43,7 +43,7 @@
   var app = document.getElementById('app');
   app.innerHTML = HF.setup.splash();
   function openSetup(s, err) {
-    HF.setup.mount(app, s, { err: err, onDone: startShell, onFail: function (m) { openSetup(s, m); } });
+    HF.setup.mount(app, s, { err: err, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
   }
   HF.api.call('apiBootState').then(function (s) {
     if (s.pengaturan && s.pengaturan.setup_selesai === 'ya') startShell();
