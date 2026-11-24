@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Simpan ke Sheet · menyimpan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+@keyframes hfSpin{to{transform:rotate(360deg)}}
+.spin{animation:hfSpin 1s linear infinite}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;" aria-hidden="true"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span></div><div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">Langkah 2 dari 4 · Anggota</span><a class="hf-tap" href="01-Setup-1-Akun.dc.html" style="display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 20px; font-weight: 600; text-decoration: none; min-height: 32px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="m15 18-6-6 6-6"></path></svg>Kembali</a></div></div></div><main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 20px;"><div style="display: flex; flex-direction: column; gap: 8px;"><h1 class="title" style="margin: 0;">Siapa saja anggota keluarganya?</h1><p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Tambahkan Anda dan keluarga yang hartanya Anda kelola. Mereka tidak perlu punya akun.</p></div><div class="hf-card" style="padding: 4px 16px; gap: 0;"><div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span style="width: 40px; height: 40px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 700;">A</span><div class="hf-detail-main"><span class="hf-detail-name">Azlan</span><span class="hf-detail-meta">Diri sendiri</span></div><span style="display: inline-flex; align-items: center; gap: 4px;"><span class="hf-badge hf-badge-brand">Pengelola</span><button type="button" aria-label="Ubah Azlan"  style="width: 44px; height: 44px; margin: -4px -8px -4px 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg></button></span></div><div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span style="width: 40px; height: 40px; border-radius: 999px; background: var(--surface-sunken); color: var(--ink-muted); display: grid; place-items: center; font-weight: 700;">Y</span><div class="hf-detail-main"><span class="hf-detail-name">Yumna</span><span class="hf-detail-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="14" height="14" class="spin" style="vertical-align: -2px; margin-right: 4px;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>Anak · Menyimpan…</span></div><span style="display: inline-flex; align-items: center; gap: 4px;"><button type="button" aria-label="Ubah Yumna" disabled style="width: 44px; height: 44px; margin: -4px -8px -4px 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; opacity: 0.4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg></button></span></div></div><button class="hf-btn hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg><span>Tambah anggota</span></button></main><footer style="padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);"><button class="hf-btn hf-btn-primary hf-btn-block" type="button">Lanjut ke Lokasi</button><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">2 anggota · bisa ditambah kapan saja</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

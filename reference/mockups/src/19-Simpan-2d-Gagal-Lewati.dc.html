@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Simpan ke Sheet · gagal, lewati</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+@keyframes hfSpin{to{transform:rotate(360deg)}}
+.spin{animation:hfSpin 1s linear infinite}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;" aria-hidden="true"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px;"><span style="height: 4px; border-radius: 999px; background: var(--brand);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span><span style="height: 4px; border-radius: 999px; background: var(--surface-sunken);"></span></span></div><div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 13px; line-height: 20px; font-weight: 500; color: var(--ink-muted);">Langkah 4 dari 4 · Pilih file (1/3)</span><a class="hf-tap" href="01-Setup-3-Lokasi.dc.html" style="display: inline-flex; align-items: center; gap: 2px; font-size: 13px; line-height: 20px; font-weight: 600; text-decoration: none; min-height: 32px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16"><path d="m15 18-6-6 6-6"></path></svg>Kembali</a></div></div></div><main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 16px; display: flex; flex-direction: column; gap: 20px;"><div style="display: flex; flex-direction: column; gap: 8px;"><h1 class="title" style="margin: 0;">Punya catatan lama?</h1><p style="margin: 0; font-size: 15px; line-height: 24px; color: var(--ink-muted);">Pindahkan sekaligus lewat template Hartafolio. Langkah ini opsional, boleh dilewati.</p></div><div role="alert" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--loss-soft);"><span style="color: var(--loss); display: grid; padding-top: 2px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg></span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Belum tersimpan</span><span style="font-size: 13px; line-height: 20px;">Setup belum ditandai selesai karena Google Sheet tidak merespons. Ketuk Lewati, mulai dari nol untuk mencoba lagi.</span></span></div><section class="hf-card" style="gap: 16px; padding: 16px;" aria-label="Import dengan template"><div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; font-weight: 600; line-height: 20px;">1</span><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Unduh template</span><span class="caption" style="color: var(--ink-muted);">Anggota dan lokasi tadi sudah jadi pilihan.</span></div><button class="hf-btn hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg> Template tabel Hartafolio</button></div></div><div style="height: 1px; background: var(--line); margin-left: 40px;"></div><div style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start;"><span style="width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; font-weight: 600; line-height: 20px;">2</span><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Isi, lalu unggah</span><span class="caption" style="color: var(--ink-muted);">Cukup sheet Transaksi, simpan sebagai .xlsx.</span></div><button class="hf-btn hf-btn-primary hf-btn-block" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg><span>Pilih file template</span></button></div></div></section></main><footer style="padding: 12px 16px calc(var(--safe-bottom) + 12px); display: flex; flex-direction: column; gap: 8px; background: var(--surface); border-top: 1px solid var(--line);"><a class="hf-btn hf-btn-block" href="Main-2d-Kosong.dc.html">Lewati, mulai dari nol</a><span style="font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: center;">Import juga bisa dilakukan nanti dari menu Alat</span></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { theme: this.props.theme ?? 'light' };
+  }
+}
+</script>
+</body>
+</html>

@@ -42,10 +42,12 @@
   /* Pertama kali: splash, lalu Setup bila belum selesai, kalau sudah ke shell. */
   var app = document.getElementById('app');
   app.innerHTML = HF.setup.splash();
+  /* Hanya mode dev (untuk perbandingan piksel): ?hold menahan splash, ?step=N memaksa langkah Setup. */
+  var dev = HF.api.isDev, hold = dev && /[?&]hold\b/.test(location.search), forced = dev && /[?&]step=(\d)/.exec(location.search);
   function openSetup(s, err) {
-    HF.setup.mount(app, s, { err: err, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
+    HF.setup.mount(app, s, { err: err, step: forced ? +forced[1] : 0, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
   }
-  HF.api.call('apiBootState').then(function (s) {
+  if (!hold) HF.api.call('apiBootState').then(function (s) {
     if (s.pengaturan && s.pengaturan.setup_selesai === 'ya') startShell();
     else openSetup(s);
   }).catch(function (e) {

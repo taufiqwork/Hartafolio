@@ -108,6 +108,7 @@
     var st = { step: 1, anggota: data.anggota.filter(function (a) { return a.aktif; }), lokasi: data.lokasi.filter(function (a) { return a.aktif; }), fm: null, hl: null, err: opts.err === 'lewati' ? { title: 'Belum tersimpan', text: 'Setup belum ditandai selesai karena Google Sheet tidak merespons. Ketuk Lewati, mulai dari nol untuk mencoba lagi.' } : null, tmp: 0 };
     if (st.anggota.length && st.lokasi.length) st.step = 4;
     else if (st.anggota.length) st.step = 3;
+    if (opts.step) st.step = opts.step;
 
     function paint() {
       var scr = [null, akun, anggota, function () { return lokasi(st, st.hl); }, import4][st.step];
