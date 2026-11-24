@@ -22,6 +22,12 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 - Antrean offline: `queue.js` + penyimpanan di perangkat (localStorage, dibungkus try/catch); kirim lewat `apiTransaksiTambah` dengan `trx_id` dari `schema.newTrxId`.
 
 ## Tahap 4 sedang berjalan
+## Tahap 5 (Catat dan Riwayat): keputusan Ticon (25 Nov 2026), baca sebelum membangun
+1. **Harga dan kurs di Catat:** dengan `?demo` memakai harga dan kurs contoh dan menyimpan hanya di perangkat (tidak ke Sheet). Tanpa `?demo` (data asli) harga dan kurs diisi manual (tampilan seperti board 04-Catat-2s "Kurs diisi manual") sampai sumber otomatis jadi di Tahap 6. Angka contoh TIDAK BOLEH ikut tersimpan ke Sheet (harga dan kurs dibekukan per transaksi).
+2. **Urutan:** Catat lengkap dulu, Riwayat belakangan. Putaran A: Beli, Jual, Masuk, Keluar + pilih tanggal dan alat bayar (04-Catat, 2a, 2b, 2k, 2m, 2n, 2o, 2p, 2q, 2r, 2s). B: Pindah (2c, 2e, 2f). C: Saldo awal (2d, 2g) + sheet Cari aset, Lokasi baru, Aset manual (2h, 2i, 2j). D: Riwayat (05-Riwayat dan state-nya). E: ubah (04-Catat-2l), hapus dan pulihkan, Beranda memakai data asli (`HF.beranda.fromState`).
+3. Tiap putaran: baca board dan kumpulkan pertanyaan dulu; sumber board dari `reference/mockups/src` (segarkan dari artifact); skenario piksel semua state termasuk animasi; merge; deploy.
+4. Detail Riwayat untuk Zakat, Pinjamkan, Cicilan, Pelunasan hanya tampilan (data contoh) sampai Tahap 7.
+
 ## Beranda: keputusan Ticon (25 Nov 2026), baca sebelum membangun
 1. **Pakai data contoh (demo) yang bisa dihapus**, jangan menyembunyikan fitur utama. Beranda harus tampil penuh seperti mockup: total, grafik kecil, "dari Okt", baris dolar, donut, daftar, kartu Harga terkini, banner zakat/piutang, lonceng.
 2. **Desain data contoh:** satu modul terpisah (`src/demo/`, mis. `demo.js`) berisi data mentah (anggota Azlan, Al Ghafiqi, M. Yahya, Yumna; lokasi; transaksi Saldo awal; harga contoh; riwayat 6 bulan; kurs) yang dirancang agar HASIL HITUNG engine sama dengan angka mockup (Rp 174,2 jt, +2,4%, $ 9.979, piutang Rp 19,3 jt, dst.). UI membaca view-model dari engine, bukan angka yang ditulis tangan. Aktif lewat `?demo` (dev dan web app); data nyata di Sheet tidak tersentuh. Menghapus fitur demo = hapus folder dan satu baris pemanggil. Skenario piksel Beranda memakai data ini.
