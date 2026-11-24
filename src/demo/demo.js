@@ -33,5 +33,18 @@
     return d;
   }
   root.HF = root.HF || {};
-  root.HF.demo = { get: function (variant) { return make(variant === 'banyak'); } };
+  var BELL = ['perhatian', 'perhatian-kosong', 'perhatian-zakat-piutang'];
+  /** variant = nama keadaan board: '', banyak, banyak-sisanya, zakat-hari-h, zakat-terlambat, zakat-mendekati, piutang-hari-h, piutang-terlambat,
+      zakat-dan-piutang, perhatian, perhatian-kosong, perhatian-zakat-piutang, tersimpan. */
+  function get(variant) {
+    var v = variant || '', d = make(v === 'banyak' || v === 'banyak-sisanya'), zpi = v === 'zakat-dan-piutang' || v === 'perhatian-zakat-piutang';
+    d.zk = v === 'zakat-hari-h' || zpi ? 'due' : (v === 'zakat-terlambat' ? 'late' : (v === 'zakat-mendekati' ? 'soon' : 'none'));
+    d.pk = v === 'piutang-hari-h' ? 'due' : (v === 'piutang-terlambat' || zpi ? 'late' : 'none');
+    d.noNotes = v === 'perhatian-kosong';
+    d.hi = v === 'banyak-sisanya' ? 4 : null;
+    d.perOpen = BELL.indexOf(v) >= 0;
+    d.toast = v === 'tersimpan' ? { text: 'Beli PAXG 0,0225 tersimpan', act: 'Lihat' } : null;
+    return d;
+  }
+  root.HF.demo = { get: get };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

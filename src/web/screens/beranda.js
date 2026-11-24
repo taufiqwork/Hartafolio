@@ -11,13 +11,34 @@
   var LAYERS = svg(['M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z', 'M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12', 'M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17'], 24);
   var PLUS20 = svg(['M5 12h14', 'M12 5v14'], 20);
 
-  var ui = { mode: 'anggota', sel: null, hi: null, open: false, k: 0 };
+  var ui = { mode: 'anggota', sel: null, hi: null, open: false, k: 0, per: false, toast: null };
 
+  function att(d) { return d ? B.attention(d) : { banner: null, notes: [], badge: 0, badgeLoss: false, label: 'Perlu perhatian, tidak ada' }; }
   function head(d) {
-    var n = d ? d.notes : 0;
+    var a = att(d);
     return '<div class="hf-head"><header class="br-header"><span class="br-brand">' + LOGO + '<span class="br-name">Harta<span>folio</span></span></span>' +
-      '<button type="button" class="hf-iconbtn" aria-label="' + (n ? 'Perlu perhatian, ' + n + ' hal' : 'Perlu perhatian, tidak ada') + '" aria-haspopup="dialog" aria-expanded="false" data-act="bell">' + BELL +
-      (n ? '<span class="hf-countbadge" aria-hidden="true">' + n + '</span>' : '') + '</button></header></div>';
+      '<button type="button" class="hf-iconbtn" aria-label="' + a.label + '" aria-haspopup="dialog" aria-expanded="' + ui.per + '" data-act="bell">' + BELL +
+      (a.badge ? '<span class="hf-countbadge' + (a.badgeLoss ? ' is-loss' : '') + '" aria-hidden="true">' + a.badge + '</span>' : '') + '</button></header></div>';
+  }
+  function banner(d) {
+    var b = att(d).banner; if (!b) return '';
+    return '<section role="status" aria-label="' + b.label + '" class="br-banner" style="background: ' + b.bg + '; border: 1.5px solid ' + b.bd + ';"><span class="br-bn-tile" style="background: ' + b.tile + ';">' + svg(b.icon, 22) + '</span>' +
+      '<span class="br-bn-title">' + esc(b.title) + '</span><span class="caption br-bn-desc">' + esc(b.desc) + '</span><a class="' + b.btnCls + ' br-bn-btn" aria-disabled="true">' + esc(b.cta) + '</a></section>';
+  }
+  /** Lembar lonceng, scrim, dan toast: elemen di atas layar, ditambahkan setelah menu bawah. */
+  function overlays(d) {
+    var h = '';
+    if (ui.per) {
+      var a = att(d);
+      h += '<div class="hf-scrim" data-act="close-bell"></div><div class="hf-sheet br-sheet" role="dialog" aria-label="Perlu perhatian"><span class="hf-sheet-handle" aria-hidden="true"></span>' +
+        '<div class="hf-sheet-headrow"><span class="heading">Perlu perhatian</span>' + (a.badge ? '<span class="hf-attn-count">' + a.badge + '</span>' : '') + '</div><div class="br-notes">' +
+        a.notes.map(function (n) {
+          return '<a class="hf-notif" aria-disabled="true"><span class="hf-notif-tile ' + n.tcls + '">' + svg(n.icon, 20) + '</span><span class="br-notif-tx"><span class="hf-notif-title">' + esc(n.t) + '</span><span class="hf-notif-desc">' + esc(n.d) + '</span></span>' + svg(['m9 18 6-6-6-6'], 20).replace('aria-hidden="true"', 'aria-hidden="true" class="br-notif-go"') + '</a>';
+        }).join('') +
+        (a.notes.length ? '' : '<div class="br-allok"><span class="su-empty-ico">' + svg(['M20 6 9 17l-5-5'], 24) + '</span><span class="heading">Semua beres</span><span class="su-empty-note">Tidak ada yang perlu diperhatikan sekarang.</span></div>') + '</div></div>';
+    }
+    if (ui.toast) h += '<div class="hf-toast br-toast" role="status"><span>' + esc(ui.toast.text) + '</span>' + (ui.toast.act ? '<a class="hf-btn hf-btn-sm hf-btn-on-ink br-toast-act" aria-disabled="true">' + esc(ui.toast.act) + '</a>' : '') + '</div>';
+    return h;
   }
 
   function hero(d, v) {
@@ -75,8 +96,9 @@
 
   /** HTML kepala + isi. data = HF.demo.get(...) atau null (kosong). */
   function html(d) {
+    if (d && !ui.init) { ui.init = true; ui.per = !!d.perOpen; ui.hi = d.hi == null ? null : d.hi; ui.toast = d.toast || null; } // keadaan awal dari data contoh
     var v = d ? B.view(d, ui) : null;
-    return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + (d ? card(v) + harga(d) : empty()) + '</main>';
+    return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + banner(d) + (d ? card(v) + harga(d) : empty()) + '</main>';
   }
 
   /** Pasang interaksi. Pembaruan sehalus board: menyorot baris hanya mengubah gaya lingkaran (transisi), mengganti tampilan
@@ -109,17 +131,24 @@
       $('.hf-details').innerHTML = rowsHtml(v); $('.hf-donut-center').innerHTML = centerHtml(v);
       paintMenu(v);
     }
+    function paintBell() {
+      var old = el.querySelector('.br-overlays'); if (old) old.remove();
+      el.insertAdjacentHTML('beforeend', '<div class="br-overlays">' + overlays(d) + '</div>');
+      var bellBtn = el.querySelector('[data-act="bell"]'); if (bellBtn) bellBtn.setAttribute('aria-expanded', String(ui.per));
+    }
     el.addEventListener('click', function (e) {
-      var t = e.target.closest('[data-act]'); if (!t || !d) return;
+      var t = e.target.closest('[data-act]'); if (!t) return;
       var a = t.getAttribute('data-act'), i = t.getAttribute('data-i');
       if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
       else if (a === 'opt') { ui = { mode: ui.mode, sel: i === '' ? null : +i, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
-      else if (a === 'menu') { ui.open = !ui.open; paintMenu(B.view(d, ui)); }
+      else if (a === 'bell') { ui.per = !ui.per; ui.open = false; if (d) paintMenu(B.view(d, ui)); paintBell(); }
+      else if (a === 'close-bell') { ui.per = false; paintBell(); }
+      else if (a === 'menu') { ui.open = !ui.open; ui.per = false; paintMenu(B.view(d, ui)); paintBell(); }
       else if (a === 'close') { ui.open = false; paintMenu(B.view(d, ui)); }
       else if (a === 'row') { ui.hi = ui.hi === +i ? null : +i; paintHighlight(B.view(d, ui)); }
     });
   }
 
   root.HF = root.HF || {};
-  root.HF.berandaScreen = { html: html, bind: bind };
+  root.HF.berandaScreen = { html: html, bind: bind, overlays: overlays };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

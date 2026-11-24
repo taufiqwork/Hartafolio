@@ -28,7 +28,7 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 3. **Urutan bertahap.** Tahap A: kerangka, total, donut, daftar, kosong, banyak anggota (Sisanya), menu dan pilihan (Main, 2a, 2b, 2c, 2d, 2k, 2l, 2m, 2n). Tahap B: banner zakat dan piutang, lonceng, toast (2e sampai 2j, 2o sampai 2r, 2h). Tiap tahap: skenario piksel semua state, merge, deploy.
 4. Tautan ke layar yang belum dibangun (Laporan, Piutang, Harga, Catat, Aset, Riwayat, Alat) dimatikan, kecuali tab shell.
 
-**Beranda tahap A selesai (25 Nov 2026), 26/26 skenario piksel 0 beda; tahap B (banner zakat/piutang, lonceng, toast: board 2e sampai 2j, 2o sampai 2r, 2h) berikutnya.** Data contoh = angka tampilan di `src/demo/demo.js` (bukan transaksi), lihat CHANGELOG.
+**Beranda selesai (25 Nov 2026): tahap A dan B, 57 perbandingan piksel 0 beda. Berikutnya: Tahap 5 (Catat transaksi dan Riwayat), yang juga menghubungkan data nyata ke Beranda (`fromState`).** Data contoh = angka tampilan di `src/demo/demo.js` (bukan transaksi), lihat CHANGELOG.
 
 **Selesai (24 Nov 2026):** Setup langkah 1 sampai 4 (langkah 4 tahap Pilih file; Import sungguhan di Tahap 8). **Berikutnya:** uji web app di Google (deploy), lalu Beranda.
 

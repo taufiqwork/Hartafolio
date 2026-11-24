@@ -58,5 +58,17 @@ export const scenarios = [
   { id: 'Main@sorot-baris', board: 'Main', query: 'demo', frames: { act: `document.querySelectorAll('.hf-legend')[1].click();`, at: [0, 80, 150, 300] } },
   { id: 'Main@tampilan-aset', board: 'Main', query: 'demo', frames: { act: `document.querySelector('button[aria-label="Per jenis aset"]').click();`, at: [0, 150, 400, 800, 1200] } },
   { id: 'Main@pilih-anggota', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-select-btn').click();await new Promise(r=>setTimeout(r,80));document.querySelectorAll('.hf-select-opt')[1].click();`, at: [0, 150, 400, 800, 1200] } },
-  { id: 'Main@buka-menu', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-select-btn').click();`, at: [0, 100, 300] } }
+  { id: 'Main@buka-menu', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-select-btn').click();`, at: [0, 100, 300] } },
+  // Beranda tahap B (banner, lonceng, toast; keadaan awal dari data contoh)
+  { id: 'Main-2e-Zakat-Hari-H', board: 'Main-2e-Zakat-Hari-H', query: 'demo=zakat-hari-h' },
+  { id: 'Main-2f-Zakat-Terlambat', board: 'Main-2f-Zakat-Terlambat', query: 'demo=zakat-terlambat' },
+  { id: 'Main-2g-Zakat-Mendekati', board: 'Main-2g-Zakat-Mendekati', query: 'demo=zakat-mendekati' },
+  { id: 'Main-2h-Tersimpan', board: 'Main-2h-Tersimpan', query: 'demo=tersimpan' },
+  { id: 'Main-2i-Perhatian', board: 'Main-2i-Perhatian', query: 'demo=perhatian' },
+  { id: 'Main-2j-Perhatian-Kosong', board: 'Main-2j-Perhatian-Kosong', query: 'demo=perhatian-kosong' },
+  { id: 'Main-2o-Piutang-Hari-H', board: 'Main-2o-Piutang-Hari-H', query: 'demo=piutang-hari-h' },
+  { id: 'Main-2p-Piutang-Terlambat', board: 'Main-2p-Piutang-Terlambat', query: 'demo=piutang-terlambat' },
+  { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
+  { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
+  { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
 ];

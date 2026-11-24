@@ -83,13 +83,42 @@
     return v.map(function (y, i) { return (2 + i * 44 / (v.length - 1)).toFixed(1) + ',' + (15 - (y - lo) / ((hi - lo) || 1) * 12).toFixed(1); }).join(' ');
   }
 
+  /* Banner dan lonceng "Perlu perhatian" (disalin dari logika board Main*.dc.html). d.zk: none|soon|due|late (zakat), d.pk: none|due|late (piutang),
+     d.noNotes: lonceng kosong. Zakat menang atas piutang untuk banner; piutang yang kalah tetap ada di lonceng. */
+  var ICO = {
+    coin: ['M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0', 'M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8', 'M12 18V6'],
+    scale: ['m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z', 'm2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z', 'M7 21h10', 'M12 3v18', 'M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2'],
+    cloud: ['m2 2 20 20', 'M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193', 'M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07'],
+    info: ['M12 16v-4', 'M12 8h.01', 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0'],
+    cal: ['M16 14v2.2l1.6 1', 'M16 2v4', 'M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5', 'M3 10h5', 'M8 2v4', 'M22 16a6 6 0 1 1-12 0 6 6 0 0 1 12 0']
+  };
+  var Z = {
+    soon: ['Zakat mal jatuh tempo 13 hari lagi', 'Azlan · 22 Nov 2026 · perkiraan ± Rp 712.980', 'Lihat', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold-line hf-btn-block'],
+    due: ['Zakat mal jatuh tempo hari ini', 'Azlan · Rp 712.980 · perak 612 g', 'Catat pembayaran', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold hf-btn-block'],
+    late: ['Zakat mal terlambat 10 hari', 'Azlan · jatuh tempo 30 Okt 2026 · Rp 712.980', 'Catat pembayaran', 'var(--loss-soft)', 'var(--loss)', 'var(--loss)', 'hf-btn hf-btn-loss hf-btn-block']
+  };
+  var P = {
+    due: ['Cicilan piutang jatuh tempo hari ini', 'Bu Sari · perak 50 g milik Azlan', 'Catat cicilan diterima', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold hf-btn-block'],
+    late: ['Piutang terlambat 56 hari', 'Bu Rina · 2 cicilan · perak 60 g milik Azlan', 'Lihat tunggakan', 'var(--loss-soft)', 'var(--loss)', 'var(--loss)', 'hf-btn hf-btn-loss hf-btn-block']
+  };
+  function mk(t, d, ic, tcls) { return { t: t, d: d, icon: ICO[ic], tcls: tcls }; }
+  function attention(d) {
+    var zk = d.zk || 'none', pk = d.pk || 'none', bz = zk !== 'none', b = bz ? Z[zk] : (pk !== 'none' ? P[pk] : null);
+    var banner = !b ? null : { title: b[0], desc: b[1], cta: b[2], bg: b[3], bd: b[4], tile: b[5], btnCls: b[6], label: bz ? 'Pengingat zakat' : 'Pengingat piutang', icon: ICO[bz ? 'cal' : 'coin'] };
+    var pNote = pk === 'late' ? mk('Piutang Bu Rina terlambat 56 hari', '2 cicilan · perak 60 g milik Azlan belum diterima', 'coin', 'is-loss') : mk('Cicilan Bu Sari jatuh tempo hari ini', 'Perak 50 g milik Azlan · catat bila sudah diterima', 'coin', '');
+    var notes = d.noNotes ? [] : [].concat(zk === 'none' ? [] : [mk(Z[zk][0], Z[zk][1], 'cal', zk === 'late' ? 'is-loss' : '')], pk === 'none' ? [] : [pNote], [
+      mk('Perak Azlan dekat batas nishob', '612 g, hanya 17 g di atas nishob', 'scale', ''), mk('Harga GFI gagal diambil', 'Memakai harga kemarin · isi manual?', 'cloud', ''),
+      mk('Nilai November dicatat 1 Des', 'Masuk ke riwayat Laporan', 'info', 'is-info')]);
+    return { banner: banner, notes: notes, badge: notes.length, badgeLoss: zk === 'late' || pk === 'late', label: notes.length ? 'Perlu perhatian, ' + notes.length + ' hal' : 'Perlu perhatian, tidak ada' };
+  }
+
   /** Data nyata dari Sheet. Tanpa transaksi aktif = Beranda kosong (null). Pemetaan ke angka menyusul bersama Catat (Tahap 5). */
   function fromState(state) {
     var aktif = (state && state.transaksi || []).filter(function (t) { return t.status !== 'dihapus'; });
     return aktif.length ? { belumDipetakan: true } : null;
   }
 
-  var api = { view: view, miniSpark: miniSpark, fromState: fromState, jt: jt };
+  var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, jt: jt };
   root.HF = root.HF || {};
   root.HF.beranda = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

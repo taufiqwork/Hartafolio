@@ -78,7 +78,8 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 - [ ] **Animasi** sama dengan board: 4 skenario `frames` (`Main@sorot-baris`, `@tampilan-aset`, `@pilih-anggota`, `@buka-menu`; 17 frame) = 0 piksel beda. Terbukti alat mendeteksi: kode lama yang menggambar ulang kartu gagal di 80 ms (donut).
 - [ ] Menyorot baris hanya mengubah gaya lingkaran (transisi); mengganti tampilan memutar ulang sapuan donut dan baris naik; membuka menu tidak menyentuh yang lain. Hitung naik di total tidak mengulang.
 - [ ] Tanpa `?demo` dan tanpa transaksi = Beranda kosong; dengan `?demo` = data contoh. Data contoh tidak pernah menulis ke Sheet.
-- Belum: banner zakat/piutang, lonceng terbuka, toast (tahap B).
+- [ ] **Tahap B** `npm run pixel`: Main-2e, 2f, 2g, 2h, 2i, 2j, 2o, 2p, 2q, 2r + animasi `Main@buka-lonceng` = 0 piksel beda (terukur 25 Nov 2026). Seluruh suite: 57 perbandingan, 0 gagal.
+- [ ] Banner: zakat menang atas piutang; piutang yang kalah tetap ada di lonceng. Angka lonceng merah (`is-loss`) bila zakat atau piutang terlambat.
 
 ## 5. Data dan aturan produk
 
