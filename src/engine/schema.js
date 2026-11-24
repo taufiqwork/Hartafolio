@@ -91,7 +91,6 @@
     ['nisab_perak_gram', '595', 'Nisab perak (gram)'],
     ['tarif_zakat', '0.025', 'Tarif zakat mal'],
     ['haul_hari', '354', 'Panjang haul (hari)'],
-    ['tanggal_snapshot', '1', 'Tanggal pembekuan snapshot bulanan'],
     ['versi_skema', String(VERSI), 'Versi skema; naik hanya saat kolom ditambah di kanan']
   ];
 

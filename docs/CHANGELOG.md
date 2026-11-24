@@ -69,3 +69,9 @@
 - Koreksi pertanyaan saya sebelumnya: board 4b tidak diperlukan. design-system menyatakan "Board 4b (Nol) is removed; start empty is the skip button", dan mockup 4a memang tanpa segmented. Baris lama di design-system yang masih menyebut 4b dan segmented perlu dirapikan di sesi desain.
 - Dev saja: buka `http://localhost:8080/?reset` untuk memulai Setup dari awal (menghapus data tiruan di browser).
 - BELUM TERVERIFIKASI: di Google sungguhan; tahap Periksa, Lengkapi, Simpan, Selesai (Tahap 8).
+
+## 24 Nov 2026 · Perapian dokumen (diminta Ticon diselesaikan di sesi ini)
+- `DATA_MODEL.md`: kelas aset menjadi 8 jenis sesuai mockup, kolom `status` dan `mata_uang_harga` dicatat, jenis lokasi "Simpanan fisik", Pengaturan tanpa `tanggal_snapshot` (ditambah `haul_hari`, `setup_selesai`), dua pertanyaan lama ditandai sudah diputuskan.
+- `design-system.md`: baris Setup 4/4a/4b ditulis ulang sesuai board 4a (tanpa segmented, tanpa 4b); "Simpanan fisik di rumah" menjadi "Simpanan fisik".
+- Kode: `tanggal_snapshot` dihapus dari setelan awal (`schema.js`); uji Pengaturan 8 menjadi 7. Sheet uji yang sudah dibuat tetap punya baris itu; tidak berbahaya dan tidak dibaca.
+- **Belum dikerjakan karena itu keputusan desain, bukan perapian:** banner/lonceng/tautan piutang di Beranda tablet dan desktop, sitemap A1 yang belum memuat Piutang, Adendum 1. Dan belum disentuh: salinan online Design System dan mockup di claude.ai (perubahan di atas baru di berkas repo).

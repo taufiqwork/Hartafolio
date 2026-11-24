@@ -58,11 +58,11 @@ test('setup membuat 11 tab, header benar, setelan dan katalog terisi, idempoten'
   assert.equal(Object.keys(g.sheets).length, 11);
   assert.equal(g.sheets.Transaksi.cells[0][0], 'trx_id');
   assert.equal(g.sheets.Transaksi.protections.length, 1);
-  assert.equal(g.run('Repo_read_("Pengaturan").length'), 8);
+  assert.equal(g.run('Repo_read_("Pengaturan").length'), 7);
   const asetN = g.run('Repo_read_("Aset").length');
   assert.ok(asetN >= 10);
   g.run('setupHartafolio()');
-  assert.equal(g.run('Repo_read_("Pengaturan").length'), 8);
+  assert.equal(g.run('Repo_read_("Pengaturan").length'), 7);
   assert.equal(g.run('Repo_read_("Aset").length'), asetN);
   assert.equal(g.sheets.Transaksi.protections.length, 1);
 });

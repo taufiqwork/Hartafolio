@@ -34,7 +34,7 @@ Perubahan di `src/engine/` wajib menambah atau memperbarui uji, bukan hanya lolo
 
 Diuji dengan Sheet tiruan di `tests/gas.test.js`. Sheet tiruan **meniru batas grid Google (1000 baris × 26 kolom)**. Jangan longgarkan batas itu.
 
-- [ ] Siapkan sheet membuat 11 tab, dua kali jalan tidak menggandakan apa pun (Pengaturan 8 baris, Aset tetap).
+- [ ] Siapkan sheet membuat 11 tab, dua kali jalan tidak menggandakan apa pun (Pengaturan 7 baris sejak 24 Nov 2026, Aset tetap).
 - [ ] Header salah = menolak baca dan tulis (data tidak rusak diam-diam).
 - [ ] Setiap tulis di luar grid didahului `Repo_ensureGrid_`.
 - [ ] Penulisan lewat `api*` di server, yang memvalidasi ulang.
