@@ -62,3 +62,10 @@
 - design-system menyebut board 4b (Mulai kosong), tetapi board itu tidak ada di artifact mockup. Perlu dijawab sebelum langkah 4.
 - Tidak digambar mockup, dibuat minimal: teks galat di form (nama ganda, dll.) dan teks galat di splash bila data gagal dimuat.
 **BELUM TERVERIFIKASI:** di Google sungguhan (web app belum di-deploy, `google.script.run` belum dicoba), splash, mode gelap, layar anggota terisi dengan menu hubungan terbuka, 3b/3c/3d. Di `npm run dev` layar memakai tiruan localStorage, bukan Sheet.
+
+## 24 Nov 2026 · Tahap 4 (bagian 2): Setup langkah 4 (Import, tahap Pilih file)
+- Dibangun persis seperti board `01-Setup-4a-Belum-Pilih`: bar dengan segmen keempat terbagi 3 tanda, judul "Punya catatan lama?", kartu dua langkah, footer "Lewati, mulai dari nol". Terukur sama dengan PNG: kartu 230 sampai 497, pemisah 363, garis footer 711, tombol 724.
+- **Keputusan Ticon:** fungsi yang belum dibangun dimatikan. "Template tabel Hartafolio" dan "Pilih file template" tampil nonaktif (di mockup keduanya aktif); pembaca .xlsx dan template dibangun di Tahap 8. "Lewati, mulai dari nol" aktif: menandai Setup selesai dan membuka aplikasi.
+- Koreksi pertanyaan saya sebelumnya: board 4b tidak diperlukan. design-system menyatakan "Board 4b (Nol) is removed; start empty is the skip button", dan mockup 4a memang tanpa segmented. Baris lama di design-system yang masih menyebut 4b dan segmented perlu dirapikan di sesi desain.
+- Dev saja: buka `http://localhost:8080/?reset` untuk memulai Setup dari awal (menghapus data tiruan di browser).
+- BELUM TERVERIFIKASI: di Google sungguhan; tahap Periksa, Lengkapi, Simpan, Selesai (Tahap 8).

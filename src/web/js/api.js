@@ -13,6 +13,10 @@
   }
 
   var KEY = 'hf-dev-state', mem = null;
+  /* Hanya mode dev: buka halaman dengan ?reset untuk memulai Setup dari awal. */
+  if (!run && /[?&]reset\b/.test(root.location ? root.location.search : '')) {
+    try { root.localStorage.removeItem(KEY); root.history.replaceState(null, '', root.location.pathname); } catch (e) { /* abaikan */ }
+  }
   function load() {
     if (mem) return mem;
     try { mem = JSON.parse(root.localStorage.getItem(KEY)); } catch (e) { mem = null; }

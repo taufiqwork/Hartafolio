@@ -387,3 +387,14 @@ main.hf-scroll { animation: hfPageIn .24s cubic-bezier(.2,.8,.2,1) backwards; }
 .su-opt[aria-selected="true"] .su-opt-ck { visibility: visible; }
 .su-fm-foot { flex: none; padding: 10px 16px calc(var(--safe-bottom, 0px) + 12px); display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); background: var(--surface-raised); }
 .su-err { font-size: 13px; line-height: 20px; color: var(--loss); }
+/* Setup langkah 4 (Import): segmen keempat bar terbagi 3 tanda, kartu dua langkah (board 01-Setup-4a-Belum-Pilih) */
+.su-bar span.ticks { height: auto; background: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+.su-bar span.ticks span { height: 4px; border-radius: 999px; background: var(--surface-sunken); }
+.su-bar span.ticks span.on { background: var(--brand); }
+.su-imp { gap: 16px; padding: 16px; }
+.su-imp-row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; }
+.su-imp-n { width: 28px; height: 28px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); font-size: 13px; font-weight: 600; line-height: 20px; }
+.su-imp-col { display: flex; flex-direction: column; gap: 8px; }
+.su-imp-txt { display: flex; flex-direction: column; gap: 4px; }
+.su-imp-txt b { font-size: 15px; line-height: 22px; font-weight: 600; }
+.su-imp-sep { height: 1px; background: var(--line); margin-left: 40px; }

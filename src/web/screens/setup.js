@@ -17,8 +17,11 @@
       '<div class="su-splash-load"><div class="hf-track" aria-hidden="true"><span style="width: 100%; background: var(--brand);"></span></div><small>Menyiapkan data Anda</small></div></div>';
   }
 
-  function head(step, label, back) {
-    var bar = [1, 2, 3, 4].map(function (i) { return '<span' + (i <= step ? ' class="on"' : '') + '></span>'; }).join('');
+  function head(step, label, back, stage) {
+    var bar = [1, 2, 3, 4].map(function (i) {
+      if (i === 4 && stage) return '<span class="ticks">' + [1, 2, 3].map(function (t) { return '<span' + (t <= stage ? ' class="on"' : '') + '></span>'; }).join('') + '</span>';
+      return '<span' + (i <= step ? ' class="on"' : '') + '></span>';
+    }).join('');
     return '<div class="hf-head"><div style="display: flex; flex-direction: column; gap: 8px;"><div class="su-bar" aria-hidden="true">' + bar + '</div>' +
       (back ? '<div class="su-headrow"><span class="su-step">Langkah ' + step + ' dari 4 · ' + label + '</span><button class="su-back hf-tap" type="button" data-act="back">' + svg(['m15 18-6-6 6-6'], 16) + 'Kembali</button></div>'
         : '<span class="su-step">Langkah ' + step + ' dari 4 · ' + label + '</span>') + '</div></div>';
@@ -78,9 +81,19 @@
         : '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Tambah minimal 1 lokasi</button>');
   }
 
-  function import4(d) {
-    return head(4, 'Import', true) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Pindahkan catatan lama</h1>' +
-      '<p class="su-lead">Langkah ini dibangun pada tahap berikutnya.</p></div></main>' + foot('');
+  /* Langkah 4, tahap 1 "Pilih file". Unduh template dan Pilih file belum dibangun (Tahap 8): tombolnya mati. */
+  function import4() {
+    var dl = svg(['M12 15V3', 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm7 10 5 5 5-5'], 18);
+    var up = svg(['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm17 8-5-5-5 5', 'M12 3v12'], 18);
+    return head(4, 'Pilih file (1/3)', true, 1) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Punya catatan lama?</h1>' +
+      '<p class="su-lead">Pindahkan sekaligus lewat template Hartafolio. Langkah ini opsional, boleh dilewati.</p></div>' +
+      '<section class="hf-card su-imp" aria-label="Import dengan template">' +
+      '<div class="su-imp-row"><span class="su-imp-n">1</span><div class="su-imp-col"><div class="su-imp-txt"><b>Unduh template</b><span class="caption su-lbl">Anggota dan lokasi tadi sudah jadi pilihan.</span></div>' +
+      '<button class="hf-btn hf-btn-block" type="button" disabled>' + dl + 'Template tabel Hartafolio</button></div></div>' +
+      '<div class="su-imp-sep"></div>' +
+      '<div class="su-imp-row"><span class="su-imp-n">2</span><div class="su-imp-col"><div class="su-imp-txt"><b>Isi, lalu unggah</b><span class="caption su-lbl">Cukup sheet Transaksi, simpan sebagai .xlsx.</span></div>' +
+      '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>' + up + '<span>Pilih file template</span></button></div></div></section></main>' +
+      foot('<button class="hf-btn hf-btn-block" type="button" data-act="next">Lewati, mulai dari nol</button><span class="su-foot-note">Import juga bisa dilakukan nanti dari menu Alat</span>');
   }
 
   /** Pasang Setup ke elemen. onDone dipanggil setelah Setup selesai. */
