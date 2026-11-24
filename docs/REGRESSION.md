@@ -65,9 +65,10 @@ Dijalankan di `npm run dev` (ukuran 390×844) dan dibandingkan dengan `reference
 - [ ] Form (tambah anggota, hubungan terbuka, ubah lokasi, jenis terbuka): sheet, kolom, daftar pilihan, tombol sama dengan mockup **setelah animasi selesai** (`document.getAnimations().forEach(a => a.finish())`; tanpa itu angka meleset 24px karena animasi masuk).
 - [ ] Memilih hubungan/jenis tidak menggambar ulang sheet (nama yang diketik tidak hilang).
 - [ ] Nama ganda ditolak server; Pengelola tetap "Diri sendiri" dan tidak bisa dihapus; hapus = aktif "tidak"; muat ulang tetap melanjutkan dari langkah terakhir.
+- [ ] Langkah 4 (tahap Pilih file): kartu dua langkah, pemisah, footer, 3 tanda di bar sama dengan `01-Setup-4a-Belum-Pilih.png`; "Lewati, mulai dari nol" mengisi `setup_selesai` dan membuka shell.
 - [ ] Uji server: `tests/gas.test.js` (anggota, lokasi, hapus, Setup selesai).
 
-Belum terukur: splash, mode gelap, menu hubungan di layar anggota terisi (2b persis), 3b/3c/3d.
+Belum terukur: tahap Periksa/Lengkapi/Simpan (belum dibangun), splash, mode gelap, menu hubungan di layar anggota terisi (2b persis), 3b/3c/3d.
 
 ## 5. Data dan aturan produk
 

@@ -30,7 +30,7 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Baca/tulis baris Sheet, batas grid, endpoint data | `src/gas/Repo.js` | `Repo_read_`, `Repo_append_`, `Repo_update_`, `Repo_ensureGrid_`, `apiState`, `apiTransaksiTambah`, `apiTransaksiUbah` |
 | Boot: splash lalu Setup atau shell 5 tab, rute | `src/web/js/app.js` | IIFE; Setup bila `pengaturan.setup_selesai` bukan "ya" |
 | Jembatan layar ke server (dan tiruan untuk `npm run dev`) | `src/web/js/api.js` | `HF.api.call(nama, ...args)` |
-| Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi (4 Import belum) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |
+| Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi, 4 Import (tahap 1; tombol unduh/pilih file mati sampai Tahap 8) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |
 | Form bersama tambah/ubah anggota dan lokasi (hfForm) | `src/web/screens/setup-form.js` | `HF.setupForm.render` |
 | Tambah/ubah/hapus-lunak anggota dan lokasi, penanda Setup selesai | `src/gas/Master.js` | `apiAnggotaTambah/Ubah/Hapus`, `apiLokasiTambah/Ubah/Hapus`, `apiSetupSelesai` |
 | Ikon | `src/web/js/icons.js` | `HF.icon(nama)` |
