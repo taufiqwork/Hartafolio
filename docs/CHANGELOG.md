@@ -44,3 +44,9 @@
 - `CLAUDE.md`: bahasa balasan dibuat sederhana; bagian Anti-regresi, Cara menulis kode (satu berkas satu urusan, alarm sekitar 400 baris), Jebakan, dan Definition of Done.
 - Tidak diambil dari kit: BUILD-BRIEF (sudah dipenuhi `BUILD_PLAN.md` dan `STATUS.md`) dan aturan git (aturan global Ticon sudah mengaturnya).
 - Alat ukur otomatis kecocokan mockup (skill mockup-match) belum dipasang di proyek ini. Mockup di sini berbentuk `.dc.html`, bukan `design-spec.json`, jadi cek kecocokan masih dengan membaca nilai nyata dari halaman. BELUM TERVERIFIKASI bahwa cara itu cukup; dinilai setelah layar Setup pertama.
+
+## 24 Nov 2026 · Uji pertama di Google sungguhan
+- `npx clasp push --force` mengirim 16 berkas ke Sheet uji; Hartafolio › Siapkan sheet berhasil: 11 tab urut benar, Aset 13, Pengaturan 8, Transaksi 28 kolom, dua kali jalan tidak dobel, "Header Hartafolio" terlindungi di tab Transaksi (dicek lewat Data › Protect sheets and ranges).
+- Dua hal yang baru ketahuan di Google: Apps Script API harus dinyalakan sekali di akun pengembang; `npm run push` tanpa `--force` melompati pengiriman tanpa pesan ketika manifest berubah. Dicatat di CLAUDE.md.
+- Akun pengembang pertama tidak bisa membuka Apps Script, diganti dengan `npx clasp logout` lalu `npx clasp login`.
+- Belum dicoba: tampilan web app, `api*`, "Periksa struktur", penguncian di tab selain Transaksi.

@@ -39,7 +39,9 @@ Diuji dengan Sheet tiruan di `tests/gas.test.js`. Sheet tiruan **meniru batas gr
 - [ ] Setiap tulis di luar grid didahului `Repo_ensureGrid_`.
 - [ ] Penulisan lewat `api*` di server, yang memvalidasi ulang.
 
-**BELUM TERVERIFIKASI di Google sungguhan** sampai Ticon menjalankan `npx clasp login`, `npm run push`, lalu menu Hartafolio › Siapkan sheet. Setelah itu: tulis di sini tanggal dan hasilnya.
+**Terverifikasi di Google sungguhan pada 24 Nov 2026** (Sheet uji milik Ticon): Siapkan sheet menghasilkan 11 tab urut benar, Aset 13 baris, Pengaturan 8 baris, Transaksi 28 kolom; dijalankan dua kali tidak dobel; "Header Hartafolio" terlindungi di tab Transaksi.
+
+**Masih BELUM TERVERIFIKASI di Google:** `doGet`, `apiState`, `apiTransaksiTambah`, `apiTransaksiUbah`, menu Periksa struktur, penguncian di tab selain Transaksi. Ulangi cek di atas setiap kali `Setup.js`, `Repo.js`, atau `schema.js` berubah.
 
 ## 4. Layar harus identik dengan mockup
 

@@ -8,8 +8,10 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 - **3 Engine + uji**: `ledger.js` (saldo, validasi, modal rata-rata), `kurs.js`, `valuation.js`, `zakat.js`, `piutang.js`, `queue.js`, `dates.js`. 44 uji lulus (`npm test`), termasuk uji lapisan Apps Script dengan Sheet tiruan.
 - Detail dan keputusan: `docs/CHANGELOG.md`. Commit terakhir: `8c34634` (Tahap 2 dan 3).
 
-## Belum dicoba di Google sungguhan
-Setup.js dan Repo.js baru diuji dengan Sheet tiruan. Langkah pertama yang perlu dikonfirmasi Ticon: buat Sheet kosong, Extensions › Apps Script, salin Script ID ke `.clasp.json` (dari `.clasp.json.example`), `clasp login`, `npm run push`, lalu Hartafolio › Siapkan sheet di Sheet. Kalau gagal, perbaiki dulu sebelum Tahap 4.
+## Sudah dicoba di Google sungguhan (24 Nov 2026)
+`npm run push` dan menu Hartafolio › Siapkan sheet **berhasil** di Sheet uji milik Ticon (akun pengembang): 11 tab urut benar, Aset 13 baris, Pengaturan 8 baris, Transaksi 28 kolom, dijalankan dua kali tidak dobel, "Header Hartafolio" terlindungi (dicek di tab Transaksi). Syarat satu kali: Apps Script API dinyalakan di script.google.com/home/usersettings, dan `npm run push` memakai `clasp push --force` bila manifest berubah.
+
+**Masih BELUM dicoba di Google:** `doGet` (tampilan web app), `apiState`, `apiTransaksiTambah`, `apiTransaksiUbah`, menu "Periksa struktur", dan penguncian di tab selain Transaksi. Dicoba ketika layar Beranda pertama memakainya.
 
 ## Keputusan yang sudah diambil (jangan tanya ulang)
 - Stack: Google Apps Script web app + Google Sheet, template salinan, library pusat plus pembungkus tipis. Hanya Pengelola login.
