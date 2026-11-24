@@ -78,8 +78,9 @@ const orig=HF.api.call;`;
 
 const want = process.argv.slice(2);
 const list = want.length ? scenarios.filter((s) => want.includes(s.id)) : scenarios;
+const statis = list.filter((s) => !s.frames);
 let gagal = 0; const rows = [];
-for (const sc of list) {
+for (const sc of statis) {
   const b = path.join(OUT, sc.id + '.board.png'), a = path.join(OUT, sc.id + '.app.png'), d = path.join(OUT, sc.id + '.diff.png');
   // board
   let p = await newPage();
@@ -98,6 +99,24 @@ for (const sc of list) {
   const ok = !out.error && out.rasio <= MAX_RASIO; if (!ok) gagal++;
   rows.push({ id: sc.id, ok, out });
   console.log(`${ok ? 'LULUS ' : 'GAGAL '} ${sc.id.padEnd(34)} ${out.error ? out.error : (out.rasio * 100).toFixed(3) + '% beda (' + out.beda_px + ' px)' + (out.dikecualikan_px ? ', ' + out.dikecualikan_px + ' px dikecualikan: ' + sc.deviasi.map((x) => x.alasan).join('; ') : '') + (out.wilayah && out.wilayah[0] && !ok ? '  terbesar: x' + out.wilayah[0].x + ' y' + out.wilayah[0].y + ' ' + out.wilayah[0].w + 'x' + out.wilayah[0].h : '')}`);
+}
+// Animasi: setelah sebuah klik, bekukan semua animasi/transisi pada waktu T (ms) lalu bandingkan. Hanya skenario ber-`frames`.
+const freezeAt = (T) => `(async()=>{await new Promise(r=>setTimeout(r,40));document.getAnimations().forEach(a=>{const it=a.effect&&a.effect.getComputedTiming().iterations;a.pause();a.currentTime=it===Infinity?0:${T}});if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();await new Promise(r=>setTimeout(r,60));return true})()`;
+for (const sc of list.filter((x) => x.frames)) {
+  for (const T of sc.frames.at) {
+    const id = `${sc.id}@${T}ms`, b = path.join(OUT, id + '.board.png'), a = path.join(OUT, id + '.app.png'), d = path.join(OUT, id + '.diff.png');
+    let p = await newPage(); await p.go(`${base}/farm/${sc.board}.dc.html`);
+    for (let i = 0; i < 50 && !(await p.ev(`!!document.querySelector('[data-theme]')&&document.querySelector('[data-theme]').children.length>0`)); i++) await sleep(100);
+    await p.ev(settle); await p.ev(`(async()=>{${sc.frames.act}})()`); await p.ev(freezeAt(T));
+    fs.writeFileSync(b, Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64')); await p.close();
+    p = await newPage(); await p.go(`${base}/app/Index.html?hold&reset`);
+    await p.go(`${base}/app/Index.html?${sc.query}`); await sleep(500);
+    await p.ev(settle); await p.ev(`(async()=>{${sc.frames.act}})()`); await p.ev(freezeAt(T));
+    fs.writeFileSync(a, Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64')); await p.close();
+    const out = JSON.parse(execFileSync('python3', [path.join(import.meta.dirname, 'diff.py'), b, a, d, '[]']).toString());
+    const ok = !out.error && out.rasio <= MAX_RASIO; if (!ok) gagal++;
+    console.log(`${ok ? 'LULUS ' : 'GAGAL '} ${id.padEnd(34)} ${out.error ? out.error : (out.rasio * 100).toFixed(3) + '% beda (' + out.beda_px + ' px)' + (out.wilayah && out.wilayah[0] && !ok ? '  terbesar: x' + out.wilayah[0].x + ' y' + out.wilayah[0].y + ' ' + out.wilayah[0].w + 'x' + out.wilayah[0].h : '')}`);
+  }
 }
 fs.writeFileSync(path.join(root, '.pixel/ringkasan.json'), JSON.stringify(rows, null, 1));
 chrome.kill(); server.close();
