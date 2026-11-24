@@ -48,7 +48,7 @@ function boot() {
   const root = path.join(__dirname, '..', 'src');
   ['catalog', 'dates', 'format', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
-  ['Repo', 'Setup'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
+  ['Repo', 'Setup', 'Master'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
 }
 
@@ -130,4 +130,62 @@ test('apiState menyatukan data; harga terakhir mengabaikan status gagal', () => 
   assert.equal(s.harga.kursSeries.length, 1);
   assert.equal(s.versi, 1);
   assert.ok(s.aset.length >= 10);
+});
+
+test('anggota dan lokasi: tambah, ubah, tolak nama ganda, pengelola tetap "Diri sendiri"', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  const j = x => JSON.parse(JSON.stringify(x));
+  const a1 = j(g.run('apiAnggotaTambah({nama:"  Azlan ", hubungan:"Anak"})'));
+  assert.equal(a1.anggota_id, 'PM-001');
+  assert.equal(a1.is_pengelola, true);
+  assert.equal(a1.hubungan, 'Diri sendiri');
+  const a2 = j(g.run('apiAnggotaTambah({nama:"Yumna", hubungan:"Anak"})'));
+  assert.equal(a2.anggota_id, 'PM-002');
+  assert.equal(a2.is_pengelola, false);
+  assert.throws(() => g.run('apiAnggotaTambah({nama:"azlan", hubungan:"Anak"})'), /Sudah ada anggota/);
+  assert.throws(() => g.run('apiAnggotaTambah({nama:"Fulan", hubungan:"Diri sendiri"})'), /Pilih hubungan/);
+  assert.throws(() => g.run('apiAnggotaTambah({nama:"", hubungan:"Anak"})'), /wajib/);
+  const u = j(g.run('apiAnggotaUbah("PM-001", {nama:"Azlan R", hubungan:"Anak"})'));
+  assert.equal(u.nama, 'Azlan R');
+  assert.equal(u.hubungan, 'Diri sendiri');
+  assert.equal(j(g.run('apiAnggotaUbah("PM-002", {hubungan:"Saudara"})')).hubungan, 'Saudara');
+  assert.throws(() => g.run('apiAnggotaUbah("PM-009", {nama:"X"})'), /tidak ditemukan/);
+  const l1 = j(g.run('apiLokasiTambah({nama:"Brankas", jenis:"Simpanan fisik"})'));
+  assert.equal(l1.lokasi_id, 'LK-001');
+  assert.throws(() => g.run('apiLokasiTambah({nama:"brankas", jenis:"Lainnya"})'), /Sudah ada lokasi/);
+  assert.throws(() => g.run('apiLokasiTambah({nama:"Bank X", jenis:"Tidak ada"})'), /Pilih jenis/);
+  assert.equal(j(g.run('apiLokasiUbah("LK-001", {jenis:"Bank atau deposito"})')).jenis, 'Bank atau deposito');
+  assert.equal(g.run('Repo_read_("Anggota").length'), 2);
+});
+
+test('setup selesai: butuh anggota dan lokasi, aman dipanggil dua kali', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  assert.throws(() => g.run('apiSetupSelesai()'), /minimal 1 anggota/);
+  g.run('apiAnggotaTambah({nama:"Azlan"})');
+  assert.throws(() => g.run('apiSetupSelesai()'), /minimal 1 lokasi/);
+  g.run('apiLokasiTambah({nama:"Brankas", jenis:"Simpanan fisik"})');
+  g.run('apiSetupSelesai()'); g.run('apiSetupSelesai()');
+  const n = g.run('Repo_read_("Pengaturan").filter(r => r.kunci === "setup_selesai").length');
+  assert.equal(n, 1);
+  assert.equal(g.run('apiState().pengaturan.setup_selesai'), 'ya');
+});
+
+test('hapus anggota dan lokasi: aktif jadi tidak, ditolak bila pengelola atau sudah dipakai', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.run('apiAnggotaTambah({nama:"Azlan"}); apiAnggotaTambah({nama:"Yumna", hubungan:"Anak"}); apiAnggotaTambah({nama:"Yahya", hubungan:"Anak"});');
+  g.run('apiLokasiTambah({nama:"Brankas", jenis:"Simpanan fisik"}); apiLokasiTambah({nama:"Bank", jenis:"Bank atau deposito"});');
+  assert.throws(() => g.run('apiAnggotaHapus("PM-001")'), /Pengelola/);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-20261103-0001', tanggal:'2026-11-03', jam:'10:00', jenis:'Saldo awal', anggota_id:'PM-002', aset_id:'AS-EMAS', lokasi_id:'LK-001', jumlah:5, harga_mata_uang:'IDR', sumber:'offline'}])`);
+  assert.throws(() => g.run('apiAnggotaHapus("PM-002")'), /masih punya catatan/);
+  assert.throws(() => g.run('apiLokasiHapus("LK-001")'), /masih dipakai/);
+  assert.equal(g.run('apiAnggotaHapus("PM-003")'), true);
+  assert.equal(g.run('apiLokasiHapus("LK-002")'), true);
+  assert.equal(g.run('Repo_read_("Anggota").length'), 3);
+  assert.equal(g.run('Repo_read_("Anggota").filter(a => a.aktif).length'), 2);
+  assert.equal(g.run('Repo_read_("Lokasi").filter(a => a.aktif).length'), 1);
+  g.run('apiAnggotaTambah({nama:"Yahya", hubungan:"Anak"})');
+  assert.equal(g.run('Repo_read_("Anggota").length'), 4);
 });

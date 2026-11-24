@@ -59,6 +59,16 @@ Aturan Ticon: tidak ada beda kecil. Tiap layar yang selesai:
 
 Yang tidak bisa saya cek sendiri di Google Apps Script: tampilan di HP sungguhan dan di dalam sandbox HtmlService. Tandai "BELUM TERVERIFIKASI".
 
+## 4b. Setup (Tahap 4), tiap perubahan di `setup*.js`, `Master.js`, atau `api.js`
+Dijalankan di `npm run dev` (ukuran 390×844) dan dibandingkan dengan `reference/mockups/png/01-Setup-*.png`:
+- [ ] Langkah 1, 2 (kosong dan 3 anggota), 3 (kosong dan 4 lokasi) sama dengan mockup. Terukur 24 Nov 2026: posisi dan tinggi tiap elemen sama sampai piksel (bar, kartu, daftar, garis pemisah, chip, tombol, footer).
+- [ ] Form (tambah anggota, hubungan terbuka, ubah lokasi, jenis terbuka): sheet, kolom, daftar pilihan, tombol sama dengan mockup **setelah animasi selesai** (`document.getAnimations().forEach(a => a.finish())`; tanpa itu angka meleset 24px karena animasi masuk).
+- [ ] Memilih hubungan/jenis tidak menggambar ulang sheet (nama yang diketik tidak hilang).
+- [ ] Nama ganda ditolak server; Pengelola tetap "Diri sendiri" dan tidak bisa dihapus; hapus = aktif "tidak"; muat ulang tetap melanjutkan dari langkah terakhir.
+- [ ] Uji server: `tests/gas.test.js` (anggota, lokasi, hapus, Setup selesai).
+
+Belum terukur: splash, mode gelap, menu hubungan di layar anggota terisi (2b persis), 3b/3c/3d.
+
 ## 5. Data dan aturan produk
 
 - [ ] Tidak ada hapus fisik data, tidak ada purge otomatis.

@@ -50,3 +50,15 @@
 - Dua hal yang baru ketahuan di Google: Apps Script API harus dinyalakan sekali di akun pengembang; `npm run push` tanpa `--force` melompati pengiriman tanpa pesan ketika manifest berubah. Dicatat di CLAUDE.md.
 - Akun pengembang pertama tidak bisa membuka Apps Script, diganti dengan `npx clasp logout` lalu `npx clasp login`.
 - Belum dicoba: tampilan web app, `api*`, "Periksa struktur", penguncian di tab selain Transaksi.
+
+## 24 Nov 2026 · Tahap 4 (bagian 1): Setup langkah 1 sampai 3
+**Dibangun:** splash, langkah 1 Akun, 2 Anggota, 3 Lokasi, form bersama (hfForm) untuk tambah/ubah anggota dan lokasi. Server: `src/gas/Master.js` (tambah/ubah/hapus-lunak anggota dan lokasi, `apiSetupSelesai`), 3 uji baru (47 uji lulus). Gaya masuk `docs/design/bundle.css` (blok "Setup", kelas `su-*`), tanpa gaya inline di layar.
+**Terukur terhadap mockup (24 Nov 2026):** langkah 1, 2 kosong, 2 terisi, 3 kosong, 3 terisi, form anggota (hubungan terbuka), form lokasi (jenis terbuka): posisi dan tinggi semua elemen yang diukur sama dengan PNG mockup. Chip Tambah cepat bergeser sampai 2px pada satu chip (lebar teks pecahan), belum dipastikan.
+**Keputusan Ticon:** langkah 1 hanya melanjutkan (login sudah ditangani Google; "Buat sheet baru" dan "Ganti sheet" diputuskan di Tahap 9). Langkah 4: hanya "Mulai kosong" dulu; tahap Import ikut Tahap 8.
+**Untuk sesi desain (mockup menang, dilaporkan):**
+- Mockup menyembunyikan tombol "Tambah anggota" setelah 4 anggota; ini artefak demo, di kode tombol selalu ada.
+- Jenis lokasi: mockup "Simpanan fisik", DATA_MODEL/design-system "Simpanan fisik di rumah". Kode mengikuti mockup (enum di `schema.js` diubah).
+- Pengaturan awal masih berisi `tanggal_snapshot`, padahal design-system menyatakan setelan itu dihapus (snapshot tetap tanggal 1).
+- design-system menyebut board 4b (Mulai kosong), tetapi board itu tidak ada di artifact mockup. Perlu dijawab sebelum langkah 4.
+- Tidak digambar mockup, dibuat minimal: teks galat di form (nama ganda, dll.) dan teks galat di splash bila data gagal dimuat.
+**BELUM TERVERIFIKASI:** di Google sungguhan (web app belum di-deploy, `google.script.run` belum dicoba), splash, mode gelap, layar anggota terisi dengan menu hubungan terbuka, 3b/3c/3d. Di `npm run dev` layar memakai tiruan localStorage, bukan Sheet.
