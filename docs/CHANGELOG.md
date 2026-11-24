@@ -38,3 +38,9 @@
 - Bug yang hanya muncul di Google: Sheet baru berukuran 1000 baris x 26 kolom, sedangkan Siapkan sheet memformat 2000 baris dan tab Transaksi punya 28 kolom. Menulis di luar grid melempar galat. Perbaikan: `Repo_ensureGrid_` menambah baris/kolom sebelum Setup menulis dan sebelum `Repo_append_` menambah baris.
 - Sheet tiruan di `tests/gas.test.js` sekarang meniru batas grid 1000 x 26 (sebelumnya tanpa batas, jadi bug ini lolos). Diuji dulu gagal 5 dari 5, lalu 44 uji lulus setelah perbaikan.
 - BELUM TERVERIFIKASI di Google: perilaku batas grid ditiru dari pengetahuan tentang Sheets, bukan dari uji nyata. `clasp` belum terpasang dan belum login di mesin ini; `clasp push` dan menu Siapkan sheet harus dijalankan Ticon.
+
+## 24 Nov 2026 · Aturan kerja anti-regresi (dari Kickstart Kit Solide)
+- Baru: `docs/REGRESSION.md` (daftar yang tidak boleh rusak, tertaut ke 44 uji, plus cek layar identik mockup dengan ukuran nyata), `docs/ARCHITECTURE.md` (peta fitur ke berkas, jalur antar-bagian, rencana struktur layar Tahap 4, area sensitif).
+- `CLAUDE.md`: bahasa balasan dibuat sederhana; bagian Anti-regresi, Cara menulis kode (satu berkas satu urusan, alarm sekitar 400 baris), Jebakan, dan Definition of Done.
+- Tidak diambil dari kit: BUILD-BRIEF (sudah dipenuhi `BUILD_PLAN.md` dan `STATUS.md`) dan aturan git (aturan global Ticon sudah mengaturnya).
+- Alat ukur otomatis kecocokan mockup (skill mockup-match) belum dipasang di proyek ini. Mockup di sini berbentuk `.dc.html`, bukan `design-spec.json`, jadi cek kecocokan masih dengan membaca nilai nyata dari halaman. BELUM TERVERIFIKASI bahwa cara itu cukup; dinilai setelah layar Setup pertama.

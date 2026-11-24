@@ -1,8 +1,9 @@
 # Hartafolio — panduan untuk Claude Code
 
 > **Mulai dari `docs/STATUS.md`** (apa yang sudah selesai, keputusan, langkah berikutnya). Tahap 0–3 selesai; lanjutkan dari Tahap 4.
+> **Baca bersama:** `docs/ARCHITECTURE.md` (fitur ada di berkas mana) dan `docs/REGRESSION.md` (yang tidak boleh rusak; jalankan sebelum bilang "selesai").
 
-Kamu membangun **Hartafolio**: pelacak portofolio multi-aset untuk keluarga, UI berbahasa Indonesia. Klien: Irfan. Developer/desainer: Ticon (Rahmat Taufiqurrahman). **Selalu balas Ticon dalam bahasa Indonesia.** Desain sudah selesai dan disetujui klien; tugasmu membangun kode yang **identik dengan mockup dan prototype**.
+Kamu membangun **Hartafolio**: pelacak portofolio multi-aset untuk keluarga, UI berbahasa Indonesia. Klien: Irfan. Developer/desainer: Ticon (Rahmat Taufiqurrahman). **Selalu balas Ticon dalam bahasa Indonesia, dengan bahasa chat yang sederhana dan mudah dipahami orang awam.** Hindari istilah teknis; kalau terpaksa, jelaskan dengan satu kalimat. Langkah yang harus Ticon jalankan diberikan satu per satu. Desain sudah selesai dan disetujui klien; tugasmu membangun kode yang **identik dengan mockup dan prototype**.
 
 ## Arsitektur (sudah diputuskan, jangan tanya ulang)
 - **Web app Google Apps Script + Google Sheet.** Dibuka di browser HP dan laptop. Tidak ada server pusat, biaya server Rp 0.
@@ -53,3 +54,37 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 ## Perintah proyek
 - `npm test` uji engine (Node 20+). `npm run build` membangun `dist/`. `npm run dev` melayani `dist/` di localhost:8080.
 - Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `npx clasp login`, lalu `npm run push` (clasp terpasang lokal; jangan pakai npm -g, /usr/local milik root).
+
+## Anti-regresi (wajib; tujuannya berhenti "tambal kiri, bocor kanan")
+1. **Jalankan `docs/REGRESSION.md` sebelum bilang selesai.** Ada yang gagal = belum selesai. Tunjukkan hasilnya.
+2. **Bukti dulu, baru klaim.** Bukti = keluaran uji, angka hasil ukur, atau diff. Bukan "seharusnya begitu".
+3. **Yang tidak bisa dicek otomatis** (tampilan di Google sungguhan, klik di HP) ditulis **"BELUM TERVERIFIKASI, minta Ticon cek"**. Jangan pasang perbaikan buta lalu bilang beres.
+4. **Satu fitur stabil = satu commit** di cabang. Perbaikan yang merusak: bandingkan dengan commit sehat (`git diff <commit>`), jangan menambal di atasnya.
+5. **Area sensitif wajib rencana dulu dan persetujuan Ticon sebelum mengubah kode:** `ledger.js`, `zakat.js`, antrean offline (`queue.js` dan `apiTransaksiTambah`), skema dan `Setup.js` (mengubah kolom Sheet yang sudah dipakai), penulisan di `Repo.js`. Daftar lengkap: `docs/ARCHITECTURE.md` §5.
+6. **Mockup bentrok dengan dokumen, atau ada state yang tidak digambar mockup: tanya Ticon, jangan menebak.** Kumpulkan semua pertanyaan jadi satu pesan sebelum mulai membangun layar. Beda yang disengaja dari mockup dicatat beserta alasannya di CHANGELOG.
+
+## Cara menulis kode
+- **Satu berkas, satu urusan.** Layar baru = berkas baru di `src/web/screens/`. `app.js` hanya rute dan shell. Berkas baru ditambahkan ke daftar `<!-- @js:... -->` di `src/web/index.html`, kalau tidak layar tidak ikut `dist/`.
+- **Alarm ±400 baris.** Berkas lewat sekitar 400 baris atau mulai mencampur dua urusan: pecah dulu sebelum commit.
+- **Satu jalur antar-bagian.** Layar ke server hanya lewat fungsi `api*`. Layar tidak menghitung sendiri; hitungan lewat `HF.ledger`, `HF.valuation`, `HF.zakat`, `HF.piutang`. Bagian lain: `docs/ARCHITECTURE.md` §3.
+- **Rapikan sedikit area yang disentuh** (boy-scout), tanpa mengubah perilaku.
+- **Perbarui `docs/ARCHITECTURE.md` di commit yang sama** saat struktur berubah.
+
+## Jebakan (tulis di sini tiap kali menemukan yang baru)
+- **Sheet baru Google hanya 1000 baris × 26 kolom.** Menulis atau memformat di luar itu gagal. Selalu lewat `Repo_ensureGrid_`. Sheet tiruan di `tests/gas.test.js` meniru batas ini; jangan dilonggarkan.
+- **Sheet tiruan yang terlalu longgar menyembunyikan bug.** Bug grid di atas lolos 44 uji karena tiruannya tanpa batas. Saat menemukan perilaku Google yang berbeda dari tiruan, perbaiki tiruannya dulu sampai uji gagal, baru perbaiki kode.
+- **Apps Script memuat berkas menurut abjad, semuanya satu lingkup global.** Engine yang butuh engine lain saat dimuat harus bergantung hanya pada berkas yang abjadnya lebih awal.
+- **`clasp` terpasang lokal, bukan global.** Pakai `npx clasp ...` atau `npm run push`. `npm install -g` ditolak izin macOS (`/usr/local` milik root); jangan pakai `sudo`.
+- **Login Google (`npx clasp login`) hanya bisa dilakukan Ticon.** Jangan mencoba menyiasati.
+- **Tampilan dibangun jadi satu berkas `Index.html`** (CSS, JS, font ditanam). Gambar atau berkas statis terpisah tidak dilayani HtmlService.
+- **Ikon harus `<svg>` nyata, garis pemisah harus elemen nyata** (bukan CSS mask atau `border-top`), supaya bisa diukur terhadap mockup.
+- **Tracking huruf di spek desain adalah persen dari ukuran font, bukan piksel.**
+
+## Selesai berarti (Definition of Done)
+- [ ] `docs/REGRESSION.md` dijalankan dan lolos, dengan bukti.
+- [ ] `npm test` lulus, jumlah uji tidak turun.
+- [ ] Layar identik dengan mockup (state kosong, error, menu, toast, sheet ikut), dengan angka ukur di laporan.
+- [ ] Kode di berkas yang benar; tidak ada berkas yang melewati ±400 baris.
+- [ ] `docs/ARCHITECTURE.md` diperbarui bila struktur berubah.
+- [ ] Tercatat di `docs/CHANGELOG.md`; satu commit per fitur.
+- [ ] Yang tidak terverifikasi ditandai jelas ke Ticon.
