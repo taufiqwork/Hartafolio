@@ -113,3 +113,10 @@
 - **Perbaikan:** pembaruan di tempat. Menyorot baris hanya mengubah gaya lingkaran dan baris; mengganti tampilan/pilihan memutar ulang sapuan dan baris lewat kelas `sw0/sw1` dan `rw0/rw1` bergantian (seperti board); menu dibuka tanpa menyentuh bagian lain.
 - **Alat:** `tools/pixel` kini membandingkan animasi (skenario `frames`: klik, bekukan pada T ms, bandingkan dengan board). 17 frame = 0 piksel beda. Diuji terbalik: dengan kode lama alat melaporkan selisih 0,52% di area donut pada 80 ms.
 - Belum diperiksa: gerak yang tidak dipicu klik (hitung naik di hero saat dimuat, sapuan awal) dan mode gelap.
+
+## 25 Nov 2026 · Beranda tahap B (banner pengingat, lonceng, toast) dan Design System online
+- **Dibangun:** banner zakat (mendekati, jatuh tempo hari ini, terlambat) dan piutang (hari ini, terlambat) di bawah total, dengan aturan satu banner (zakat menang, piutang tetap di lonceng); lembar "Perlu perhatian" dari lonceng (daftar dengan ikon, keadaan "Semua beres"); toast "tersimpan" dengan tombol Lihat. Logika di `HF.beranda.attention`, tampilan di `src/web/screens/beranda.js`.
+- **Perbandingan piksel:** 10 board baru (2e, 2f, 2g, 2h, 2i, 2j, 2o, 2p, 2q, 2r) + animasi buka lonceng (4 frame) = 0 piksel beda. Seluruh suite 57 perbandingan, 0 gagal.
+- **Data contoh:** `?demo=<keadaan>` memilih keadaan board (daftar di ARCHITECTURE.md). Isi banner dan lonceng adalah teks contoh (Azlan, Bu Sari, Bu Rina); sumber nyata (mesin zakat dan piutang) dihubungkan bersama Tahap 5 dan 7.
+- Dimatikan: tombol banner, baris lonceng, dan "Lihat" di toast (layar tujuan belum ada).
+- **Design System online** (artifact RLygUek1tq98GXvtuegirr, versi 86): gerak dan kartu hero Beranda dipindah dari helmet board ke `components/bundle.css`; README menambah bagian "Beranda motion and hero" dan "Save states and error notice". Canvas mockup tidak diubah.

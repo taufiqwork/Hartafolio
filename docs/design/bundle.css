@@ -467,3 +467,18 @@ main.hf-scroll { animation: hfPageIn .24s cubic-bezier(.2,.8,.2,1) backwards; }
 .hf-tick{border-radius:8px;padding:0 4px;margin-right:-4px;animation:hfTick 5s ease-in-out 1.5s infinite}
 @keyframes hfTick{0%,8%,100%{background:transparent}3%{background:var(--brand-soft)}}
 @media (prefers-reduced-motion: reduce){.hf-count,.hf-spark svg,.hf-spark .area,.hf-spark-end,.hf-donut svg,.hf-rise,.hf-tick{animation:none}}
+
+/* Beranda tahap B: banner pengingat, lembar lonceng (board Main-2e sampai 2r, 2h) */
+.br-banner { border-radius: 20px; padding: 14px; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; align-items: center; }
+.br-bn-tile { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--surface-raised); grid-row: span 2; }
+.br-bn-title { font-size: 15px; line-height: 22px; font-weight: 600; }
+.br-bn-desc { color: var(--ink-muted); }
+.br-bn-btn { grid-column: 1 / -1; margin-top: 8px; }
+.br-sheet { gap: 4px; padding-left: 8px; padding-right: 8px; }
+.br-sheet .hf-sheet-handle { margin-bottom: 8px; }
+.br-notes { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; min-height: 0; }
+.br-notif-tx { display: flex; flex-direction: column; min-width: 0; }
+.br-notif-go { color: var(--ink-muted); }
+.br-allok { display: grid; justify-items: center; gap: 8px; text-align: center; padding: 24px 16px 16px; }
+.br-toast { --toast-bottom: calc(var(--safe-bottom) + 83px); }
+.br-toast-act { flex: none; }

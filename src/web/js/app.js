@@ -38,7 +38,7 @@
     var r = route();
     if (r === 'beranda') {
       var el = document.getElementById('app');
-      el.innerHTML = HF.berandaScreen.html(berandaData) + nav('beranda');
+      el.innerHTML = HF.berandaScreen.html(berandaData) + nav('beranda') + '<div class="br-overlays">' + HF.berandaScreen.overlays(berandaData) + '</div>';
       HF.berandaScreen.bind(el, berandaData);
       document.title = 'Beranda · Hartafolio';
       return;
