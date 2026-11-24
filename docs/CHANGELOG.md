@@ -93,3 +93,9 @@
 - Terukur di DOM: notice padding 12/16, radius 12, gap 12, judul 15/22/600, latar `loss-soft`; urutan blok sama dengan board. PNG board belum diekspor, jadi belum dibandingkan piksel demi piksel.
 - Tidak digambar board dan dibuat sama polanya: baris lokasi yang menyimpan hanya redup (tanpa teks "Menyimpan…"), dan kegagalan hapus memakai notice umum "Belum tersimpan". Sebelumnya gagal dengan pesan server mentah; sekarang semua galat non-nama-ganda dianggap "Google Sheet tidak merespons" (belum membedakan penyebab lain).
 - BELUM TERVERIFIKASI di Google sungguhan.
+
+## 25 Nov 2026 · Perbandingan piksel otomatis (diminta Ticon)
+- Alat baru `npm run pixel` (`tools/pixel/`): me-render board asli dari `reference/mockups/src` (dengan runtime board di `reference/mockups/runtime/`) dan aplikasi pada 390×844 @1x memakai Chrome, lalu membandingkan piksel. 17 skenario: Splash, Setup 1 sampai 4a (semua state yang dibangun) dan 5 board Simpan ke Sheet.
+- **Selisih nyata yang tertangkap:** `-webkit-font-smoothing: antialiased` di `shell.css` membuat semua teks aplikasi lebih tipis dari mockup (lolos dari pengukuran posisi sebelumnya). Dihapus. Hasil: 15 dari 17 state 0 piksel beda; 2 sisanya 0 piksel beda di luar tombol Import yang sengaja dimatikan (dicatat sebagai penyimpangan).
+- Sekarang menjadi aturan tetap di CLAUDE.md dan REGRESSION.md: tiap layar dan semua state-nya dibandingkan piksel otomatis.
+- Mode dev saja: `?hold` menahan splash, `?step=N` memaksa langkah Setup. Belum diukur: mode gelap. Board 01-Setup-4 dan tahap Import berikutnya belum dibangun.

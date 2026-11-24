@@ -37,6 +37,7 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Gaya shell | `src/web/css/shell.css` | tipis; gaya komponen **hanya** di `docs/design/` |
 | Token dan komponen `.hf-*` | `docs/design/tokens.css`, `docs/design/bundle.css` | disalin ke `dist` oleh build |
 | Uji komponen | `src/web/components.html`, `src/web/js/components.js` | `?page=components` |
+| Perbandingan piksel board vs aplikasi | `tools/pixel/run.mjs`, `scenarios.mjs`, `diff.py` | `npm run pixel`; runtime board di `reference/mockups/runtime/` |
 | Build | `tools/build.mjs` | daftar JS per halaman ada di komentar `<!-- @js:... -->` di `src/web/index.html` |
 
 ## 3. Satu jalur antar-bagian

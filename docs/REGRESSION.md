@@ -47,6 +47,7 @@ Diuji dengan Sheet tiruan di `tests/gas.test.js`. Sheet tiruan **meniru batas gr
 
 Aturan Ticon: tidak ada beda kecil. Tiap layar yang selesai:
 
+- [ ] **`npm run pixel` lulus untuk semua skenario** (perbandingan piksel penuh board vs aplikasi, 390×844 @1x). Terukur 24 Nov 2026: 17 state Setup dan Simpan ke Sheet, 0 piksel beda (2 dengan penyimpangan tercatat: tombol Import dimatikan). Layar atau state baru tanpa skenario = belum selesai.
 - [ ] Buka board mockupnya di artifact (nama board ada di `docs/MOCKUPS.md`), **termasuk state kosong, error, menu terbuka, toast, sheet**.
 - [ ] **Teks disalin dari mockup, bukan diketik ulang** (satu contoh nyata di proyek lain: panjang sandi diketik 8, mockup menulis 12). Bandingkan tiap kalimat.
 - [ ] **Ukur, bukan lihat**: buka layar di `npm run dev`, baca nilai nyata dari halaman (ukuran, jarak, warna, radius, font) dan cocokkan dengan nilai di mockup. Jangan menilai dari tangkapan layar. Cantumkan angkanya di laporan: berapa elemen diukur, berapa yang beda.
@@ -69,7 +70,7 @@ Dijalankan di `npm run dev` (ukuran 390×844) dan dibandingkan dengan `reference
 - [ ] Langkah 4 (tahap Pilih file): kartu dua langkah, pemisah, footer, 3 tanda di bar sama dengan `01-Setup-4a-Belum-Pilih.png`; "Lewati, mulai dari nol" mengisi `setup_selesai` dan membuka shell.
 - [ ] Uji server: `tests/gas.test.js` (anggota, lokasi, hapus, Setup selesai).
 
-Belum terukur: tahap Periksa/Lengkapi/Simpan (belum dibangun), splash, mode gelap, menu hubungan di layar anggota terisi (2b persis), 3b/3c/3d.
+Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode gelap (alat baru memotret mode terang).
 
 ## 5. Data dan aturan produk
 

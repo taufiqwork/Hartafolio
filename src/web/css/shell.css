@@ -1,7 +1,7 @@
 /* Shell aplikasi Hartafolio. Gaya komponen ada di docs/design/bundle.css; di sini hanya tata letak halaman. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 22px; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 22px; }
 a { color: var(--brand); }
 .app { --safe-top: max(env(safe-area-inset-top, 0px), 47px); --safe-bottom: max(env(safe-area-inset-bottom, 0px), 34px); display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; }
 @media (min-width: 481px) { .app { border-left: 1px solid var(--line); border-right: 1px solid var(--line); } }

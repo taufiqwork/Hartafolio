@@ -63,6 +63,13 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 5. **Area sensitif wajib rencana dulu dan persetujuan Ticon sebelum mengubah kode:** `ledger.js`, `zakat.js`, antrean offline (`queue.js` dan `apiTransaksiTambah`), skema dan `Setup.js` (mengubah kolom Sheet yang sudah dipakai), penulisan di `Repo.js`. Daftar lengkap: `docs/ARCHITECTURE.md` §5.
 6. **Mockup bentrok dengan dokumen, atau ada state yang tidak digambar mockup: tanya Ticon, jangan menebak.** Kumpulkan semua pertanyaan jadi satu pesan sebelum mulai membangun layar. Beda yang disengaja dari mockup dicatat beserta alasannya di CHANGELOG.
 
+## Perbandingan piksel (wajib, otomatis, tanpa menunggu perintah Ticon)
+Tiap kali membangun sebuah layar, **bandingkan piksel dengan board mockup untuk SEMUA state-nya** sebelum bilang selesai, lalu perbaiki sampai sama. Ticon sudah menetapkan ini (24 Nov 2026); jangan menunggu diminta.
+- Cara: tambahkan skenario tiap state ke `tools/pixel/scenarios.mjs` (board, data, klik), lalu `npm run pixel`. Alat me-render board asli dari `reference/mockups/src` dan aplikasi pada 390×844 @1x, membandingkan piksel, dan menulis gambar selisih ke `.pixel/out/`. Lulus = 0 piksel beda (batas 0,3% hanya untuk derau antialias).
+- Penyimpangan yang disengaja (mis. tombol dimatikan karena fungsinya belum ada) dicatat sebagai `deviasi` di skenario, lengkap dengan alasan; areanya dikecualikan tapi tetap dilaporkan.
+- Board baru atau diubah: segarkan `reference/mockups/src/<nama>.dc.html` dari artifact (Artifact read), karena alat membaca sumber board, bukan PNG lama.
+- Pengukuran posisi dengan JavaScript saja tidak cukup: pada 24 Nov 2026 pengaturan `-webkit-font-smoothing: antialiased` membuat semua teks lebih tipis dari mockup dan lolos dari pengukuran posisi; hanya perbandingan piksel yang menangkapnya.
+
 ## Cara menulis kode
 - **Satu berkas, satu urusan.** Layar baru = berkas baru di `src/web/screens/`. `app.js` hanya rute dan shell. Berkas baru ditambahkan ke daftar `<!-- @js:... -->` di `src/web/index.html`, kalau tidak layar tidak ikut `dist/`.
 - **Alarm ±400 baris.** Berkas lewat sekitar 400 baris atau mulai mencampur dua urusan: pecah dulu sebelum commit.
@@ -76,6 +83,7 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 - **Apps Script memuat berkas menurut abjad, semuanya satu lingkup global.** Engine yang butuh engine lain saat dimuat harus bergantung hanya pada berkas yang abjadnya lebih awal.
 - **`clasp` terpasang lokal, bukan global.** Pakai `npx clasp ...` atau `npm run push`. `npm install -g` ditolak izin macOS (`/usr/local` milik root); jangan pakai `sudo`.
 - **Login Google (`npx clasp login`) hanya bisa dilakukan Ticon.** Jangan mencoba menyiasati.
+- **Jangan memasang `-webkit-font-smoothing` atau pengaturan render teks lain di CSS aplikasi**: mockup memakai bawaan browser, dan penghalus huruf mengubah ketebalan teks.
 - **Tampilan dibangun jadi satu berkas `Index.html`** (CSS, JS, font ditanam). Gambar atau berkas statis terpisah tidak dilayani HtmlService.
 - **Ikon harus `<svg>` nyata, garis pemisah harus elemen nyata** (bukan CSS mask atau `border-top`), supaya bisa diukur terhadap mockup.
 - **Tracking huruf di spek desain adalah persen dari ukuran font, bukan piksel.**
