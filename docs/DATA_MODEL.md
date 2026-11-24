@@ -9,12 +9,13 @@ Tab hasil (Snapshot, Riwayat_Nilai, Zakat) boleh dibangun ulang dari Transaksi +
 ## Perubahan terhadap v1
 
 ### Aset
-- `kelas`: Emas · Perak · Crypto · Saham · Mata uang (bukan "Kripto").
+- `kelas` (Jenis aset, 8 pilihan, sesuai form "Aset manual" di mockup): Emas · Perak · Crypto · Saham · Reksa dana · Mata uang · Properti · Lainnya ("Crypto", bukan "Kripto"). Satuan: gram, oz, koin, token, lot, lembar, unit, nominal, m².
+- Kolom `status` (aktif | tersembunyi | dihapus) menggantikan `aktif`; kolom `mata_uang_harga` (mis. saham GFI dalam USD) ditambahkan.
 - `kategori_zakat` diturunkan: hanya kelas Emas dan Perak (fisik/digital, ETF emas/perak); selain itu kosong. Wajib `gram_per_unit` untuk emas/perak yang satuannya bukan gram (1 oz = 31,1035 g). USDT dan mata uang lain tidak dihitung zakat.
 - Aset bisa disembunyikan (status tersembunyi) dan dihapus hanya bila tidak punya transaksi; lihat bagian Kelola aset di design-system.md.
 
 ### Lokasi
-- `jenis` (urutan tampil): Exchange crypto, Wallet crypto, Sekuritas saham, Aplikasi investasi, Emas digital, Bank atau deposito, Dompet digital, Simpanan fisik di rumah, Lainnya. (Menggantikan daftar v1.)
+- `jenis` (urutan tampil): Exchange crypto, Wallet crypto, Sekuritas saham, Aplikasi investasi, Emas digital, Bank atau deposito, Dompet digital, Simpanan fisik, Lainnya. (Menggantikan daftar v1.)
 
 ### Transaksi
 - `jenis`: Beli · Jual · Masuk · Keluar · Pindah · Saldo awal · Zakat · Pinjamkan · Cicilan diterima · Pelunasan diterima · Penyesuaian.
@@ -43,11 +44,10 @@ Aturan lengkap (qty dibulatkan ke atas ke satuan terkecil, Urungkan menghapus re
 - Tanpa bunga dan tanpa denda.
 
 ### Pengaturan
-Tetap v1 (`mata_uang_utama=IDR`, `mata_uang_kedua=USD`, `nisab_emas_gram=85`, `nisab_perak_gram=595`, `tarif_zakat=0.025`, `tanggal_snapshot=1`, `versi_skema=1`). Bila skema berubah ke 2, naikkan `versi_skema` dan hanya tambah kolom di kanan.
+Tujuh kunci awal: `mata_uang_utama=IDR`, `mata_uang_kedua=USD`, `nisab_emas_gram=85`, `nisab_perak_gram=595`, `tarif_zakat=0.025`, `haul_hari=354`, `versi_skema=1`. `tanggal_snapshot` dihapus: snapshot selalu tanggal 1 (design-system, "Snapshot merged into Laporan"). Kunci `setup_selesai=ya` ditulis saat Setup awal selesai. Bila skema berubah ke 2, naikkan `versi_skema` dan hanya tambah kolom di kanan.
 
 ## Notifikasi Beranda (diturunkan, tidak disimpan)
 Banner tunggal (zakat lebih dulu, lalu piutang) + lonceng berisi semua; aturannya di design-system.md "Notifikasi Beranda".
 
-## Hal yang harus diputuskan bersama Ticon sebelum mengunci kolom
-- Apakah `Pindah` disimpan sebagai satu baris dengan tujuan, atau dua baris berpasangan (keluar dan masuk) untuk menyederhanakan saldo. Rekomendasi: satu baris, engine menghitung dua sisi.
-- Perlukah tab `Piutang_Jadwal` bila "Ubah rencana pelunasan" perlu menyimpan jadwal yang diedit manual. Rekomendasi: mulai tanpa, jadwal diturunkan.
+## Keputusan yang dulu terbuka
+(Diputuskan 24 Nov 2026, lihat `docs/STATUS.md`.) `Pindah` disimpan satu baris dan engine menghitung dua sisi. Tab `Piutang_Jadwal` tidak ada; jadwal diturunkan.
