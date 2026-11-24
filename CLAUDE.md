@@ -53,7 +53,7 @@ Deploy dengan `clasp` (Ticon login sendiri: `clasp login`; kamu tidak bisa login
 
 ## Perintah proyek
 - `npm test` uji engine (Node 20+). `npm run build` membangun `dist/`. `npm run dev` melayani `dist/` di localhost:8080.
-- Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `npx clasp login`, lalu `npm run push` (clasp terpasang lokal; jangan pakai npm -g, /usr/local milik root).
+- Deploy ke Apps Script: salin `.clasp.json.example` menjadi `.clasp.json` (isi scriptId), `npx clasp login`, nyalakan Apps Script API di script.google.com/home/usersettings (sekali), lalu `npm run push`. Bila `push` berkata "Skipping push" (manifest berubah, tidak ada yang menjawab konfirmasi), jalankan `npx clasp push --force`.
 
 ## Anti-regresi (wajib; tujuannya berhenti "tambal kiri, bocor kanan")
 1. **Jalankan `docs/REGRESSION.md` sebelum bilang selesai.** Ada yang gagal = belum selesai. Tunjukkan hasilnya.
