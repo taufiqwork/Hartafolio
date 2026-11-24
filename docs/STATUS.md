@@ -22,6 +22,12 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 - Antrean offline: `queue.js` + penyimpanan di perangkat (localStorage, dibungkus try/catch); kirim lewat `apiTransaksiTambah` dengan `trx_id` dari `schema.newTrxId`.
 
 ## Tahap 4 sedang berjalan
+## Beranda: keputusan Ticon (25 Nov 2026), baca sebelum membangun
+1. **Pakai data contoh (demo) yang bisa dihapus**, jangan menyembunyikan fitur utama. Beranda harus tampil penuh seperti mockup: total, grafik kecil, "dari Okt", baris dolar, donut, daftar, kartu Harga terkini, banner zakat/piutang, lonceng.
+2. **Desain data contoh:** satu modul terpisah (`src/demo/`, mis. `demo.js`) berisi data mentah (anggota Azlan, Al Ghafiqi, M. Yahya, Yumna; lokasi; transaksi Saldo awal; harga contoh; riwayat 6 bulan; kurs) yang dirancang agar HASIL HITUNG engine sama dengan angka mockup (Rp 174,2 jt, +2,4%, $ 9.979, piutang Rp 19,3 jt, dst.). UI membaca view-model dari engine, bukan angka yang ditulis tangan. Aktif lewat `?demo` (dev dan web app); data nyata di Sheet tidak tersentuh. Menghapus fitur demo = hapus folder dan satu baris pemanggil. Skenario piksel Beranda memakai data ini.
+3. **Urutan bertahap.** Tahap A: kerangka, total, donut, daftar, kosong, banyak anggota (Sisanya), menu dan pilihan (Main, 2a, 2b, 2c, 2d, 2k, 2l, 2m, 2n). Tahap B: banner zakat dan piutang, lonceng, toast (2e sampai 2j, 2o sampai 2r, 2h). Tiap tahap: skenario piksel semua state, merge, deploy.
+4. Tautan ke layar yang belum dibangun (Laporan, Piutang, Harga, Catat, Aset, Riwayat, Alat) dimatikan, kecuali tab shell.
+
 **Selesai (24 Nov 2026):** Setup langkah 1 sampai 4 (langkah 4 tahap Pilih file; Import sungguhan di Tahap 8). **Berikutnya:** uji web app di Google (deploy), lalu Beranda.
 
 ## Rencana awal Tahap 4 (Setup dan Beranda)
