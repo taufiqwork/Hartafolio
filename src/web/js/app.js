@@ -25,8 +25,24 @@
     }).join('') + '</nav>';
   }
 
+  /* Parameter alamat. Di Google, alamat asli tidak terlihat dari dalam halaman, jadi doGet menyuntikkannya ke window.HF_PARAMS. */
+  function param(name) {
+    var p = window.HF_PARAMS || {};
+    if (p[name] !== undefined && p[name] !== null) return p[name];
+    var m = new RegExp('[?&]' + name + '(?:=([\\w-]*))?(?:&|$)').exec(location.search);
+    return m ? (m[1] || '') : null;
+  }
+  var demoParam = param('demo'), berandaData = demoParam === null ? null : HF.demo.get(demoParam); // ?demo = data contoh (src/demo)
+
   function render() {
     var r = route();
+    if (r === 'beranda') {
+      var el = document.getElementById('app');
+      el.innerHTML = HF.berandaScreen.html(berandaData) + nav('beranda');
+      HF.berandaScreen.bind(el, berandaData);
+      document.title = 'Beranda · Hartafolio';
+      return;
+    }
     var screen = '<main class="app-screen hf-scroll" id="screen">' +
       '<h1 class="app-title">' + TITLES[r] + '</h1>' +
       '<p class="app-soon">Layar ini dibangun pada tahap berikutnya.</p></main>';
@@ -47,7 +63,8 @@
   function openSetup(s, err) {
     HF.setup.mount(app, s, { err: err, step: forced ? +forced[1] : 0, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
   }
-  if (!hold) HF.api.call('apiBootState').then(function (s) {
+  if (demoParam !== null) startShell(); // data contoh: langsung ke aplikasi
+  else if (!hold) HF.api.call('apiBootState').then(function (s) {
     if (s.pengaturan && s.pengaturan.setup_selesai === 'ya') startShell();
     else openSetup(s);
   }).catch(function (e) {

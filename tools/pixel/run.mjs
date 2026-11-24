@@ -90,7 +90,7 @@ for (const sc of list) {
   p = await newPage();
   await p.go(`${base}/app/Index.html?hold&reset`);
   await p.ev(`localStorage.setItem('hf-dev-state', ${JSON.stringify(JSON.stringify(sc.seed || { pengaturan: {}, anggota: [], lokasi: [] }))})`);
-  await p.go(`${base}/app/Index.html${sc.hold ? '?hold' : sc.step ? '?step=' + sc.step : ''}`);
+  await p.go(`${base}/app/Index.html${sc.query ? '?' + sc.query : sc.hold ? '?hold' : sc.step ? '?step=' + sc.step : ''}`);
   await sleep(500);
   if (sc.js) await p.ev(`(async()=>{${H_JS}${sc.js}})()`);
   await snap(p, a); if (process.env.PIXEL_EVAL) console.log('app  :', JSON.stringify(await p.ev(process.env.PIXEL_EVAL))); await p.close();
