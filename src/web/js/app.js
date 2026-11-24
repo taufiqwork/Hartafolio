@@ -34,6 +34,18 @@
     document.title = TITLES[r] + ' · Hartafolio';
   }
 
-  window.addEventListener('hashchange', render);
-  render();
+  function startShell() {
+    window.addEventListener('hashchange', render);
+    render();
+  }
+
+  /* Pertama kali: splash, lalu Setup bila belum selesai, kalau sudah ke shell. */
+  var app = document.getElementById('app');
+  app.innerHTML = HF.setup.splash();
+  HF.api.call('apiState').then(function (s) {
+    if (s.pengaturan && s.pengaturan.setup_selesai === 'ya') startShell();
+    else HF.setup.mount(app, s, { onDone: startShell });
+  }).catch(function (e) {
+    app.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message);
+  });
 })();

@@ -551,3 +551,7 @@ Beranda menampilkan **satu banner saja** di bawah kartu total, dan lonceng di po
 ### Segmented control: kolom mengikuti jumlah opsi (Round 15)
 
 Kolom grid segmented control selalu sama dengan jumlah opsinya (`repeat(n, minmax(0, 1fr))`). Saat opsi ditambah atau dihapus, angka kolom ikut diubah; kolom kosong membuat opsi bergeser dan tidak simetris.
+
+
+## Setup build notes (Claude Code, 24 Nov 2026)
+Setup (screens 00 and 01-2/3) is built with classes `su-*` at the end of `bundle.css`; values are copied one-to-one from the mockup boards. The form `hfForm` is one component (`src/web/screens/setup-form.js`) for anggota and lokasi. Step 1 only continues (no login button logic): Google handles sign-in before the web app opens.

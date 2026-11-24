@@ -21,7 +21,10 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 - Pembagian kerja data: Sheet menyimpan; `apiState()` mengirim seluruh data ke klien; klien menghitung layar dengan engine yang sama (engine diinline ke `Index.html` oleh `tools/build.mjs`). Penulisan selalu lewat `api*` di server, yang memvalidasi ulang.
 - Antrean offline: `queue.js` + penyimpanan di perangkat (localStorage, dibungkus try/catch); kirim lewat `apiTransaksiTambah` dengan `trx_id` dari `schema.newTrxId`.
 
-## Berikutnya: Tahap 4 (Setup dan Beranda)
+## Tahap 4 sedang berjalan
+**Selesai (24 Nov 2026):** Setup langkah 1 sampai 3 (lihat CHANGELOG). **Berikutnya:** langkah 4 "Mulai kosong" + penanda Setup selesai (butuh jawaban Ticon soal board 4b), uji web app di Google (deploy), lalu Beranda.
+
+## Rencana awal Tahap 4 (Setup dan Beranda)
 1. Konfirmasi `clasp push` dan Siapkan sheet berjalan di Sheet sungguhan.
 2. Layar Setup (akun, anggota, lokasi, import), ikuti board `01-Setup-*` di mockup. Endpoint baru: tambah anggota, tambah lokasi, simpan setelan (pakai `Repo_append_` dan `schema.nextId`).
 3. Beranda: kartu total (3 tingkat), sparkline, donut per kelas, daftar, banner zakat/piutang dan lonceng, kartu "Harga terkini". Data dari `apiState()`; hitungan dari `HF.ledger`, `HF.valuation`, `HF.zakat`, `HF.piutang`.

@@ -13,7 +13,7 @@
   var ENUM = {
     hubungan: ['Diri sendiri', 'Pasangan', 'Anak', 'Orang tua', 'Saudara', 'Lainnya'],
     lokasiJenis: ['Exchange crypto', 'Wallet crypto', 'Sekuritas saham', 'Aplikasi investasi', 'Emas digital',
-      'Bank atau deposito', 'Dompet digital', 'Simpanan fisik di rumah', 'Lainnya'],
+      'Bank atau deposito', 'Dompet digital', 'Simpanan fisik', 'Lainnya'],
     kelas: ['Emas', 'Perak', 'Crypto', 'Saham', 'Reksa dana', 'Mata uang', 'Properti', 'Lainnya'],
     bentuk: ['Fisik', 'Token', 'Digital'],
     satuan: ['gram', 'oz', 'koin', 'token', 'lot', 'lembar', 'unit', 'nominal', 'm2'],

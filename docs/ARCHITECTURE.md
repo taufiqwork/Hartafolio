@@ -28,7 +28,11 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Titik masuk web app | `src/gas/Code.js` | `doGet` (hanya menyajikan halaman) |
 | Menu "Siapkan sheet", header terkunci, isi awal | `src/gas/Setup.js` | `onOpen`, `setupHartafolio`, `periksaStruktur` |
 | Baca/tulis baris Sheet, batas grid, endpoint data | `src/gas/Repo.js` | `Repo_read_`, `Repo_append_`, `Repo_update_`, `Repo_ensureGrid_`, `apiState`, `apiTransaksiTambah`, `apiTransaksiUbah` |
-| Shell 5 tab, rute | `src/web/js/app.js` | IIFE; belum ada isi layar |
+| Boot: splash lalu Setup atau shell 5 tab, rute | `src/web/js/app.js` | IIFE; Setup bila `pengaturan.setup_selesai` bukan "ya" |
+| Jembatan layar ke server (dan tiruan untuk `npm run dev`) | `src/web/js/api.js` | `HF.api.call(nama, ...args)` |
+| Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi (4 Import belum) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |
+| Form bersama tambah/ubah anggota dan lokasi (hfForm) | `src/web/screens/setup-form.js` | `HF.setupForm.render` |
+| Tambah/ubah/hapus-lunak anggota dan lokasi, penanda Setup selesai | `src/gas/Master.js` | `apiAnggotaTambah/Ubah/Hapus`, `apiLokasiTambah/Ubah/Hapus`, `apiSetupSelesai` |
 | Ikon | `src/web/js/icons.js` | `HF.icon(nama)` |
 | Gaya shell | `src/web/css/shell.css` | tipis; gaya komponen **hanya** di `docs/design/` |
 | Token dan komponen `.hf-*` | `docs/design/tokens.css`, `docs/design/bundle.css` | disalin ke `dist` oleh build |
@@ -44,9 +48,9 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 
 ## 4. Rencana struktur untuk Tahap 4 (belum ada)
 
-`app.js` sekarang 39 baris dan hanya berisi shell. Jangan menumpuk layar di sana. Rencana:
+`app.js` hanya rute, boot, dan shell. Jangan menumpuk layar di sana. Aturan:
 
-- `src/web/screens/setup.js`, `beranda.js`, dst.: **satu berkas per layar**. Berkas lewat sekitar 400 baris atau mencampur dua urusan = dipecah dulu.
+- `src/web/screens/setup.js` (sudah ada), `beranda.js`, dst.: **satu berkas per layar**. Berkas lewat sekitar 400 baris atau mencampur dua urusan = dipecah dulu.
 - `app.js` tetap hanya rute dan shell.
 - Tiap berkas baru ditambahkan ke daftar `<!-- @js:... -->` di `src/web/index.html`, kalau tidak, tidak ikut `dist/` dan layar kosong tanpa galat.
 - Endpoint baru Tahap 4 (tambah anggota, tambah lokasi, simpan setelan) masuk `Repo.js` atau berkas `src/gas/` baru bila `Repo.js` mendekati 400 baris (sekarang 154).

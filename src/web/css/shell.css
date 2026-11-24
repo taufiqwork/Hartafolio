@@ -3,7 +3,7 @@
 html, body { height: 100%; }
 body { margin: 0; background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 22px; -webkit-font-smoothing: antialiased; }
 a { color: var(--brand); }
-.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; }
+.app { --safe-top: max(env(safe-area-inset-top, 0px), 47px); --safe-bottom: max(env(safe-area-inset-bottom, 0px), 34px); display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; background: var(--surface); position: relative; overflow: hidden; }
 @media (min-width: 481px) { .app { border-left: 1px solid var(--line); border-right: 1px solid var(--line); } }
 .app-screen { flex: 1; min-height: 0; overflow-y: auto; padding: calc(var(--space-4) + env(safe-area-inset-top, 0px)) var(--space-4) 28px; display: flex; flex-direction: column; gap: var(--space-6); }
 .app-title { margin: 0; font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.01em; }
