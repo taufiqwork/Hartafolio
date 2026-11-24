@@ -107,3 +107,9 @@
 - **Penyimpangan dari rencana (dicatat):** data contoh berupa angka tampilan (juta Rp) di lapisan view-model, bukan set transaksi yang dihitung mesin. Alasan: persen per anggota (+7,7%) dan persen per jenis (+6,1%) di mockup adalah angka sendiri-sendiri; tidak ada satu set transaksi yang menghasilkan keduanya. Pemetaan dari transaksi nyata ke view-model (`fromState`) dibangun bersama Catat (Tahap 5); sampai itu, data nyata dengan transaksi belum ditampilkan.
 - **Dimatikan (tautan ke layar yang belum ada, tanpa mengubah piksel):** "Termasuk piutang", grafik kecil (Laporan), "Lihat semua" (Harga), "Catat aset pertama" (Catat), lonceng belum membuka sheet (tahap B). Tab bawah tetap berjalan.
 - BELUM TERVERIFIKASI di Google sungguhan. Tahap B belum: banner zakat/piutang, lonceng terbuka, toast.
+
+## 25 Nov 2026 · Animasi Beranda (laporan Ticon)
+- **Masalah:** mengetuk baris di bawah donut menggambar ulang seluruh kartu, jadi transisi donut (lebar dan keburaman segmen) tidak jalan dan sapuan donut serta naiknya baris terulang. Perbandingan piksel sebelumnya hanya memeriksa hasil akhir sehingga tidak menangkapnya.
+- **Perbaikan:** pembaruan di tempat. Menyorot baris hanya mengubah gaya lingkaran dan baris; mengganti tampilan/pilihan memutar ulang sapuan dan baris lewat kelas `sw0/sw1` dan `rw0/rw1` bergantian (seperti board); menu dibuka tanpa menyentuh bagian lain.
+- **Alat:** `tools/pixel` kini membandingkan animasi (skenario `frames`: klik, bekukan pada T ms, bandingkan dengan board). 17 frame = 0 piksel beda. Diuji terbalik: dengan kode lama alat melaporkan selisih 0,52% di area donut pada 80 ms.
+- Belum diperiksa: gerak yang tidak dipicu klik (hitung naik di hero saat dimuat, sapuan awal) dan mode gelap.

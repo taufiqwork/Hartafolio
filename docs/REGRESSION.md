@@ -75,7 +75,8 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 ## 4c. Beranda (Tahap 4A)
 - [ ] `npm run pixel`: Main, 2a, 2b, 2c, 2d, 2k, 2l, 2m, 2n = 0 piksel beda (terukur 25 Nov 2026).
 - [ ] `npm test`: `tests/beranda.test.js` (urutan terbesar, Sisanya, sorotan, kosong tanpa transaksi).
-- [ ] Hanya kartu Pembagian harta yang digambar ulang saat interaksi (hitung naik di total tidak mengulang).
+- [ ] **Animasi** sama dengan board: 4 skenario `frames` (`Main@sorot-baris`, `@tampilan-aset`, `@pilih-anggota`, `@buka-menu`; 17 frame) = 0 piksel beda. Terbukti alat mendeteksi: kode lama yang menggambar ulang kartu gagal di 80 ms (donut).
+- [ ] Menyorot baris hanya mengubah gaya lingkaran (transisi); mengganti tampilan memutar ulang sapuan donut dan baris naik; membuka menu tidak menyentuh yang lain. Hitung naik di total tidak mengulang.
 - [ ] Tanpa `?demo` dan tanpa transaksi = Beranda kosong; dengan `?demo` = data contoh. Data contoh tidak pernah menulis ke Sheet.
 - Belum: banner zakat/piutang, lonceng terbuka, toast (tahap B).
 

@@ -29,24 +29,32 @@
         : '<span class="hf-total-sub">$ 0 · belum ada catatan</span>') + '</div>' + spark + '</section>';
   }
 
-  function card(v) {
-    var rows = v.rows.map(function (r) {
+  /* Potongan kartu Pembagian harta. Dipisah agar interaksi memperbarui yang berubah saja: transisi donut (lebar dan keburaman) dan
+     animasi sapuan hanya jalan bila elemennya tetap ada, persis seperti di board. */
+  function rowsHtml(v) {
+    return v.rows.map(function (r) {
       return '<div><button class="hf-detail hf-legend hf-rise ' + v.rwCls + '" type="button" aria-pressed="' + r.pressed + '" data-act="row" data-i="' + r.i + '" style="--i: ' + r.i + '; opacity: ' + r.op + '; border-top: ' + r.bt + ';">' +
         '<span class="hf-swatch" style="background: ' + r.c + ';"></span><div class="hf-detail-main"><span class="hf-detail-name">' + esc(r.n) + '</span><span class="hf-detail-meta">' + esc(r.sub) + '</span></div>' +
-        '<div class="hf-detail-figs"><span class="hf-detail-amount">' + r.vs + '</span><span class="' + r.dcls + '">' + r.g + '</span></div></button>' +
-        (r.open ? '<div class="hf-subrows">' + r.subs.map(function (u) { return '<div class="hf-subrow"><span>' + esc(u.n) + '</span><span>' + u.v + '</span></div>'; }).join('') + '</div>' : '') + '</div>';
+        '<div class="hf-detail-figs"><span class="hf-detail-amount">' + r.vs + '</span><span class="' + r.dcls + '">' + r.g + '</span></div></button>' + subHtml(r) + '</div>';
     }).join('');
-    var opts = ui.open ? '<ul class="hf-select-menu" role="listbox" aria-label="Pilih">' + v.opts.map(function (o) {
+  }
+  function subHtml(r) { return r.open ? '<div class="hf-subrows">' + r.subs.map(function (u) { return '<div class="hf-subrow"><span>' + esc(u.n) + '</span><span>' + u.v + '</span></div>'; }).join('') + '</div>' : ''; }
+  function segsHtml(v) { return v.segs.map(function (s) { return '<circle class="' + s.cls + '" cx="100" cy="100" r="86" stroke-dasharray="' + s.da + '" stroke-dashoffset="' + s.off + '" style="opacity: ' + s.op + '; stroke-width: ' + s.sw + ';"></circle>'; }).join(''); }
+  function centerHtml(v) {
+    return '<span class="br-c-name">' + esc(v.cName) + '</span>' + (v.cHasCtx ? '<span class="br-c-ctx">' + esc(v.cCtx) + '</span>' : '') + '<span class="br-c-val">' + v.cValue + '</span>' + (v.cHasShare ? '<span class="hf-share">' + v.cShare + '</span>' : '');
+  }
+  function menuHtml(v) {
+    return '<ul class="hf-select-menu" role="listbox" aria-label="Pilih">' + v.opts.map(function (o) {
       return '<li><button class="hf-select-opt" type="button" role="option" aria-selected="' + o.sel + '" data-act="opt" data-i="' + (o.i === null ? '' : o.i) + '"><span>' + esc(o.l) + '</span><span class="hf-sub">' + o.v + '</span></button></li>';
-    }).join('') + '</ul>' : '';
-    var segs = v.segs.map(function (s) { return '<circle class="' + s.cls + '" cx="100" cy="100" r="86" stroke-dasharray="' + s.da + '" stroke-dashoffset="' + s.off + '" style="opacity: ' + s.op + '; stroke-width: ' + s.sw + ';"></circle>'; }).join('');
+    }).join('') + '</ul>';
+  }
+  function card(v) {
     return '<section class="hf-card" aria-label="Pembagian harta"><div class="hf-card-head"><h2 class="hf-card-title">' + esc(v.title) + '</h2>' +
       '<div class="hf-toggle" role="group" aria-label="Tampilkan"><button type="button" aria-label="Per anggota" aria-pressed="' + (v.mode === 'anggota') + '" data-act="mode" data-mode="anggota">' + USER + '</button>' +
       '<button type="button" aria-label="Per jenis aset" aria-pressed="' + (v.mode === 'aset') + '" data-act="mode" data-mode="aset">' + GRID + '</button></div></div>' +
-      '<div class="hf-select" style="z-index: ' + (ui.open ? 30 : 10) + ';"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="' + ui.open + '" data-act="menu"><span>' + esc(v.selLabel) + '</span>' + CHEVD + '</button>' + opts + '</div>' +
-      '<div class="hf-donut"><svg class="' + v.swCls + '" viewBox="0 0 200 200" aria-hidden="true">' + segs + '</svg><div class="hf-donut-center"><span class="br-c-name">' + esc(v.cName) + '</span>' +
-      (v.cHasCtx ? '<span class="br-c-ctx">' + esc(v.cCtx) + '</span>' : '') + '<span class="br-c-val">' + v.cValue + '</span>' + (v.cHasShare ? '<span class="hf-share">' + v.cShare + '</span>' : '') + '</div></div>' +
-      '<div class="hf-details">' + rows + '</div><p class="br-note">Ketuk baris untuk menyorot · % sejak awal dicatat</p></section>';
+      '<div class="hf-select" style="z-index: ' + (ui.open ? 30 : 10) + ';"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="' + ui.open + '" data-act="menu"><span>' + esc(v.selLabel) + '</span>' + CHEVD + '</button>' + (ui.open ? menuHtml(v) : '') + '</div>' +
+      '<div class="hf-donut"><svg class="' + v.swCls + '" viewBox="0 0 200 200" aria-hidden="true">' + segsHtml(v) + '</svg><div class="hf-donut-center">' + centerHtml(v) + '</div></div>' +
+      '<div class="hf-details">' + rowsHtml(v) + '</div><p class="br-note">Ketuk baris untuk menyorot · % sejak awal dicatat</p></section>';
   }
 
   function harga(d) {
@@ -71,24 +79,44 @@
     return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + (d ? card(v) + harga(d) : empty()) + '</main>';
   }
 
-  /** Pasang interaksi. Hanya kartu Pembagian harta yang digambar ulang, supaya hitungan total tidak berulang. */
+  /** Pasang interaksi. Pembaruan sehalus board: menyorot baris hanya mengubah gaya lingkaran (transisi), mengganti tampilan
+      memutar ulang sapuan donut dan naiknya baris (kelas sw0/sw1 dan rw0/rw1 bergantian), membuka menu tidak menyentuh yang lain. */
   function bind(el, d) {
-    function redo() {
-      var sec = el.querySelector('[aria-label="Pembagian harta"]'), scrim = el.querySelector('.hf-scrim');
-      var tmp = document.createElement('div'); tmp.innerHTML = card(B.view(d, ui)); sec.replaceWith(tmp.firstChild);
+    function $(sel) { return el.querySelector(sel); }
+    function paintMenu(v) {
+      var sel = $('.hf-select'), ul = sel.querySelector('.hf-select-menu'), scrim = el.querySelector('.hf-scrim');
+      sel.style.zIndex = ui.open ? 30 : 10; sel.querySelector('.hf-select-btn').setAttribute('aria-expanded', String(ui.open));
+      if (ui.open && !ul) sel.insertAdjacentHTML('beforeend', menuHtml(v)); if (!ui.open && ul) ul.remove();
       if (ui.open && !scrim) { var s = document.createElement('div'); s.className = 'hf-scrim'; s.setAttribute('data-act', 'close'); el.appendChild(s); }
       if (!ui.open && scrim) scrim.remove();
+    }
+    function paintHighlight(v) {
+      var circles = el.querySelectorAll('.hf-donut svg circle');
+      v.segs.forEach(function (sg, i) { circles[i].style.opacity = sg.op; circles[i].style.strokeWidth = sg.sw; });
+      var wraps = el.querySelectorAll('.hf-details > div');
+      v.rows.forEach(function (r, i) {
+        var b = wraps[i].querySelector('.hf-legend'), sub = wraps[i].querySelector('.hf-subrows');
+        b.setAttribute('aria-pressed', String(r.pressed)); b.style.opacity = r.op;
+        if (r.open && !sub) wraps[i].insertAdjacentHTML('beforeend', subHtml(r)); if (!r.open && sub) sub.remove();
+      });
+      $('.hf-donut-center').innerHTML = centerHtml(v);
+    }
+    function paintView(v) {
+      $('.hf-card-title').textContent = v.title;
+      [].forEach.call(el.querySelectorAll('.hf-toggle button'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === v.mode)); });
+      $('.hf-select-btn span').textContent = v.selLabel;
+      var svgEl = $('.hf-donut svg'); svgEl.innerHTML = segsHtml(v); svgEl.setAttribute('class', v.swCls);
+      $('.hf-details').innerHTML = rowsHtml(v); $('.hf-donut-center').innerHTML = centerHtml(v);
+      paintMenu(v);
     }
     el.addEventListener('click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t || !d) return;
       var a = t.getAttribute('data-act'), i = t.getAttribute('data-i');
-      if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; }
-      else if (a === 'menu') ui.open = !ui.open;
-      else if (a === 'close') ui.open = false;
-      else if (a === 'opt') ui = { mode: ui.mode, sel: i === '' ? null : +i, hi: null, open: false, k: ui.k + 1 };
-      else if (a === 'row') ui.hi = ui.hi === +i ? null : +i;
-      else return;
-      redo();
+      if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
+      else if (a === 'opt') { ui = { mode: ui.mode, sel: i === '' ? null : +i, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
+      else if (a === 'menu') { ui.open = !ui.open; paintMenu(B.view(d, ui)); }
+      else if (a === 'close') { ui.open = false; paintMenu(B.view(d, ui)); }
+      else if (a === 'row') { ui.hi = ui.hi === +i ? null : +i; paintHighlight(B.view(d, ui)); }
     });
   }
 

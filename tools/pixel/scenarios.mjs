@@ -53,5 +53,10 @@ export const scenarios = [
   { id: 'Main-2k-Banyak-Anggota', board: 'Main-2k-Banyak-Anggota', query: 'demo=banyak' },
   { id: 'Main-2l-Banyak-Sisanya', board: 'Main-2l-Banyak-Sisanya', query: 'demo=banyak', js: `document.querySelectorAll('[data-act=row]')[4].click();await sleep(80);` },
   { id: 'Main-2m-Satu-Anggota-Pilih', board: 'Main-2m-Satu-Anggota-Pilih', query: 'demo', js: `q('[data-act=menu]').click();await sleep(60);document.querySelectorAll('[data-act=opt]')[1].click();await sleep(60);document.querySelectorAll('[data-act=row]')[0].click();await sleep(80);` },
-  { id: 'Main-2n-Per-Aset-Pilih', board: 'Main-2n-Per-Aset-Pilih', query: 'demo', js: `q('[data-act=mode][data-mode=aset]').click();await sleep(60);document.querySelectorAll('[data-act=row]')[0].click();await sleep(80);` }
+  { id: 'Main-2n-Per-Aset-Pilih', board: 'Main-2n-Per-Aset-Pilih', query: 'demo', js: `q('[data-act=mode][data-mode=aset]').click();await sleep(60);document.querySelectorAll('[data-act=row]')[0].click();await sleep(80);` },
+  // Animasi Beranda: bekukan pada waktu tertentu setelah klik (board vs aplikasi). Selector kelas dipakai bersama oleh board dan aplikasi.
+  { id: 'Main@sorot-baris', board: 'Main', query: 'demo', frames: { act: `document.querySelectorAll('.hf-legend')[1].click();`, at: [0, 80, 150, 300] } },
+  { id: 'Main@tampilan-aset', board: 'Main', query: 'demo', frames: { act: `document.querySelector('button[aria-label="Per jenis aset"]').click();`, at: [0, 150, 400, 800, 1200] } },
+  { id: 'Main@pilih-anggota', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-select-btn').click();await new Promise(r=>setTimeout(r,80));document.querySelectorAll('.hf-select-opt')[1].click();`, at: [0, 150, 400, 800, 1200] } },
+  { id: 'Main@buka-menu', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-select-btn').click();`, at: [0, 100, 300] } }
 ];
