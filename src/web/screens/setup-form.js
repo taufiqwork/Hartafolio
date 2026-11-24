@@ -32,6 +32,12 @@
     return 'dots';
   }
 
+  var ALERT = '<svg ' + A + ' width="20" height="20"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>';
+  /** Kartu notice galat (board 19-Simpan*): judul, lalu fakta dan langkah berikutnya. */
+  function notice(title, text) {
+    return '<div class="su-notice" role="alert"><span class="su-notice-ico">' + ALERT + '</span><span class="su-notice-txt"><b>' + esc(title) + '</b><span>' + esc(text) + '</span></span></div>';
+  }
+
   /** fm = { k:'anggota'|'lokasi', mode:'tambah'|'ubah', owner, name, v:{nama,rel,jenis}, pk:'rel'|'jenis'|null, error, busy, sec } */
   function render(fm) {
     var ubah = fm.mode === 'ubah', v = fm.v, nama = String(v.nama || '').trim(), title, desc, primary, ok, fields = [], opts;
@@ -77,13 +83,13 @@
       '<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="' + esc(title) + '">' +
       '<span aria-hidden="true" class="hf-sheet-handle" style="margin-bottom: 8px;"></span>' +
       '<div class="su-fm-body"><div class="su-fm-head"><span class="heading">' + esc(title) + '</span>' + (desc ? '<span class="su-fm-desc">' + esc(desc) + '</span>' : '') + '</div>' +
-      fields.join('') + '</div>' +
-      '<div class="su-fm-foot">' + (fm.error ? '<span class="su-err" role="alert">' + esc(fm.error) + '</span>' : '') +
-      '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="fm-save"' + (ok && !fm.busy ? '' : ' disabled') + '>' + primary + '</button>' +
+      fields.join('') + (fm.error ? notice(fm.error.title, fm.error.text) : '') + '</div>' +
+      '<div class="su-fm-foot">' +
+      '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="fm-save"' + (ok && !fm.busy ? '' : ' disabled') + '>' + (fm.error && fm.error.retry ? 'Coba lagi' : primary) + '</button>' +
       (fm.sec ? '<button class="hf-btn hf-btn-ghost hf-btn-block hf-btn-danger" type="button" data-act="fm-sec">' + esc(fm.sec) + '</button>' : '') +
       '</div></section>';
   }
 
   root.HF = root.HF || {};
-  root.HF.setupForm = { render: render, svg: svg, esc: esc, IC: IC, LOK: LOK, GOLD: GOLD, lokasiIkon: lokasiIkon };
+  root.HF.setupForm = { render: render, notice: notice, svg: svg, esc: esc, IC: IC, LOK: LOK, GOLD: GOLD, lokasiIkon: lokasiIkon };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
