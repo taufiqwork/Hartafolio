@@ -43,5 +43,15 @@ export const scenarios = [
     js: `${GAGAL('apiLokasiTambah')}q('[data-act=quick][data-nama=Pluang]').click();await sleep(200);` },
   { id: '19-Simpan-2d-Gagal-Lewati', board: '19-Simpan-2d-Gagal-Lewati', seed: seed(AZLAN, [L('Binance', 'Exchange crypto', 1)]), step: 4,
     deviasi: [{ box: [72, 426, 288, 50], alasan: 'Template tabel dimatikan' }, { box: [72, 559, 288, 50], alasan: 'Pilih file template dimatikan' }],
-    js: `${GAGAL('apiSetupSelesai')}q('.su-foot [data-act=next]').click();await sleep(300);` }
+    js: `${GAGAL('apiSetupSelesai')}q('.su-foot [data-act=next]').click();await sleep(300);` },
+  // Beranda tahap A (data contoh src/demo; kosong memakai data nyata tanpa transaksi)
+  { id: 'Main', board: 'Main', query: 'demo' },
+  { id: 'Main-2a-Per-Aset', board: 'Main-2a-Per-Aset', query: 'demo', js: `q('[data-act=mode][data-mode=aset]').click();await sleep(80);` },
+  { id: 'Main-2b-Menu-Anggota', board: 'Main-2b-Menu-Anggota', query: 'demo', js: `q('[data-act=menu]').click();await sleep(80);` },
+  { id: 'Main-2c-Satu-Anggota', board: 'Main-2c-Satu-Anggota', query: 'demo', js: `q('[data-act=menu]').click();await sleep(60);document.querySelectorAll('[data-act=opt]')[1].click();await sleep(80);` },
+  { id: 'Main-2d-Kosong', board: 'Main-2d-Kosong', seed: { pengaturan: { setup_selesai: 'ya' }, anggota: AZLAN, lokasi: [L('Binance', 'Exchange crypto', 1)] } },
+  { id: 'Main-2k-Banyak-Anggota', board: 'Main-2k-Banyak-Anggota', query: 'demo=banyak' },
+  { id: 'Main-2l-Banyak-Sisanya', board: 'Main-2l-Banyak-Sisanya', query: 'demo=banyak', js: `document.querySelectorAll('[data-act=row]')[4].click();await sleep(80);` },
+  { id: 'Main-2m-Satu-Anggota-Pilih', board: 'Main-2m-Satu-Anggota-Pilih', query: 'demo', js: `q('[data-act=menu]').click();await sleep(60);document.querySelectorAll('[data-act=opt]')[1].click();await sleep(60);document.querySelectorAll('[data-act=row]')[0].click();await sleep(80);` },
+  { id: 'Main-2n-Per-Aset-Pilih', board: 'Main-2n-Per-Aset-Pilih', query: 'demo', js: `q('[data-act=mode][data-mode=aset]').click();await sleep(60);document.querySelectorAll('[data-act=row]')[0].click();await sleep(80);` }
 ];

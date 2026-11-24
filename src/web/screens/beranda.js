@@ -1,0 +1,97 @@
+/* Beranda (tab Beranda). Tahap A: kerangka, total, grafik kecil, kartu Pembagian harta, Harga terkini, keadaan kosong.
+   Mengikuti board Main*.dc.html. Data = HF.demo (?demo) atau null (Beranda kosong). Banner zakat/piutang dan lonceng terbuka = tahap B. */
+(function (root) {
+  'use strict';
+  var F = root.HF.setupForm, esc = F.esc, svg = F.svg, B = root.HF.beranda;
+  var LOGO = '<svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg>';
+  var CHEV = svg(['m9 18 6-6-6-6'], 14), CHEV16 = svg(['m9 18 6-6-6-6'], 16), CHEVD = svg(['m6 9 6 6 6-6']);
+  var BELL = svg(['M10.268 21a2 2 0 0 0 3.464 0', 'M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326']);
+  var USER = svg(['M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2', 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0']);
+  var GRID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>';
+  var LAYERS = svg(['M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z', 'M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12', 'M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17'], 24);
+  var PLUS20 = svg(['M5 12h14', 'M12 5v14'], 20);
+
+  var ui = { mode: 'anggota', sel: null, hi: null, open: false, k: 0 };
+
+  function head(d) {
+    var n = d ? d.notes : 0;
+    return '<div class="hf-head"><header class="br-header"><span class="br-brand">' + LOGO + '<span class="br-name">Harta<span>folio</span></span></span>' +
+      '<button type="button" class="hf-iconbtn" aria-label="' + (n ? 'Perlu perhatian, ' + n + ' hal' : 'Perlu perhatian, tidak ada') + '" aria-haspopup="dialog" aria-expanded="false" data-act="bell">' + BELL +
+      (n ? '<span class="hf-countbadge" aria-hidden="true">' + n + '</span>' : '') + '</button></header></div>';
+  }
+
+  function hero(d, v) {
+    var spark = !d ? '' : '<a class="hf-spark" aria-label="Lihat laporan bulanan"><span class="br-spark-wrap"><svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hfSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".26"></stop><stop offset="1" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs><polygon class="area" points="' + v.spark.area + '" style="fill: url(#hfSparkFill);"></polygon><polyline class="line" pathLength="100" points="' + v.spark.pts + '"></polyline></svg><span class="hf-spark-end" aria-hidden="true" style="left: 98%; top: ' + v.spark.dy + ';"><span class="hf-spark-pulse"></span><span class="hf-spark-core"></span></span></span><span class="hf-spark-axis"><span>Jun</span><span>6 bln</span><span>Nov</span></span></a>';
+    var str = d ? v.hero.str : 'Rp 0';
+    return '<section class="hf-total hf-hero' + (d ? ' hf-total-with-link' : '') + '" aria-label="Total harta"><div class="br-total-col"><span class="hf-total-label">Total semua anggota</span>' +
+      '<span class="hf-total-amount" aria-label="' + str + '"><span aria-hidden="true">Rp <span class="hf-count" style="--n: ' + (d ? v.hero.int : 0) + ';"></span>' + (d ? v.hero.dec : '') + '</span></span>' +
+      (d ? '<span class="hf-total-sub">' + esc(d.usd) + ' · <span class="hf-delta hf-delta-up">↑ ' + esc(d.delta) + '</span></span><a class="hf-total-link" aria-label="Termasuk piutang ' + esc(d.piutang) + ', buka Piutang">Termasuk piutang ' + esc(d.piutang) + CHEV + '</a>'
+        : '<span class="hf-total-sub">$ 0 · belum ada catatan</span>') + '</div>' + spark + '</section>';
+  }
+
+  function card(v) {
+    var rows = v.rows.map(function (r) {
+      return '<div><button class="hf-detail hf-legend hf-rise ' + v.rwCls + '" type="button" aria-pressed="' + r.pressed + '" data-act="row" data-i="' + r.i + '" style="--i: ' + r.i + '; opacity: ' + r.op + '; border-top: ' + r.bt + ';">' +
+        '<span class="hf-swatch" style="background: ' + r.c + ';"></span><div class="hf-detail-main"><span class="hf-detail-name">' + esc(r.n) + '</span><span class="hf-detail-meta">' + esc(r.sub) + '</span></div>' +
+        '<div class="hf-detail-figs"><span class="hf-detail-amount">' + r.vs + '</span><span class="' + r.dcls + '">' + r.g + '</span></div></button>' +
+        (r.open ? '<div class="hf-subrows">' + r.subs.map(function (u) { return '<div class="hf-subrow"><span>' + esc(u.n) + '</span><span>' + u.v + '</span></div>'; }).join('') + '</div>' : '') + '</div>';
+    }).join('');
+    var opts = ui.open ? '<ul class="hf-select-menu" role="listbox" aria-label="Pilih">' + v.opts.map(function (o) {
+      return '<li><button class="hf-select-opt" type="button" role="option" aria-selected="' + o.sel + '" data-act="opt" data-i="' + (o.i === null ? '' : o.i) + '"><span>' + esc(o.l) + '</span><span class="hf-sub">' + o.v + '</span></button></li>';
+    }).join('') + '</ul>' : '';
+    var segs = v.segs.map(function (s) { return '<circle class="' + s.cls + '" cx="100" cy="100" r="86" stroke-dasharray="' + s.da + '" stroke-dashoffset="' + s.off + '" style="opacity: ' + s.op + '; stroke-width: ' + s.sw + ';"></circle>'; }).join('');
+    return '<section class="hf-card" aria-label="Pembagian harta"><div class="hf-card-head"><h2 class="hf-card-title">' + esc(v.title) + '</h2>' +
+      '<div class="hf-toggle" role="group" aria-label="Tampilkan"><button type="button" aria-label="Per anggota" aria-pressed="' + (v.mode === 'anggota') + '" data-act="mode" data-mode="anggota">' + USER + '</button>' +
+      '<button type="button" aria-label="Per jenis aset" aria-pressed="' + (v.mode === 'aset') + '" data-act="mode" data-mode="aset">' + GRID + '</button></div></div>' +
+      '<div class="hf-select" style="z-index: ' + (ui.open ? 30 : 10) + ';"><button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="' + ui.open + '" data-act="menu"><span>' + esc(v.selLabel) + '</span>' + CHEVD + '</button>' + opts + '</div>' +
+      '<div class="hf-donut"><svg class="' + v.swCls + '" viewBox="0 0 200 200" aria-hidden="true">' + segs + '</svg><div class="hf-donut-center"><span class="br-c-name">' + esc(v.cName) + '</span>' +
+      (v.cHasCtx ? '<span class="br-c-ctx">' + esc(v.cCtx) + '</span>' : '') + '<span class="br-c-val">' + v.cValue + '</span>' + (v.cHasShare ? '<span class="hf-share">' + v.cShare + '</span>' : '') + '</div></div>' +
+      '<div class="hf-details">' + rows + '</div><p class="br-note">Ketuk baris untuk menyorot · % sejak awal dicatat</p></section>';
+  }
+
+  function harga(d) {
+    var rows = d.harga.map(function (h, i) {
+      return '<div class="br-hrow" style="border-top: ' + (i ? '1px solid var(--line)' : 'none') + ';"><span class="br-hic" aria-hidden="true" style="background: var(--' + h[3] + '-soft); color: ' + (h[3] === 'gold' ? 'var(--gold)' : 'var(--brand)') + ';">' + h[2] + '</span>' +
+        '<span class="br-htx"><span class="br-hname">' + h[0] + '</span><span class="caption su-lbl">' + h[1] + '</span></span>' +
+        '<svg class="br-hspark" viewBox="0 0 48 18" width="44" height="17" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + B.miniSpark(h[7]) + '" fill="none" stroke="' + (h[6] === 'down' ? 'var(--loss)' : 'var(--brand)') + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>' +
+        '<span class="br-hfig"><span class="br-hprice' + (i === 0 ? ' hf-tick' : '') + '">' + h[4] + '</span><span class="hf-delta hf-delta-' + h[6] + '">' + h[5] + '</span></span></div>';
+    }).join('');
+    return '<section class="hf-card br-harga" aria-label="Harga terkini"><div class="br-harga-head"><span class="heading">Harga terkini</span><a class="hf-tap br-tap">Lihat semua' + CHEV16 + '</a></div><div class="br-harga-list">' + rows + '</div>' +
+      '<span class="caption br-live"><span class="hf-spark-end" aria-hidden="true"><span class="hf-spark-pulse"></span><span class="hf-spark-core"></span></span>Live · diperbarui ' + d.live + '</span></section>';
+  }
+
+  function empty() {
+    return '<section class="hf-card br-empty" aria-label="Belum ada aset"><span class="su-empty-ico">' + LAYERS + '</span><span class="heading">Belum ada aset</span>' +
+      '<span class="su-empty-note">Catat aset yang Anda miliki sekarang, satu per satu.</span><a class="hf-btn hf-btn-primary hf-btn-block" aria-disabled="true">' + PLUS20 + 'Catat aset pertama</a></section>';
+  }
+
+  /** HTML kepala + isi. data = HF.demo.get(...) atau null (kosong). */
+  function html(d) {
+    var v = d ? B.view(d, ui) : null;
+    return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + (d ? card(v) + harga(d) : empty()) + '</main>';
+  }
+
+  /** Pasang interaksi. Hanya kartu Pembagian harta yang digambar ulang, supaya hitungan total tidak berulang. */
+  function bind(el, d) {
+    function redo() {
+      var sec = el.querySelector('[aria-label="Pembagian harta"]'), scrim = el.querySelector('.hf-scrim');
+      var tmp = document.createElement('div'); tmp.innerHTML = card(B.view(d, ui)); sec.replaceWith(tmp.firstChild);
+      if (ui.open && !scrim) { var s = document.createElement('div'); s.className = 'hf-scrim'; s.setAttribute('data-act', 'close'); el.appendChild(s); }
+      if (!ui.open && scrim) scrim.remove();
+    }
+    el.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-act]'); if (!t || !d) return;
+      var a = t.getAttribute('data-act'), i = t.getAttribute('data-i');
+      if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; }
+      else if (a === 'menu') ui.open = !ui.open;
+      else if (a === 'close') ui.open = false;
+      else if (a === 'opt') ui = { mode: ui.mode, sel: i === '' ? null : +i, hi: null, open: false, k: ui.k + 1 };
+      else if (a === 'row') ui.hi = ui.hi === +i ? null : +i;
+      else return;
+      redo();
+    });
+  }
+
+  root.HF = root.HF || {};
+  root.HF.berandaScreen = { html: html, bind: bind };
+})(typeof globalThis !== 'undefined' ? globalThis : this);

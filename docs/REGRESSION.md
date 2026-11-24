@@ -72,6 +72,13 @@ Dijalankan di `npm run dev` (ukuran 390×844) dan dibandingkan dengan `reference
 
 Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode gelap (alat baru memotret mode terang).
 
+## 4c. Beranda (Tahap 4A)
+- [ ] `npm run pixel`: Main, 2a, 2b, 2c, 2d, 2k, 2l, 2m, 2n = 0 piksel beda (terukur 25 Nov 2026).
+- [ ] `npm test`: `tests/beranda.test.js` (urutan terbesar, Sisanya, sorotan, kosong tanpa transaksi).
+- [ ] Hanya kartu Pembagian harta yang digambar ulang saat interaksi (hitung naik di total tidak mengulang).
+- [ ] Tanpa `?demo` dan tanpa transaksi = Beranda kosong; dengan `?demo` = data contoh. Data contoh tidak pernah menulis ke Sheet.
+- Belum: banner zakat/piutang, lonceng terbuka, toast (tahap B).
+
 ## 5. Data dan aturan produk
 
 - [ ] Tidak ada hapus fisik data, tidak ada purge otomatis.
