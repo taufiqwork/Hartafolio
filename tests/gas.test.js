@@ -26,7 +26,7 @@ function fakeSheet(name) {
     getValues: () => Array.from({ length: nr }, (_, i) => Array.from({ length: nc }, (_, j) => get(r + i, c + j))),
     setValues: vals => { vals.forEach((row, i) => row.forEach((v, j) => set(r + i, c + j, v))); },
     setValue: v => set(r, c, v),
-    protect: () => { const p = Object.assign(chain(), { getDescription: () => 'Header Hartafolio' }); g.protections.push(p); return p; }
+    protect: () => { const p = Object.assign(chain(), { getDescription: () => 'Header Hartafolio', remove: () => { g.protections.splice(g.protections.indexOf(p), 1); } }); g.protections.push(p); return p; }
   }));
   return g;
 }
@@ -128,7 +128,7 @@ test('apiState menyatukan data; harga terakhir mengabaikan status gagal', () => 
   const s = g.run('apiState()');
   assert.equal(s.harga.terakhir['AS-BTC'].harga, 100);
   assert.equal(s.harga.kursSeries.length, 1);
-  assert.equal(s.versi, 1);
+  assert.equal(s.versi, 2);
   assert.ok(s.aset.length >= 10);
 });
 
@@ -209,4 +209,34 @@ test('apiAsetTambah: aset buatan sendiri tersimpan dengan harga manual; nama gan
   assert.throws(() => g.run(`apiAsetTambah({ nama: 'emas PERHIASAN', kelas: 'Emas', satuan: 'gram' })`), /Sudah ada aset/);
   assert.throws(() => g.run(`apiAsetTambah({ nama: 'X', kelas: 'Mobil', satuan: 'unit' })`), /Pilih jenis aset/);
   assert.throws(() => g.run(`apiAsetTambah({ nama: 'Koin', kelas: 'Perak', satuan: 'lembar' })`), /setara gram/);
+});
+
+test('migrasi v1 ke v2: Siapkan sheet menambah kolom ke-29, memperluas perlindungan header, menaikkan versi, data lama utuh', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  // jadikan Sheet seperti versi 1: 28 kolom, versi_skema 1, ada satu transaksi
+  g.sheets.Transaksi.cells[0].length = 28;
+  g.run(`Repo_update_('Pengaturan', 'versi_skema', { nilai: '1' })`);
+  assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/); // sebelum migrasi: berhenti, bukan diam-diam
+  const hasil = g.run('setupHartafolio()');
+  assert.ok(hasil.some(x => /Transaksi: kolom ditambah \(alat_bayar_lokasi_id\)/.test(x)), hasil.join('|'));
+  assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
+  assert.equal(g.sheets.Transaksi.protections.length, 1); // satu perlindungan, bukan dua
+  assert.equal(g.run('apiState()').versi, 2);
+  assert.equal(g.run('apiState()').pengaturan.versi_skema, '2');
+  assert.deepEqual(JSON.parse(JSON.stringify(g.run('setupHartafolio()'))), ['Struktur sudah lengkap']); // idempoten
+});
+
+test('apiTransaksiTambah: bayar dari lokasi lain mengurangi lokasi pembayar; lokasi pembayar tidak ada ditolak', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'}); apiLokasiTambah({nama:'Bybit', jenis:'Exchange crypto'});`);
+  const base = { tanggal: '2026-11-25', jam: '09:00', anggota_id: 'PM-001', sumber: 'manual' };
+  const j = o => JSON.parse(JSON.stringify(g.run(`apiTransaksiTambah(${JSON.stringify([Object.assign({}, base, o)])})`)));
+  assert.equal(j({ trx_id: 'TX-1', jenis: 'Saldo awal', aset_id: 'AS-USDT', lokasi_id: 'LK-002', jumlah: 500 }).diterima.length, 1);
+  assert.equal(j({ trx_id: 'TX-2', jenis: 'Beli', aset_id: 'AS-PAXG', lokasi_id: 'LK-001', jumlah: 0.1, harga_per_unit: 4000, harga_mata_uang: 'USDT', alat_bayar_aset_id: 'AS-USDT', alat_bayar_lokasi_id: 'LK-002', kurs: 1, kurs_sumber: 'manual' }).diterima.length, 1);
+  const bad = j({ trx_id: 'TX-3', jenis: 'Beli', aset_id: 'AS-PAXG', lokasi_id: 'LK-001', jumlah: 0.1, harga_per_unit: 4000, harga_mata_uang: 'USDT', alat_bayar_aset_id: 'AS-USDT', alat_bayar_lokasi_id: 'LK-099', kurs: 1 });
+  assert.equal(bad.ditolak[0].error, 'lokasi:tidak-ada');
+  const rows = JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)));
+  assert.equal(rows[1].alat_bayar_lokasi_id, 'LK-002');
 });

@@ -94,12 +94,18 @@ test('Setelah transaksi tersimpan, aset muncul di Catat berikutnya dengan saldo;
   assert.equal(v.fA, 'PAXG'); assert.equal(v.qErr, true);
 });
 
-test('Bayar dari lokasi lain diblokir di data nyata sampai kolom alat_bayar_lokasi_id ada', () => {
+test('Bayar dari lokasi lain di data nyata: boleh, baris membawa alat_bayar_lokasi_id, lolos validasi dan mengurangi lokasi pembayar', () => {
   const trx = [{ trx_id: 'TX-1', tanggal: '2026-11-20', jenis: 'Saldo awal', anggota_id: 'PM-001', aset_id: 'AS-USDT', lokasi_id: 'LK-002', jumlah: 500, status: 'aktif' },
     { trx_id: 'TX-2', tanggal: '2026-11-20', jenis: 'Saldo awal', anggota_id: 'PM-001', aset_id: 'AS-PAXG', lokasi_id: 'LK-001', jumlah: 1, status: 'aktif' }];
-  const { c, ctx } = real(trx);
-  const v = c.HF.catat.view({ fJ: 'Beli', fA: 'PAXG', fL: 'Binance', pay: 'USDT@Brankas', qv: '0,1', pv: '4.425' }, ctx, { mulai: 'beli' });
-  assert.equal(v.pay, 'USDT@Brankas'); assert.equal(v.invalid, true);
+  const { c, ctx, s } = real(trx);
+  const v = c.HF.catat.view({ fJ: 'Beli', fA: 'PAXG', fL: 'Binance', pay: 'USDT@Brankas', qv: '0,1', pv: '4.000', kv: '1', fee: '0' }, ctx, { mulai: 'beli' });
+  assert.equal(v.pay, 'USDT@Brankas'); assert.equal(v.invalid, false);
+  const t = c.HF.catatCtx.toRows(v, ctx, {}).rows[0];
+  assert.equal(t.alat_bayar_aset_id, 'AS-USDT'); assert.equal(t.alat_bayar_lokasi_id, 'LK-002'); assert.equal(t.lokasi_id, 'LK-001');
+  t.trx_id = 'TX-3'; t.status = 'aktif';
+  assert.equal(c.HF.ledger.validate(t, { trxList: trx, lokasiIds: ['LK-001', 'LK-002'] }).length, 0);
+  const b = c.HF.ledger.balances(trx.concat([t]));
+  assert.equal(b[c.HF.ledger.key('PM-001', 'AS-USDT', 'LK-002')], 500 - 400);
 });
 
 test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; data nyata lewat antrean', async () => {

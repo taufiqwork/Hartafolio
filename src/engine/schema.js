@@ -7,7 +7,7 @@
 (function (root) {
   'use strict';
 
-  var VERSI = 1;
+  var VERSI = 2; // 2: kolom alat_bayar_lokasi_id di kanan Transaksi (25 Nov 2026)
   var OZ_GRAM = 31.1035;
 
   var ENUM = {
@@ -56,7 +56,7 @@
       c('harga_per_unit', 'num'), c('harga_mata_uang'), c('kurs', 'num'), c('kurs_sumber'), c('kurs_tanggal', 'date'),
       c('kurs_waktu'), c('biaya', 'num'), c('pajak', 'num'), c('alat_bayar_aset_id'), c('asal_alasan'), c('link_id'),
       c('harga_beli_rata2', 'num'), c('bukti'), c('catatan'), c('sumber', 'text', 1), c('status', 'text', 1),
-      c('dibuat_pada', 'dt', 1), c('diubah_pada', 'dt')] },
+      c('dibuat_pada', 'dt', 1), c('diubah_pada', 'dt'), c('alat_bayar_lokasi_id')] },
     Harga: { kind: 'result', cols: [
       c('waktu', 'dt', 1), c('aset_id', 'text', 1), c('harga', 'num', 1), c('mata_uang', 'text', 1), c('sumber', 'text', 1),
       c('status', 'text', 1)] },

@@ -36,15 +36,16 @@
    */
   function effects(t) {
     var A = t.anggota_id, S = t.aset_id, L = t.lokasi_id, q = num(t.jumlah), out = [];
+    var PL = t.alat_bayar_lokasi_id || L; // lokasi aset pembayar; kosong = lokasi transaksi (baris v1)
     function add(a, s, l, d, role) { out.push({ anggota_id: a, aset_id: s, lokasi_id: l, delta: d, role: role }); }
     switch (t.jenis) {
       case 'Beli':
         add(A, S, L, q, 'utama');
-        if (t.alat_bayar_aset_id) add(A, t.alat_bayar_aset_id, L, -(gross(t) + fees(t)), 'bayar');
+        if (t.alat_bayar_aset_id) add(A, t.alat_bayar_aset_id, PL, -(gross(t) + fees(t)), 'bayar');
         break;
       case 'Jual':
         add(A, S, L, -q, 'utama');
-        if (t.alat_bayar_aset_id) add(A, t.alat_bayar_aset_id, L, gross(t) - fees(t), 'bayar');
+        if (t.alat_bayar_aset_id) add(A, t.alat_bayar_aset_id, PL, gross(t) - fees(t), 'bayar');
         break;
       case 'Masuk': case 'Saldo awal': case 'Cicilan diterima': case 'Pelunasan diterima':
         add(A, S, L, q, 'utama');
@@ -110,6 +111,7 @@
       if (ctx.asetIds && t.aset_id && ctx.asetIds.indexOf(t.aset_id) < 0) e.push('aset:tidak-ada');
       if (ctx.anggotaIds && t.anggota_id && ctx.anggotaIds.indexOf(t.anggota_id) < 0) e.push('anggota:tidak-ada');
       if (ctx.lokasiIds && t.lokasi_id && ctx.lokasiIds.indexOf(t.lokasi_id) < 0) e.push('lokasi:tidak-ada');
+      else if (ctx.lokasiIds && t.alat_bayar_lokasi_id && ctx.lokasiIds.indexOf(t.alat_bayar_lokasi_id) < 0) e.push('lokasi:tidak-ada');
       if (ctx.trxList && e.length === 0) {
         // Saldo tidak boleh minus setelah transaksi ini (Jual, Keluar, Pindah, Zakat, Pinjamkan, bayar dengan aset).
         var bal = balances(ctx.trxList.concat([t]));
