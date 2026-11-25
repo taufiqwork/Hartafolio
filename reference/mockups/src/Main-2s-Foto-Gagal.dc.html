@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Beranda · foto belum terunggah (coba lagi)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/hartafolio/tokens.css">
+<link rel="stylesheet" href="ds/hartafolio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:var(--brand)}a:hover{color:var(--ink)}
+.hf-spark-end{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;pointer-events:none}
+.hf-spark-core{position:absolute;inset:0;border-radius:999px;background:var(--brand);box-shadow:0 0 0 2px var(--surface)}
+.hf-spark-pulse{position:absolute;inset:0;border-radius:999px;background:var(--brand);opacity:.45;animation:hfPulse 2s ease-out infinite}
+@keyframes hfPulse{0%{transform:scale(1);opacity:.45}70%{transform:scale(2.8);opacity:0}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion: reduce){.hf-spark-pulse{animation:none;transform:scale(1.8);opacity:.2}}
+@property --n{syntax:'<integer>';inherits:false;initial-value:0}
+@property --sweep{syntax:'<angle>';inherits:false;initial-value:0deg}
+.hf-hero{position:relative;border-radius:20px;padding:16px 16px 14px;background:linear-gradient(155deg,color-mix(in srgb,var(--brand-soft) 85%,var(--surface-raised)) 0%,var(--surface-raised) 62%);border:1px solid color-mix(in srgb,var(--brand) 12%,var(--line));box-shadow:var(--shadow-card)}
+.hf-count{--n:0;counter-reset:n var(--n);animation:hfCount 1.1s cubic-bezier(.2,.8,.2,1) both}.hf-count::after{content:counter(n)}
+@keyframes hfCount{from{--n:0}}
+.hf-spark svg{animation:hfWipe 1.2s cubic-bezier(.4,0,.2,1) both}
+.hf-spark .area{animation:hfFade .6s .7s ease-out both}
+.hf-spark-end{animation:hfFade .3s 1.1s ease-out both}
+@keyframes hfWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes hfFade{from{opacity:0}}
+.hf-donut svg{-webkit-mask:conic-gradient(from 84deg,#000 calc(var(--sweep) + 6deg),transparent 0);mask:conic-gradient(from 84deg,#000 calc(var(--sweep) + 6deg),transparent 0);--sweep:360deg;animation:hfSweepA 1s cubic-bezier(.3,.7,.2,1) both}
+.hf-donut svg.sw1{animation-name:hfSweepB}
+@keyframes hfSweepA{from{--sweep:0deg}}
+@keyframes hfSweepB{from{--sweep:0deg}}
+.hf-donut{width:208px;height:208px}.hf-donut circle{stroke-linecap:round;transition:opacity .25s ease,stroke-width .25s ease}.hf-donut .track{display:none}
+.hf-donut-center{padding:0 40px;gap:0}.hf-donut .hf-donut-center span span{font:inherit;color:inherit;letter-spacing:inherit}.hf-donut .hf-donut-center .hf-share{white-space:nowrap}.hf-donut .hf-donut-center .hf-share{display:inline-block;justify-self:center;margin-top:4px;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.hf-donut-center span{transition:opacity .2s}
+.hf-rise{animation:hfRiseA .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 60ms + 200ms)}
+.hf-rise.rw1{animation-name:hfRiseB}
+@keyframes hfRiseA{from{opacity:0;transform:translateY(6px)}}
+@keyframes hfRiseB{from{opacity:0;transform:translateY(6px)}}
+.hf-select-menu{max-height:264px;overflow-y:auto}
+.hf-subrows{display:grid;gap:2px;padding:0 0 10px 24px}.hf-subrow{display:flex;justify-content:space-between;gap:12px;font-size:13px;line-height:20px;color:var(--ink-muted);font-variant-numeric:tabular-nums}
+.hf-legend{font:inherit;color:inherit;width:100%;text-align:left;background:transparent;border:0;cursor:pointer;transition:opacity .2s}
+.hf-tick{border-radius:8px;padding:0 4px;margin-right:-4px;animation:hfTick 5s ease-in-out 1.5s infinite}
+@keyframes hfTick{0%,8%,100%{background:transparent}3%{background:var(--brand-soft)}}
+@media (prefers-reduced-motion: reduce){.hf-count,.hf-spark svg,.hf-spark .area,.hf-spark-end,.hf-donut svg,.hf-rise,.hf-tick{animation:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="width: 390px; height: 844px; --safe-top: 47px; --safe-bottom: 34px; position: relative; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+<div class="hf-head"><header style="display: flex; justify-content: space-between; align-items: center;">
+<span style="display: inline-flex; align-items: center; gap: 8px;"><svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true"><circle cx="24" cy="30" r="14" fill="var(--gold-fill)"></circle><circle cx="24" cy="30" r="9" fill="none" stroke="var(--gold-soft)" stroke-width="2.5"></circle><path d="M24 16V9" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"></path><path d="M23.07 11.75 C22.76 4.56 28 2 34 2 C34 8 30.04 13 23.07 11.75 Z" fill="var(--brand)"></path><path d="M24.89 12.197 C25.511 6.488 21 5 16 5 C16 10 19.89 12.197 24.89 12.197 Z" fill="var(--brand)"></path></svg><span style="font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.03em;">Harta<span style="color: var(--brand);">folio</span></span></span>
+<button type="button" class="hf-iconbtn" aria-label="{{ bellLabel }}" aria-haspopup="dialog" aria-expanded="{{ perOpenStr }}" onClick="{{ togglePer }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></svg><sc-if value="{{ hasBadge }}" hint-placeholder-val="{{ true }}"><span class="hf-countbadge {{ badgeCls }}" aria-hidden="true">{{ badge }}</span></sc-if></button>
+</header></div>
+<main class="hf-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 28px; display: flex; flex-direction: column; gap: 24px;">
+
+
+
+<section class="hf-total hf-hero {{ heroMod }}" aria-label="Total harta">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+<span class="hf-total-label">Total semua anggota</span>
+<span class="hf-total-amount" aria-label="{{ totalStr }}"><span aria-hidden="true">Rp <span class="hf-count" style="--n: {{ totalInt }};"></span>{{ totalDec }}</span></span>
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><span class="hf-total-sub">$ 9.979 · <span class="hf-delta hf-delta-up">↑ +2,4% dari Okt</span></span></sc-if>
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><a class="hf-total-link" href="18-Piutang.dc.html" aria-label="Termasuk piutang Rp 19,3 juta, buka Piutang">Termasuk piutang Rp 19,3 jt<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></sc-if>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><span class="hf-total-sub">$ 0 · belum ada catatan</span></sc-if>
+</div>
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><a class="hf-spark" href="07-Laporan-2g-Dari-Beranda.dc.html" aria-label="Lihat laporan bulanan">
+<span style="position: relative; display: block;"><svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hfSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".26"></stop><stop offset="1" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs><polygon class="area" points="{{ spark.area }}" style="fill: url(#hfSparkFill);"></polygon><polyline class="line" pathLength="100" points="{{ spark.pts }}"></polyline></svg><span class="hf-spark-end" aria-hidden="true" style="left: {{ spark.dx }}; top: {{ spark.dy }};"><span class="hf-spark-pulse"></span><span class="hf-spark-core"></span></span></span>
+<span class="hf-spark-axis"><span>Jun</span><span>6 bln</span><span>Nov</span></span>
+</a></sc-if>
+</section>
+
+<sc-if value="{{ showZk }}" hint-placeholder-val="{{ true }}"><section role="status" aria-label="{{ zLabel }}" style="border-radius: 20px; padding: 14px; background: {{ zBg }}; border: 1.5px solid {{ zBd }}; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; align-items: center;">
+<span style="width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: {{ zTile }}; color: var(--surface-raised); grid-row: span 2;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="22" height="22"><sc-for list="{{ zIcon }}" as="ic" hint-placeholder-count="3"><path d="{{ ic.d }}"></path></sc-for></svg></span>
+<span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ zTitle }}</span>
+<span class="caption" style="color: var(--ink-muted);">{{ zDesc }}</span>
+<a href="{{ zHref }}" class="{{ zBtnCls }}" style="grid-column: 1 / -1; margin-top: 8px;">{{ zCta }}</a>
+</section></sc-if>
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><section class="hf-card" aria-label="Pembagian harta">
+<div class="hf-card-head">
+<h2 class="hf-card-title">{{ d.title }}</h2>
+<div class="hf-toggle" role="group" aria-label="Tampilkan">
+<button type="button" aria-label="Per anggota" aria-pressed="{{ tgMem.pressed }}" onClick="{{ tgMem.on }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
+<button type="button" aria-label="Per jenis aset" aria-pressed="{{ tgCls.pressed }}" onClick="{{ tgCls.on }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg></button>
+</div>
+</div>
+<div class="hf-select" style="z-index: {{ selZ }};">
+<button class="hf-select-btn" type="button" aria-haspopup="listbox" aria-expanded="{{ openStr }}" onClick="{{ toggleMenu }}"><span>{{ selLabel }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button>
+<sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+<ul class="hf-select-menu" role="listbox" aria-label="Pilih">
+<sc-for list="{{ opts }}" as="o" hint-placeholder-count="5"><li><button class="hf-select-opt" type="button" role="option" aria-selected="{{ o.sel }}" onClick="{{ o.on }}"><span>{{ o.l }}</span><span class="hf-sub">{{ o.v }}</span></button></li></sc-for>
+</ul>
+</sc-if>
+</div>
+<div class="hf-donut">
+<svg class="{{ swCls }}" viewBox="0 0 200 200" aria-hidden="true"><sc-for list="{{ segs }}" as="s" hint-placeholder-count="4"><circle class="{{ s.cls }}" cx="100" cy="100" r="86" stroke-dasharray="{{ s.da }}" stroke-dashoffset="{{ s.off }}" style="opacity: {{ s.op }}; stroke-width: {{ s.sw }};"></circle></sc-for></svg>
+<div class="hf-donut-center"><span style="font-size: 13px; line-height: 18px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">{{ cName }}</span><sc-if value="{{ cHasCtx }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; line-height: 16px; font-weight: 500; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">{{ cCtx }}</span></sc-if><span style="font-size: 20px; line-height: 28px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: -0.01em;">{{ cValue }}</span><sc-if value="{{ cHasShare }}" hint-placeholder-val="{{ false }}"><span class="hf-share">{{ cShare }}</span></sc-if></div>
+</div>
+<div class="hf-details">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="4"><div><button class="hf-detail hf-legend hf-rise {{ rwCls }}" type="button" aria-pressed="{{ r.pressed }}" onClick="{{ r.tap }}" style="--i: {{ r.i }}; opacity: {{ r.op }}; border-top: {{ r.bt }};">
+<span class="hf-swatch" style="background: {{ r.c }};"></span>
+<div class="hf-detail-main"><span class="hf-detail-name">{{ r.n }}</span><span class="hf-detail-meta">{{ r.sub }}</span></div>
+<div class="hf-detail-figs"><span class="hf-detail-amount">{{ r.vs }}</span><span class="{{ r.dcls }}">{{ r.g }}</span></div>
+</button><sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}"><div class="hf-subrows"><sc-for list="{{ r.subs }}" as="u" hint-placeholder-count="5"><div class="hf-subrow"><span>{{ u.n }}</span><span>{{ u.v }}</span></div></sc-for></div></sc-if></div></sc-for>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 18px; color: var(--ink-muted); text-align: right;">Ketuk baris untuk menyorot · % sejak awal dicatat</p>
+</section></sc-if>
+
+<sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}"><section class="hf-card" aria-label="Harga terkini" style="gap: 12px;">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;"><span class="heading">Harga terkini</span><a class="hf-tap" href="11-Harga-2d-Dari-Beranda.dc.html" style="display: inline-flex; align-items: center; gap: 2px; min-height: 36px; font-size: 14px; font-weight: 600; text-decoration: none; line-height: 20px;">Lihat semua<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></a></div>
+<div style="display: flex; flex-direction: column;">
+<sc-for list="{{ hargaMini }}" as="h" hint-placeholder-count="4"><div style="display: grid; grid-template-columns: 36px minmax(0, 1fr) 44px 136px; gap: 12px; align-items: center; padding: 10px 0; border-top: {{ h.bt }};"><span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; background: {{ h.bg }}; color: {{ h.fg }}; font-size: 14px; font-weight: 600; line-height: 20px;">{{ h.ic }}</span><span style="display: flex; flex-direction: column; min-width: 0;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{ h.n }}</span><span class="caption" style="color: var(--ink-muted);">{{ h.u }}</span></span><svg viewBox="0 0 48 18" width="44" height="17" preserveAspectRatio="none" aria-hidden="true" style="display: block;"><polyline points="{{ h.sp }}" fill="none" stroke="{{ h.sc }}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg><span style="display: flex; flex-direction: column; align-items: flex-end; min-width: 0;"><span class="{{ h.tk }}" style="font-size: 15px; line-height: 22px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ h.p }}</span><span class="{{ h.cls }}">{{ h.c }}</span></span></div></sc-for>
+</div>
+<span class="caption" style="color: var(--ink-muted); display: inline-flex; align-items: center; gap: 8px;"><span class="hf-spark-end" aria-hidden="true" style="position: relative; margin: 0; width: 8px; height: 8px; animation: none;"><span class="hf-spark-pulse"></span><span class="hf-spark-core" style="box-shadow: none;"></span></span>Live · diperbarui 14.32</span>
+</section></sc-if>
+
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+<section class="hf-card" style="padding: 24px 16px; gap: 12px; justify-items: center; text-align: center;" aria-label="Belum ada aset">
+<span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg></span>
+<span class="heading">Belum ada aset</span>
+<span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Catat aset yang Anda miliki sekarang, satu per satu.</span>
+<a class="hf-btn hf-btn-primary hf-btn-block" href="04-Catat-2d-Saldo-Awal.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Catat aset pertama</a>
+</section>
+</sc-if>
+</main>
+<nav class="hf-nav" aria-label="Menu utama">
+<a href="Main.dc.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path class="hf-ico-cut" d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path></svg>Beranda</a>
+<a href="03-Aset.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="hf-ico-fill" width="7" height="7" x="3" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="3" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="14" y="14" rx="1"></rect><rect class="hf-ico-fill" width="7" height="7" x="3" y="14" rx="1"></rect></svg>Aset</a>
+<a class="hf-add" href="04-Catat.dc.html" aria-label="Catat transaksi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></a>
+<a href="05-Riwayat.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"></path><path class="hf-ico-cut" d="M14 8H8"></path><path class="hf-ico-cut" d="M16 12H8"></path><path class="hf-ico-cut" d="M13 16H8"></path></svg>Riwayat</a>
+<a href="09-Lainnya.dc.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="hf-ico-fill" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>Alat</a>
+</nav>
+<sc-if value="{{ open }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ closeMenu }}"></div></sc-if>
+<sc-if value="{{ perOpen }}" hint-placeholder-val="{{ false }}"><div class="hf-scrim" onClick="{{ closePer }}"></div>
+<div class="hf-sheet" role="dialog" aria-label="Perlu perhatian" style="gap: 4px; padding-left: 8px; padding-right: 8px;">
+<span class="hf-sheet-handle" style="margin-bottom: 8px;" aria-hidden="true"></span>
+<div class="hf-sheet-headrow"><span class="heading">Perlu perhatian</span><sc-if value="{{ hasBadge }}" hint-placeholder-val="{{ true }}"><span class="hf-attn-count">{{ badge }}</span></sc-if></div>
+<div style="display: flex; flex-direction: column; gap: 4px; overflow-y: auto; min-height: 0;">
+<sc-for list="{{ notes }}" as="n" hint-placeholder-count="3"><a class="hf-notif" href="{{ n.href }}"><span class="hf-notif-tile {{ n.tcls }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><sc-for list="{{ n.icon }}" as="ic" hint-placeholder-count="2"><path d="{{ ic.d }}"></path></sc-for></svg></span><span style="display: flex; flex-direction: column; min-width: 0;"><span class="hf-notif-title">{{ n.t }}</span><span class="hf-notif-desc">{{ n.d }}</span></span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-muted);"><path d="m9 18 6-6-6-6"></path></svg></a></sc-for>
+<sc-if value="{{ noNotes }}" hint-placeholder-val="{{ false }}"><div style="display: grid; justify-items: center; gap: 8px; text-align: center; padding: 24px 16px 16px;"><span style="width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="24" height="24"><path d="M20 6 9 17l-5-5"></path></svg></span><span class="heading">Semua beres</span><span style="font-size: 13px; line-height: 20px; color: var(--ink-muted);">Tidak ada yang perlu diperhatikan sekarang.</span></div></sc-if>
+</div>
+</div></sc-if>
+<sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}"><div class="hf-toast" role="status" style="--toast-bottom: calc(var(--safe-bottom) + 83px);"><span>{{ savedToast }}</span><sc-if value="{{ savedAct }}" hint-placeholder-val="{{ true }}"><a class="hf-btn hf-btn-sm hf-btn-on-ink" href="05-Riwayat-2b-Detail.dc.html" style="flex: none;">Coba lagi</a></sc-if></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["default","aset","menu","satu","kosong","zakat-mendekati","zakat-hari-h","zakat-terlambat","piutang-hari-h","piutang-terlambat","zakat-dan-piutang","perhatian-zakat-piutang","perhatian","perhatian-kosong","banyak","banyak-sisanya","satu-pilih","aset-pilih"],"default":"foto-gagal"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const __t = ({'foto-gagal': ['Foto belum terunggah. Transaksi sudah tersimpan.', true]})[this.props.mulai] || null;
+    return Object.assign({}, this.renderVals0(), { hasSaved: !!__t, savedToast: __t ? __t[0] : '', savedAct: !!(__t && __t[1]) });
+  }
+  renderVals0() {
+    const st = this.state || {};
+    const mulai = this.props.mulai ?? 'default';
+    const many = mulai === 'banyak' || mulai === 'banyak-sisanya';
+    const MEM = many ? ['Azlan', 'Al Ghafiqi', 'Ibu', 'M. Yahya', 'Ayah', 'Kakak', 'Yumna', 'Adik', 'Paman'] : ['Azlan', 'Al Ghafiqi', 'M. Yahya', 'Yumna'];
+    const CLS = ['Emas', 'Crypto', 'Perak', 'Saham', 'Mata uang'];
+    let MX;
+    if (many) { const T = [98.4, 24.6, 16.2, 11.3, 8.1, 6.9, 4.2, 3.1, 1.4], PR = [.40, .25, .09, .18]; MX = T.map(t => { const a = PR.map(p => Math.round(t * p * 10) / 10); a.push(Math.round((t - a.reduce((x, y) => x + y, 0)) * 10) / 10); return a; }); }
+    else MX = [[69.4, 42.5, 15.6, 9.9, 4.3], [10.2, 2.5, 0, 2.0, 2.3], [9.9, 1.8, 0.1, 2.0, 0], [1.1, 0.2, 0, 0, 0.4]];
+    const AR = [['PAXG','Emas','Binance','Azlan'],['Emas fisik','Emas','Brankas','Azlan'],['BTC','Crypto','Bybit','Azlan'],['BTC','Crypto','Binance','Azlan'],['Perak fisik','Perak','Brankas','Azlan'],['GFI','Saham','Pluang','Azlan'],['BBCA','Saham','Pluang','Azlan'],['IDR','Mata uang','Brankas','Azlan'],
+      ['PAXG','Emas','Binance','Al Ghafiqi'],['BTC','Crypto','Bybit','Al Ghafiqi'],['BBCA','Saham','Pluang','Al Ghafiqi'],['USDT','Mata uang','Binance','Al Ghafiqi'],
+      ['PAXG','Emas','Binance','M. Yahya'],['BTC','Crypto','Bybit','M. Yahya'],['Perak fisik','Perak','Brankas','M. Yahya'],['BBCA','Saham','Pluang','M. Yahya'],
+      ['PAXG','Emas','Binance','Yumna'],['BTC','Crypto','Bybit','Yumna'],['USDT','Mata uang','Binance','Yumna']];
+    const GM = { 'Azlan': '+7,7%', 'Al Ghafiqi': '+9,0%', 'M. Yahya': '+4,5%', 'Yumna': '0%', 'Ibu': '+3,1%', 'Ayah': '+2,2%', 'Kakak': '+1,4%', 'Adik': '0%', 'Paman': '−0,6%' };
+    const GC = { 'Emas': '+6,1%', 'Crypto': '+4,2%', 'Perak': '+8,0%', 'Saham': '−1,3%', 'Mata uang': '0%', 'Sisanya': '+2,0%' };
+    const sum = a => a.reduce((x, y) => x + y, 0);
+    const jt = v => 'Rp ' + v.toFixed(1).replace('.', ',') + ' jt';
+    const kk = st.k || 0;
+    const m = st.mode || (mulai === 'aset' || mulai === 'aset-pilih' ? 'aset' : 'anggota'), s = st.sel === undefined ? (mulai === 'satu' || mulai === 'satu-pilih' ? 0 : null) : st.sel, list = m === 'anggota' ? MEM : CLS;
+    const allLabel = m === 'anggota' ? 'Semua anggota' : 'Semua aset';
+    let items, title;
+    if (m === 'anggota' && s === null) { items = MEM.map((n, i) => [n, sum(MX[i])]); title = 'Harta tiap anggota'; }
+    else if (m === 'anggota') { items = CLS.map((n, j) => [n, MX[s][j]]); title = 'Isi harta ' + MEM[s]; }
+    else if (s === null) { items = CLS.map((n, j) => [n, sum(MX.map(r => r[j]))]); title = 'Jenis aset terhadap total'; }
+    else { items = MEM.map((n, i) => [n, MX[i][s]]); title = CLS[s] + ' per anggota'; }
+    const short = s === null ? allLabel : list[s];
+    items = items.filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+    let grp = null;
+    if (items.length > 5) { grp = items.slice(4); items = items.slice(0, 4).concat([['Sisanya', sum(grp.map(x => x[1]))]]); }
+    const total = sum(items.map(x => x[1]));
+    const C = 2 * Math.PI * 86; let acc = 0;
+    const hiInit = mulai === 'banyak-sisanya' ? 4 : (mulai === 'satu-pilih' || mulai === 'aset-pilih' ? 0 : undefined);
+    const hi0 = st.hi === undefined ? hiInit : st.hi;
+    const hs = hi0 === undefined || hi0 === null || hi0 >= items.length ? null : hi0;
+    const isG = k => !!grp && k === 4;
+    const raw = items.map(x => x[1] / total * C), MINL = 26, small = raw.map(l => items.length > 1 && l < MINL), fixedL = small.reduce((a, s) => a + (s ? MINL : 0), 0), restL = raw.reduce((a, l, i) => a + (small[i] ? 0 : l), 0); const Ls = raw.map((l, i) => small[i] ? MINL : l * (C - fixedL) / restL); const segs = items.map((x, k) => { const L = Ls[k]; const dash = items.length === 1 ? C : Math.max(L - 6 - 14, 0.01); const o = { cls: isG(k) ? 's6' : 's' + (k + 1), da: dash.toFixed(1) + ' ' + (C - dash).toFixed(1), off: (-acc).toFixed(1), op: hs === null || hs === k ? 1 : 0.22, sw: hs === k ? 20 : 14 }; acc += L; return o; });
+    const rows = items.map(([n, v], k) => {
+      const g0 = isG(k);
+      const isMem = g0 ? m === 'aset' || (m === 'anggota' && s === null) : MEM.includes(n);
+      let sub;
+      if (g0) sub = grp.length + (isMem ? ' anggota' : ' jenis') + ' · gabungan';
+      else {
+        const ar = AR.filter(x => (isMem ? x[3] === n : x[1] === n) && (s === null || (m === 'anggota' ? x[3] === MEM[s] : x[1] === CLS[s])));
+        if (isMem && !ar.length) sub = MX[MEM.indexOf(n)].filter(q => q > 0).length + ' jenis aset';
+        else sub = ar.length + ' aset · ' + [...new Set(ar.map(x => x[2]))].join(', ');
+      }
+      const g = (GM[n] || GC[n] || '0%');
+      const up = g.startsWith('+'), down = g.startsWith('−');
+      const open = g0 && hs === k;
+      return { i: k, pressed: String(hs === k), tap: () => this.setState({ hi: hs === k ? null : k }), op: hs === null || hs === k ? 1 : 0.45, bt: k ? '1px solid var(--line)' : '0', n: g0 ? 'Sisanya (' + grp.length + ')' : n, c: g0 ? 'var(--chart-more)' : 'var(--chart-' + (k + 1) + ')', vs: jt(v), sub, g: (up ? '↑ ' : down ? '↓ ' : '') + g, dcls: 'hf-delta ' + (up ? 'hf-delta-up' : down ? 'hf-delta-down' : 'hf-delta-flat'), open, subs: open ? grp.map(x => ({ n: x[0], v: jt(x[1]) })) : [] };
+    });
+    const totFor = i => m === 'anggota' ? sum(MX[i]) : sum(MX.map(r => r[i]));
+    const open = st.open === undefined ? mulai === 'menu' : !!st.open;
+    const opts = [null, ...list.map((_, i) => i)].map(i => ({ l: i === null ? allLabel : list[i], v: jt(i === null ? 174.2 : totFor(i)), sel: String(s === i), on: () => this.setState({ sel: i, open: false, hi: null, k: kk + 1 }) }));
+    const vals = [160.8, 164.0, 163.5, 166.6, 170.1, 174.2], lo = Math.min(...vals), hi = Math.max(...vals);
+    const pts = vals.map((v, i) => (2 + i * 96 / (vals.length - 1)).toFixed(1) + ',' + (42 - (v - lo) / (hi - lo) * 36).toFixed(1)).join(' ');
+    const ZPI = mulai === 'zakat-dan-piutang' || mulai === 'perhatian-zakat-piutang';
+    const zk = mulai === 'zakat-hari-h' || ZPI ? 'due' : (mulai === 'zakat-terlambat' ? 'late' : (mulai === 'zakat-mendekati' ? 'soon' : 'none'));
+    const pk = mulai === 'piutang-hari-h' ? 'due' : (mulai === 'piutang-terlambat' || ZPI ? 'late' : 'none');
+    const Z = { soon: ['Zakat mal jatuh tempo 13 hari lagi', 'Azlan · 22 Nov 2026 · perkiraan ± Rp 712.980', 'Lihat', '08-Zakat-2g-Mendekati.dc.html', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold-line hf-btn-block'],
+      due: ['Zakat mal jatuh tempo hari ini', 'Azlan · Rp 712.980 · perak 612 g', 'Catat pembayaran', '08-Zakat-2j-Catat-Pembayaran.dc.html', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold hf-btn-block'],
+      late: ['Zakat mal terlambat 10 hari', 'Azlan · jatuh tempo 30 Okt 2026 · Rp 712.980', 'Catat pembayaran', '08-Zakat-2h-Terlambat.dc.html', 'var(--loss-soft)', 'var(--loss)', 'var(--loss)', 'hf-btn hf-btn-loss hf-btn-block'] }[zk] || [];
+    const P = { due: ['Cicilan piutang jatuh tempo hari ini', 'Bu Sari · perak 50 g milik Azlan', 'Catat cicilan diterima', '18-Piutang-2f-Terima-Cicilan.dc.html', 'var(--gold-soft)', 'var(--gold)', 'var(--gold)', 'hf-btn hf-btn-gold hf-btn-block'],
+      late: ['Piutang terlambat 56 hari', 'Bu Rina · 2 cicilan · perak 60 g milik Azlan', 'Lihat tunggakan', '18-Piutang-2k-Terlambat.dc.html', 'var(--loss-soft)', 'var(--loss)', 'var(--loss)', 'hf-btn hf-btn-loss hf-btn-block'] }[pk] || [];
+    /* Banner: satu saja. Zakat menang atas piutang; piutang yang kalah tetap ada di lonceng. */
+    const bz = zk !== 'none', B = bz ? Z : (pk !== 'none' ? P : []), bIco = bz ? 'cal' : 'coin', bLabel = bz ? 'Pengingat zakat' : 'Pengingat piutang';
+    const ICO = { coin: ['M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0', 'M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8', 'M12 18V6'], scale: ['m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z', 'm2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z', 'M7 21h10', 'M12 3v18', 'M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2'], cloud: ['m2 2 20 20', 'M5.782 5.782A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.307-.193', 'M21.532 16.5A4.5 4.5 0 0 0 17.5 10h-1.79A7.008 7.008 0 0 0 10 5.07'], info: ['M12 16v-4', 'M12 8h.01', 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0'], cal: ['M16 14v2.2l1.6 1', 'M16 2v4', 'M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5', 'M3 10h5', 'M8 2v4', 'M22 16a6 6 0 1 1-12 0 6 6 0 0 1 12 0'] };
+    const mk = (t, d, href, ic, tcls) => ({ t, d, href, icon: ICO[ic].map(x => ({ d: x })), tcls });
+    const pNote = pk === 'late' ? mk('Piutang Bu Rina terlambat 56 hari', '2 cicilan · perak 60 g milik Azlan belum diterima', P[3], 'coin', 'is-loss') : mk('Cicilan Bu Sari jatuh tempo hari ini', 'Perak 50 g milik Azlan · catat bila sudah diterima', P[3], 'coin', '');
+    const notes = mulai === 'kosong' || mulai === 'perhatian-kosong' ? [] : [].concat(zk === 'none' ? [] : [mk(Z[0], Z[1], Z[3], 'cal', zk === 'late' ? 'is-loss' : '')], pk === 'none' ? [] : [pNote], [mk('Perak Azlan dekat batas nishob', '612 g, hanya 17 g di atas nishob', '08-Zakat-2s-Dari-Beranda.dc.html', 'scale', ''), mk('Harga GFI gagal diambil', 'Memakai harga kemarin · isi manual?', '14-Aset-2i-Isi-Harga-Dari-Beranda.dc.html', 'cloud', ''), mk('Nilai November dicatat 1 Des', 'Masuk ke riwayat Laporan', '07-Laporan-2g-Dari-Beranda.dc.html', 'info', 'is-info')]);
+    const perOpen = st.per === undefined ? (mulai === 'perhatian' || mulai === 'perhatian-kosong' || mulai === 'perhatian-zakat-piutang') : !!st.per;
+    const SPV = [[3, 5, 4, 7, 6, 9, 12], [5, 5, 6, 6, 7, 7, 8], [8, 7, 7, 8, 6, 6, 5], [5, 6, 5, 6, 6, 7, 7]];
+    const spl = v => { const lo = Math.min(...v), hi2 = Math.max(...v); return v.map((y, i) => (2 + i * 44 / (v.length - 1)).toFixed(1) + ',' + (15 - (y - lo) / ((hi2 - lo) || 1) * 12).toFixed(1)).join(' '); };
+    const hargaMini = [['Bitcoin', 'BTC', '₿', 'brand', 'Rp 1,48 M', '↑ +1,8%', 'hf-delta hf-delta-up'], ['Emas', 'per gram', 'Au', 'gold', 'Rp 2.380.000', '↑ +0,3%', 'hf-delta hf-delta-up'], ['Perak', 'per gram', 'Ag', 'gold', 'Rp 46.600', '↓ −0,2%', 'hf-delta hf-delta-down'], ['Dolar AS', 'USD', '$', 'brand', 'Rp 16.420', '↑ +0,1%', 'hf-delta hf-delta-up']].map(([n, u, ic, k, p, c, cls], i) => ({ n, u, ic, p, c, cls, sp: spl(SPV[i]), sc: cls.includes('down') ? 'var(--loss)' : 'var(--brand)', tk: i === 0 ? 'hf-tick' : '', bg: 'var(--' + k + '-soft)', fg: k === 'gold' ? 'var(--gold)' : 'var(--brand)', bt: i ? '1px solid var(--line)' : 'none' }));
+    return {
+      showZk: mulai !== 'kosong' && B.length > 0, zTitle: B[0], zDesc: B[1], zCta: B[2], zHref: B[3], zBg: B[4], zBd: B[5], zTile: B[6], zBtnCls: B[7], zLabel: bLabel, zIcon: ICO[bIco].map(x => ({ d: x })), hargaMini,
+      notes, noNotes: notes.length === 0, hasBadge: notes.length > 0, badge: notes.length, badgeCls: zk === 'late' || pk === 'late' ? 'is-loss' : '', bellLabel: notes.length ? 'Perlu perhatian, ' + notes.length + ' hal' : 'Perlu perhatian, tidak ada', selZ: (open && !perOpen) ? 30 : 10, perOpen, perOpenStr: String(perOpen), togglePer: () => this.setState({ per: !perOpen, open: false }), closePer: () => this.setState({ per: false }),
+      swCls: 'sw' + (kk % 2), rwCls: 'rw' + (kk % 2),
+      theme: this.props.theme ?? 'light',
+      heroMod: mulai === 'kosong' ? '' : 'hf-total-with-link', empty: mulai === 'kosong', totalStr: mulai === 'kosong' ? 'Rp 0' : 'Rp 174,2 jt', hasData: mulai !== 'kosong',
+      spark: { pts, area: '2,48 ' + pts + ' 98,48', dx: '98%', dy: ((42 - (vals[vals.length - 1] - lo) / (hi - lo) * 36) / 48 * 100).toFixed(1) + '%' },
+      d: { title },
+      cName: hs === null ? short : items[hs][0], cHasCtx: hs !== null, cCtx: s === null ? (m === 'anggota' ? 'Total harta' : 'Total') : short, cValue: jt(hs === null ? total : items[hs][1]), cHasShare: hs !== null, cShare: hs === null ? '' : Math.round(items[hs][1] / total * 100) + '%',
+      totalInt: mulai === 'kosong' ? 0 : 174, totalDec: mulai === 'kosong' ? '' : ',2 jt',
+      segs, rows, opts, open, openStr: String(open),
+      selLabel: s === null ? allLabel : list[s],
+      toggleMenu: () => this.setState({ open: !open, per: false }),
+      closeMenu: () => this.setState({ open: false }),
+      tgMem: { pressed: String(m === 'anggota'), on: () => this.setState({ mode: 'anggota', sel: null, open: false, hi: null, k: kk + 1 }) },
+      tgCls: { pressed: String(m === 'aset'), on: () => this.setState({ mode: 'aset', sel: null, open: false, hi: null, k: kk + 1 }) }
+    };
+  }
+}
+</script>
+</body>
+</html>

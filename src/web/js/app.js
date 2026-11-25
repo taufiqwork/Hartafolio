@@ -36,6 +36,14 @@
 
   var lastTab = 'beranda', appState = null;
   /* Catat transaksi: layar penuh di atas shell. Data contoh (?demo) atau data nyata dari apiState. */
+  /* Unggah foto bukti di belakang layar. Gagal = toast dengan Coba lagi (foto ditahan di memori selama aplikasi terbuka). */
+  function unggah(id, photo) {
+    HF.api.call('apiBuktiUnggah', id, { nama: photo.nama, mime: photo.mime, base64: photo.base64 }).then(function () {
+      HF.berandaScreen.flash({ text: 'Foto terunggah' });
+    }).catch(function () {
+      HF.berandaScreen.flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.', act: 'Coba lagi', on: function () { unggah(id, photo); } });
+    });
+  }
   function openCatat() {
     var el = document.getElementById('app'), mulai = demoParam !== null ? (param('mulai') || 'beli') : 'beli';
     function go(ctx) {
@@ -46,10 +54,7 @@
         onSave: function (res, vm, c, photo) {
           if (res.error) return;
           var done = HF.catatSave.submit(res.rows, ctx.demo);
-          if (photo && !ctx.demo) done.then(function (r) {
-            if ((r.ditolak || []).length) return;
-            return HF.api.call('apiBuktiUnggah', r.utama, { nama: photo.nama, mime: photo.mime, base64: photo.base64 });
-          }).catch(function () { HF.berandaScreen.flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.' }); });
+          if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
           HF.berandaScreen.flash({ text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
           location.hash = '#/' + lastTab;
         } });

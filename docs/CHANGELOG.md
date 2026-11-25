@@ -156,3 +156,8 @@
 - **Kolom `bukti`:** berisi No. referensi (baris pertama, bila diisi) lalu tautan foto (baris berikutnya). Tidak ada kolom baru.
 - **Perbandingan piksel:** 05.u, 05.v, 05.w, dan seluruh board Catat tetap 0 piksel beda. Uji 71 (+1: folder sekali, tautan di bukti, izin sempit, gagal ditolak).
 - **BELUM TERVERIFIKASI di Google:** unggah ke Drive sungguhan dan layar izin. Setelah push, pemilik harus menyetujui izin Drive satu kali (lihat laporan).
+
+## 25 Nov 2026 · Foto gagal: Coba lagi (board 02.p dan 02.q)
+- **Koreksi proses:** Ticon sudah meminta semua keadaan yang belum digambar dibuatkan boardnya. Saya melewatkan keadaan gagal unggah foto (hanya menulis teks toast tanpa tombol) dan baru menggambarnya setelah Ticon menegur. Aturan kerja: keadaan gagal, coba lagi, dan berhasil dari tiap fitur baru digambar bersama fiturnya.
+- **Board baru** (artifact, kolom Beranda): `Main-2s-Foto-Gagal` (toast "Foto belum terunggah. Transaksi sudah tersimpan." dengan tombol Coba lagi) dan `Main-2t-Foto-Terunggah` (toast "Foto terunggah"). Dibangun: tombol toast aktif, Coba lagi mengunggah ulang foto yang masih ditahan di memori, toast dengan tombol bertahan 12 detik. 0 piksel beda.
+- **Batas yang jujur:** foto hanya ditahan selama aplikasi terbuka. Bila ditutup sebelum berhasil, foto hilang dan harus dilampirkan lagi (belum ada tempat menyimpan foto di perangkat dan belum ada board "lampirkan foto dari Riwayat").

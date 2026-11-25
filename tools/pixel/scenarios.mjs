@@ -71,6 +71,8 @@ export const catatActions = [
 // Boards foto dan pajak (dibuat 25 Nov, 05.u sampai 05.y). Keadaan awal = prop mulai board.
 export const catatBukti = [['-2t-Foto-Pilih', 'foto-pilih', false], ['-2u-Foto-Terlampir', 'foto-terlampir', true], ['-2v-Foto-Gagal', 'foto-gagal', true], ['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
   .map(([id, mulai, gulir]) => CT(id, mulai, gulir ? { boardJs: SCROLL, js: SCROLL, deviasi: [] } : {}));
+// Toast foto di Beranda (boards Main-2s dan Main-2t, dibuat 25 Nov).
+export const berandaFoto = [{ id: 'Main-2s-Foto-Gagal', board: 'Main-2s-Foto-Gagal', query: 'demo=foto-gagal' }, { id: 'Main-2t-Foto-Terunggah', board: 'Main-2t-Foto-Terunggah', query: 'demo=foto-terunggah' }];
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
   CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
@@ -135,5 +137,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...berandaFoto, ...catatFrames
 ];

@@ -37,7 +37,7 @@
         }).join('') +
         (a.notes.length ? '' : '<div class="br-allok"><span class="su-empty-ico">' + svg(['M20 6 9 17l-5-5'], 24) + '</span><span class="heading">Semua beres</span><span class="su-empty-note">Tidak ada yang perlu diperhatikan sekarang.</span></div>') + '</div></div>';
     }
-    if (ui.toast) h += '<div class="hf-toast br-toast" role="status"><span>' + esc(ui.toast.text) + '</span>' + (ui.toast.act ? '<a class="hf-btn hf-btn-sm hf-btn-on-ink br-toast-act" aria-disabled="true">' + esc(ui.toast.act) + '</a>' : '') + '</div>';
+    if (ui.toast) h += '<div class="hf-toast br-toast" role="status"><span>' + esc(ui.toast.text) + '</span>' + (ui.toast.act ? '<a class="hf-btn hf-btn-sm hf-btn-on-ink br-toast-act"' + (ui.toast.on ? ' role="button" data-act="toast-act"' : ' aria-disabled="true"') + '>' + esc(ui.toast.act) + '</a>' : '') + '</div>';
     return h;
   }
 
@@ -143,6 +143,7 @@
       if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
       else if (a === 'opt') { ui = { mode: ui.mode, sel: i === '' ? null : +i, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
       else if (a === 'bell') { ui.per = !ui.per; ui.open = false; if (d) paintMenu(B.view(d, ui)); paintBell(); }
+      else if (a === 'toast-act') { if (ui.toast && ui.toast.on) ui.toast.on(); }
       else if (a === 'close-bell') { ui.per = false; paintBell(); }
       else if (a === 'menu') { ui.open = !ui.open; ui.per = false; paintMenu(B.view(d, ui)); paintBell(); }
       else if (a === 'close') { ui.open = false; paintMenu(B.view(d, ui)); }
@@ -150,11 +151,11 @@
     });
   }
 
-  /** Tampilkan toast (mis. "Beli PAXG 0,0225 tersimpan") di Beranda; hilang sendiri setelah 4 detik. */
+  /** Tampilkan toast (mis. "Beli PAXG 0,0225 tersimpan") di Beranda; hilang sendiri setelah 4 detik (12 detik bila ada tombol aksi). */
   var flashTimer = null;
   function flash(t) {
     ui.init = true; ui.toast = t; clearTimeout(flashTimer);
-    flashTimer = setTimeout(function () { ui.toast = null; if (ui.repaint) ui.repaint(); }, 4000);
+    flashTimer = setTimeout(function () { ui.toast = null; if (ui.repaint) ui.repaint(); }, t && t.on ? 12000 : 4000); // toast dengan tombol aksi bertahan lebih lama
   }
   root.HF = root.HF || {};
   root.HF.berandaScreen = { html: html, bind: bind, overlays: overlays, flash: flash };
