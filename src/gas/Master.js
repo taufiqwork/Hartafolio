@@ -128,7 +128,7 @@ function apiAsetTambah(d) {
     if (HF.schema.ENUM.kelas.indexOf(kelas) < 0) throw new Error('Pilih jenis aset.');
     if (!satuan) throw new Error('Pilih satuan.');
     if (rows.some(function (a) { return a.status !== 'dihapus' && Master_sama_(a.nama, nama); })) throw new Error('Sudah ada aset bernama "' + nama + '".');
-    var zakat = kelas === 'Emas' || kelas === 'Perak', gram = satuan === 'gram' ? 1 : Number(String(d.gram_per_unit == null ? '' : d.gram_per_unit).replace(',', '.'));
+    var zakat = kelas === 'Emas' || kelas === 'Perak', gram = satuan === 'gram' ? 1 : Number(String(d.gram_per_unit == null ? '' : d.gram_per_unit).replace(/\./g, '').replace(',', '.'));
     if (zakat && !(gram > 0)) throw new Error('Isi setara gram per satuan.');
     var harga = Number(String(d.harga == null ? '' : d.harga).replace(/\./g, '').replace(',', '.')) || 0, now = Master_now_();
     var baru = { aset_id: HF.schema.nextId('AS', rows.map(function (a) { return a.aset_id; })), simbol: nama, nama: nama, kelas: kelas,

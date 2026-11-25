@@ -36,7 +36,7 @@ function boot() {
   const ss = {
     getSheetByName: n => sheets[n] || null,
     insertSheet: n => (sheets[n] = fakeSheet(n)),
-    getSheets: () => Object.values(sheets), deleteSheet: () => {}
+    getSheets: () => Object.values(sheets), deleteSheet: () => {}, copies: [], copy(n) { this.copies.push(n); }
   };
   const ctx = vm.createContext({
     console, Math, Date, Object, Array, String, Number, JSON, Error,
@@ -242,27 +242,25 @@ test('apiTransaksiTambah: bayar dari lokasi lain mengurangi lokasi pembayar; lok
   assert.equal(rows[1].alat_bayar_lokasi_id, 'LK-002');
 });
 
-test('apiBuktiUnggah: folder dibuat sekali, foto masuk folder itu, tautan ditambahkan ke bukti (setelah No. referensi), hanya izin sempit', () => {
+test('apiBuktiUnggah (DriveApp): folder dibuat sekali, foto masuk folder itu, tautan di bukti setelah No. referensi; tanpa Cloud Console', () => {
   const g = boot();
+  const dibuat = []; const folder = { getId: () => 'FOLDER1', getUrl: () => 'https://drive.google.com/drive/folders/FOLDER1', isTrashed: () => false, createFile: (b) => { dibuat.push(b); return { getUrl: () => 'https://drive.google.com/file/d/FILE1/view' }; } };
+  g.ctx.DriveApp = { folders: 0, getFoldersByName() { return { hasNext: () => false }; }, createFolder(n) { this.folders++; this.nama = n; return folder; }, getFolderById: (id) => { if (id !== 'FOLDER1') throw new Error('x'); return folder; } };
+  g.ctx.Utilities.base64Decode = (b) => Buffer.from(b, 'base64'); g.ctx.Utilities.newBlob = (data, mime, nama) => ({ data, mime, nama });
   g.run('setupHartafolio()');
   g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
   g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:1, sumber:'manual', bukti:'INV-77'}])`);
   const r = JSON.parse(JSON.stringify(g.run(`apiBuktiUnggah('TX-1', {nama:'nota binance.jpg', mime:'image/jpeg', base64:'QUJD'})`)));
   assert.equal(r.url, 'https://drive.google.com/file/d/FILE1/view');
-  const calls = g.ctx.UrlFetchApp.calls;
-  assert.equal(calls.length, 2); assert.match(calls[1].o.contentType, /multipart\/related/); assert.match(calls[1].o.payload, /"parents":\["FOLDER1"\]/); assert.match(calls[1].o.payload, /QUJD/);
-  assert.equal(calls[1].o.headers.Authorization, 'Bearer tok');
+  assert.equal(g.ctx.DriveApp.nama, 'Hartafolio Bukti'); assert.equal(dibuat[0].mime, 'image/jpeg'); assert.match(dibuat[0].nama, /^TX-1-nota binance\.jpg$/); assert.equal(dibuat[0].data.toString(), 'ABC');
   assert.equal(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)))[0].bukti, 'INV-77\nhttps://drive.google.com/file/d/FILE1/view');
   g.run(`apiBuktiUnggah('TX-1', {nama:'b.png', mime:'image/png', base64:'QUJD'})`);
-  assert.equal(calls.length, 3); // folder tidak dibuat lagi
+  assert.equal(g.ctx.DriveApp.folders, 1); // folder tidak dibuat lagi
   assert.equal(g.run('apiState()').pengaturan.folder_bukti_id, 'FOLDER1');
   assert.throws(() => g.run(`apiBuktiUnggah('TX-9', {mime:'image/jpeg', base64:'QUJD'})`), /tidak ditemukan/);
   assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'application/pdf', base64:'QUJD'})`), /JPG atau PNG/);
-  g.ctx.UrlFetchApp.fail = true;
-  assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'image/png', base64:'QUJD'})`), /Foto belum terunggah/);
   const m = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'gas', 'appsscript.json'), 'utf8'));
-  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file'));
-  assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); // bukan akses seluruh Drive
+  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/script.external_request'));
 });
 
 test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perlindungan tetap satu; header salah tetap berhenti', () => {
@@ -286,9 +284,26 @@ test('Perbaiki header: menulis ulang hanya sel header yang salah, data utuh; lap
   const lap = JSON.parse(JSON.stringify(g.run('Setup_laporan_()')));
   assert.match(lap.find(x => /^Transaksi/.test(x)), /kolom 29 berisi "Alat Bayar Lokasi", seharusnya "alat_bayar_lokasi_id"/);
   const out = JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()')));
-  assert.match(out.join('|'), /Transaksi: header diperbaiki di kolom 29/);
+  assert.match(out.join('|'), /Transaksi: judul diperbaiki di kolom 29/);
   assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
   assert.equal(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`))).length, 1); // data utuh
   assert.equal(g.sheets.Transaksi.protections.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()'))), ['Semua header sudah cocok']);
+});
+
+test('Perbaiki header: kolom yang bergeser disusun ulang bersama datanya (cadangan dibuat), kolom ekstra berdata ikut di kanan, nilai tetap di bawah judul yang benar', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:7, sumber:'manual', catatan:'cat'}])`);
+  const sh = g.sheets.Transaksi, ss = sh.cells;
+  ss.forEach(row => row.splice(4, 0, row === ss[0] ? '' : 'sisip')); sh.maxC = 30; // seseorang menyisipkan kolom di tengah: semua setelah kolom 4 bergeser
+  assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/);
+  const out = JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()')));
+  assert.match(out.join('|'), /Transaksi: kolom disusun ulang bersama datanya/); assert.match(out.join('|'), /Salinan cadangan/);
+  assert.equal(g.ctx.SpreadsheetApp.getActiveSpreadsheet().copies.length, 1);
+  const baris = JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)));
+  assert.equal(baris.length, 1); assert.equal(baris[0].jumlah, 7); assert.equal(baris[0].catatan, 'cat'); assert.equal(baris[0].trx_id, 'TX-1'); assert.equal(baris[0].lokasi_id, 'LK-001');
+  assert.equal(sh.cells[1].includes('sisip'), true); // kolom sisipan berdata tidak hilang (dibawa ke kanan)
   assert.deepEqual(JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()'))), ['Semua header sudah cocok']);
 });

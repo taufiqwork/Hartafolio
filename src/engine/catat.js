@@ -19,10 +19,10 @@
     Masuk: 'Datang dari luar tanpa dibeli, misalnya hadiah atau warisan.', Keluar: 'Pergi ke luar tanpa dijual, misalnya hadiah atau sedekah.',
     Pindah: 'Antar lokasi atau anggota. Total harta tetap, kecuali biaya.' };
   var JENIS_MULAI = { 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli',
-    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'angka-format': 'Beli', 'angka-titik': 'Beli', 'angka-inggris': 'Beli', 'angka-koma': 'Beli', 'foto-kamera': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
+    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'aset-manual-angka': 'Beli', 'angka-format': 'Beli', 'angka-titik': 'Beli', 'angka-inggris': 'Beli', 'angka-koma': 'Beli', 'foto-kamera': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
   var INIT = { 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' },
     'bayar-bybit': { pay: 'USDT@Bybit' }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' },
-    'foto-pilih': { sheet: 'foto' }, 'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' } };
+    'foto-pilih': { sheet: 'foto' }, 'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' }, 'aset-manual-angka': { sheet: 'manual' } };
 
   function num(x) { return parseFloat(String(x).replace(/\./g, '').replace(',', '.')); }
   function fmt(n, d) { return (isFinite(n) ? n : 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d }); }
