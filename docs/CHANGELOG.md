@@ -198,3 +198,7 @@
 - **Galat angka satu baris:** pesan dipersingkat ("Titik dan koma tertukar?") dan tombol "Ubah jadi 0,0225" sejajar dalam satu baris (board 05.ac sampai 05.ae diperbarui).
 - **Form Aset manual:** gram per satuan dan harga kini diformat saat diketik dan menandai galat yang sama (board baru 05.af); Simpan mati selama ada galat. Server membuang titik ribuan pada gram per satuan.
 - **Beranda tidak berubah setelah simpan:** disengaja, belum bug. Penghubung Beranda ke data nyata (`HF.beranda.fromState`) dijadwalkan di putaran E.
+
+## 25 Nov 2026 · Keputusan Jalan C dan percobaan C0
+- **Keputusan Ticon (25 Nov):** maju ke Jalan C (satu aplikasi pusat, tiap keluarga login dengan akun Google dan aplikasi membuat Sheet di Drive mereka) bila percobaan C0 berhasil. Tanpa verifikasi Google dan tanpa domain berbayar (klien menolak): batas 100 pengguna baru dan layar peringatan "belum diverifikasi" diterima; klien akan diberi tahu. Tenggat 4 Des boleh mundur 2 sampai 3 hari, dijelaskan ke klien.
+- **C0 dibuat:** `prototype/c0` (proyek Apps Script mandiri "Hartafolio C0 (percobaan)", deployment web app, protokol uji di README). Belum diuji di Google. Produk utama tidak berubah.
