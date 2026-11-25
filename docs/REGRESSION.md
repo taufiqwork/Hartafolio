@@ -81,6 +81,12 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 - [ ] **Tahap B** `npm run pixel`: Main-2e, 2f, 2g, 2h, 2i, 2j, 2o, 2p, 2q, 2r + animasi `Main@buka-lonceng` = 0 piksel beda (terukur 25 Nov 2026). Seluruh suite: 57 perbandingan, 0 gagal.
 - [ ] Banner: zakat menang atas piutang; piutang yang kalah tetap ada di lonceng. Angka lonceng merah (`is-loss`) bila zakat atau piutang terlambat.
 
+## 4d. Catat (Tahap 5 A sampai C), tiap perubahan di `catat*.js`, `morph.js`, `catat-save.js`, `catat-demo.js`
+- [ ] `npm run pixel`: semua skenario `04-Catat*` (19 board, 28 gulir, 22 interaksi, 5 animasi) = 0 piksel beda. Deviasi sah: tombol Pajak, catatan dimatikan (`DEV_FOTO`), board 2n memakai `patch` 44 ke 40 px.
+- [ ] `npm test`: `tests/catat.test.js` (total sama dengan board, saldo kurang, bayar tidak cukup, kalender, data nyata, baris lolos `ledger.validate`, bayar lokasi lain diblokir, data contoh tidak pernah memanggil server).
+- [ ] Data contoh (`?demo`) tidak pernah ke Sheet. Data nyata: baris masuk antrean (`hf-queue`) lalu `apiTransaksiTambah`; `trx_id` tetap.
+- [ ] Pembaruan layar di tempat (`HF.morph`): mengetik tidak menghilangkan fokus; animasi lembar hanya memutar saat lembar baru muncul.
+
 ## 5. Data dan aturan produk
 
 - [ ] Tidak ada hapus fisik data, tidak ada purge otomatis.

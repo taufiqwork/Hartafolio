@@ -34,7 +34,21 @@
   function fail(msg) { return Promise.reject(new Error(msg)); }
 
   var dev = {
-    apiState: function () { return Promise.resolve(JSON.parse(JSON.stringify(load()))); },
+    apiState: function () {
+      var s = JSON.parse(JSON.stringify(load()));
+      s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []); s.transaksi = s.transaksi || []; return Promise.resolve(s);
+    },
+    apiTransaksiTambah: function (list) {
+      var s = load(); s.transaksi = s.transaksi || []; var ok = [], dup = [], bad = [];
+      var ctx = { asetIds: (s.aset || (root.HF.catalog ? root.HF.catalog.all() : [])).map(function (a) { return a.aset_id; }), anggotaIds: s.anggota.map(function (a) { return a.anggota_id; }), lokasiIds: s.lokasi.map(function (a) { return a.lokasi_id; }) };
+      list.forEach(function (t) {
+        if (s.transaksi.some(function (x) { return x.trx_id === t.trx_id; })) return dup.push(t.trx_id);
+        t.status = 'aktif'; ctx.trxList = s.transaksi; var e = root.HF.ledger.validate(t, ctx);
+        if (e.length) return bad.push({ trx_id: t.trx_id, error: e[0] });
+        s.transaksi.push(t); ok.push(t.trx_id);
+      });
+      save(); return Promise.resolve({ diterima: ok, duplikat: dup, ditolak: bad });
+    },
     apiBootState: function () { return dev.apiState(); },
     apiAnggotaTambah: function (d) {
       var s = load(), nama = clean(d.nama);
@@ -80,6 +94,13 @@
       var s = load(), l = s.lokasi.filter(function (x) { return x.lokasi_id === lid; })[0];
       if (!l) return fail('Lokasi tidak ditemukan.');
       l.aktif = false; save(); return Promise.resolve(true);
+    },
+    apiAsetTambah: function (d) {
+      var s = load(); s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []);
+      var nama = clean(d.nama); if (!nama) return fail('Nama aset wajib diisi.');
+      if (s.aset.some(function (a) { return a.nama.toLowerCase() === nama.toLowerCase(); })) return fail('Sudah ada aset bernama "' + nama + '".');
+      var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', status: 'aktif' };
+      s.aset.push(a); save(); return Promise.resolve(a);
     },
     apiSetupSelesai: function () {
       var s = load(); s.pengaturan.setup_selesai = 'ya'; save(); return Promise.resolve(true);

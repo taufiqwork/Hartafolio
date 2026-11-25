@@ -33,6 +33,14 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Beranda: tampilan (kepala, total, kartu Pembagian harta, Harga terkini, kosong) | `src/web/screens/beranda.js` | `HF.berandaScreen.html/bind/overlays` (lembar lonceng dan toast) |
 | Beranda: logika kartu (urutan, Sisanya, donut, sorotan, pilihan) dan pengingat (banner, lonceng) | `src/engine/beranda.js` | `HF.beranda.view`, `attention`, `fromState` (kosong bila tanpa transaksi) |
 | Data contoh Beranda (bisa dihapus) | `src/demo/demo.js` | `HF.demo.get('' \| 'banyak')`; aktif dengan `?demo` atau `?demo=<keadaan>` (banyak, zakat-hari-h, zakat-terlambat, zakat-mendekati, piutang-hari-h, piutang-terlambat, zakat-dan-piutang, perhatian, perhatian-kosong, perhatian-zakat-piutang, tersimpan) |
+| Catat: logika (vm, reduksi state, kalender, saldo, kurs) | `src/engine/catat.js` | `HF.catat.view(st, ctx, {mulai})`, `reduce`, `calendar` |
+| Catat: data nyata → ctx, keadaan layar → baris Transaksi | `src/engine/catat-ctx.js` | `HF.catatCtx.fromState`, `toRows`, `nowOf` |
+| Catat: markup form dan lembar | `src/web/screens/catat-view.js`, `catat-sheets.js` | `HF.catatView`, `HF.catatSheets` (form Lokasi baru dan Aset manual memakai `HF.setupForm`) |
+| Catat: state, klik, pasang | `src/web/screens/catat.js` | `HF.catatScreen.mount(el, {ctx, mulai, onClose, onSave, onLokasi, onAset})` |
+| Catat: simpan (antrean perangkat, kirim, data contoh hanya lokal) | `src/web/js/catat-save.js` | `HF.catatSave.submit/flush/pending` |
+| Pembaruan DOM di tempat (transisi dan animasi tetap jalan) | `src/web/js/morph.js` | `HF.morph(el, html)` |
+| Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |
+| Aset buatan sendiri | `src/gas/Master.js` | `apiAsetTambah` |
 | Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi, 4 Import (tahap 1; tombol unduh/pilih file mati sampai Tahap 8) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |
 | Form bersama tambah/ubah anggota dan lokasi (hfForm) | `src/web/screens/setup-form.js` | `HF.setupForm.render` |
 | Tambah/ubah/hapus-lunak anggota dan lokasi, penanda Setup selesai | `src/gas/Master.js` | `apiAnggotaTambah/Ubah/Hapus`, `apiLokasiTambah/Ubah/Hapus`, `apiSetupSelesai` |

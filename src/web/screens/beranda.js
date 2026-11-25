@@ -136,6 +136,7 @@
       el.insertAdjacentHTML('beforeend', '<div class="br-overlays">' + overlays(d) + '</div>');
       var bellBtn = el.querySelector('[data-act="bell"]'); if (bellBtn) bellBtn.setAttribute('aria-expanded', String(ui.per));
     }
+    ui.repaint = paintBell;
     el.addEventListener('click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t) return;
       var a = t.getAttribute('data-act'), i = t.getAttribute('data-i');
@@ -149,6 +150,12 @@
     });
   }
 
+  /** Tampilkan toast (mis. "Beli PAXG 0,0225 tersimpan") di Beranda; hilang sendiri setelah 4 detik. */
+  var flashTimer = null;
+  function flash(t) {
+    ui.init = true; ui.toast = t; clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { ui.toast = null; if (ui.repaint) ui.repaint(); }, 4000);
+  }
   root.HF = root.HF || {};
-  root.HF.berandaScreen = { html: html, bind: bind, overlays: overlays };
+  root.HF.berandaScreen = { html: html, bind: bind, overlays: overlays, flash: flash };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
