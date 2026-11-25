@@ -134,8 +134,7 @@
     else payNote = pc + ' di ' + pl + (fJ === 'Jual' ? ' bertambah ' : ' berkurang ') + fmt(net, dC) + (fJ === 'Jual' ? '.' : ', sisa ' + fmt(payBal - net, dC) + '.') + (pl !== fL ? ' Dibayar dari lokasi lain.' : '') + (isCrypto ? ' ' + pc + ' dianggap dijual seharga ' + rp(net * rate) + '.' : '');
     var needPrice = isTrade && !(num(pv) >= 0) || (isTrade && cur !== 'IDR' && !(rate > 0));
     var needQ = !(num(q) > 0) && !awal || (awal && !fA);
-    var otherLoc = !ctx.demo && pay !== 'luar' && pl !== fL; // menunggu kolom alat_bayar_lokasi_id di Sheet (disetujui, belum dibangun)
-    var invalid = otherLoc || qErr || payErr; // tampilan tombol Simpan (aturan board): redup hanya bila saldo kurang atau bayar tidak cukup
+    var invalid = qErr || payErr; // tampilan tombol Simpan (aturan board): redup hanya bila saldo kurang atau bayar tidak cukup
     var incomplete = (isTrade && (needPrice || !(num(q) > 0))) || (!isTrade && !awal && !(num(q) > 0)) || (awal && (!fA || !fL || !(num(q) > 0))) || (isMove && !fKr) || (isMoveMem && !fR) || !fA || !fL;
     var valueText = fA && asetInfo ? (asetInfo.valText || (asetInfo.price != null ? rp(num(q) * asetInfo.price) : '—')) : '—';
     var qtyIdr = fA && asetInfo && asetInfo.price != null ? num(q) * asetInfo.price : null;

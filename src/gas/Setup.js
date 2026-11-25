@@ -22,7 +22,15 @@ function setupHartafolio() {
       laporan.push(tab + ': dibuat');
     } else {
       var r = S.checkHeader(tab, sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), names.length)).getValues()[0]);
-      if (!r.ok) throw new Error('Header tab "' + tab + '" tidak cocok (kolom ' + r.mismatches[0].col + '). Tidak ada yang diubah.');
+      if (!r.ok) {
+        // Migrasi aman: hanya bila yang kurang adalah kolom baru di kanan (sel header kosong). Selain itu berhenti tanpa mengubah apa pun.
+        var cuma = r.mismatches.every(function (m) { return m.got === ''; });
+        if (!cuma) throw new Error('Header tab "' + tab + '" tidak cocok (kolom ' + r.mismatches[0].col + '). Tidak ada yang diubah.');
+        var tambah = r.mismatches.map(function (m) { return m.want; });
+        r.mismatches.forEach(function (m) { sh.getRange(1, m.col, 1, 1).setValue(m.want); });
+        Setup_dropProtection_(sh);
+        laporan.push(tab + ': kolom ditambah (' + tambah.join(', ') + ')');
+      }
     }
     Setup_format_(sh, tab);
     Setup_protectHeader_(sh, tab);
@@ -46,6 +54,11 @@ function Setup_format_(sh, tab) {
   });
 }
 
+/** Lepas perlindungan header lama supaya bisa dibuat ulang selebar header baru. */
+function Setup_dropProtection_(sh) {
+  sh.getProtections(SpreadsheetApp.ProtectionType.RANGE).forEach(function (p) { if (p.getDescription() === 'Header Hartafolio') p.remove(); });
+}
+
 /** Header dikunci: hanya pemilik yang dapat mengubah baris 1. */
 function Setup_protectHeader_(sh, tab) {
   var ada = sh.getProtections(SpreadsheetApp.ProtectionType.RANGE).some(function (p) { return p.getDescription() === 'Header Hartafolio'; });
@@ -57,6 +70,7 @@ function Setup_protectHeader_(sh, tab) {
 function Setup_seedPengaturan_() {
   var ada = {};
   Repo_read_('Pengaturan').forEach(function (r) { ada[r.kunci] = true; });
+  if (ada.versi_skema && Repo_settings_().versi_skema !== String(HF.schema.VERSI)) Repo_update_('Pengaturan', 'versi_skema', { nilai: String(HF.schema.VERSI) });
   var baru = HF.schema.PENGATURAN_AWAL.filter(function (r) { return !ada[r[0]]; })
     .map(function (r) { return { kunci: r[0], nilai: r[1], keterangan: r[2] }; });
   Repo_append_('Pengaturan', baru);

@@ -106,3 +106,27 @@ test('Pindah antar anggota membawa modal; pinjaman membawa modal pergi dan kemba
   assert.equal(r.posisi['PM-1|AS-EMAS'].qty, 6);
   assert.equal(r.posisi['PM-1|AS-EMAS'].cost, 600);
 });
+
+test('bayar dari lokasi lain: aset pembayar berkurang di lokasi pembayar, bukan lokasi pembelian', () => {
+  const b = L.balances([
+    T({ jenis: 'Saldo awal', aset_id: 'AS-USDT', lokasi_id: 'LK-2', jumlah: 500 }),
+    T({ jenis: 'Beli', aset_id: 'AS-PAXG', lokasi_id: 'LK-1', jumlah: 0.1, harga_per_unit: 4000, harga_mata_uang: 'USDT', alat_bayar_aset_id: 'AS-USDT', alat_bayar_lokasi_id: 'LK-2', biaya: 1 }),
+    T({ jenis: 'Jual', aset_id: 'AS-PAXG', lokasi_id: 'LK-1', jumlah: 0.05, harga_per_unit: 4000, harga_mata_uang: 'USDT', alat_bayar_aset_id: 'AS-USDT', alat_bayar_lokasi_id: 'LK-3' })
+  ]);
+  assert.equal(bal(b, 'PM-1', 'AS-PAXG', 'LK-1'), 0.05);
+  assert.equal(bal(b, 'PM-1', 'AS-USDT', 'LK-2'), 500 - 401);
+  assert.equal(bal(b, 'PM-1', 'AS-USDT', 'LK-1'), 0); // lokasi pembelian tidak tersentuh
+  assert.equal(bal(b, 'PM-1', 'AS-USDT', 'LK-3'), 200);
+});
+
+test('bayar dari lokasi lain: saldo pembayar kurang ditolak, lokasi pembayar harus ada; kolom kosong = lokasi pembelian (baris lama)', () => {
+  const base = [T({ jenis: 'Saldo awal', aset_id: 'AS-USDT', lokasi_id: 'LK-2', jumlah: 100 })];
+  const beli = (extra) => T(Object.assign({ jenis: 'Beli', aset_id: 'AS-PAXG', lokasi_id: 'LK-1', jumlah: 0.1, harga_per_unit: 4000, harga_mata_uang: 'USDT', kurs: 16400, alat_bayar_aset_id: 'AS-USDT' }, extra));
+  const ctx = { trxList: base, lokasiIds: ['LK-1', 'LK-2'] };
+  assert.deepEqual(L.validate(beli({ alat_bayar_lokasi_id: 'LK-2' }), ctx), ['saldo:kurang:AS-USDT']);
+  assert.deepEqual(L.validate(beli({ alat_bayar_lokasi_id: 'LK-9' }), ctx), ['lokasi:tidak-ada']);
+  const ok = Object.assign({}, beli({ jumlah: 0.01, alat_bayar_lokasi_id: 'LK-2' }));
+  assert.deepEqual(L.validate(ok, ctx), []);
+  // tanpa kolom: pembayaran jatuh di LK-1 yang tidak punya USDT, jadi ditolak seperti dulu
+  assert.deepEqual(L.validate(beli({ jumlah: 0.01 }), ctx), ['saldo:kurang:AS-USDT']);
+});
