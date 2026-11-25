@@ -116,3 +116,26 @@ function apiLokasiHapus(id) {
 function apiBootState() {
   return { pengaturan: Repo_settings_(), anggota: Repo_read_('Anggota'), lokasi: Repo_read_('Lokasi') };
 }
+
+/**
+ * Aset buatan sendiri (form "Aset manual" di Catat). Harga diisi pengelola; sumber "manual". Satuan Emas/Perak bukan gram wajib
+ * punya gram_per_unit (untuk nishob). Tidak ada hapus fisik; nama ganda ditolak.
+ */
+function apiAsetTambah(d) {
+  return Master_dalamKunci_(function () {
+    var nama = Master_clean_(d && d.nama), kelas = Master_clean_(d && d.kelas), satuan = Master_clean_(d && d.satuan), rows = Repo_read_('Aset');
+    if (!nama) throw new Error('Nama aset wajib diisi.');
+    if (HF.schema.ENUM.kelas.indexOf(kelas) < 0) throw new Error('Pilih jenis aset.');
+    if (!satuan) throw new Error('Pilih satuan.');
+    if (rows.some(function (a) { return a.status !== 'dihapus' && Master_sama_(a.nama, nama); })) throw new Error('Sudah ada aset bernama "' + nama + '".');
+    var zakat = kelas === 'Emas' || kelas === 'Perak', gram = satuan === 'gram' ? 1 : Number(String(d.gram_per_unit == null ? '' : d.gram_per_unit).replace(',', '.'));
+    if (zakat && !(gram > 0)) throw new Error('Isi setara gram per satuan.');
+    var harga = Number(String(d.harga == null ? '' : d.harga).replace(/\./g, '').replace(',', '.')) || 0, now = Master_now_();
+    var baru = { aset_id: HF.schema.nextId('AS', rows.map(function (a) { return a.aset_id; })), simbol: nama, nama: nama, kelas: kelas,
+      bentuk: kelas === 'Crypto' || kelas === 'Saham' || kelas === 'Reksa dana' || kelas === 'Mata uang' ? 'Digital' : 'Fisik', satuan: satuan, gram_per_unit: zakat ? gram : null,
+      mata_uang_harga: 'IDR', sumber_harga: 'manual', kode_sumber: '', kunci_manual: true, kategori_zakat: HF.catalog.zakatKategori({ kelas: kelas }), status: 'aktif', dibuat_pada: now };
+    Repo_append_('Aset', [baru]);
+    if (harga > 0) Repo_append_('Harga', [{ waktu: now, aset_id: baru.aset_id, harga: harga, mata_uang: 'IDR', sumber: 'manual', status: 'manual' }]);
+    return baru;
+  });
+}

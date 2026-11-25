@@ -13,6 +13,67 @@ const BASE = [L('Binance', 'Exchange crypto', 1), L('Bybit', 'Exchange crypto', 
 const TAHAN = (nama) => `HF.api.call=(n,...a)=>n==='${nama}'?new Promise(()=>{}):orig(n,...a);`;
 const GAGAL = (nama) => `HF.api.call=(n,...a)=>n==='${nama}'?Promise.reject(new Error('Service timed out')):orig(n,...a);`;
 
+
+// Catat transaksi (?demo&mulai=...: data contoh dan keadaan awal sama dengan prop `mulai` board). Patch 2n: lihat deviasi di docs/CHANGELOG.
+const CT = (id, mulai, extra) => Object.assign({ id: '04-Catat' + id, board: '04-Catat' + id, query: 'demo&mulai=' + mulai, hash: '#/catat' }, extra || {});
+const TOMBOL_40 = [['width: auto; height: 44px; padding: 0; font: inherit', 'width: auto; height: 40px; padding: 0; font: inherit'], ['width: auto; height: 44px; font: inherit', 'width: auto; height: 40px; font: inherit'], ['right: 4px; top: 4px; width: 44px; height: 44px', 'right: 4px; top: 4px; width: 40px; height: 40px'], ['width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px', 'width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 12px']];
+const SCROLL = `document.querySelector('.hf-scroll').scrollTop = 99999;`;
+const DEV_FOTO = [{ box: [16, 640, 128, 48], alasan: 'Pajak, catatan dimatikan (tombolnya ada tetapi belum ada board keadaannya; Ticon 25 Nov)' }];
+export const catatScenarios = [
+  CT('', 'beli'), CT('-2a-Jual', 'jual'), CT('-2b-Masuk', 'masuk'), CT('-2k-Keluar', 'keluar'), CT('-2m-Beli-Dari-Luar', 'beli-luar'),
+  CT('-2o-Pilih-Alat-Bayar', 'bayar-lain'), CT('-2p-Bayar-Dengan-BTC', 'bayar-btc'), CT('-2q-Bayar-Dari-Bybit', 'bayar-bybit'),
+  CT('-2r-Tanggal-Lalu', 'tanggal-lalu'), CT('-2s-Kurs-Manual', 'kurs-manual'),
+  CT('-2n-Pilih-Tanggal', 'pilih-tanggal', { patch: TOMBOL_40 }),
+  // putaran B dan C
+  CT('-2c-Pindah', 'pindah'), CT('-2e-Pindah-Anggota', 'pindah-anggota'), CT('-2f-Pindah-Anggota-Beda-Lokasi', 'pindah-anggota-lokasi'),
+  CT('-2d-Saldo-Awal', 'awal'), CT('-2g-Saldo-Awal-Lanjut', 'awal-lanjut'), CT('-2h-Cari-Aset', 'cari-aset'), CT('-2i-Lokasi-Baru', 'lokasi-baru'), CT('-2j-Aset-Manual', 'aset-manual')
+];
+
+// Animasi Catat: klik di board dan di aplikasi, bekukan pada T ms. Selektor berdasarkan teks tombol (sama di keduanya).
+const KLIK = (txt) => `[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(txt)}).click();`;
+const CTF = (id, mulai, act, at) => ({ id: '04-Catat@' + id, board: '04-Catat' + (mulai === 'pilih-tanggal' ? '' : ''), query: 'demo&mulai=beli', hash: '#/catat', frames: { act, at } });
+// Tiap board form digulir: tengah (400 px) dan dasar, supaya bagian di bawah lipatan layar ikut dibandingkan.
+const FORM = [['', 'beli'], ['-2a-Jual', 'jual'], ['-2b-Masuk', 'masuk'], ['-2k-Keluar', 'keluar'], ['-2m-Beli-Dari-Luar', 'beli-luar'], ['-2p-Bayar-Dengan-BTC', 'bayar-btc'], ['-2q-Bayar-Dari-Bybit', 'bayar-bybit'], ['-2r-Tanggal-Lalu', 'tanggal-lalu'], ['-2s-Kurs-Manual', 'kurs-manual'],
+  ['-2c-Pindah', 'pindah'], ['-2e-Pindah-Anggota', 'pindah-anggota'], ['-2f-Pindah-Anggota-Beda-Lokasi', 'pindah-anggota-lokasi'], ['-2d-Saldo-Awal', 'awal'], ['-2g-Saldo-Awal-Lanjut', 'awal-lanjut']];
+const MID = `document.querySelector('.hf-scroll').scrollTop = 400;`;
+export const catatScroll = FORM.flatMap(([id, mulai]) => [
+  CT(id + '@tengah', mulai, { board: '04-Catat' + id, boardJs: MID, js: MID }),
+  CT(id + '@bawah', mulai, { board: '04-Catat' + id, boardJs: SCROLL, js: SCROLL, deviasi: DEV_FOTO })]);
+// Interaksi Catat: aksi yang sama dijalankan di board dan aplikasi (boardJs = js), lalu keduanya dibandingkan.
+const SET = (sel, v) => `{const i=document.querySelector(${JSON.stringify(sel)});i.value=${JSON.stringify(v)};i.dispatchEvent(new Event('input',{bubbles:true}));}await new Promise(r=>setTimeout(r,60));`;
+const KLIKI = (txt) => `[...document.querySelectorAll('button')].find(b=>b.textContent.includes(${JSON.stringify(txt)})).click();await new Promise(r=>setTimeout(r,80));`;
+const KLIKT = (txt) => KLIK(txt) + `await new Promise(r=>setTimeout(r,80));`;
+const ACT = (id, board, mulai, act, extra) => CT(id, mulai, Object.assign({ board, boardJs: act, js: act }, extra || {}));
+export const catatActions = [
+  ACT('@x-jual-lebih-saldo', '04-Catat-2a-Jual', 'jual', SET('#jml', '99')),
+  ACT('@x-keluar-lebih-saldo', '04-Catat-2k-Keluar', 'keluar', SET('#jml', '700')),
+  ACT('@x-pindah-lebih-saldo', '04-Catat-2c-Pindah', 'pindah', SET('#jml', '9')),
+  ACT('@x-bayar-tak-cukup', '04-Catat-2q-Bayar-Dari-Bybit', 'bayar-bybit', SET('#jml', '10')),
+  ACT('@x-kurs-diketik', '04-Catat', 'beli', SET('#kurs', '16.100') + SCROLL, { deviasi: DEV_FOTO }),
+  ACT('@x-kurs-reset', '04-Catat-2s-Kurs-Manual', 'kurs-manual', `document.querySelector('[aria-label="Kembali ke kurs otomatis"]').click();await new Promise(r=>setTimeout(r,80));` + SCROLL, { deviasi: DEV_FOTO }),
+  ACT('@x-jenis-masuk-asal', '04-Catat-2b-Masuk', 'masuk', KLIK('Warisan')),
+  ACT('@x-hari-dipilih', '04-Catat-2n-Pilih-Tanggal', 'pilih-tanggal', KLIKT('5'), { patch: TOMBOL_40 }),
+  ACT('@x-jam-dipilih', '04-Catat-2n-Pilih-Tanggal', 'pilih-tanggal', `[...document.querySelectorAll('.hf-wheel')].filter(b=>b.textContent.trim()==='15')[0].click();await new Promise(r=>setTimeout(r,80));`, { patch: TOMBOL_40 }),
+  ACT('@x-sekarang', '04-Catat-2n-Pilih-Tanggal', 'pilih-tanggal', KLIKT('Sekarang'), { patch: TOMBOL_40 }),
+  ACT('@x-cari-bri', '04-Catat-2h-Cari-Aset', 'cari-aset', SET('#cariA', 'bri')),
+  ACT('@x-cari-filter-saham', '04-Catat-2h-Cari-Aset', 'cari-aset', KLIK('Saham')),
+  ACT('@x-cari-pilih-eth', '04-Catat-2h-Cari-Aset', 'cari-aset', KLIKI('Ethereum')),
+  ACT('@x-cari-keluarga', '04-Catat-2h-Cari-Aset', 'cari-aset', KLIKT('Mata uang')),
+  ACT('@x-lokasi-jenis-terbuka', '04-Catat-2i-Lokasi-Baru', 'lokasi-baru', `document.querySelector('.hf-select-btn').click();await new Promise(r=>setTimeout(r,120));`),
+  ACT('@x-manual-jenis-crypto', '04-Catat-2j-Aset-Manual', 'aset-manual', `document.querySelector('.hf-select-btn').click();await new Promise(r=>setTimeout(r,80));[...document.querySelectorAll('[role=option]')].find(b=>b.textContent.includes('Crypto')).click();await new Promise(r=>setTimeout(r,120));`),
+  ACT('@x-manual-satuan-oz', '04-Catat-2j-Aset-Manual', 'aset-manual', KLIK('oz')),
+  ACT('@x-bayar-pilih-bybit', '04-Catat-2o-Pilih-Alat-Bayar', 'bayar-lain', KLIKI('USDT · Bybit')),
+  ACT('@x-pindah-ke-lokasi-baru', '04-Catat-2c-Pindah', 'pindah', KLIKI('Lokasi') ),
+  ACT('@x-awal-pilih-aset', '04-Catat-2d-Saldo-Awal', 'awal', KLIK('BTC') + KLIK('Bybit')),
+  ACT('@x-beli-ganti-anggota', '04-Catat', 'beli', KLIK('Yumna')),
+  ACT('@x-beli-lokasi-lain', '04-Catat', 'beli', KLIK('Bybit'))
+];
+export const catatFrames = [
+  CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
+  CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
+  CTF('buka-bayar', 'beli', KLIK('Aset lain…'), [0, 100, 250, 450]), CTF('buka-aset', 'beli', KLIK('Aset lain'), [0, 100, 250, 450])
+];
+
 export const scenarios = [
   { id: '00-Splash', board: '00-Splash', hold: true },
   { id: '01-Setup-1-Akun', board: '01-Setup-1-Akun', seed: seed(), step: 1 },
@@ -71,4 +132,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatFrames
 ];

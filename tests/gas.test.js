@@ -197,3 +197,16 @@ test('apiBootState: hanya penanda Setup, anggota, lokasi', () => {
   assert.deepEqual(Object.keys(b).sort(), ['anggota', 'lokasi', 'pengaturan']);
   assert.equal(b.anggota.length, 1);
 });
+
+test('apiAsetTambah: aset buatan sendiri tersimpan dengan harga manual; nama ganda, jenis salah, dan gram kosong ditolak', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  const a = g.run(`apiAsetTambah({ nama: 'Emas perhiasan', kelas: 'Emas', satuan: 'gram', harga: '1.900.000' })`);
+  assert.equal(a.aset_id, 'AS-001'); assert.equal(a.sumber_harga, 'manual'); assert.equal(a.kategori_zakat, 'emas'); assert.equal(a.gram_per_unit, 1);
+  const state = g.run('apiState()');
+  assert.equal(state.aset.length, 14);
+  assert.equal(g.sheets.Harga.getLastRow(), 2); // header + satu harga manual
+  assert.throws(() => g.run(`apiAsetTambah({ nama: 'emas PERHIASAN', kelas: 'Emas', satuan: 'gram' })`), /Sudah ada aset/);
+  assert.throws(() => g.run(`apiAsetTambah({ nama: 'X', kelas: 'Mobil', satuan: 'unit' })`), /Pilih jenis aset/);
+  assert.throws(() => g.run(`apiAsetTambah({ nama: 'Koin', kelas: 'Perak', satuan: 'lembar' })`), /setara gram/);
+});

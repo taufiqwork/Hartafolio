@@ -28,6 +28,8 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 3. Tiap putaran: baca board dan kumpulkan pertanyaan dulu; sumber board dari `reference/mockups/src` (segarkan dari artifact); skenario piksel semua state termasuk animasi; merge; deploy.
 4. Detail Riwayat untuk Zakat, Pinjamkan, Cicilan, Pelunasan hanya tampilan (data contoh) sampai Tahap 7.
 
+**Putaran A, B, C Catat selesai (25 Nov 2026), lihat CHANGELOG.** Berikutnya: persetujuan kolom `alat_bayar_lokasi_id`, board foto/pajak/catatan, putaran D (Riwayat), E (Ubah, hapus, pulihkan, Beranda dari data nyata).
+
 ## Beranda: keputusan Ticon (25 Nov 2026), baca sebelum membangun
 1. **Pakai data contoh (demo) yang bisa dihapus**, jangan menyembunyikan fitur utama. Beranda harus tampil penuh seperti mockup: total, grafik kecil, "dari Okt", baris dolar, donut, daftar, kartu Harga terkini, banner zakat/piutang, lonceng.
 2. **Desain data contoh:** satu modul terpisah (`src/demo/`, mis. `demo.js`) berisi data mentah (anggota Azlan, Al Ghafiqi, M. Yahya, Yumna; lokasi; transaksi Saldo awal; harga contoh; riwayat 6 bulan; kurs) yang dirancang agar HASIL HITUNG engine sama dengan angka mockup (Rp 174,2 jt, +2,4%, $ 9.979, piutang Rp 19,3 jt, dst.). UI membaca view-model dari engine, bukan angka yang ditulis tangan. Aktif lewat `?demo` (dev dan web app); data nyata di Sheet tidak tersentuh. Menghapus fitur demo = hapus folder dan satu baris pemanggil. Skenario piksel Beranda memakai data ini.

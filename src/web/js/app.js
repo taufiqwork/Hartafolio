@@ -34,8 +34,31 @@
   }
   var demoParam = param('demo'), berandaData = demoParam === null ? null : HF.demo.get(demoParam); // ?demo = data contoh (src/demo)
 
+  var lastTab = 'beranda', appState = null;
+  /* Catat transaksi: layar penuh di atas shell. Data contoh (?demo) atau data nyata dari apiState. */
+  function openCatat() {
+    var el = document.getElementById('app'), mulai = demoParam !== null ? (param('mulai') || 'beli') : 'beli';
+    function go(ctx) {
+      HF.catatScreen.mount(el, { ctx: ctx, mulai: mulai,
+        onClose: function () { location.hash = '#/' + lastTab; },
+        onLokasi: ctx.demo ? null : function (nama, jenis) { return HF.api.call('apiLokasiTambah', { nama: nama, jenis: jenis }); },
+        onAset: ctx.demo ? null : function (d) { return HF.api.call('apiAsetTambah', d); },
+        onSave: function (res, vm) {
+          if (res.error) return;
+          HF.catatSave.submit(res.rows, ctx.demo);
+          HF.berandaScreen.flash({ text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
+          location.hash = '#/' + lastTab;
+        } });
+    }
+    if (demoParam !== null) return go(HF.demo.catat());
+    function ready(s) { appState = s; go(HF.catatCtx.fromState(s, HF.catatCtx.nowOf())); }
+    if (appState) ready(appState); else HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
+  }
+
   function render() {
     var r = route();
+    if (r === 'catat') { document.title = 'Catat transaksi · Hartafolio'; return openCatat(); }
+    lastTab = r;
     if (r === 'beranda') {
       var el = document.getElementById('app');
       el.innerHTML = HF.berandaScreen.html(berandaData) + nav('beranda') + '<div class="br-overlays">' + HF.berandaScreen.overlays(berandaData) + '</div>';

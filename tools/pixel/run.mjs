@@ -82,16 +82,19 @@ const statis = list.filter((s) => !s.frames);
 let gagal = 0; const rows = [];
 for (const sc of statis) {
   const b = path.join(OUT, sc.id + '.board.png'), a = path.join(OUT, sc.id + '.app.png'), d = path.join(OUT, sc.id + '.diff.png');
-  // board
+  // board (sc.patch = [[dari, ke]]: salinan board dengan penggantian teks, untuk beda desain yang disengaja; wajib dicatat di deviasi)
+  let boardName = sc.board;
+  if (sc.patch) { boardName = sc.board + '__p'; let src = fs.readFileSync(path.join(FARM, sc.board + '.dc.html'), 'utf8'); for (const [x, y] of sc.patch) src = src.split(x).join(y); fs.writeFileSync(path.join(FARM, boardName + '.dc.html'), src); }
   let p = await newPage();
-  await p.go(`${base}/farm/${sc.board}.dc.html`);
+  await p.go(`${base}/farm/${boardName}.dc.html`);
   for (let i = 0; i < 50 && !(await p.ev(`!!document.querySelector('[data-theme]')&&document.querySelector('[data-theme]').children.length>0`)); i++) await sleep(100);
+  if (sc.boardJs) { await p.ev(`(async()=>{${sc.boardJs}})()`); await sleep(100); }
   await snap(p, b); if (process.env.PIXEL_EVAL) console.log('board:', JSON.stringify(await p.ev(process.env.PIXEL_EVAL))); await p.close();
   // aplikasi
   p = await newPage();
   await p.go(`${base}/app/Index.html?hold&reset`);
   await p.ev(`localStorage.setItem('hf-dev-state', ${JSON.stringify(JSON.stringify(sc.seed || { pengaturan: {}, anggota: [], lokasi: [] }))})`);
-  await p.go(`${base}/app/Index.html${sc.query ? '?' + sc.query : sc.hold ? '?hold' : sc.step ? '?step=' + sc.step : ''}`);
+  await p.go(`${base}/app/Index.html${sc.query ? '?' + sc.query : sc.hold ? '?hold' : sc.step ? '?step=' + sc.step : sc.hash ? '?go' : ''}${sc.hash || ''}`); // '?go' memaksa muat ulang (hanya beda hash = tidak memuat ulang)
   await sleep(500);
   if (sc.js) await p.ev(`(async()=>{${H_JS}${sc.js}})()`);
   await snap(p, a); if (process.env.PIXEL_EVAL) console.log('app  :', JSON.stringify(await p.ev(process.env.PIXEL_EVAL))); await p.close();
@@ -110,7 +113,7 @@ for (const sc of list.filter((x) => x.frames)) {
     await p.ev(settle); await p.ev(`(async()=>{${sc.frames.act}})()`); await p.ev(freezeAt(T));
     fs.writeFileSync(b, Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64')); await p.close();
     p = await newPage(); await p.go(`${base}/app/Index.html?hold&reset`);
-    await p.go(`${base}/app/Index.html?${sc.query}`); await sleep(500);
+    await p.go(`${base}/app/Index.html?${sc.query}${sc.hash || ''}`); await sleep(500);
     await p.ev(settle); await p.ev(`(async()=>{${sc.frames.act}})()`); await p.ev(freezeAt(T));
     fs.writeFileSync(a, Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64')); await p.close();
     const out = JSON.parse(execFileSync('python3', [path.join(import.meta.dirname, 'diff.py'), b, a, d, '[]']).toString());

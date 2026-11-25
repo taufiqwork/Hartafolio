@@ -18,8 +18,16 @@
     bank: ['M10 18v-7', 'M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z', 'M14 18v-7', 'M18 18v-7', 'M3 22h18', 'M6 18v-7'],
     ewallet: ['M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1', 'M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'],
     vault: ['M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2', 'M15.5 12a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0', 'M7 7h.01', 'M17 7h.01', 'M7 17h.01', 'M17 17h.01'],
-    dots: ['M12 12h.01', 'M19 12h.01', 'M5 12h.01']
+    dots: ['M12 12h.01', 'M19 12h.01', 'M5 12h.01'],
+    btc: ['M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727'],
+    pie: ['M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z', 'M21.21 15.89A10 10 0 1 1 8 2.83'],
+    cash: ['M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2', 'M14 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0', 'M6 12h.01', 'M18 12h.01'],
+    home: ['M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8', 'M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z']
   };
+  /* Jenis aset (form Aset manual) dan satuan yang boleh dipilih per jenis. Sama dengan board 04-Catat-2j. */
+  var JA = [['coin', 'Emas', 'Zakat mal, nishob 85 g · logam mulia, perhiasan, token emas'], ['coin', 'Perak', 'Zakat mal, nishob 595 g · fisik maupun digital'], ['btc', 'Crypto', 'BTC, ETH, stablecoin'],
+    ['sekuritas', 'Saham', 'Saham dan ETF'], ['pie', 'Reksa dana', 'Pasar uang, obligasi, saham'], ['cash', 'Mata uang', 'Tunai dan tabungan valas'], ['home', 'Properti', 'Rumah, tanah, ruko'], ['dots', 'Lainnya', 'Aset lain dengan harga sendiri']];
+  var MU = { 'Emas': ['gram', 'oz', 'token', 'lembar'], 'Perak': ['gram', 'oz', 'token', 'lembar'], 'Crypto': ['koin', 'token'], 'Saham': ['lot', 'lembar'], 'Reksa dana': ['unit'], 'Mata uang': ['nominal'], 'Properti': ['unit', 'm²'], 'Lainnya': ['unit', 'gram', 'lot', 'lembar'] };
   /* [kunci ikon, nama jenis, contoh]. Urutan dan salinan persis seperti mockup. */
   var LOK = [['exchange', 'Exchange crypto', 'Binance, Indodax'], ['wallet', 'Wallet crypto', 'Ledger, MetaMask'],
     ['sekuritas', 'Sekuritas saham', 'Ajaib, IPOT'], ['app', 'Aplikasi investasi', 'Pluang, Bibit'], ['coin', 'Emas digital', 'Pegadaian, Treasury'],
@@ -50,6 +58,17 @@
       fields.push(fm.owner ? ro('Hubungan dengan Anda', 'Diri sendiri', ubah ? 'Pengelola akun selalu Diri sendiri.' : '')
         : select('rel', 'Hubungan dengan Anda', 'Pilih hubungan', ubah ? 'Hanya label. Tidak mengubah aset maupun riwayat.' : '', v.rel, fm.pk === 'rel'));
       ok = !!nama && (fm.owner || !!v.rel);
+    } else if (fm.k === 'aset') {
+      var j = v.jenis || null, units = j ? MU[j] : [], sat = units.indexOf(v.sat) >= 0 ? v.sat : (units[0] || null), zak = j === 'Emas' || j === 'Perak';
+      title = 'Aset manual'; desc = 'Untuk aset tanpa harga pasar, misalnya emas perhiasan. Harganya Anda isi sendiri.'; primary = 'Tambah aset';
+      opts = JA.map(function (o) { return { l: o[1], sub: o[2], ik: o[0] }; });
+      fields.push(input('nama', 'Nama', 'Misalnya Emas perhiasan', '', v.nama));
+      fields.push(select('jenis', 'Jenis', 'Pilih jenis aset', !j ? 'Menentukan cara aset ini dihitung untuk zakat mal.' : (zak ? j + ' dihitung untuk zakat mal dengan nishob ' + (j === 'Emas' ? '85' : '595') + ' g, fisik maupun digital.' : 'Tidak dihitung untuk zakat mal. Zakat hanya dari emas dan perak.'), v.jenis, fm.pk === 'jenis'));
+      if (j) fields.push(field('Satuan', '<div class="hf-toggle su-seg" role="group" aria-label="Satuan" style="grid-template-columns: repeat(' + units.length + ', minmax(0, 1fr));">' + units.map(function (u) {
+        return '<button type="button" aria-pressed="' + (u === sat) + '" data-act="seg" data-key="sat" data-val="' + esc(u) + '">' + esc(u) + '</button>'; }).join('') + '</div>', 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.'));
+      if (zak && sat !== 'gram') fields.push(field('Setara gram per satuan', '<input class="hf-input" type="text" inputmode="decimal" data-in="gram" value="' + esc(v.gram) + '" placeholder="Contoh: 31,1035" aria-label="Setara gram per satuan">', 'Untuk nishob zakat. Contoh: 1 oz atau 1 token PAXG = 31,1035 g.'));
+      fields.push(field('Harga per satuan (Rp)', '<input class="hf-input" type="text" inputmode="decimal" data-in="harga" value="' + esc(v.harga) + '" placeholder="0" aria-label="Harga per satuan (Rp)">', 'Harga per ' + (sat || 'satuan') + ' hari ini. Bisa diubah kapan saja.'));
+      ok = !!nama && !!j;
     } else {
       title = ubah ? 'Ubah ' + fm.name : 'Tambah lokasi';
       desc = ubah ? '' : 'Lokasi baru langsung bisa dipilih saat mencatat transaksi.';
@@ -86,10 +105,10 @@
       fields.join('') + (fm.error ? notice(fm.error.title, fm.error.text) : '') + '</div>' +
       '<div class="su-fm-foot">' +
       '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="fm-save"' + (ok && !fm.busy ? '' : ' disabled') + '>' + (fm.error && fm.error.retry ? 'Coba lagi' : primary) + '</button>' +
-      (fm.sec ? '<button class="hf-btn hf-btn-ghost hf-btn-block hf-btn-danger" type="button" data-act="fm-sec">' + esc(fm.sec) + '</button>' : '') +
+      (fm.sec ? '<button class="hf-btn hf-btn-ghost hf-btn-block' + (fm.k === 'aset' ? '' : ' hf-btn-danger') + '" type="button" data-act="fm-sec">' + esc(fm.sec) + '</button>' : '') +
       '</div></section>';
   }
 
   root.HF = root.HF || {};
-  root.HF.setupForm = { render: render, notice: notice, svg: svg, esc: esc, IC: IC, LOK: LOK, GOLD: GOLD, lokasiIkon: lokasiIkon };
+  root.HF.setupForm = { MU: MU, render: render, notice: notice, svg: svg, esc: esc, IC: IC, LOK: LOK, GOLD: GOLD, lokasiIkon: lokasiIkon };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
