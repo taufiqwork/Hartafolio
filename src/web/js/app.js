@@ -57,7 +57,7 @@
           if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
           done.then(function (r) { if ((r.ditolak || []).length) HF.berandaScreen.flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
             .catch(function () { HF.berandaScreen.flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
-          HF.berandaScreen.flash({ text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
+          HF.berandaScreen.flash(ctx.demo ? { text: 'Contoh: ' + vm.fJ + ' ' + (vm.fA || '') + ' tidak masuk ke Sheet' } : { text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
           location.hash = '#/' + lastTab;
         } });
     }

@@ -8,11 +8,13 @@
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
     if (ctx.demo && mulai === 'belum-lengkap') st = { tried: true, qv: '', pv: '' };
+    if (ctx.demo && mulai === 'foto-kamera') st = { kamera: true };
     if (ctx.demo && mulai === 'foto-terlampir') st = { foto: { ok: true, nama: 'nota-binance.jpg', kb: 184 } };
     if (ctx.demo && mulai === 'foto-gagal') st = { foto: { ok: false } };
     if (ctx.demo && (mulai === 'pajak-catatan' || mulai === 'pajak-terisi')) st = mulai === 'pajak-terisi' ? { pajakOn: true, pajakV: '0,05', catatanV: 'Beli saat harga turun, sesuai rencana bulanan.' } : { pajakOn: true };
     el.innerHTML = '<div class="ct" data-theme="light">' + V.header({ title: 'Catat transaksi' }) + '<main class="hf-scroll ct-main" id="screen"></main><footer class="ct-foot"></footer><div class="ct-over"></div></div>';
     var $ = function (s) { return el.querySelector(s); }, title = $('.ct-title'), main = $('.ct-main'), foot = $('.ct-foot'), over = $('.ct-over');
+    var stream = null; // aliran kamera yang sedang terbuka
     var photo = null; // foto terpilih (berisi base64) untuk diunggah sesudah simpan
     var wait = []; // simpanan ke server yang masih jalan (lokasi/aset baru): Simpan menunggu id-nya
     function seedForm() { // keadaan awal form Lokasi baru dari board (hanya data contoh)
@@ -29,7 +31,7 @@
       title.textContent = vm.title;
       HF.morph(main, V.main(vm));
       HF.morph(foot, V.footer(vm));
-      HF.morph(over, (vm.sheet === 'lokasi' || vm.sheet === 'manual') && fm ? S.render(fm) : SH.sheets(vm, ''));
+      HF.morph(over, st.kamera ? SH.kamera(!!stream) : ((vm.sheet === 'lokasi' || vm.sheet === 'manual') && fm ? S.render(fm) : SH.sheets(vm, '')));
     }
     function set(p) { st = Object.assign({}, st, p); draw(); }
 
@@ -43,7 +45,9 @@
       'ke-lokasi': function (v) { st = Object.assign({}, st, vm.isMoveMem ? { fKa: v } : { fK: v }); },
       'open-foto': function () { st = Object.assign({}, st, { sheet: 'foto' }); },
       'del-foto': function () { photo = null; st = Object.assign({}, st, { foto: null }); },
-      'pick-cam': function () { pickFoto(true); }, 'pick-gal': function () { pickFoto(false); },
+      'pick-cam': function () { bukaKamera(); }, 'pick-gal': function () { pickFoto(false); },
+      'close-kam': function () { tutupKamera(); },
+      shutter: function () { var v = el.querySelector('.ct-cam-video'); if (!v) return tutupKamera(); HF.foto.jepret(v).then(function (r) { hasilFoto(r); }); tutupKamera(); },
       'toggle-pajak': function () { var buka = !st.pajakOn; st = Object.assign({}, st, { pajakOn: buka }); if (buka) setTimeout(function () { main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }); }, 60); },
       'open-tgl': function () { st = Object.assign({}, st, { sheet: 'tgl' }); },
       'close-tgl': function () { st = Object.assign({}, st, { sheet: null, pv: undefined }); },
@@ -74,12 +78,22 @@
         Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx, photo); });
       }
     };
+    function tutupKamera() { HF.foto.berhenti(stream); stream = null; st = Object.assign({}, st, { kamera: false }); }
+    function hasilFoto(r) {
+      if (r.ok) { photo = r; st = Object.assign({}, st, { sheet: null, foto: { ok: true, nama: r.nama, kb: r.kb, thumb: 'data:image/jpeg;base64,' + r.base64 } }); }
+      else { photo = null; st = Object.assign({}, st, { sheet: null, foto: { ok: false } }); }
+      draw();
+    }
+    /* Ambil foto: di HP memakai kamera bawaan lewat atribut capture; di komputer membuka kamera sendiri. Gagal (izin ditolak, tidak ada kamera) = pemilih berkas. */
+    function bukaKamera() {
+      if (HF.foto.sentuh() || !HF.foto.bisaKamera()) return pickFoto(true);
+      HF.foto.mulaiKamera().then(function (s) {
+        stream = s; st = Object.assign({}, st, { sheet: null, kamera: true }); draw();
+        var v = el.querySelector('.ct-cam-video'); if (v) v.srcObject = s;
+      }).catch(function () { pickFoto(false); });
+    }
     function pickFoto(kamera) {
-      HF.foto.pilih(kamera, function (r) {
-        if (r.ok) { photo = r; st = Object.assign({}, st, { sheet: null, foto: { ok: true, nama: r.nama, kb: r.kb, thumb: 'data:image/jpeg;base64,' + r.base64 } }); }
-        else { photo = null; st = Object.assign({}, st, { sheet: null, foto: { ok: false } }); }
-        draw();
-      });
+      HF.foto.pilih(kamera, hasilFoto);
     }
     function saveLokasi() {
       var nama = String(fm.v.nama || '').trim(); if (!nama || !fm.v.jenis) return;
