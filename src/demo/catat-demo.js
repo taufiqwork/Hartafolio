@@ -17,8 +17,13 @@
   function ctx() {
     var assets = {};
     Object.keys(FA).forEach(function (k) { var a = FA[k]; assets[k] = { unit: a[1], price: a[2], quote: a[3] || undefined, cat: a[4], q0: a[0], valText: a[5] }; });
+    var ids = { members: {}, lokasi: {}, aset: {} }; // id palsu agar Simpan di mode contoh berjalan (hanya disimpan di perangkat)
+    Object.keys(FM).forEach(function (m, i) { ids.members[m] = 'PM-D' + (i + 1); });
+    ['Binance', 'Bybit', 'Pluang', 'Brankas'].forEach(function (l, i) { ids.lokasi[l] = 'LK-D' + (i + 1); });
+    Object.keys(FA).forEach(function (a, i) { ids.aset[a] = 'AS-D' + (i + 1); });
+    CAT.forEach(function (c, i) { ids.aset[c[0]] = 'AS-D' + (20 + i); });
     return {
-      demo: true, members: Object.keys(FM), lokasi: ['Binance', 'Bybit', 'Pluang', 'Brankas'], held: FM, bal: BAL, assets: assets, rates: { USD: 16420, USDT: 16420 }, payCur: ['USDT', 'USD'], catalog: CAT,
+      ids: ids, demo: true, members: Object.keys(FM), lokasi: ['Binance', 'Bybit', 'Pluang', 'Brankas'], held: FM, bal: BAL, assets: assets, rates: { USD: 16420, USDT: 16420 }, payCur: ['USDT', 'USD'], catalog: CAT,
       now: { y: 2026, m: 11, d: 11, hh: 14, mm: 20 },
       awalBase: function (all) { return [['PAXG', all], ['Emas fisik', ['Brankas']], ['BTC', all], ['Perak fisik', ['Brankas']], ['GFI', ['Pluang']], ['USDT', ['Binance']]]; }
     };
