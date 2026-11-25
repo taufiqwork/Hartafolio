@@ -111,8 +111,8 @@
     var price = asetInfo && asetInfo.price != null ? asetInfo.price : null;
     var pDef = fA && price != null && rateAuto ? fmt(price * (fA === 'USDT' || fA === 'USD' ? 1 : kF) / rateAuto, dC) : '';
     var pv = st.pv != null ? st.pv : (st.fA === undefined && st.cur === undefined && I.pv ? I.pv : pDef);
-    var gross = num(q) * num(pv), feeN = num(fee) || 0;
-    var net = fJ === 'Jual' ? gross - feeN : gross + feeN;
+    var gross = num(q) * num(pv), feeN = num(fee) || 0, pajN = num(st.pajakV) || 0;
+    var net = fJ === 'Jual' ? gross - feeN - pajN : gross + feeN + pajN; // pajak ikut total, seperti biaya (ledger.fees)
     var curTxt = function (n) { return cur === 'IDR' ? rp(n) : fmt(n, dC) + ' ' + cur; };
     var payBal = pay !== 'luar' ? (BAL[fM + '|' + pc + '|' + pl] || 0) : 0;
     var payErr = fJ === 'Beli' && pay !== 'luar' && net > payBal;
@@ -163,7 +163,7 @@
       minusTxt: '−' + q + ' ' + unit, plusTxt: '+' + q + ' ' + unit, recNote: recHas ? fKr : fKr + ' · posisi baru', famNote: hasFee ? 'Total harta turun sebesar biaya.' : 'Total harta keluarga tidak berubah.',
       totLabel: isTrade ? (fJ === 'Jual' ? 'Hasil bersih' : 'Total dibayar') : (isIn ? 'Nilai saat ini' : (isOut ? 'Nilai yang keluar' : 'Nilai harta')),
       totValue: isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? valueText : (isOut ? (qtyIdr != null ? '−' + rp(qtyIdr) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
-      showRecorded: mulai === 'awal-lanjut', avg: st.avg || '',
+      pajakOn: !!st.pajakOn, pajakV: st.pajakV || '', catatanV: st.catatanV || '', showRecorded: mulai === 'awal-lanjut', avg: st.avg || '',
       anggota: ctx.members, aset: fAs.map(function (x) { return x[0]; }), lokasi: fLs, keLokasi: isMoveMem ? ALL_LOC : toL, keAnggota: others,
       balColor: qErr ? 'var(--loss)' : 'var(--ink-muted)',
       catChips: ['Semua', 'Crypto', 'Saham', 'Emas', 'Mata uang'], byGroups: [

@@ -6,7 +6,7 @@
   var PLUS = svg(['M5 12h14', 'M12 5v14']);
   var CAL = svg(['M8 2v4', 'M16 2v4', 'M3 10h18'], 20).replace('</svg>', '<rect width="18" height="18" x="3" y="4" rx="2"></rect></svg>');
   var CAMERA = svg(['M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z'], 20).replace('</svg>', '<circle cx="12" cy="13" r="3"></circle></svg>');
-  var CHEV = svg(['m9 18 6-6-6-6'], 18);
+  var CHEV = svg(['m9 18 6-6-6-6'], 18), CHEVUP = svg(['m18 15-6-6-6 6']);
 
   function chip(l, on, act, v) { return '<button class="hf-chip" type="button" aria-pressed="' + on + '" data-act="' + act + '" data-v="' + esc(v === undefined ? l : v) + '">' + esc(l) + '</button>'; }
   function add(act, label) { return '<button class="hf-chip hf-chip-add" type="button" data-act="' + act + '">' + PLUS + label + '</button>'; }
@@ -81,11 +81,15 @@
       dateBtn('tglA', 'Tanggal saldo', vm.tglAwal, 'Ubah bila sudah dimiliki sejak lama.');
   }
 
-  function proof() {
+  function proof(vm) {
     return '<section class="ct-f" aria-label="Bukti"><div class="ct-lr ct-base"><span class="label ct-m">Bukti</span><span class="caption ct-m">opsional</span></div><div class="hf-card ct-proof">' +
       '<button type="button" class="ct-photo" disabled><span class="ct-photo-ic">' + CAMERA + '</span><span class="ct-photo-tx"><span class="ct-photo-t">Lampirkan foto</span><span class="caption ct-m">Nota, struk, atau tangkapan layar</span></span><span class="ct-m ct-ic">' + CHEV + '</span></button>' +
       '<label for="nota" class="ct-nota"><span class="ct-photo-t">No. referensi</span><input class="hf-input" id="nota" type="text" placeholder="No. nota, ID order, atau tx hash" data-in="nota"><span class="caption ct-m ct-n4">Dipakai agar import ulang tidak dobel.</span></label></div></section>' +
-      '<button class="hf-btn hf-btn-ghost ct-more" type="button" disabled>' + PLUS + 'Pajak, catatan</button>';
+      '<button class="hf-btn hf-btn-ghost ct-more" type="button" data-act="toggle-pajak" aria-expanded="' + vm.pajakOn + '">' + (vm.pajakOn ? CHEVUP : PLUS) + 'Pajak, catatan</button>' + (vm.pajakOn ? taxFields(vm) : '');
+  }
+  function taxFields(vm) {
+    return '<div class="ct-f"><label for="pajak" class="label ct-m">Pajak (opsional)</label><input class="hf-input hf-input-num" id="pajak" type="text" inputmode="decimal" value="' + esc(vm.pajakV) + '" placeholder="0" data-in="pajakV"><span class="caption ct-m">dalam ' + esc(vm.cur) + '. Bagian dari total dibayar.</span></div>' +
+      '<div class="ct-f"><label for="catatan" class="label ct-m">Catatan (opsional)</label><textarea class="hf-input ct-note" id="catatan" rows="3" placeholder="Contoh: beli saat harga turun" data-in="catatanV">' + esc(vm.catatanV) + '</textarea><span class="caption ct-m">Hanya terlihat di Riwayat.</span></div>';
   }
 
   function main(vm) {
@@ -102,7 +106,7 @@
     if (vm.isTrade) h += tradeBlock(vm);
     if (vm.isMove) h += moveFee(vm);
     if (vm.awal) h += awalBlock(vm);
-    return h + proof();
+    return h + proof(vm);
   }
 
   function footer(vm) {

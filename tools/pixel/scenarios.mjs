@@ -18,7 +18,7 @@ const GAGAL = (nama) => `HF.api.call=(n,...a)=>n==='${nama}'?Promise.reject(new 
 const CT = (id, mulai, extra) => Object.assign({ id: '04-Catat' + id, board: '04-Catat' + id, query: 'demo&mulai=' + mulai, hash: '#/catat' }, extra || {});
 const TOMBOL_40 = [['width: auto; height: 44px; padding: 0; font: inherit', 'width: auto; height: 40px; padding: 0; font: inherit'], ['width: auto; height: 44px; font: inherit', 'width: auto; height: 40px; font: inherit'], ['right: 4px; top: 4px; width: 44px; height: 44px', 'right: 4px; top: 4px; width: 40px; height: 40px'], ['width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px', 'width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 12px']];
 const SCROLL = `document.querySelector('.hf-scroll').scrollTop = 99999;`;
-const DEV_FOTO = [{ box: [16, 640, 128, 48], alasan: 'Pajak, catatan dimatikan (tombolnya ada tetapi belum ada board keadaannya; Ticon 25 Nov)' }];
+const DEV_FOTO = []; // Pajak, catatan kini aktif; Lampirkan foto masih dimatikan tetapi tampil sama dengan board
 export const catatScenarios = [
   CT('', 'beli'), CT('-2a-Jual', 'jual'), CT('-2b-Masuk', 'masuk'), CT('-2k-Keluar', 'keluar'), CT('-2m-Beli-Dari-Luar', 'beli-luar'),
   CT('-2o-Pilih-Alat-Bayar', 'bayar-lain'), CT('-2p-Bayar-Dengan-BTC', 'bayar-btc'), CT('-2q-Bayar-Dari-Bybit', 'bayar-bybit'),
@@ -68,6 +68,10 @@ export const catatActions = [
   ACT('@x-beli-ganti-anggota', '04-Catat', 'beli', KLIK('Yumna')),
   ACT('@x-beli-lokasi-lain', '04-Catat', 'beli', KLIK('Bybit'))
 ];
+// Boards foto dan pajak (dibuat 25 Nov, 05.u sampai 05.y). Keadaan awal = prop mulai board.
+// Board foto (2t, 2u, 2v) belum dibangun di aplikasi: menunggu keputusan izin Google Drive. Hanya Pajak dan catatan (2w, 2x) yang dibandingkan.
+export const catatBukti = [['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
+  .map(([id, mulai, gulir]) => CT(id, mulai, gulir ? { boardJs: SCROLL, js: SCROLL, deviasi: [] } : {}));
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
   CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
@@ -132,5 +136,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatFrames
 ];
