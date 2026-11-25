@@ -7,6 +7,7 @@
 
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
+    if (ctx.demo && mulai === 'belum-lengkap') st = { tried: true, qv: '', pv: '' };
     if (ctx.demo && mulai === 'foto-terlampir') st = { foto: { ok: true, nama: 'nota-binance.jpg', kb: 184 } };
     if (ctx.demo && mulai === 'foto-gagal') st = { foto: { ok: false } };
     if (ctx.demo && (mulai === 'pajak-catatan' || mulai === 'pajak-terisi')) st = mulai === 'pajak-terisi' ? { pajakOn: true, pajakV: '0,05', catatanV: 'Beli saat harga turun, sesuai rencana bulanan.' } : { pajakOn: true };
@@ -43,7 +44,7 @@
       'open-foto': function () { st = Object.assign({}, st, { sheet: 'foto' }); },
       'del-foto': function () { photo = null; st = Object.assign({}, st, { foto: null }); },
       'pick-cam': function () { pickFoto(true); }, 'pick-gal': function () { pickFoto(false); },
-      'toggle-pajak': function () { st = Object.assign({}, st, { pajakOn: !st.pajakOn }); },
+      'toggle-pajak': function () { var buka = !st.pajakOn; st = Object.assign({}, st, { pajakOn: buka }); if (buka) setTimeout(function () { main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }); }, 60); },
       'open-tgl': function () { st = Object.assign({}, st, { sheet: 'tgl' }); },
       'close-tgl': function () { st = Object.assign({}, st, { sheet: null, pv: undefined }); },
       'close-sheet': function () { st = Object.assign({}, st, { sheet: null }); },

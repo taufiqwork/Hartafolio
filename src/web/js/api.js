@@ -8,7 +8,7 @@
   function remote(name, args) {
     return new Promise(function (resolve, reject) {
       run.withSuccessHandler(resolve)
-        .withFailureHandler(function (e) { reject(new Error(String((e && e.message) || e).replace(/^Error:\s*/, ''))); })[name].apply(run, args || []);
+        .withFailureHandler(function (e) { reject(new Error(String((e && e.message) || e).replace(/^Error:\s*/, ''))); })[name].apply(run, JSON.parse(JSON.stringify(args || []))); // buang nilai undefined: google.script.run menolaknya
     });
   }
 

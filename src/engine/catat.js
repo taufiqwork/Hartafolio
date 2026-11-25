@@ -137,6 +137,14 @@
     var invalid = qErr || payErr; // tampilan tombol Simpan (aturan board): redup hanya bila saldo kurang atau bayar tidak cukup
     var feeNoPrice = isMove && hasFee && (st.fu || 'Rp') === 'Rp' && !(price > 0); // biaya Rupiah butuh harga aset untuk dipotong dari aset yang dipindah
     var incomplete = feeNoPrice || (isTrade && (needPrice || !(num(q) > 0))) || (!isTrade && !awal && !(num(q) > 0)) || (awal && (!fA || !fL || !(num(q) > 0))) || (isMove && !fKr) || (isMoveMem && !fR) || !fA || !fL;
+    var miss = []; // yang belum diisi, untuk pesan di atas tombol Simpan dan garis merah (diketuk Simpan saat belum lengkap)
+    if (!fA) miss.push('aset'); else if (!fL) miss.push('lokasi');
+    if (!(num(q) > 0)) miss.push('jumlah');
+    if (isTrade && !String(pv).trim()) miss.push('harga');
+    if (isTrade && cur !== 'IDR' && !(rate > 0)) miss.push('kurs');
+    if (isMove && !fKr) miss.push('lokasi tujuan');
+    if (isMoveMem && !fR) miss.push('anggota penerima');
+    if (feeNoPrice) miss.push('harga aset untuk biaya');
     var valueText = fA && asetInfo ? (asetInfo.valText || (asetInfo.price != null ? rp(num(q) * asetInfo.price) : '—')) : '—';
     var qtyIdr = fA && asetInfo && asetInfo.price != null ? num(q) * asetInfo.price : null;
     var vm = {
@@ -147,7 +155,8 @@
       dd: dd, dm: dm, dy: dy, hh: hh, mm: mm, isToday: isToday, tglTxt: tglTxt, tglAwal: tglTxt.replace(/ · .*/, ''), tglBtn: 'Pakai ' + (isToday ? 'hari ini' : dd + ' ' + BULAN[dm - 1]) + ' · ' + p2(hh) + '.' + p2(mm),
       cal: cal, kTgl: kTgl,
       sheet: sheet, sq: sq, cat: cat, kat: kat, fam: fam,
-      qErr: qErr, payErr: payErr, invalid: !!invalid, incomplete: !!incomplete, qMissing: !!(st.tried && !(num(q) > 0)), bal: balTxt0, balTxt: qErr ? 'Melebihi saldo ' + fM + ' di ' + fL + ': ' + balTxt0 + ' ' + unit + '.' : 'Saldo ' + fM + ' di ' + fL + ': ' + (balTxt0 || '—') + ' ' + unit,
+      qErr: qErr, payErr: payErr, invalid: !!invalid, incomplete: !!incomplete, tried: !!st.tried, missing: miss, missOn: !!(st.tried && miss.length), missTxt: 'Lengkapi dulu: ' + miss.join(', ') + '.',
+      qMiss: !!(st.tried && !(num(q) > 0)), pMiss: !!(st.tried && isTrade && !String(pv).trim()), kMiss: !!(st.tried && isTrade && cur !== 'IDR' && !(rate > 0)), bal: balTxt0, balTxt: qErr ? 'Melebihi saldo ' + fM + ' di ' + fL + ': ' + balTxt0 + ' ' + unit + '.' : 'Saldo ' + fM + ' di ' + fL + ': ' + (balTxt0 || '—') + ' ' + unit,
       showBalQ: (fJ === 'Jual' || isOut) && !!bal, payNote: payNote, payColor: payErr ? 'var(--loss)' : 'var(--ink-muted)',
       modeHint: awal ? 'Aset yang sudah Anda miliki. Bukan pembelian, jadi tidak memengaruhi untung-rugi.' : (isMoveMem ? 'Saldo pengirim berkurang, penerima bertambah. Lokasinya boleh berbeda.' : HINT[fJ]),
       payLabel: fJ === 'Jual' ? 'Hasilnya masuk ke' : 'Dibayar dengan', payMoreL: fJ === 'Jual' ? 'Ke aset lain…' : 'Aset lain…',

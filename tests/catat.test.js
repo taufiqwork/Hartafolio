@@ -142,6 +142,18 @@ test('Pajak ikut total (Beli menambah, Jual mengurangi) dan tersimpan di kolom p
   assert.equal(t.pajak, 1.5); assert.equal(t.catatan, 'beli rutin');
 });
 
+test('Simpan ditekan saat belum lengkap: daftar yang kurang, garis merah, dan Simpan tidak lolos', () => {
+  const { c, ctx } = real();
+  const kosong = c.HF.catat.view({ tried: true }, ctx, { mulai: 'beli' });
+  assert.deepEqual(JSON.parse(JSON.stringify(kosong.missing)), ['aset', 'jumlah', 'harga']); assert.equal(kosong.missTxt, 'Lengkapi dulu: aset, jumlah, harga.');
+  const v = c.HF.catat.view({ tried: true, ext: PX, fA: 'PAXG', fL: 'Binance', qv: '0,5', pv: '4.425' }, ctx, { mulai: 'beli' });
+  assert.deepEqual(JSON.parse(JSON.stringify(v.missing)), ['kurs']); assert.equal(v.kMiss, true); assert.equal(v.pMiss, false); assert.equal(v.incomplete, true);
+  const belum = c.HF.catat.view({ ext: PX, fA: 'PAXG', fL: 'Binance' }, ctx, { mulai: 'beli' });
+  assert.equal(belum.missOn, false); // pesan baru muncul sesudah Simpan diketuk
+  const e = E(), demo = e.HF.catat.view({ tried: true, qv: '', pv: '' }, e.HF.demo.catat(), { mulai: 'beli' });
+  assert.equal(demo.missTxt, 'Lengkapi dulu: jumlah, harga.');
+});
+
 test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; data nyata lewat antrean', async () => {
   const store = {}; let calls = [];
   const c = load(['engine/schema.js', 'engine/queue.js', 'web/js/catat-save.js'], {

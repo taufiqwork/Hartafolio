@@ -64,8 +64,8 @@
       '<button class="hf-chip hf-chip-add" type="button" data-act="open-bayar">' + vm.payMoreL + '</button>') + '<span class="caption" style="color: ' + vm.payColor + ';">' + esc(vm.payNote) + '</span></div>';
     var curs = vm.curTabs.map(function (c) { return { l: c, key: c, pressed: String(vm.curSel === c) }; });
     var price = '<div class="ct-f"><div class="ct-lr"><label for="hrg" class="label ct-m">' + vm.pLabel + '</label>' +
-      (vm.curFree ? mini(curs, 'cur') : '<span class="hf-badge">dalam <span>' + vm.cur + '</span> · ikut alat bayar</span>') + '</div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="' + esc(vm.pv) + '" data-in="pv"></div>';
-    var kurs = vm.showKurs ? '<div class="ct-f"><label for="kurs" class="label ct-m">Rp per 1 ' + vm.cur + '</label><div class="ct-kv"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="' + esc(vm.kv) + '" data-in="kv" style="flex: 1; padding: 0 ' + vm.kvPad + ' 0 12px;">' +
+      (vm.curFree ? mini(curs, 'cur') : '<span class="hf-badge">dalam <span>' + vm.cur + '</span> · ikut alat bayar</span>') + '</div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="' + esc(vm.pv) + '" data-in="pv" style="border-color: ' + (vm.pMiss ? 'var(--loss)' : 'var(--line-strong)') + ';"></div>';
+    var kurs = vm.showKurs ? '<div class="ct-f"><label for="kurs" class="label ct-m">Rp per 1 ' + vm.cur + '</label><div class="ct-kv"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="' + esc(vm.kv) + '" data-in="kv" style="flex: 1; padding: 0 ' + vm.kvPad + ' 0 12px;' + (vm.kMiss ? ' border-color: var(--loss);' : '') + '">' +
       (vm.kvManual ? '<button type="button" class="ct-kv-reset" data-act="reset-kv" aria-label="Kembali ke kurs otomatis" title="Kembali ke kurs otomatis">' + svg(['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8', 'M3 3v5h5'], 18) + '</button>' : '') +
       '</div><span class="caption ct-m ct-live">' + (vm.kvLive ? '<span class="hf-live" aria-hidden="true"></span>' : '') + esc(vm.kursNote) + '</span></div>' : '';
     var fee = '<div class="ct-fee" style="grid-template-columns: ' + (vm.showKurs ? 'repeat(2, minmax(0, 1fr))' : '1fr') + ';"><div class="ct-f"><label for="biaya" class="label ct-m">Biaya (opsional)</label><input class="hf-input hf-input-num" id="biaya" type="text" inputmode="decimal" value="' + esc(vm.fee) + '" data-in="fee"><span class="caption ct-m">dalam ' + vm.cur + '</span></div>' + kurs + '</div>';
@@ -111,7 +111,7 @@
     h += vm.isMove ? moveCards(vm) : pick(vm);
     if (vm.showAsal) h += group(vm.asalLabel, wrap(vm.asalList.map(function (n) { return chip(n, n === vm.fS, 'asal'); }).join('')));
     if (vm.showTgl) h += dateBtn('tglL', 'Tanggal', vm.tglTxt);
-    h += '<div class="ct-f"><label for="jml" class="label ct-m">' + esc(vm.qLabel) + '</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="' + esc(vm.q) + '" data-in="qv" aria-invalid="' + (vm.qErr || vm.qMissing) + '" style="border-color: ' + (vm.qErr || vm.qMissing ? 'var(--loss)' : 'var(--line-strong)') + ';">' +
+    h += '<div class="ct-f"><label for="jml" class="label ct-m">' + esc(vm.qLabel) + '</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="' + esc(vm.q) + '" data-in="qv" aria-invalid="' + (vm.qErr || vm.qMiss) + '" style="border-color: ' + (vm.qErr || vm.qMiss ? 'var(--loss)' : 'var(--line-strong)') + ';">' +
       (vm.showBalQ ? '<span class="caption" style="color: ' + vm.balColor + ';">' + esc(vm.balTxt) + '</span>' : '') + '</div>';
     if (vm.isTrade) h += tradeBlock(vm);
     if (vm.isMove) h += moveFee(vm);
@@ -126,6 +126,7 @@
         (vm.hasFee ? '<div class="ct-sum"><span class="ct-m">Biaya</span><span class="amount ct-amt ct-loss">−Rp ' + esc(vm.fee) + '</span></div>' : '') + '<span class="caption ct-m">' + vm.famNote + '</span></div>';
     }
     if (vm.showTotal) h += '<div class="ct-tot"><span class="label ct-m">' + vm.totLabel + '</span><span class="amount ct-tot-v">' + esc(vm.totValue) + '</span></div>';
+    if (vm.missOn) h += '<span class="caption" style="color: var(--loss);">' + esc(vm.missTxt) + '</span>';
     h += '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="save" aria-disabled="' + vm.invalid + '" style="opacity: ' + (vm.invalid ? '0.45' : '1') + '; pointer-events: ' + (vm.invalid ? 'none' : 'auto') + ';">' + vm.saveLabel + '</button>';
     if (vm.awal) h += '<button class="hf-btn hf-btn-ghost hf-btn-block" type="button" data-act="save-more">Simpan &amp; tambah aset lain</button>';
     return h;
