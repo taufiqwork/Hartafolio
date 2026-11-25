@@ -7,6 +7,7 @@
 
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
+    if (ctx.demo && (mulai === 'pajak-catatan' || mulai === 'pajak-terisi')) st = mulai === 'pajak-terisi' ? { pajakOn: true, pajakV: '0,05', catatanV: 'Beli saat harga turun, sesuai rencana bulanan.' } : { pajakOn: true };
     el.innerHTML = '<div class="ct" data-theme="light">' + V.header({ title: 'Catat transaksi' }) + '<main class="hf-scroll ct-main" id="screen"></main><footer class="ct-foot"></footer><div class="ct-over"></div></div>';
     var $ = function (s) { return el.querySelector(s); }, title = $('.ct-title'), main = $('.ct-main'), foot = $('.ct-foot'), over = $('.ct-over');
     var wait = []; // simpanan ke server yang masih jalan (lokasi/aset baru): Simpan menunggu id-nya
@@ -36,6 +37,7 @@
       pay: function (v) { st = C.reduce(st, 'pay', v); }, cur: function (v) { st = C.reduce(st, 'cur', v); }, fu: function (v) { st = C.reduce(st, 'fu', v); },
       'ke-anggota': function (v) { st = C.reduce(st, 'keAnggota', v); },
       'ke-lokasi': function (v) { st = Object.assign({}, st, vm.isMoveMem ? { fKa: v } : { fK: v }); },
+      'toggle-pajak': function () { st = Object.assign({}, st, { pajakOn: !st.pajakOn }); },
       'open-tgl': function () { st = Object.assign({}, st, { sheet: 'tgl' }); },
       'close-tgl': function () { st = Object.assign({}, st, { sheet: null, pv: undefined }); },
       'close-sheet': function () { st = Object.assign({}, st, { sheet: null }); },
@@ -62,7 +64,7 @@
       save: function () {
         if (vm.invalid) return;
         if (vm.incomplete) { st = Object.assign({}, st, { tried: true }); return; }
-        Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota }), vm, ctx); });
+        Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx); });
       }
     };
     function saveLokasi() {

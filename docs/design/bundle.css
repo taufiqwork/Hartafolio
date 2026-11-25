@@ -565,3 +565,4 @@ input::placeholder{font-weight:400;color:var(--ink-muted);opacity:.75}
 .ct-by-note{padding-top:6px;border-top:1px solid var(--line)}
 .su-seg{display:grid;width:100%;box-sizing:border-box}
 .su-seg button{width:auto;height:40px;font:inherit;font-size:14px;font-weight:600;line-height:20px}
+.ct-note{min-height:96px;padding:12px;resize:none;line-height:24px}

@@ -90,6 +90,11 @@ Ukuran: phone 390x844, desktop 1440x900, tablet 1024x768, board Alur/Arsip lebar
 | 05.g · Catat · Tanggal lalu, kurs rata-rata harian | `png/04-Catat-2r-Tanggal-Lalu.png` | `src/04-Catat-2r-Tanggal-Lalu.dc.html` |
 | 05.h · Catat · Kurs diisi manual, bisa di-reset | `png/04-Catat-2s-Kurs-Manual.png` | `src/04-Catat-2s-Kurs-Manual.dc.html` |
 | 05.i · Catat · Jual, hasil masuk ke USD | `png/04-Catat-2a-Jual.png` | `src/04-Catat-2a-Jual.dc.html` |
+| 05.u · Catat · Lampirkan foto (pilih sumber) | `src/04-Catat-2t-Foto-Pilih.dc.html` |
+| 05.v · Catat · Foto terlampir | `src/04-Catat-2u-Foto-Terlampir.dc.html` |
+| 05.w · Catat · Foto tidak bisa dipakai | `src/04-Catat-2v-Foto-Gagal.dc.html` |
+| 05.x · Catat · Pajak dan catatan dibuka | `src/04-Catat-2w-Pajak-Catatan.dc.html` |
+| 05.y · Catat · Pajak dan catatan terisi | `src/04-Catat-2x-Pajak-Catatan-Terisi.dc.html` |
 | 05.j · Catat · Masuk (dari luar, tanpa beli) | `png/04-Catat-2b-Masuk.png` | `src/04-Catat-2b-Masuk.dc.html` |
 | 05.k · Catat · Keluar (sedekah) | `png/04-Catat-2k-Keluar.png` | `src/04-Catat-2k-Keluar.dc.html` |
 | 05.l · Catat · Pindah antar lokasi | `png/04-Catat-2c-Pindah.png` | `src/04-Catat-2c-Pindah.dc.html` |

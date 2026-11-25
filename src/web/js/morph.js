@@ -8,6 +8,7 @@
     for (i = a.attributes.length - 1; i >= 0; i--) { n = a.attributes[i].name; if (!b.hasAttribute(n)) a.removeAttribute(n); }
     for (i = 0; i < b.attributes.length; i++) { n = b.attributes[i].name; if (a.getAttribute(n) !== b.attributes[i].value) a.setAttribute(n, b.attributes[i].value); }
     if (a.nodeName === 'INPUT' && a !== document.activeElement && a.value !== b.getAttribute('value')) a.value = b.getAttribute('value') || '';
+    if (a.nodeName === 'TEXTAREA' && a !== document.activeElement && a.value !== b.value) a.value = b.value;
   }
   function sync(a, b) {
     var ac = [].slice.call(a.childNodes), bc = [].slice.call(b.childNodes), i;

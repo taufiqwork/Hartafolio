@@ -131,6 +131,17 @@ test('Biaya Pindah dalam Rupiah: Keluar (Biaya) dari aset yang dipindah = Rp dib
   assert.equal(v2.incomplete, false); assert.equal(sans.c.HF.catatCtx.toRows(v2, sans.ctx, {}).rows[1].jumlah, 0.5);
 });
 
+test('Pajak ikut total (Beli menambah, Jual mengurangi) dan tersimpan di kolom pajak; catatan tersimpan', () => {
+  const c = E(), ctx = c.HF.demo.catat();
+  assert.equal(c.HF.catat.view({ pajakV: '0,05' }, ctx, { mulai: 'beli' }).totValue, '99,71 USDT · Rp 1,64 jt');
+  const j = c.HF.catat.view({ pajakV: '0,05' }, ctx, { mulai: 'jual' });
+  assert.equal(c.HF.catat.view({}, ctx, { mulai: 'jual' }).totValue === j.totValue, false);
+  const { c: r, ctx: rc } = real();
+  const v = r.HF.catat.view({ ext: PX, fA: 'PAXG', fL: 'Binance', qv: '1', pv: '4.425', kv: '16.250', fee: '0', pajakV: '1,5', catatanV: ' beli rutin ' }, rc, { mulai: 'beli' });
+  const t = r.HF.catatCtx.toRows(v, rc, { pajak: '1,5', catatan: ' beli rutin ' }).rows[0];
+  assert.equal(t.pajak, 1.5); assert.equal(t.catatan, 'beli rutin');
+});
+
 test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; data nyata lewat antrean', async () => {
   const store = {}; let calls = [];
   const c = load(['engine/schema.js', 'engine/queue.js', 'web/js/catat-save.js'], {

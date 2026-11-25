@@ -69,6 +69,8 @@
       rows.push(Object.assign({}, base, { jenis: 'Keluar', jumlah: qty, asal_alasan: 'Biaya', lokasi_tujuan_id: undefined, anggota_tujuan_id: undefined, catatan: vm.feeUnit === 'Rp' ? 'Biaya Pindah Rp ' + fee : '' }));
     }
     if (o.nomor) base.bukti = o.nomor;
+    if (N(o.pajak) > 0) base.pajak = N(o.pajak);
+    if (o.catatan && String(o.catatan).trim()) base.catatan = String(o.catatan).trim();
     return { rows: rows, error: null };
   }
 
