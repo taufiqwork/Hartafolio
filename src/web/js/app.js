@@ -40,7 +40,8 @@
   function unggah(id, photo) {
     HF.api.call('apiBuktiUnggah', id, { nama: photo.nama, mime: photo.mime, base64: photo.base64 }).then(function () {
       HF.berandaScreen.flash({ text: 'Foto terunggah' });
-    }).catch(function () {
+    }).catch(function (e) {
+      if (window.console) console.warn('Unggah foto gagal:', e && e.message);
       HF.berandaScreen.flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.', act: 'Coba lagi', on: function () { unggah(id, photo); } });
     });
   }
@@ -54,6 +55,7 @@
         onSave: function (res, vm, c, photo) {
           if (res.error) return;
           var done = HF.catatSave.submit(res.rows, ctx.demo);
+          appState = null; // Catat berikutnya memuat saldo terbaru
           if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
           done.then(function (r) { if ((r.ditolak || []).length) HF.berandaScreen.flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
             .catch(function () { HF.berandaScreen.flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });

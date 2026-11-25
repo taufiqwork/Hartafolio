@@ -8,6 +8,7 @@ function onOpen() {
     .addItem('Siapkan sheet', 'setupHartafolio')
     .addItem('Periksa struktur', 'periksaStruktur')
     .addItem('Perbaiki header', 'perbaikiHeader')
+    .addItem('Izinkan Google Drive', 'izinkanDrive')
     .addToUi();
 }
 

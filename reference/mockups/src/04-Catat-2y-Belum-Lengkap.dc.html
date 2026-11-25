@@ -67,10 +67,10 @@ a{color:var(--brand)}a:hover{color:var(--ink)}
 <sc-if value="{{ showAsal }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ asalLabel }}</span>
 <div style="display: flex; flex-wrap: wrap; gap: 8px;"><sc-for list="{{ asal }}" as="p" hint-placeholder-count="4"><button class="hf-chip" type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.on }}">{{ p.l }}</button></sc-for></div></div></sc-if>
 <sc-if value="{{ showTgl }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);" id="tglL">Tanggal</span><button class="hf-input hf-input-num" type="button" onClick="{{ openTgl }}" aria-labelledby="tglL"><span>{{ tgl }}</span><span style="color: var(--ink-muted); display: grid;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="20" height="20"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg></span></button></div></sc-if>
-<div style="display: flex; flex-direction: column; gap: 8px;"><label for="jml" class="label" style="color: var(--ink-muted);">{{ qLabel }}</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="{{ q }}" onInput="{{ onQ }}" aria-invalid="{{ qErrStr }}" style="border-color: {{ qBorder }};"><sc-if value="{{ showBalQ }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: {{ balColor }};">{{ balTxt }}</span></sc-if></div>
+<div style="display: flex; flex-direction: column; gap: 8px;"><label for="jml" class="label" style="color: var(--ink-muted);">{{ qLabel }}</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="{{ q }}" onInput="{{ onQ }}" aria-invalid="{{ qErrStr }}" style="border-color: {{ qBorder }};"><sc-if value="{{ eQ }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;"><span class="caption" style="color: var(--loss);">{{ eQm }}</span><sc-if value="{{ eQf }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ fixQ }}" style="font: inherit; font-size: 13px; line-height: 20px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer;">Ubah jadi {{ eQfv }}</button></sc-if></div></sc-if><sc-if value="{{ showBalQ }}" hint-placeholder-val="{{ false }}"><span class="caption" style="color: {{ balColor }};">{{ balTxt }}</span></sc-if></div>
 <sc-if value="{{ isTrade }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="color: var(--ink-muted);">{{ payLabel }}</span><div style="display: flex; flex-wrap: wrap; gap: 8px;"><sc-for list="{{ pays }}" as="p" hint-placeholder-count="2"><button class="hf-chip" type="button" aria-pressed="{{ p.pressed }}" onClick="{{ p.on }}">{{ p.l }}</button></sc-for><button class="hf-chip hf-chip-add" type="button" onClick="{{ openBayar }}">{{ payMoreL }}</button></div><span class="caption" style="color: {{ payColor }};">{{ payNote }}</span></div>
-<div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px;"><label for="hrg" class="label" style="color: var(--ink-muted);">{{ pLabel }}</label><sc-if value="{{ curFree }}" hint-placeholder-val="{{ true }}"><div class="hf-toggle" role="group" style="display: inline-grid; grid-auto-flow: column;"><sc-for list="{{ curs }}" as="c" hint-placeholder-count="3"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; min-width: 48px; height: 28px; padding: 0 8px; font: inherit; font-size: 12px; font-weight: 600; line-height: 18px;">{{ c.l }}</button></sc-for></div></sc-if><sc-if value="{{ curLocked }}" hint-placeholder-val="{{ false }}"><span class="hf-badge">dalam {{ cur }} · ikut alat bayar</span></sc-if></div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="{{ pv }}" onInput="{{ onP }}" style="border-color: {{ pBorder }};"></div>
-<div style="display: grid; grid-template-columns: {{ feeCols }}; gap: 12px;"><div style="display: flex; flex-direction: column; gap: 8px;"><label for="biaya" class="label" style="color: var(--ink-muted);">Biaya (opsional)</label><input class="hf-input hf-input-num" id="biaya" type="text" inputmode="decimal" value="{{ fee }}" onInput="{{ onFee }}"><span class="caption" style="color: var(--ink-muted);">dalam {{ cur }}</span></div><sc-if value="{{ showKurs }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 8px;"><label for="kurs" class="label" style="color: var(--ink-muted);">Rp per 1 {{ cur }}</label><div style="position: relative; display: flex;"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="{{ kv }}" onInput="{{ onKv }}" style="flex: 1; padding: 0 {{ kvPad }} 0 12px;"><sc-if value="{{ kvManual }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ resetKv }}" aria-label="Kembali ke kurs otomatis" title="Kembali ke kurs otomatis" style="position: absolute; right: 4px; top: 4px; width: 40px; height: 40px; border: 0; border-radius: 8px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></button></sc-if></div><span class="caption" style="color: var(--ink-muted); display: flex; align-items: center; gap: 8px;"><sc-if value="{{ kvLive }}" hint-placeholder-val="{{ true }}"><span class="hf-live" aria-hidden="true"></span></sc-if>{{ kursNote }}</span></div></sc-if></div></sc-if>
+<div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px;"><label for="hrg" class="label" style="color: var(--ink-muted);">{{ pLabel }}</label><sc-if value="{{ curFree }}" hint-placeholder-val="{{ true }}"><div class="hf-toggle" role="group" style="display: inline-grid; grid-auto-flow: column;"><sc-for list="{{ curs }}" as="c" hint-placeholder-count="3"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; min-width: 48px; height: 28px; padding: 0 8px; font: inherit; font-size: 12px; font-weight: 600; line-height: 18px;">{{ c.l }}</button></sc-for></div></sc-if><sc-if value="{{ curLocked }}" hint-placeholder-val="{{ false }}"><span class="hf-badge">dalam {{ cur }} · ikut alat bayar</span></sc-if></div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="{{ pv }}" onInput="{{ onP }}" style="border-color: {{ pBorder }};"><sc-if value="{{ eP }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;"><span class="caption" style="color: var(--loss);">{{ ePm }}</span><sc-if value="{{ ePf }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ fixP }}" style="font: inherit; font-size: 13px; line-height: 20px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer;">Ubah jadi {{ ePfv }}</button></sc-if></div></sc-if></div>
+<div style="display: grid; grid-template-columns: {{ feeCols }}; gap: 12px;"><div style="display: flex; flex-direction: column; gap: 8px;"><label for="biaya" class="label" style="color: var(--ink-muted);">Biaya (opsional)</label><input class="hf-input hf-input-num" id="biaya" type="text" inputmode="decimal" value="{{ fee }}" onInput="{{ onFee }}" style="border-color: {{ feeBorder }};"><sc-if value="{{ eF }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;"><span class="caption" style="color: var(--loss);">{{ eFm }}</span><sc-if value="{{ eFf }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ fixF }}" style="font: inherit; font-size: 13px; line-height: 20px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer;">Ubah jadi {{ eFfv }}</button></sc-if></div></sc-if><span class="caption" style="color: var(--ink-muted);">dalam {{ cur }}</span></div><sc-if value="{{ showKurs }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 8px;"><label for="kurs" class="label" style="color: var(--ink-muted);">Rp per 1 {{ cur }}</label><div style="position: relative; display: flex;"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="{{ kv }}" onInput="{{ onKv }}" style="flex: 1; padding: 0 {{ kvPad }} 0 12px;"><sc-if value="{{ kvManual }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ resetKv }}" aria-label="Kembali ke kurs otomatis" title="Kembali ke kurs otomatis" style="position: absolute; right: 4px; top: 4px; width: 40px; height: 40px; border: 0; border-radius: 8px; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; cursor: pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="18" height="18"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg></button></sc-if></div><span class="caption" style="color: var(--ink-muted); display: flex; align-items: center; gap: 8px;"><sc-if value="{{ kvLive }}" hint-placeholder-val="{{ true }}"><span class="hf-live" aria-hidden="true"></span></sc-if>{{ kursNote }}</span></div></sc-if></div></sc-if>
 <sc-if value="{{ isMove }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px;"><label for="biayaP" class="label" style="color: var(--ink-muted);">Biaya (opsional)</label><div class="hf-toggle" role="group" style="display: inline-grid; grid-auto-flow: column;"><sc-for list="{{ feeUnits }}" as="c" hint-placeholder-count="3"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; min-width: 48px; height: 28px; padding: 0 8px; font: inherit; font-size: 12px; font-weight: 600; line-height: 18px;">{{ c.l }}</button></sc-for></div></div><input class="hf-input hf-input-num" id="biayaP" type="text" inputmode="decimal" value="{{ fee }}" onInput="{{ onFee }}"><span class="caption" style="color: var(--ink-muted);">{{ feeNote }}</span></div></sc-if>
 <sc-if value="{{ isAwal }}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px;"><label for="avg" class="label" style="color: var(--ink-muted);">Harga beli rata-rata (opsional)</label><div class="hf-toggle" role="group" style="display: inline-grid; grid-auto-flow: column;"><sc-for list="{{ curs }}" as="c" hint-placeholder-count="3"><button type="button" aria-pressed="{{ c.pressed }}" onClick="{{ c.on }}" style="width: auto; min-width: 48px; height: 28px; padding: 0 8px; font: inherit; font-size: 12px; font-weight: 600; line-height: 18px;">{{ c.l }}</button></sc-for></div></div><input class="hf-input hf-input-num" id="avg" type="text" inputmode="decimal" value="{{ avg }}" placeholder="Kosongkan bila tidak tahu"><span class="caption" style="color: var(--ink-muted);">Per {{ u }}, dari catatan lama atau pernyataan pialang. Dipakai untuk menghitung untung-rugi.</span></div></sc-if>
 
@@ -184,7 +184,7 @@ a{color:var(--brand)}a:hover{color:var(--ink)}
 </x-dc>
 <script>addEventListener('load',function(){setTimeout(function(){var m=document.querySelector('main.hf-scroll');if(m)m.scrollTop=300},600)})</script>
 
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["beli","beli-luar","jual","masuk","keluar","ubah","pilih-tanggal","tanggal-lalu","kurs-manual","bayar-lain","bayar-btc","bayar-bybit","pindah","pindah-anggota","pindah-anggota-lokasi","awal","awal-lanjut","cari-aset","lokasi-baru","aset-manual","foto-kamera","belum-lengkap","foto-pilih","foto-terlampir","foto-gagal","pajak-catatan","pajak-terisi"],"default":"belum-lengkap"},"dari":{"editor":"enum","options":["beranda","aset","riwayat","lainnya","kelola","laporan","zakat","harga"],"default":"beranda"},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"mulai":{"editor":"enum","options":["beli","beli-luar","jual","masuk","keluar","ubah","pilih-tanggal","tanggal-lalu","kurs-manual","bayar-lain","bayar-btc","bayar-bybit","pindah","pindah-anggota","pindah-anggota-lokasi","awal","awal-lanjut","cari-aset","lokasi-baru","aset-manual","angka-format","angka-titik","angka-inggris","angka-koma","foto-kamera","belum-lengkap","foto-pilih","foto-terlampir","foto-gagal","pajak-catatan","pajak-terisi"],"default":"belum-lengkap"},"dari":{"editor":"enum","options":["beranda","aset","riwayat","lainnya","kelola","laporan","zakat","harga"],"default":"beranda"},"$preview":{"width":390,"height":844}}'>
 /* ===== hfForm: satu sumber untuk form tambah/ubah anggota, lokasi, aset manual ===== */
 const HF_IC = {
   exchange: ['M3 3v16a2 2 0 0 0 2 2h16', 'm19 9-5 5-4-4-3 3'],
@@ -282,6 +282,39 @@ function hfForm(self, F) {
 
 
 
+/* Angka Indonesia: sama dengan src/engine/angka.js (sumber tunggal di aplikasi) */
+const hfAngka = (function () {
+  function kelompok(digit) { return digit.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+    function ribuan(ip) { return /^\d{1,3}(\.\d{3})+$/.test(ip); }
+  
+    function analisis(raw) {
+      var s0 = String(raw == null ? '' : raw).replace(/\s/g, ''), s = s0.replace(/[^0-9.,]/g, ''), adaLain = s !== s0;
+      var koma = (s.match(/,/g) || []).length;
+      if (koma > 1) return { teks: s, galat: { jenis: 'koma', pasti: true, perbaiki: null, pesan: 'Hanya boleh satu koma, untuk desimal.' } };
+      var bagian = s.split(','), ip = bagian[0], dp = bagian[1];
+      var titik = (ip.match(/\./g) || []).length;
+      var ok = function () { return { teks: kelompok(ip.replace(/\./g, '')) + (koma ? ',' + dp : ''), galat: adaLain ? { jenis: 'karakter', pasti: true, perbaiki: null, pesan: 'Hanya angka dan koma.' } : null }; };
+      if (!titik && !/\./.test(dp || '')) return ok();
+      // ada titik. Bentuk Inggris: 1,234.56 (koma ribuan lalu titik desimal)
+      if (koma === 1 && /^\d{1,3}$/.test(ip) && /^\d{3}(\.\d+)?$/.test(dp) && /\./.test(dp)) {
+        var fix = kelompok((ip + dp.split('.')[0])) + ',' + dp.split('.')[1];
+        return { teks: s, galat: { jenis: 'inggris', pasti: true, perbaiki: fix, pesan: 'Sepertinya memakai format Inggris. Di sini titik untuk ribuan dan koma untuk desimal: ' + fix + '.' } };
+      }
+      if (/\./.test(dp || '')) return { teks: s, galat: { jenis: 'titik', pasti: true, perbaiki: null, pesan: 'Setelah koma tidak boleh ada titik.' } };
+      if (ribuan(ip)) return ok(); // titik ribuan yang benar (diketik sendiri), dirapikan
+      // titik yang bukan pemisah ribuan: kemungkinan titik dipakai sebagai desimal
+      var akhir = ip.slice(ip.lastIndexOf('.') + 1), depan = ip.slice(0, ip.lastIndexOf('.'));
+      if (titik === 1 && !koma && /^\d+$/.test(depan) && /^\d*$/.test(akhir)) {
+        if (akhir === '') return { teks: s, galat: null }; // "12." masih diketik
+        var perbaiki = depan + ',' + akhir, pasti = !(depan.length <= 3 && akhir.length <= 3); // "1.0" bisa jadi awal "1.000"
+        return { teks: s, galat: { jenis: 'titik', pasti: pasti, perbaiki: perbaiki, pesan: 'Titik dan koma tertukar? Di sini titik untuk ribuan dan koma untuk desimal. Maksudnya ' + perbaiki + '?' } };
+      }
+      return { teks: s, galat: { jenis: 'titik', pasti: true, perbaiki: null, pesan: 'Titik hanya untuk ribuan, tiap tiga angka. Desimal memakai koma.' } };
+    }
+  return analisis;
+})();
+const hfLive = v => { const a = hfAngka(v); return !a.galat || a.galat.jenis === 'karakter' ? a.teks : v; };
+
 class Component extends DCLogic {
   renderVals() {
     const st = this.state || {};
@@ -303,8 +336,8 @@ class Component extends DCLogic {
     const nl = st.nl || [];
     const ALL_LOC = ['Binance', 'Bybit', 'Pluang', 'Brankas', ...nl];
     const ext = st.ext || [];
-    const INIT = ({ 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' }, 'bayar-bybit': { pay: 'USDT@Bybit' }, ubah: { fA: 'PAXG', fL: 'Binance', qv: '0,0225', pv: '4.425', fee: '0,1', pay: 'USDT@Binance', d: 4, hh: 9, mm: 12 }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' } })[this.props.mulai ?? 'beli'] || {};
-    const fJ = st.fJ || ({ 'belum-lengkap': 'Beli', 'foto-kamera': 'Beli', 'foto-pilih': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli', 'pajak-catatan': 'Beli', 'pajak-terisi': 'Beli', 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli', ubah: 'Beli', jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli' })[mulai];
+    const INIT = ({ 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' }, 'bayar-bybit': { pay: 'USDT@Bybit' }, 'angka-format': { qv: '1.250', pv: '72.658.500', fee: '16.500' }, 'angka-titik': { qv: '0.0225' }, 'angka-inggris': { pv: '1,234.56' }, 'angka-koma': { qv: '1,2,3' }, ubah: { fA: 'PAXG', fL: 'Binance', qv: '0,0225', pv: '4.425', fee: '0,1', pay: 'USDT@Binance', d: 4, hh: 9, mm: 12 }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' } })[this.props.mulai ?? 'beli'] || {};
+    const fJ = st.fJ || ({ 'belum-lengkap': 'Beli', 'angka-format': 'Beli', 'angka-titik': 'Beli', 'angka-inggris': 'Beli', 'angka-koma': 'Beli', 'foto-kamera': 'Beli', 'foto-pilih': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli', 'pajak-catatan': 'Beli', 'pajak-terisi': 'Beli', 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli', ubah: 'Beli', jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli' })[mulai];
     const fP = st.fP || (mulai.startsWith('pindah-anggota') ? 'anggota' : 'lokasi');
     const fM = st.fM || 'Azlan';
     const PHYS = ['Emas fisik', 'Perak fisik'];
@@ -340,7 +373,7 @@ class Component extends DCLogic {
     const VAL = { 'PAXG': 'Rp 1,63 jt', 'Emas fisik': 'Rp 2,38 jt', 'BTC': 'Rp 3,37 jt', 'Perak fisik': 'Rp 2,33 jt', 'GFI': 'Rp 70.000', 'USDT': 'Rp 1,65 jt' };
     const bal = BAL[fM + '|' + fA + '|' + fL];
     const checksBal = isMove || fJ === 'Jual' || isOut;
-    const qErr = checksBal && bal && num(q) > num(bal);
+    const qErr = checksBal && bal && !(hfAngka(q).galat && hfAngka(q).galat.pasti && hfAngka(q).galat.jenis !== 'karakter') && num(q) > num(bal);
     const fmt = (n, d) => (isFinite(n) ? n : 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d });
     const rp = n => n >= 1e6 ? 'Rp ' + fmt(n / 1e6, 2) + ' jt' : 'Rp ' + fmt(n, 0);
     const dd = st.d ?? (INIT.d || 11), hh = st.hh ?? (INIT.hh ?? 14), mm = st.mm ?? (INIT.mm ?? 20);
@@ -363,7 +396,8 @@ class Component extends DCLogic {
     const kvS = (st.kv !== undefined ? st.kv : INIT.kv) || ''; const rate = kvS ? num(kvS) : rateAuto;
     const pDef = fA && PIDR[fA] ? fmt(PIDR[fA] * (fA === 'USDT' || fA === 'USD' ? 1 : kF) / rateAuto, dC) : '';
     const pv = (mulai === 'belum-lengkap' && st.pv === undefined) ? '' : (st.pv ?? (st.fA === undefined && st.cur === undefined && INIT.pv ? INIT.pv : pDef));
-    const gross = num(q) * num(pv), feeN = num(fee) || 0;
+    const gS = g => (g && g.jenis !== 'karakter' && g.pasti) ? g : null, gQ = gS(hfAngka(q).galat), gP = gS(hfAngka(pv).galat), gF = gS(hfAngka(fee).galat), nErrAda = !!(gQ || gP || gF);
+    const gross = (gQ ? 0 : num(q)) * (gP ? 0 : num(pv)), feeN = (gF ? 0 : num(fee)) || 0;
     const pajN = num(pajakV) || 0;
     const net = fJ === 'Jual' ? gross - feeN - pajN : gross + feeN + pajN;   // pajak ikut total (kolom pajak di Transaksi dihitung sebagai biaya)
     const curTxt = n => cur === 'IDR' ? rp(n) : fmt(n, dC) + ' ' + cur;
@@ -406,7 +440,10 @@ class Component extends DCLogic {
     };
     return {
       qMiss: tried && !(num(q) > 0), pMiss: tried && isTrade && !String(pv).trim(), missOn: tried && (!(num(q) > 0) || (isTrade && !String(pv).trim())), missTxt: 'Lengkapi dulu: ' + [!(num(q) > 0) ? 'jumlah' : null, isTrade && !String(pv).trim() ? 'harga' : null].filter(Boolean).join(', ') + '.',
-      pBorder: tried && isTrade && !String(pv).trim() ? 'var(--loss)' : 'var(--line-strong)',
+      pBorder: gP || (tried && isTrade && !String(pv).trim()) ? 'var(--loss)' : 'var(--line-strong)', feeBorder: gF ? 'var(--loss)' : 'var(--line-strong)',
+      eQ: !!gQ, eQm: gQ ? gQ.pesan : '', eQf: !!(gQ && gQ.perbaiki), eQfv: gQ && gQ.perbaiki || '', fixQ: () => this.setState({ qv: hfAngka(hfAngka(q).galat.perbaiki).teks }),
+      eP: !!gP, ePm: gP ? gP.pesan : '', ePf: !!(gP && gP.perbaiki), ePfv: gP && gP.perbaiki || '', fixP: () => this.setState({ pv: hfAngka(hfAngka(pv).galat.perbaiki).teks }),
+      eF: !!gF, eFm: gF ? gF.pesan : '', eFf: !!(gF && gF.perbaiki), eFfv: gF && gF.perbaiki || '', fixF: () => this.setState({ fee: hfAngka(hfAngka(fee).galat.perbaiki).teks }),
       kamera: st.kamera ?? (mulai === 'foto-kamera'), closeKam: () => this.setState({ kamera: false }), openKam: () => this.setState({ kamera: true, sheet: null }),
       sheetFoto: sheet === 'foto', openFoto: () => this.setState({ sheet: 'foto' }), closeFoto: () => this.setState({ sheet: null }), pickFoto: () => this.setState({ foto: 'ok', sheet: null }), delFoto: () => this.setState({ foto: '' }),
       fotoNo: foto !== 'ok', fotoYes: foto === 'ok', fotoCap: foto === 'err' ? 'Foto tidak bisa dipakai. Pilih JPG atau PNG, paling besar 10 MB.' : 'Nota, struk, atau tangkapan layar', fotoCapColor: foto === 'err' ? 'var(--loss)' : 'var(--ink-muted)',
@@ -414,7 +451,7 @@ class Component extends DCLogic {
       theme: this.props.theme ?? 'light',
       title: awal ? 'Saldo awal' : (isUbah ? 'Ubah transaksi' : 'Catat transaksi'),
       isUbah, closeHref: isUbah ? '05-Riwayat-2b-Detail.dc.html' : ORIG[dari][0],
-      showBalQ: (fJ === 'Jual' || isOut) && !!bal, qBorder: qErr || (tried && !(num(q) > 0)) ? 'var(--loss)' : 'var(--line-strong)',
+      showBalQ: (fJ === 'Jual' || isOut) && !!bal, qBorder: qErr || gQ || (tried && !(num(q) > 0)) ? 'var(--loss)' : 'var(--line-strong)',
       payLabel: fJ === 'Jual' ? 'Hasilnya masuk ke' : 'Dibayar dengan',
       pays: payOpts.map(k => pill(k === 'luar' ? 'Di luar Hartafolio' : k.replace('@', ' · '), pay === k, () => this.setState({ pay: k, pv: undefined, kv: undefined }))),
       payMoreL: fJ === 'Jual' ? 'Ke aset lain…' : 'Aset lain…', openBayar: () => this.setState({ sheet: 'bayar' }), closeBayar: () => this.setState({ sheet: null }),
@@ -439,7 +476,7 @@ class Component extends DCLogic {
       payColor: payErr ? 'var(--loss)' : 'var(--ink-muted)',
       cur, curFree: pay === 'luar', curLocked: pay !== 'luar',
       curs: ['IDR', 'USD', 'USDT'].map(c => pill(c, (awal ? avgCur : cur) === c, () => this.setState({ cur: c, pv: undefined }))),
-      pv, onP: e => this.setState({ pv: e.target.value }),
+      pv, onP: e => this.setState({ pv: hfLive(e.target.value) }),
       showKurs: cur !== 'IDR', feeCols: cur !== 'IDR' ? 'repeat(2, minmax(0, 1fr))' : '1fr',
 
       feeUnits: ['Rp', A[1]].map(c => pill(c, (st.fu || 'Rp') === c, () => this.setState({ fu: c }))),
@@ -455,10 +492,10 @@ class Component extends DCLogic {
       mName: fM, rName: fR, lokNow: fL, q, u: A[1], p: A[2], t: A[3],
       qLabel: fA ? 'Jumlah (' + A[1] + ')' : 'Jumlah',
       pLabel: fA ? 'Harga per ' + A[1] : 'Harga per unit',
-      onQ: e => this.setState({ qv: e.target.value }),
-      onFee: e => this.setState({ fee: e.target.value }),
+      onQ: e => this.setState({ qv: hfLive(e.target.value) }),
+      onFee: e => this.setState({ fee: hfLive(e.target.value) }),
       fee, hasFee,
-      qErrStr: String(!!(qErr || payErr)), saveOpacity: qErr || payErr ? '0.45' : '1', savePE: qErr || payErr ? 'none' : 'auto',
+      qErrStr: String(!!(qErr || payErr || nErrAda)), saveOpacity: qErr || payErr || nErrAda ? '0.45' : '1', savePE: qErr || payErr || nErrAda ? 'none' : 'auto',
       balTxt: qErr ? 'Melebihi saldo ' + fM + ' di ' + fL + ': ' + bal + ' ' + A[1] + '.' : 'Saldo ' + fM + ' di ' + fL + ': ' + (bal || '—') + ' ' + A[1],
       balColor: qErr ? 'var(--loss)' : 'var(--ink-muted)',
       minusTxt: '−' + q + ' ' + A[1], plusTxt: '+' + q + ' ' + A[1],
@@ -472,7 +509,7 @@ class Component extends DCLogic {
       lokLabel: 'Lokasi',
       keLokLabel: isMoveMem ? 'Lokasi penerima' : 'Lokasi tujuan',
       totLabel: isPiu ? 'Nilai dipinjamkan' : isTrade ? (fJ === 'Jual' ? 'Hasil bersih' : 'Total dibayar') : (isIn ? 'Nilai saat ini' : (isOut ? 'Nilai yang keluar' : 'Nilai harta')),
-      totValue: isPiu ? (fA && PIDR[fA] ? rp(num(q) * PIDR[fA]) : '—') : isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? (fA ? VAL[fA] || '—' : '—') : (isOut ? (fA && PIDR[fA] ? '−' + rp(num(q) * PIDR[fA]) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
+      totValue: isPiu ? (fA && PIDR[fA] ? rp(num(q) * PIDR[fA]) : '—') : nErrAda ? '—' : isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? (fA ? VAL[fA] || '—' : '—') : (isOut ? (fA && PIDR[fA] ? '−' + rp(num(q) * PIDR[fA]) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
       keLokasi: (isMoveMem ? ALL_LOC : toL).map(l => pill(l, (isMoveMem ? fKa : fK) === l, () => this.setState(isMoveMem ? { fKa: l } : { fK: l }))),
       keAnggota: others.map(l => pill(l, fR === l, () => this.setState({ fR: l }))),
       asal: (isOut ? ['Hadiah', 'Sedekah', 'Ke dompet luar', 'Hilang', 'Lainnya'] : ['Hadiah', 'Warisan', 'Dari dompet luar', 'Lainnya']).map(l => pill(l, fS === l, () => this.setState({ fS: l }))),

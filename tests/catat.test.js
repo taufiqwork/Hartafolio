@@ -12,7 +12,7 @@ function load(files, extra) {
   files.forEach((f) => vm.runInContext(src(f), ctx, { filename: f }));
   return ctx;
 }
-const engine = ['engine/schema.js', 'engine/catalog.js', 'engine/ledger.js', 'engine/queue.js', 'engine/catat.js', 'engine/catat-ctx.js', 'demo/catat-demo.js'];
+const engine = ['engine/schema.js', 'engine/catalog.js', 'engine/ledger.js', 'engine/queue.js', 'engine/angka.js', 'engine/catat.js', 'engine/catat-ctx.js', 'demo/catat-demo.js'];
 const E = () => load(engine);
 
 test('Beli PAXG contoh: total sama dengan board (99,66 USDT · Rp 1,64 jt), alat bayar USDT di Binance', () => {
@@ -161,6 +161,16 @@ test('Mode contoh: Simpan tidak error (id palsu), baris hanya untuk perangkat; s
     const r = c.HF.catatCtx.toRows(v, ctx, {});
     assert.ok(r.rows && r.rows.length >= 1, m); assert.match(r.rows[0].anggota_id, /^PM-D/); assert.ok(r.rows[0].aset_id, m);
   });
+});
+
+test('Galat angka: titik dipakai sebagai desimal memblokir Simpan dan menawarkan perbaikan; yang ragu baru muncul setelah kolom ditinggalkan', () => {
+  const c = E(), ctx = c.HF.demo.catat();
+  const v = c.HF.catat.view({ qv: '0.0225' }, ctx, { mulai: 'beli' });
+  assert.equal(v.nErr.qv.perbaiki, '0,0225'); assert.equal(v.invalid, true); assert.equal(v.incomplete, true);
+  const ragu = c.HF.catat.view({ pv: '2.5' }, ctx, { mulai: 'beli' }); assert.equal(Object.keys(ragu.nErr).length, 0);
+  const sesudah = c.HF.catat.view({ pv: '2.5', nBlur: { pv: true } }, ctx, { mulai: 'beli' }); assert.equal(sesudah.nErr.pv.perbaiki, '2,5');
+  const ing = c.HF.catat.view({ pv: '1,234.56' }, ctx, { mulai: 'beli' }); assert.equal(ing.nErr.pv.perbaiki, '1.234,56');
+  assert.equal(Object.keys(c.HF.catat.view({ qv: '0,0225', pv: '4.425' }, ctx, { mulai: 'beli' }).nErr).length, 0);
 });
 
 test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; data nyata lewat antrean', async () => {

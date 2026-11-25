@@ -7,6 +7,8 @@
 
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
+    var ANGKA_DEMO = { 'angka-format': { qv: '1.250', pv: '72.658.500', fee: '16.500' }, 'angka-titik': { qv: '0.0225' }, 'angka-inggris': { pv: '1,234.56' }, 'angka-koma': { qv: '1,2,3' } };
+    if (ctx.demo && ANGKA_DEMO[mulai]) st = ANGKA_DEMO[mulai];
     if (ctx.demo && mulai === 'belum-lengkap') st = { tried: true, qv: '', pv: '' };
     if (ctx.demo && mulai === 'foto-kamera') st = { kamera: true };
     if (ctx.demo && mulai === 'foto-terlampir') st = { foto: { ok: true, nama: 'nota-binance.jpg', kb: 184 } };
@@ -48,6 +50,7 @@
       'pick-cam': function () { bukaKamera(); }, 'pick-gal': function () { pickFoto(false); },
       'close-kam': function () { tutupKamera(); },
       shutter: function () { var v = el.querySelector('.ct-cam-video'); if (!v) return tutupKamera(); HF.foto.jepret(v).then(function (r) { hasilFoto(r); }); tutupKamera(); },
+      'fix-num': function (v, t) { var k = t.getAttribute('data-f'), g = HF.angka.analisis(st[k]).galat; if (g && g.perbaiki) { var p = {}; p[k] = HF.angka.analisis(g.perbaiki).teks; st = Object.assign({}, st, p); } },
       'toggle-pajak': function () { var buka = !st.pajakOn; st = Object.assign({}, st, { pajakOn: buka }); if (buka) setTimeout(function () { main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' }); }, 60); },
       'open-tgl': function () { st = Object.assign({}, st, { sheet: 'tgl' }); },
       'close-tgl': function () { st = Object.assign({}, st, { sheet: null, pv: undefined }); },
@@ -115,12 +118,36 @@
     el.addEventListener('click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t || !el.contains(t) || t.disabled) return;
       var a = t.getAttribute('data-act'), v = t.getAttribute('data-v'); if (v === null) v = t.getAttribute('data-val');
-      if (!A[a]) return; A[a](v); if (a !== 'close') draw();
+      if (!A[a]) return; A[a](v, t); if (a !== 'close') draw();
     });
+    var ANGKA = { qv: 1, pv: 1, fee: 1, kv: 1, pajakV: 1, avg: 1 }; // kolom angka: titik ribuan disisipkan saat diketik
     el.addEventListener('input', function (e) {
       var k = e.target.getAttribute && e.target.getAttribute('data-in'); if (!k) return;
       if (fm && (st.sheet === 'lokasi' || st.sheet === 'manual') && (k === 'nama' || k === 'gram' || k === 'harga')) { fm.v[k] = e.target.value; return draw(); }
-      st = Object.assign({}, st, k === 'qv' ? { qv: e.target.value } : (function () { var p = {}; p[k] = e.target.value; return p; })()); draw();
+      var nilai = e.target.value;
+      if (ANGKA[k]) {
+        /* Titik yang kita sisipkan sendiri bukan ketikan pengguna: bila sebelumnya valid dan yang diketik angka (atau menghapus), buang dulu titiknya
+           lalu rapikan lagi. Titik yang diketik sendiri, atau tempelan, dianalisis apa adanya (supaya "0.0225" terdeteksi). */
+        var tipe = e.inputType || '', wasOk = !HF.angka.analisis(st[k] || '').galat;
+        var raw = st.nRaw || {}, ulang = wasOk && !raw[k] && ((tipe === 'insertText' && e.data !== '.') || /^delete/.test(tipe));
+        var a = HF.angka.analisis(ulang ? nilai.replace(/\./g, '') : nilai);
+        if (!a.galat || a.galat.jenis === 'karakter') { // valid: rapikan dengan titik ribuan dan jaga posisi kursor
+          var pos = HF.angka.kursor(nilai, e.target.selectionStart == null ? nilai.length : e.target.selectionStart, a.teks);
+          if (a.teks !== nilai) { e.target.value = a.teks; if (e.target.setSelectionRange) e.target.setSelectionRange(pos, pos); }
+          nilai = a.teks;
+        }
+      }
+      var p = {}; p[k] = nilai;
+      if (ANGKA[k]) { // ingat bila titik diketik pengguna (bukan sisipan kita) selama kolom itu masih mentah
+        var r2 = Object.assign({}, st.nRaw || {}), ga = HF.angka.analisis(nilai).galat;
+        r2[k] = e.data === '.' ? true : (/\.$/.test(nilai) ? !!r2[k] : (ga && ga.jenis !== 'karakter' ? !!r2[k] : false));
+        p.nRaw = r2;
+      }
+      st = Object.assign({}, st, p); draw();
+    });
+    el.addEventListener('focusout', function (e) { // yang masih ragu ditandai setelah kolom ditinggalkan
+      var k = e.target.getAttribute && e.target.getAttribute('data-in');
+      if (k && ANGKA[k] && !(st.nBlur || {})[k]) { var b = Object.assign({}, st.nBlur || {}); b[k] = true; st = Object.assign({}, st, { nBlur: b }); draw(); }
     });
     draw();
     return { state: function () { return st; } };
