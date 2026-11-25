@@ -23,10 +23,10 @@
       fm = { k: 'lokasi', mode: 'tambah', v: ctx.demo && mulai === 'lokasi-baru' ? { nama: 'Indodax', jenis: 'Exchange crypto' } : { nama: '', jenis: null }, pk: null };
     }
     function seedManual(nama) {
-      fm = { k: 'aset', mode: 'tambah', v: ctx.demo && mulai === 'aset-manual' ? { nama: 'Emas perhiasan', jenis: 'Emas', sat: 'gram', harga: '1.900.000', gram: '31,1035' } : { nama: nama || '', jenis: null, sat: null, harga: '', gram: '31,1035' }, pk: null, sec: 'Kembali ke daftar' };
+      fm = { k: 'aset', mode: 'tambah', v: ctx.demo && mulai === 'aset-manual-angka' ? { nama: 'Emas perhiasan', jenis: 'Emas', sat: 'oz', harga: '1.900.000', gram: '31.1035' } : ctx.demo && mulai === 'aset-manual' ? { nama: 'Emas perhiasan', jenis: 'Emas', sat: 'gram', harga: '1.900.000', gram: '31,1035' } : { nama: nama || '', jenis: null, sat: null, harga: '', gram: '31,1035' }, pk: null, sec: 'Kembali ke daftar' };
     }
     if (mulai === 'lokasi-baru') seedForm();
-    if (mulai === 'aset-manual') seedManual();
+    if (mulai === 'aset-manual' || mulai === 'aset-manual-angka') seedManual();
 
     function draw() {
       vm = C.view(st, ctx, { mulai: mulai });
@@ -74,6 +74,7 @@
       sel: function () { fm.pk = fm.pk === 'jenis' ? null : 'jenis'; },
       opt: function (v) { fm.v.jenis = v; fm.pk = null; if (fm.k === 'aset') fm.v.sat = null; },
       seg: function (v) { fm.v.sat = v; },
+      'fix-fm': function (v, t) { var k = t.getAttribute('data-f'), g = HF.angka.analisis(fm.v[k]).galat; if (g && g.perbaiki) { fm.v[k] = HF.angka.analisis(g.perbaiki).teks; if (fm.raw) fm.raw[k] = false; } },
       'fm-save': function () { return fm.k === 'aset' ? saveAset() : saveLokasi(); },
       save: function () {
         if (vm.invalid) return;
@@ -123,7 +124,16 @@
     var ANGKA = { qv: 1, pv: 1, fee: 1, kv: 1, pajakV: 1, avg: 1 }; // kolom angka: titik ribuan disisipkan saat diketik
     el.addEventListener('input', function (e) {
       var k = e.target.getAttribute && e.target.getAttribute('data-in'); if (!k) return;
-      if (fm && (st.sheet === 'lokasi' || st.sheet === 'manual') && (k === 'nama' || k === 'gram' || k === 'harga')) { fm.v[k] = e.target.value; return draw(); }
+      if (fm && (st.sheet === 'lokasi' || st.sheet === 'manual') && (k === 'nama' || k === 'gram' || k === 'harga')) {
+        var v0 = e.target.value;
+        if (k !== 'nama') { // kolom angka di form Aset manual: titik ribuan otomatis, sama dengan kolom lain
+          var tp = e.inputType || '', ok0 = !HF.angka.analisis(fm.v[k] || '').galat, rw = fm.raw && fm.raw[k];
+          var an = HF.angka.analisis(ok0 && !rw && ((tp === 'insertText' && e.data !== '.') || /^delete/.test(tp)) ? v0.replace(/\./g, '') : v0);
+          if (!an.galat || an.galat.jenis === 'karakter') { var ps = HF.angka.kursor(v0, e.target.selectionStart == null ? v0.length : e.target.selectionStart, an.teks); if (an.teks !== v0) { e.target.value = an.teks; if (e.target.setSelectionRange) e.target.setSelectionRange(ps, ps); } v0 = an.teks; }
+          fm.raw = fm.raw || {}; fm.raw[k] = e.data === '.' ? true : (/\.$/.test(v0) ? !!fm.raw[k] : (an.galat && an.galat.jenis !== 'karakter' ? !!fm.raw[k] : false));
+        }
+        fm.v[k] = v0; return draw();
+      }
       var nilai = e.target.value;
       if (ANGKA[k]) {
         /* Titik yang kita sisipkan sendiri bukan ketikan pengguna: bila sebelumnya valid dan yang diketik angka (atau menghapus), buang dulu titiknya

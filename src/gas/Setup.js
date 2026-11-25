@@ -105,27 +105,56 @@ function Setup_laporan_() {
 }
 
 /**
- * Perbaiki header yang tidak cocok dengan skema: HANYA sel baris 1 yang ditulis ulang; data di bawahnya tidak disentuh.
- * Dipakai bila sebuah kolom di kanan hilang atau salah tulis dan Siapkan sheet tidak memperbaikinya.
+ * Susun ulang kolom sebuah tab bila semua nama kolom skema ada tetapi urutannya bergeser (mis. ada kolom disisipkan atau dipindah).
+ * Data ikut dipindah bersama judulnya, jadi tiap nilai tetap berada di bawah judul yang benar. Kolom lain/kosong berdata ditaruh di kanan.
+ * Mengembalikan true bila ada yang dipindah, false bila urutan sudah benar, null bila ada nama kolom skema yang tidak ada (tidak bisa disusun).
+ */
+function Setup_susun_(sh, tab) {
+  var names = HF.schema.colNames(tab), lastR = Math.max(sh.getLastRow(), 1), lastC = Math.max(sh.getLastColumn(), names.length);
+  var vals = sh.getRange(1, 1, lastR, lastC).getValues(), head = vals[0].map(function (h) { return String(h == null ? '' : h).trim(); });
+  var idx = names.map(function (n) { return head.indexOf(n); });
+  if (idx.some(function (i) { return i < 0; })) return null;
+  var lain = []; // kolom bukan skema yang berisi sesuatu: tetap dibawa, di kanan
+  head.forEach(function (h, c) {
+    if (idx.indexOf(c) >= 0) return;
+    if (h !== '' || vals.slice(1).some(function (r) { return r[c] !== '' && r[c] != null; })) lain.push(c);
+  });
+  var urut = idx.concat(lain);
+  if (urut.every(function (c, k) { return c === k; }) && lastC === urut.length) return false;
+  var hasil = vals.map(function (r) { var o = urut.map(function (c) { return r[c]; }); while (o.length < lastC) o.push(''); return o; });
+  sh.getRange(1, 1, lastR, lastC).setValues(hasil);
+  return true;
+}
+
+/**
+ * Perbaiki header yang tidak cocok dengan skema. Bila kolom hanya bergeser, kolom disusun ulang bersama datanya (cadangan Sheet dibuat dulu).
+ * Bila ada nama kolom yang tidak ada, hanya sel header yang salah ditulis ulang (data tidak disentuh).
  */
 function Setup_perbaikiHeader_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet(), S = HF.schema, laporan = [];
+  var ss = SpreadsheetApp.getActiveSpreadsheet(), S = HF.schema, laporan = [], cadangan = false;
   S.URUTAN.forEach(function (tab) {
     var sh = ss.getSheetByName(tab); if (!sh) return;
     var names = S.colNames(tab);
     Repo_ensureGrid_(sh, sh.getMaxRows(), names.length);
     var r = S.checkHeader(tab, sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), names.length)).getValues()[0]);
     if (r.ok) return;
+    var kunci = r.mismatches.every(function (m) { return m.got === ''; });
+    if (!kunci) {
+      if (!cadangan) { ss.copy('Hartafolio cadangan ' + Master_now_().replace(/[: ]/g, '-')); cadangan = true; }
+      var hasil = Setup_susun_(sh, tab);
+      if (hasil === true) { Setup_dropProtection_(sh); Setup_protectHeader_(sh, tab); laporan.push(tab + ': kolom disusun ulang bersama datanya'); return; }
+    }
     r.mismatches.forEach(function (m) { sh.getRange(1, m.col, 1, 1).setValue(m.want); });
     Setup_dropProtection_(sh); Setup_protectHeader_(sh, tab);
-    laporan.push(tab + ': header diperbaiki di kolom ' + r.mismatches.map(function (m) { return m.col; }).join(', '));
+    laporan.push(tab + ': judul diperbaiki di kolom ' + r.mismatches.map(function (m) { return m.col; }).join(', '));
   });
+  if (cadangan) laporan.push('Salinan cadangan dibuat di Drive Anda: "Hartafolio cadangan ..."');
   return laporan.length ? laporan : ['Semua header sudah cocok'];
 }
 
 function perbaikiHeader() {
   var ui = SpreadsheetApp.getUi(), lap = Setup_laporan_().filter(function (x) { return !/: ok$/.test(x); });
   if (!lap.length) { ui.alert('Semua header sudah cocok.'); return []; }
-  if (ui.alert('Perbaiki header?', 'Yang tidak cocok:\n' + lap.join('\n') + '\n\nHanya baris judul (baris 1) yang ditulis ulang. Data tidak diubah.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return [];
+  if (ui.alert('Perbaiki header?', 'Yang tidak cocok:\n' + lap.join('\n') + '\n\nBila kolom hanya bergeser, kolom disusun ulang bersama datanya (salinan cadangan dibuat dulu). Bila tidak, hanya judul yang ditulis ulang.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return [];
   var out = Setup_perbaikiHeader_(); ui.alert(out.join('\n')); return out;
 }

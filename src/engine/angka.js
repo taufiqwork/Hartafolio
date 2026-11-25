@@ -14,7 +14,7 @@
   function analisis(raw) {
     var s0 = String(raw == null ? '' : raw).replace(/\s/g, ''), s = s0.replace(/[^0-9.,]/g, ''), adaLain = s !== s0;
     var koma = (s.match(/,/g) || []).length;
-    if (koma > 1) return { teks: s, galat: { jenis: 'koma', pasti: true, perbaiki: null, pesan: 'Hanya boleh satu koma, untuk desimal.' } };
+    if (koma > 1) return { teks: s, galat: { jenis: 'koma', pasti: true, perbaiki: null, pesan: 'Hanya boleh satu koma.' } };
     var bagian = s.split(','), ip = bagian[0], dp = bagian[1];
     var titik = (ip.match(/\./g) || []).length;
     var ok = function () { return { teks: kelompok(ip.replace(/\./g, '')) + (koma ? ',' + dp : ''), galat: adaLain ? { jenis: 'karakter', pasti: true, perbaiki: null, pesan: 'Hanya angka dan koma.' } : null }; };
@@ -22,7 +22,7 @@
     // ada titik. Bentuk Inggris: 1,234.56 (koma ribuan lalu titik desimal)
     if (koma === 1 && /^\d{1,3}$/.test(ip) && /^\d{3}(\.\d+)?$/.test(dp) && /\./.test(dp)) {
       var fix = kelompok((ip + dp.split('.')[0])) + ',' + dp.split('.')[1];
-      return { teks: s, galat: { jenis: 'inggris', pasti: true, perbaiki: fix, pesan: 'Sepertinya memakai format Inggris. Di sini titik untuk ribuan dan koma untuk desimal: ' + fix + '.' } };
+      return { teks: s, galat: { jenis: 'inggris', pasti: true, perbaiki: fix, pesan: 'Format Inggris? Di sini titik = ribuan.' } };
     }
     if (/\./.test(dp || '')) return { teks: s, galat: { jenis: 'titik', pasti: true, perbaiki: null, pesan: 'Setelah koma tidak boleh ada titik.' } };
     if (ribuan(ip)) return ok(); // titik ribuan yang benar (diketik sendiri), dirapikan
@@ -31,9 +31,9 @@
     if (titik === 1 && !koma && /^\d+$/.test(depan) && /^\d*$/.test(akhir)) {
       if (akhir === '') return { teks: s, galat: null }; // "12." masih diketik
       var perbaiki = depan + ',' + akhir, pasti = !(depan.length <= 3 && akhir.length <= 3); // "1.0" bisa jadi awal "1.000"
-      return { teks: s, galat: { jenis: 'titik', pasti: pasti, perbaiki: perbaiki, pesan: 'Titik dan koma tertukar? Di sini titik untuk ribuan dan koma untuk desimal. Maksudnya ' + perbaiki + '?' } };
+      return { teks: s, galat: { jenis: 'titik', pasti: pasti, perbaiki: perbaiki, pesan: 'Titik dan koma tertukar?' } };
     }
-    return { teks: s, galat: { jenis: 'titik', pasti: true, perbaiki: null, pesan: 'Titik hanya untuk ribuan, tiap tiga angka. Desimal memakai koma.' } };
+    return { teks: s, galat: { jenis: 'titik', pasti: true, perbaiki: null, pesan: 'Titik hanya untuk ribuan (tiga angka).' } };
   }
 
   /** Nilai angka dari teks yang valid (NaN bila galat). */

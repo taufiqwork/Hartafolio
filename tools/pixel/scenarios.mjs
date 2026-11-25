@@ -81,6 +81,7 @@ export const catatPajakGulir = [ACT('@x-pajak-gulir', '04-Catat-2u-Foto-Terlampi
 const GULIR300 = `document.querySelector('.hf-scroll').scrollTop = 300;`;
 export const catatAngka = [['-3a-Angka-Format', 'angka-format'], ['-3b-Angka-Titik-Desimal', 'angka-titik'], ['-3c-Angka-Format-Inggris', 'angka-inggris'], ['-3d-Angka-Banyak-Koma', 'angka-koma']]
   .map(([id, mulai]) => CT(id, mulai, { boardJs: GULIR300, js: GULIR300 }));
+export const catatAsetAngka = [CT('-3e-Aset-Manual-Angka', 'aset-manual-angka')];
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
   CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
@@ -145,5 +146,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames
 ];

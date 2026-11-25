@@ -66,9 +66,15 @@
       fields.push(select('jenis', 'Jenis', 'Pilih jenis aset', !j ? 'Menentukan cara aset ini dihitung untuk zakat mal.' : (zak ? j + ' dihitung untuk zakat mal dengan nishob ' + (j === 'Emas' ? '85' : '595') + ' g, fisik maupun digital.' : 'Tidak dihitung untuk zakat mal. Zakat hanya dari emas dan perak.'), v.jenis, fm.pk === 'jenis'));
       if (j) fields.push(field('Satuan', '<div class="hf-toggle su-seg" role="group" aria-label="Satuan" style="grid-template-columns: repeat(' + units.length + ', minmax(0, 1fr));">' + units.map(function (u) {
         return '<button type="button" aria-pressed="' + (u === sat) + '" data-act="seg" data-key="sat" data-val="' + esc(u) + '">' + esc(u) + '</button>'; }).join('') + '</div>', 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.'));
-      if (zak && sat !== 'gram') fields.push(field('Setara gram per satuan', '<input class="hf-input" type="text" inputmode="decimal" data-in="gram" value="' + esc(v.gram) + '" placeholder="Contoh: 31,1035" aria-label="Setara gram per satuan">', 'Untuk nishob zakat. Contoh: 1 oz atau 1 token PAXG = 31,1035 g.'));
-      fields.push(field('Harga per satuan (Rp)', '<input class="hf-input" type="text" inputmode="decimal" data-in="harga" value="' + esc(v.harga) + '" placeholder="0" aria-label="Harga per satuan (Rp)">', 'Harga per ' + (sat || 'satuan') + ' hari ini. Bisa diubah kapan saja.'));
-      ok = !!nama && !!j;
+      var galat = {};
+      function angka(key, label, ph, hint) {
+        var g = root.HF.angka ? root.HF.angka.analisis(v[key] || '').galat : null, ge = g && g.jenis !== 'karakter' && g.pasti ? g : null; if (ge) galat[key] = ge;
+        return field(label, '<input class="hf-input" type="text" inputmode="decimal" data-in="' + key + '" value="' + esc(v[key]) + '" placeholder="' + ph + '" aria-label="' + label + '"' + (ge ? ' aria-invalid="true"' : '') + '>' +
+          (ge ? '<div class="ct-ne" role="alert"><span class="caption ct-err">' + esc(ge.pesan) + '</span>' + (ge.perbaiki ? '<button type="button" class="ct-fix" data-act="fix-fm" data-f="' + key + '">Ubah jadi ' + esc(ge.perbaiki) + '</button>' : '') + '</div>' : ''), hint);
+      }
+      if (zak && sat !== 'gram') fields.push(angka('gram', 'Setara gram per satuan', 'Contoh: 31,1035', 'Untuk nishob zakat. Contoh: 1 oz atau 1 token PAXG = 31,1035 g.'));
+      fields.push(angka('harga', 'Harga per satuan (Rp)', '0', 'Harga per ' + (sat || 'satuan') + ' hari ini. Bisa diubah kapan saja.'));
+      ok = !!nama && !!j && !Object.keys(galat).length;
     } else {
       title = ubah ? 'Ubah ' + fm.name : 'Tambah lokasi';
       desc = ubah ? '' : 'Lokasi baru langsung bisa dipilih saat mencatat transaksi.';
