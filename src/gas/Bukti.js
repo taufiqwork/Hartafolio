@@ -9,7 +9,10 @@ function Bukti_fetch_(method, url, opts) {
   var o = { method: method, headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true };
   Object.keys(opts || {}).forEach(function (k) { o[k] = opts[k]; });
   var r = UrlFetchApp.fetch(url, o), code = r.getResponseCode();
-  if (code < 200 || code >= 300) throw new Error('Google Drive menolak (' + code + '). Foto belum terunggah.');
+  if (code < 200 || code >= 300) {
+    var alasan = ''; try { alasan = JSON.parse(r.getContentText()).error.message || ''; } catch (e) { /* bukan JSON */ }
+    throw new Error('Google Drive menolak (' + code + (alasan ? ': ' + alasan : '') + '). Foto belum terunggah.');
+  }
   return JSON.parse(r.getContentText());
 }
 
@@ -39,4 +42,11 @@ function apiBuktiUnggah(trxId, foto) {
     Repo_update_('Transaksi', trxId, { bukti: trx.bukti ? trx.bukti + '\n' + url : url });
     return { url: url };
   });
+}
+
+/** Menu Hartafolio › Izinkan Google Drive: menyiapkan folder bukti. Dijalankan pemilik sekali; Google meminta izin drive.file saat pertama. */
+function izinkanDrive() {
+  var id = Bukti_folderId_();
+  SpreadsheetApp.getUi().alert('Google Drive siap. Folder "Hartafolio Bukti" ada di Drive Anda.\n(id: ' + id + ')');
+  return id;
 }

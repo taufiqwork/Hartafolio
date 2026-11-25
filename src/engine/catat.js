@@ -19,7 +19,7 @@
     Masuk: 'Datang dari luar tanpa dibeli, misalnya hadiah atau warisan.', Keluar: 'Pergi ke luar tanpa dijual, misalnya hadiah atau sedekah.',
     Pindah: 'Antar lokasi atau anggota. Total harta tetap, kecuali biaya.' };
   var JENIS_MULAI = { 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli',
-    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'foto-kamera': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
+    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'angka-format': 'Beli', 'angka-titik': 'Beli', 'angka-inggris': 'Beli', 'angka-koma': 'Beli', 'foto-kamera': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
   var INIT = { 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' },
     'bayar-bybit': { pay: 'USDT@Bybit' }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' },
     'foto-pilih': { sheet: 'foto' }, 'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' } };
@@ -73,7 +73,9 @@
     var q0 = asetInfo && asetInfo.q0 !== undefined && ctx.demo ? asetInfo.q0 : '';
     var q = st.qv != null ? st.qv : (st.fA === undefined && I.qv ? I.qv : (awal && !fA ? '' : q0));
     var fee = st.fee != null ? st.fee : (I.fee != null ? I.fee : (mulai === 'pindah-anggota-lokasi' ? '16.500' : (isTrade && ctx.demo ? '0,1' : '0')));
-    var hasFee = isMove && num(fee) > 0;
+    var _A = root.HF && root.HF.angka, bad = function (t) { var g = _A && t ? _A.analisis(t).galat : null; return !!(g && g.jenis !== 'karakter' && g.pasti); };
+    var qn = bad(q) ? '' : q, feen = bad(fee) ? '' : fee;
+    var hasFee = isMove && num(feen) > 0;
     var toL = ALL_LOC.filter(function (l) { return l !== fL; });
     var fK = st.fK && has(toL, st.fK) ? st.fK : toL[0];
     var fKa = st.fKa && has(ALL_LOC, st.fKa) ? st.fKa : (mulai === 'pindah-anggota-lokasi' ? 'Bybit' : fL);
@@ -83,7 +85,7 @@
     var fS = st.fS || (isOut ? 'Sedekah' : 'Hadiah');
     var bal = BAL[fM + '|' + fA + '|' + fL], balTxt0 = bal ? fmt(bal, 8) : null;
     var checksBal = isMove || fJ === 'Jual' || isOut;
-    var qErr = !!(checksBal && bal && num(q) > bal);
+    var qErr = !!(checksBal && bal && num(qn) > bal);
     // waktu
     var dd = st.d != null ? st.d : (I.d || now.d), hh = st.hh != null ? st.hh : (I.hh != null ? I.hh : now.hh), mm = st.mm != null ? st.mm : (I.mm != null ? I.mm : now.mm);
     var dm = st.dm != null ? st.dm : now.m, dy = st.dy != null ? st.dy : now.y;
@@ -111,7 +113,8 @@
     var price = asetInfo && asetInfo.price != null ? asetInfo.price : null;
     var pDef = fA && price != null && rateAuto ? fmt(price * (fA === 'USDT' || fA === 'USD' ? 1 : kF) / rateAuto, dC) : '';
     var pv = st.pv != null ? st.pv : (st.fA === undefined && st.cur === undefined && I.pv ? I.pv : pDef);
-    var gross = num(q) * num(pv), feeN = num(fee) || 0, pajN = num(st.pajakV) || 0;
+    var pvn = bad(pv) ? '' : pv, pajn = bad(st.pajakV) ? '' : st.pajakV;
+    var gross = (bad(q) ? 0 : num(q)) * (bad(pv) ? 0 : num(pv)), feeN = (bad(fee) ? 0 : num(fee)) || 0, pajN = num(pajn) || 0;
     var net = fJ === 'Jual' ? gross - feeN - pajN : gross + feeN + pajN; // pajak ikut total, seperti biaya (ledger.fees)
     var curTxt = function (n) { return cur === 'IDR' ? rp(n) : fmt(n, dC) + ' ' + cur; };
     var payBal = pay !== 'luar' ? (BAL[fM + '|' + pc + '|' + pl] || 0) : 0;
@@ -145,6 +148,14 @@
     if (isMove && !fKr) miss.push('lokasi tujuan');
     if (isMoveMem && !fR) miss.push('anggota penerima');
     if (feeNoPrice) miss.push('harga aset untuk biaya');
+    // Galat penulisan angka (titik dan koma tertukar dll). Yang masih ragu (mungkin awal "1.000") baru ditandai sesudah kolom ditinggalkan atau Simpan diketuk.
+    var nErr = {}, nBlur = st.nBlur || {}, A = root.HF && root.HF.angka;
+    if (A) [['qv', st.qv], ['pv', st.pv], ['fee', st.fee], ['kv', st.kv], ['pajakV', st.pajakV], ['avg', st.avg]].forEach(function (f) {
+      var g = f[1] ? A.analisis(f[1]).galat : null;
+      if (g && g.jenis !== 'karakter' && (g.pasti || nBlur[f[0]] || st.tried)) nErr[f[0]] = { pesan: g.pesan, perbaiki: g.perbaiki };
+    });
+    var nErrAda = Object.keys(nErr).length;
+    if (nErrAda) { invalid = true; miss.push('angka yang benar'); incomplete = true; }
     var valueText = fA && asetInfo ? (asetInfo.valText || (asetInfo.price != null ? rp(num(q) * asetInfo.price) : '—')) : '—';
     var qtyIdr = fA && asetInfo && asetInfo.price != null ? num(q) * asetInfo.price : null;
     var vm = {
@@ -155,7 +166,7 @@
       dd: dd, dm: dm, dy: dy, hh: hh, mm: mm, isToday: isToday, tglTxt: tglTxt, tglAwal: tglTxt.replace(/ · .*/, ''), tglBtn: 'Pakai ' + (isToday ? 'hari ini' : dd + ' ' + BULAN[dm - 1]) + ' · ' + p2(hh) + '.' + p2(mm),
       cal: cal, kTgl: kTgl,
       sheet: sheet, sq: sq, cat: cat, kat: kat, fam: fam,
-      qErr: qErr, payErr: payErr, invalid: !!invalid, incomplete: !!incomplete, tried: !!st.tried, missing: miss, missOn: !!(st.tried && miss.length), missTxt: 'Lengkapi dulu: ' + miss.join(', ') + '.',
+      qErr: qErr, payErr: payErr, invalid: !!invalid, incomplete: !!incomplete, nErr: nErr, tried: !!st.tried, missing: miss, missOn: !!(st.tried && miss.length), missTxt: 'Lengkapi dulu: ' + miss.join(', ') + '.',
       qMiss: !!(st.tried && !(num(q) > 0)), pMiss: !!(st.tried && isTrade && !String(pv).trim()), kMiss: !!(st.tried && isTrade && cur !== 'IDR' && !(rate > 0)), bal: balTxt0, balTxt: qErr ? 'Melebihi saldo ' + fM + ' di ' + fL + ': ' + balTxt0 + ' ' + unit + '.' : 'Saldo ' + fM + ' di ' + fL + ': ' + (balTxt0 || '—') + ' ' + unit,
       showBalQ: (fJ === 'Jual' || isOut) && !!bal, payNote: payNote, payColor: payErr ? 'var(--loss)' : 'var(--ink-muted)',
       modeHint: awal ? 'Aset yang sudah Anda miliki. Bukan pembelian, jadi tidak memengaruhi untung-rugi.' : (isMoveMem ? 'Saldo pengirim berkurang, penerima bertambah. Lokasinya boleh berbeda.' : HINT[fJ]),
@@ -171,7 +182,7 @@
       fromSum: fM + ' · ' + (fA || '—') + ' · ' + (fL || '—'), toSum: isMoveMem ? fR + ' · ' + fKr : fKr,
       minusTxt: '−' + q + ' ' + unit, plusTxt: '+' + q + ' ' + unit, recNote: recHas ? fKr : fKr + ' · posisi baru', famNote: hasFee ? 'Total harta turun sebesar biaya.' : 'Total harta keluarga tidak berubah.',
       totLabel: isTrade ? (fJ === 'Jual' ? 'Hasil bersih' : 'Total dibayar') : (isIn ? 'Nilai saat ini' : (isOut ? 'Nilai yang keluar' : 'Nilai harta')),
-      totValue: isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? valueText : (isOut ? (qtyIdr != null ? '−' + rp(qtyIdr) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
+      totValue: nErrAda ? '—' : isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? valueText : (isOut ? (qtyIdr != null ? '−' + rp(qtyIdr) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
       foto: st.foto || null, nota: st.nota || '', pajakOn: !!st.pajakOn, pajakV: st.pajakV || '', catatanV: st.catatanV || '', showRecorded: mulai === 'awal-lanjut', avg: st.avg || '',
       anggota: ctx.members, aset: fAs.map(function (x) { return x[0]; }), lokasi: fLs, keLokasi: isMoveMem ? ALL_LOC : toL, keAnggota: others,
       balColor: qErr ? 'var(--loss)' : 'var(--ink-muted)',

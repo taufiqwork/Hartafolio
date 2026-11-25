@@ -64,10 +64,10 @@
       '<button class="hf-chip hf-chip-add" type="button" data-act="open-bayar">' + vm.payMoreL + '</button>') + '<span class="caption" style="color: ' + vm.payColor + ';">' + esc(vm.payNote) + '</span></div>';
     var curs = vm.curTabs.map(function (c) { return { l: c, key: c, pressed: String(vm.curSel === c) }; });
     var price = '<div class="ct-f"><div class="ct-lr"><label for="hrg" class="label ct-m">' + vm.pLabel + '</label>' +
-      (vm.curFree ? mini(curs, 'cur') : '<span class="hf-badge">dalam <span>' + vm.cur + '</span> · ikut alat bayar</span>') + '</div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="' + esc(vm.pv) + '" data-in="pv" style="border-color: ' + (vm.pMiss ? 'var(--loss)' : 'var(--line-strong)') + ';"></div>';
-    var kurs = vm.showKurs ? '<div class="ct-f"><label for="kurs" class="label ct-m">Rp per 1 ' + vm.cur + '</label><div class="ct-kv"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="' + esc(vm.kv) + '" data-in="kv" style="flex: 1; padding: 0 ' + vm.kvPad + ' 0 12px;' + (vm.kMiss ? ' border-color: var(--loss);' : '') + '">' +
+      (vm.curFree ? mini(curs, 'cur') : '<span class="hf-badge">dalam <span>' + vm.cur + '</span> · ikut alat bayar</span>') + '</div><input class="hf-input hf-input-num" id="hrg" type="text" inputmode="decimal" value="' + esc(vm.pv) + '" data-in="pv" style="border-color: ' + (vm.pMiss || vm.nErr.pv ? 'var(--loss)' : 'var(--line-strong)') + ';"></div>';
+    var kurs = vm.showKurs ? '<div class="ct-f"><label for="kurs" class="label ct-m">Rp per 1 ' + vm.cur + '</label><div class="ct-kv"><input class="hf-input hf-input-num" id="kurs" type="text" inputmode="decimal" value="' + esc(vm.kv) + '" data-in="kv" style="flex: 1; padding: 0 ' + vm.kvPad + ' 0 12px;' + (vm.kMiss || vm.nErr.kv ? ' border-color: var(--loss);' : '') + '">' +
       (vm.kvManual ? '<button type="button" class="ct-kv-reset" data-act="reset-kv" aria-label="Kembali ke kurs otomatis" title="Kembali ke kurs otomatis">' + svg(['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8', 'M3 3v5h5'], 18) + '</button>' : '') +
-      '</div><span class="caption ct-m ct-live">' + (vm.kvLive ? '<span class="hf-live" aria-hidden="true"></span>' : '') + esc(vm.kursNote) + '</span></div>' : '';
+      '</div><span class="caption ct-m ct-live">' + (vm.kvLive ? '<span class="hf-live" aria-hidden="true"></span>' : '') + esc(vm.kursNote) + '</span>' + (vm.nErr.kv ? galat('kv', vm.nErr.kv) : '') + '</div>' : '';
     var fee = '<div class="ct-fee" style="grid-template-columns: ' + (vm.showKurs ? 'repeat(2, minmax(0, 1fr))' : '1fr') + ';"><div class="ct-f"><label for="biaya" class="label ct-m">Biaya (opsional)</label><input class="hf-input hf-input-num" id="biaya" type="text" inputmode="decimal" value="' + esc(vm.fee) + '" data-in="fee"><span class="caption ct-m">dalam ' + vm.cur + '</span></div>' + kurs + '</div>';
     return payRow + price + fee;
   }
@@ -102,6 +102,21 @@
       '<div class="ct-f"><label for="catatan" class="label ct-m">Catatan (opsional)</label><textarea class="hf-input ct-note" id="catatan" rows="3" placeholder="Contoh: beli saat harga turun" data-in="catatanV">' + esc(vm.catatanV) + '</textarea><span class="caption ct-m">Hanya terlihat di Riwayat.</span></div>';
   }
 
+  /* Galat penulisan angka: pesan merah di bawah kolom, dan tombol usulan perbaikan bila ada. */
+  function galat(k, e) {
+    return '<div class="ct-ne" role="alert"><span class="caption ct-err">' + esc(e.pesan) + '</span>' + (e.perbaiki ? '<button type="button" class="ct-fix" data-act="fix-num" data-f="' + k + '">Ubah jadi ' + esc(e.perbaiki) + '</button>' : '') + '</div>';
+  }
+  function withErrors(h, vm) {
+    Object.keys(vm.nErr).filter(function (k) { return k !== 'kv'; }).forEach(function (k) {
+      var re = new RegExp('(<input[^>]*data-in="' + k + '"[^>]*>)');
+      h = h.replace(re, function (m) {
+        var tag = /aria-invalid/.test(m) ? m : m.replace('data-in="' + k + '"', 'data-in="' + k + '" aria-invalid="true"');
+        return tag + galat(k, vm.nErr[k]);
+      });
+    });
+    return h;
+  }
+
   function main(vm) {
     var h = '';
     if (vm.showJenis) h += toggle(['Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah'].map(function (l) { return { l: l, key: l, pressed: String(vm.fJ === l) }; }), 5, 'jenis');
@@ -111,12 +126,12 @@
     h += vm.isMove ? moveCards(vm) : pick(vm);
     if (vm.showAsal) h += group(vm.asalLabel, wrap(vm.asalList.map(function (n) { return chip(n, n === vm.fS, 'asal'); }).join('')));
     if (vm.showTgl) h += dateBtn('tglL', 'Tanggal', vm.tglTxt);
-    h += '<div class="ct-f"><label for="jml" class="label ct-m">' + esc(vm.qLabel) + '</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="' + esc(vm.q) + '" data-in="qv" aria-invalid="' + (vm.qErr || vm.qMiss) + '" style="border-color: ' + (vm.qErr || vm.qMiss ? 'var(--loss)' : 'var(--line-strong)') + ';">' +
+    h += '<div class="ct-f"><label for="jml" class="label ct-m">' + esc(vm.qLabel) + '</label><input class="hf-input hf-input-num" id="jml" type="text" inputmode="decimal" value="' + esc(vm.q) + '" data-in="qv" aria-invalid="' + (vm.qErr || vm.qMiss || !!vm.nErr.qv) + '" style="border-color: ' + (vm.qErr || vm.qMiss || vm.nErr.qv ? 'var(--loss)' : 'var(--line-strong)') + ';">' +
       (vm.showBalQ ? '<span class="caption" style="color: ' + vm.balColor + ';">' + esc(vm.balTxt) + '</span>' : '') + '</div>';
     if (vm.isTrade) h += tradeBlock(vm);
     if (vm.isMove) h += moveFee(vm);
     if (vm.awal) h += awalBlock(vm);
-    return h + proof(vm);
+    return withErrors(h + proof(vm), vm);
   }
 
   function footer(vm) {
