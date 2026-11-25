@@ -28,7 +28,7 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 3. Tiap putaran: baca board dan kumpulkan pertanyaan dulu; sumber board dari `reference/mockups/src` (segarkan dari artifact); skenario piksel semua state termasuk animasi; merge; deploy.
 4. Detail Riwayat untuk Zakat, Pinjamkan, Cicilan, Pelunasan hanya tampilan (data contoh) sampai Tahap 7.
 
-**Putaran A, B, C Catat selesai (25 Nov 2026), lihat CHANGELOG.** Kolom `alat_bayar_lokasi_id` sudah dibangun (skema v2; Ticon perlu menjalankan Siapkan sheet sekali). Berikutnya: board foto/pajak/catatan, putaran D (Riwayat), E (Ubah, hapus, pulihkan, Beranda dari data nyata).
+**Putaran A, B, C Catat selesai (25 Nov 2026), lihat CHANGELOG.** Kolom `alat_bayar_lokasi_id` sudah dibangun (skema v2; migrasi terverifikasi di Sheet uji 25 Nov). Berikutnya: board foto/pajak/catatan, putaran D (Riwayat), E (Ubah, hapus, pulihkan, Beranda dari data nyata).
 
 ## Beranda: keputusan Ticon (25 Nov 2026), baca sebelum membangun
 1. **Pakai data contoh (demo) yang bisa dihapus**, jangan menyembunyikan fitur utama. Beranda harus tampil penuh seperti mockup: total, grafik kecil, "dari Okt", baris dolar, donut, daftar, kartu Harga terkini, banner zakat/piutang, lonceng.
