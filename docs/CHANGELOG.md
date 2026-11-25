@@ -180,3 +180,8 @@
 ## 25 Nov 2026 · Kolom 29 hilang dari Sheet Transaksi (laporan Ticon)
 - **Laporan:** Sheet Transaksi error; kolom ke-29 `alat_bayar_lokasi_id` hilang dan tidak muncul lagi walau Siapkan sheet dijalankan. **Penyebab belum diketahui**: tidak ada kode di Hartafolio yang menghapus kolom (dicari: tidak ada `deleteColumn`, `clear`, atau hapus). Dugaan: perubahan dari luar (hapus kolom, atau Sheet lain yang terhubung). Perlu isi pesan galat dan hasil menu Periksa struktur untuk memastikan.
 - **Ketahanan:** `Repo_checkHeader_` kini melengkapi sendiri kolom kanan yang kosong (menulis header, melebarkan grid, membuat ulang perlindungan header) alih-alih berhenti. Header tengah yang rusak tetap berhenti dengan pesan. Uji ditambah (74).
+
+## 25 Nov 2026 · Menu Perbaiki header dan laporan struktur yang lebih rinci
+- **Laporan Ticon:** Periksa struktur menyebut Transaksi tidak cocok di kolom 29, Siapkan sheet tidak memperbaikinya, dan web app berhenti dengan "Header tab Transaksi berubah (kolom 29...)". Penyebab yang mungkin: sel header kolom 29 berisi teks lain (bukan kosong), sehingga perbaikan otomatis (hanya untuk sel kosong) dan Siapkan sheet sengaja berhenti.
+- **Alat baru:** Periksa struktur kini menulis isi sel yang salah, nilai yang diharapkan, dan ukuran grid. Menu baru Hartafolio › Perbaiki header menulis ulang HANYA sel baris 1 yang tidak cocok (dengan konfirmasi Ya/Tidak); data di bawahnya tidak disentuh dan perlindungan header dibuat ulang. Uji (75): sel salah tulis, data utuh, idempoten.
+- **BELUM TERVERIFIKASI di Google:** menu baru dan penulisan header di Sheet sungguhan.
