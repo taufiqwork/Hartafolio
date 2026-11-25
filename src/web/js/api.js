@@ -102,6 +102,7 @@
       var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', status: 'aktif' };
       s.aset.push(a); save(); return Promise.resolve(a);
     },
+    apiBuktiUnggah: function (trxId) { return Promise.resolve({ url: 'https://drive.google.com/file/d/dev-' + trxId + '/view' }); },
     apiSetupSelesai: function () {
       var s = load(); s.pengaturan.setup_selesai = 'ya'; save(); return Promise.resolve(true);
     }

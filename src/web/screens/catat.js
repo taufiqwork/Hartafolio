@@ -7,9 +7,12 @@
 
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
+    if (ctx.demo && mulai === 'foto-terlampir') st = { foto: { ok: true, nama: 'nota-binance.jpg', kb: 184 } };
+    if (ctx.demo && mulai === 'foto-gagal') st = { foto: { ok: false } };
     if (ctx.demo && (mulai === 'pajak-catatan' || mulai === 'pajak-terisi')) st = mulai === 'pajak-terisi' ? { pajakOn: true, pajakV: '0,05', catatanV: 'Beli saat harga turun, sesuai rencana bulanan.' } : { pajakOn: true };
     el.innerHTML = '<div class="ct" data-theme="light">' + V.header({ title: 'Catat transaksi' }) + '<main class="hf-scroll ct-main" id="screen"></main><footer class="ct-foot"></footer><div class="ct-over"></div></div>';
     var $ = function (s) { return el.querySelector(s); }, title = $('.ct-title'), main = $('.ct-main'), foot = $('.ct-foot'), over = $('.ct-over');
+    var photo = null; // foto terpilih (berisi base64) untuk diunggah sesudah simpan
     var wait = []; // simpanan ke server yang masih jalan (lokasi/aset baru): Simpan menunggu id-nya
     function seedForm() { // keadaan awal form Lokasi baru dari board (hanya data contoh)
       fm = { k: 'lokasi', mode: 'tambah', v: ctx.demo && mulai === 'lokasi-baru' ? { nama: 'Indodax', jenis: 'Exchange crypto' } : { nama: '', jenis: null }, pk: null };
@@ -37,6 +40,9 @@
       pay: function (v) { st = C.reduce(st, 'pay', v); }, cur: function (v) { st = C.reduce(st, 'cur', v); }, fu: function (v) { st = C.reduce(st, 'fu', v); },
       'ke-anggota': function (v) { st = C.reduce(st, 'keAnggota', v); },
       'ke-lokasi': function (v) { st = Object.assign({}, st, vm.isMoveMem ? { fKa: v } : { fK: v }); },
+      'open-foto': function () { st = Object.assign({}, st, { sheet: 'foto' }); },
+      'del-foto': function () { photo = null; st = Object.assign({}, st, { foto: null }); },
+      'pick-cam': function () { pickFoto(true); }, 'pick-gal': function () { pickFoto(false); },
       'toggle-pajak': function () { st = Object.assign({}, st, { pajakOn: !st.pajakOn }); },
       'open-tgl': function () { st = Object.assign({}, st, { sheet: 'tgl' }); },
       'close-tgl': function () { st = Object.assign({}, st, { sheet: null, pv: undefined }); },
@@ -64,9 +70,16 @@
       save: function () {
         if (vm.invalid) return;
         if (vm.incomplete) { st = Object.assign({}, st, { tried: true }); return; }
-        Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx); });
+        Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx, photo); });
       }
     };
+    function pickFoto(kamera) {
+      HF.foto.pilih(kamera, function (r) {
+        if (r.ok) { photo = r; st = Object.assign({}, st, { sheet: null, foto: { ok: true, nama: r.nama, kb: r.kb, thumb: 'data:image/jpeg;base64,' + r.base64 } }); }
+        else { photo = null; st = Object.assign({}, st, { sheet: null, foto: { ok: false } }); }
+        draw();
+      });
+    }
     function saveLokasi() {
       var nama = String(fm.v.nama || '').trim(); if (!nama || !fm.v.jenis) return;
       var upd = { nl: (st.nl || []).concat([nama]), sheet: null }; if (st.lt === 'to') { if (vm.isMoveMem) upd.fKa = nama; else upd.fK = nama; } else upd.fL = nama;

@@ -19,10 +19,10 @@
     Masuk: 'Datang dari luar tanpa dibeli, misalnya hadiah atau warisan.', Keluar: 'Pergi ke luar tanpa dijual, misalnya hadiah atau sedekah.',
     Pindah: 'Antar lokasi atau anggota. Total harta tetap, kecuali biaya.' };
   var JENIS_MULAI = { 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli',
-    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli' };
+    jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
   var INIT = { 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' },
     'bayar-bybit': { pay: 'USDT@Bybit' }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' },
-    'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' } };
+    'foto-pilih': { sheet: 'foto' }, 'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' } };
 
   function num(x) { return parseFloat(String(x).replace(/\./g, '').replace(',', '.')); }
   function fmt(n, d) { return (isFinite(n) ? n : 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d }); }
@@ -163,7 +163,7 @@
       minusTxt: '−' + q + ' ' + unit, plusTxt: '+' + q + ' ' + unit, recNote: recHas ? fKr : fKr + ' · posisi baru', famNote: hasFee ? 'Total harta turun sebesar biaya.' : 'Total harta keluarga tidak berubah.',
       totLabel: isTrade ? (fJ === 'Jual' ? 'Hasil bersih' : 'Total dibayar') : (isIn ? 'Nilai saat ini' : (isOut ? 'Nilai yang keluar' : 'Nilai harta')),
       totValue: isTrade ? (cur === 'IDR' ? rp(net) : curTxt(net) + ' · ' + rp(net * rate)) : (isIn ? valueText : (isOut ? (qtyIdr != null ? '−' + rp(qtyIdr) : '—') : (hasFee ? '−Rp ' + fee : 'Tidak berubah'))),
-      pajakOn: !!st.pajakOn, pajakV: st.pajakV || '', catatanV: st.catatanV || '', showRecorded: mulai === 'awal-lanjut', avg: st.avg || '',
+      foto: st.foto || null, nota: st.nota || '', pajakOn: !!st.pajakOn, pajakV: st.pajakV || '', catatanV: st.catatanV || '', showRecorded: mulai === 'awal-lanjut', avg: st.avg || '',
       anggota: ctx.members, aset: fAs.map(function (x) { return x[0]; }), lokasi: fLs, keLokasi: isMoveMem ? ALL_LOC : toL, keAnggota: others,
       balColor: qErr ? 'var(--loss)' : 'var(--ink-muted)',
       catChips: ['Semua', 'Crypto', 'Saham', 'Emas', 'Mata uang'], byGroups: [
