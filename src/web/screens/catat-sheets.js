@@ -53,6 +53,14 @@
       '<div class="ct-sheet-cta"><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" data-act="close-sheet">Batal</button></div></section>';
   }
 
+  var CAM48 = svg(['M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z'], 48).replace('</svg>', '<circle cx="12" cy="13" r="3"></circle></svg>');
+  /** Kamera terbuka (Ambil foto di komputer). live = true bila aliran kamera tersambung (elemen video); kalau tidak, ikon penanda. */
+  function kamera(live) {
+    return '<section class="ct-cam" role="dialog" aria-label="Ambil foto"><div class="ct-cam-top"><span class="heading ct-cam-h">Ambil foto</span><button type="button" class="ct-cam-x" aria-label="Tutup kamera" data-act="close-kam">' + svg(['M18 6 6 18', 'm6 6 12 12'], 20) + '</button></div>' +
+      '<div class="ct-cam-view">' + (live ? '<video class="ct-cam-video" autoplay playsinline muted></video>' : CAM48) + '</div>' +
+      '<div class="ct-cam-bar"><span class="caption ct-cam-cap">Arahkan ke nota atau struk, lalu ketuk lingkaran.</span><button type="button" class="ct-cam-shot" aria-label="Ambil foto" data-act="shutter"><span></span></button></div></section>';
+  }
+
   /** HTML lembar yang terbuka (kosong bila tidak ada). form = hasil HF.setupForm.render untuk Lokasi baru / Aset manual, atau ''. */
   function sheets(vm, form) {
     var s = vm.sheet;
@@ -65,5 +73,5 @@
   }
 
   root.HF = root.HF || {};
-  root.HF.catatSheets = { sheets: sheets };
+  root.HF.catatSheets = { sheets: sheets, kamera: kamera };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

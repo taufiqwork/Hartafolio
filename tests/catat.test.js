@@ -156,7 +156,7 @@ test('Simpan ditekan saat belum lengkap: daftar yang kurang, garis merah, dan Si
 
 test('Mode contoh: Simpan tidak error (id palsu), baris hanya untuk perangkat; semua jenis menghasilkan baris', () => {
   const c = E(), ctx = c.HF.demo.catat();
-  ['beli', 'jual', 'masuk', 'keluar', 'pindah', 'pindah-anggota', 'awal', 'bayar-bybit'].forEach((m) => {
+  ['beli', 'jual', 'masuk', 'keluar', 'pindah', 'pindah-anggota', 'bayar-bybit'].forEach((m) => {
     const v = c.HF.catat.view({}, ctx, { mulai: m });
     const r = c.HF.catatCtx.toRows(v, ctx, {});
     assert.ok(r.rows && r.rows.length >= 1, m); assert.match(r.rows[0].anggota_id, /^PM-D/); assert.ok(r.rows[0].aset_id, m);

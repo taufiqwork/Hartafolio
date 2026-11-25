@@ -34,6 +34,20 @@
     i.click();
   }
 
+  /** Ada layar sentuh (HP)? Di HP atribut capture membuka kamera bawaan; di komputer atribut itu diabaikan, jadi kita buka kamera sendiri. */
+  function sentuh() { return !!(root.matchMedia && root.matchMedia('(pointer: coarse)').matches); }
+  function bisaKamera() { return !!(root.navigator && root.navigator.mediaDevices && root.navigator.mediaDevices.getUserMedia); }
+  function mulaiKamera() { return root.navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false }); }
+  function berhenti(stream) { if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); }
+  /** Ambil satu gambar dari elemen video, lalu lewati pemeriksaan dan pengecilan yang sama dengan foto dari berkas. */
+  function jepret(video) {
+    return new Promise(function (resolve) {
+      var c = root.document.createElement('canvas'); c.width = video.videoWidth || 1280; c.height = video.videoHeight || 720;
+      c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+      c.toBlob(function (b) { if (!b) return resolve({ ok: false, alasan: 'baca' }); b.name = 'kamera.jpg'; prepare(new root.File([b], 'kamera.jpg', { type: 'image/jpeg' })).then(resolve); }, 'image/jpeg', 0.9);
+    });
+  }
+
   root.HF = root.HF || {};
-  root.HF.foto = { prepare: prepare, pilih: pilih, MAX_BYTES: MAX_BYTES };
+  root.HF.foto = { sentuh: sentuh, bisaKamera: bisaKamera, mulaiKamera: mulaiKamera, berhenti: berhenti, jepret: jepret, prepare: prepare, pilih: pilih, MAX_BYTES: MAX_BYTES };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

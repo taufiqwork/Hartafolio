@@ -69,7 +69,7 @@ export const catatActions = [
   ACT('@x-beli-lokasi-lain', '04-Catat', 'beli', KLIK('Bybit'))
 ];
 // Boards foto dan pajak (dibuat 25 Nov, 05.u sampai 05.y). Keadaan awal = prop mulai board.
-export const catatBukti = [['-2t-Foto-Pilih', 'foto-pilih', false], ['-2u-Foto-Terlampir', 'foto-terlampir', true], ['-2v-Foto-Gagal', 'foto-gagal', true], ['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
+export const catatBukti = [['-2t-Foto-Pilih', 'foto-pilih', false], ['-2z-Foto-Kamera', 'foto-kamera', false], ['-2u-Foto-Terlampir', 'foto-terlampir', true], ['-2v-Foto-Gagal', 'foto-gagal', true], ['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
   .map(([id, mulai, gulir]) => CT(id, mulai, gulir ? { boardJs: SCROLL, js: SCROLL, deviasi: [] } : {}));
 // Toast foto di Beranda (boards Main-2s dan Main-2t, dibuat 25 Nov).
 export const berandaFoto = [{ id: 'Main-2s-Foto-Gagal', board: 'Main-2s-Foto-Gagal', query: 'demo=foto-gagal' }, { id: 'Main-2t-Foto-Terunggah', board: 'Main-2t-Foto-Terunggah', query: 'demo=foto-terunggah' }];
