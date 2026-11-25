@@ -275,3 +275,20 @@ test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perl
   g.sheets.Transaksi.cells[0][3] = 'salah'; // kolom tengah rusak: bukan kasus kolom kanan
   assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/);
 });
+
+test('Perbaiki header: menulis ulang hanya sel header yang salah, data utuh; laporan menyebut isi sel dan ukuran grid', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  g.sheets.Transaksi.cells[0][28] = 'Alat Bayar Lokasi'; // sel header salah tulis (bukan kosong)
+  assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/);
+  const lap = JSON.parse(JSON.stringify(g.run('Setup_laporan_()')));
+  assert.match(lap.find(x => /^Transaksi/.test(x)), /kolom 29 berisi "Alat Bayar Lokasi", seharusnya "alat_bayar_lokasi_id"/);
+  const out = JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()')));
+  assert.match(out.join('|'), /Transaksi: header diperbaiki di kolom 29/);
+  assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
+  assert.equal(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`))).length, 1); // data utuh
+  assert.equal(g.sheets.Transaksi.protections.length, 1);
+  assert.deepEqual(JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()'))), ['Semua header sudah cocok']);
+});

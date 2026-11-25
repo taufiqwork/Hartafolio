@@ -7,6 +7,7 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('Hartafolio')
     .addItem('Siapkan sheet', 'setupHartafolio')
     .addItem('Periksa struktur', 'periksaStruktur')
+    .addItem('Perbaiki header', 'perbaikiHeader')
     .addToUi();
 }
 
@@ -84,15 +85,46 @@ function Setup_seedAset_() {
   Repo_append_('Aset', baru);
 }
 
-/** Laporan struktur untuk menu: header tiap tab dan versi skema. */
+/** Laporan struktur untuk menu: tiap tab, isi sel header yang salah, dan ukuran grid. */
 function periksaStruktur() {
+  var out = Setup_laporan_();
+  SpreadsheetApp.getUi().alert(out.join('\n'));
+  return out;
+}
+
+function Setup_laporan_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet(), out = [];
   HF.schema.URUTAN.forEach(function (tab) {
     var sh = ss.getSheetByName(tab);
     if (!sh) { out.push(tab + ': TIDAK ADA'); return; }
     var r = HF.schema.checkHeader(tab, sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), HF.schema.colNames(tab).length)).getValues()[0]);
-    out.push(tab + ': ' + (r.ok ? 'ok' : 'header tidak cocok di kolom ' + r.mismatches[0].col));
+    out.push(tab + ': ' + (r.ok ? 'ok' : r.mismatches.slice(0, 3).map(function (m) { return 'kolom ' + m.col + ' berisi "' + m.got + '", seharusnya "' + m.want + '"'; }).join('; ') + ' (kolom terpakai ' + sh.getLastColumn() + ', ukuran ' + sh.getMaxColumns() + ')'));
   });
-  SpreadsheetApp.getUi().alert(out.join('\n'));
   return out;
+}
+
+/**
+ * Perbaiki header yang tidak cocok dengan skema: HANYA sel baris 1 yang ditulis ulang; data di bawahnya tidak disentuh.
+ * Dipakai bila sebuah kolom di kanan hilang atau salah tulis dan Siapkan sheet tidak memperbaikinya.
+ */
+function Setup_perbaikiHeader_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet(), S = HF.schema, laporan = [];
+  S.URUTAN.forEach(function (tab) {
+    var sh = ss.getSheetByName(tab); if (!sh) return;
+    var names = S.colNames(tab);
+    Repo_ensureGrid_(sh, sh.getMaxRows(), names.length);
+    var r = S.checkHeader(tab, sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), names.length)).getValues()[0]);
+    if (r.ok) return;
+    r.mismatches.forEach(function (m) { sh.getRange(1, m.col, 1, 1).setValue(m.want); });
+    Setup_dropProtection_(sh); Setup_protectHeader_(sh, tab);
+    laporan.push(tab + ': header diperbaiki di kolom ' + r.mismatches.map(function (m) { return m.col; }).join(', '));
+  });
+  return laporan.length ? laporan : ['Semua header sudah cocok'];
+}
+
+function perbaikiHeader() {
+  var ui = SpreadsheetApp.getUi(), lap = Setup_laporan_().filter(function (x) { return !/: ok$/.test(x); });
+  if (!lap.length) { ui.alert('Semua header sudah cocok.'); return []; }
+  if (ui.alert('Perbaiki header?', 'Yang tidak cocok:\n' + lap.join('\n') + '\n\nHanya baris judul (baris 1) yang ditulis ulang. Data tidak diubah.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return [];
+  var out = Setup_perbaikiHeader_(); ui.alert(out.join('\n')); return out;
 }
