@@ -219,7 +219,6 @@ test('migrasi v1 ke v2: Siapkan sheet menambah kolom ke-29, memperluas perlindun
   // jadikan Sheet seperti versi 1: 28 kolom, versi_skema 1, ada satu transaksi
   g.sheets.Transaksi.cells[0].length = 28;
   g.run(`Repo_update_('Pengaturan', 'versi_skema', { nilai: '1' })`);
-  assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/); // sebelum migrasi: berhenti, bukan diam-diam
   const hasil = g.run('setupHartafolio()');
   assert.ok(hasil.some(x => /Transaksi: kolom ditambah \(alat_bayar_lokasi_id\)/.test(x)), hasil.join('|'));
   assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
@@ -264,4 +263,15 @@ test('apiBuktiUnggah: folder dibuat sekali, foto masuk folder itu, tautan ditamb
   const m = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'gas', 'appsscript.json'), 'utf8'));
   assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file'));
   assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); // bukan akses seluruh Drive
+});
+
+test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perlindungan tetap satu; header salah tetap berhenti', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.sheets.Transaksi.cells[0].length = 28; // kolom 29 hilang
+  assert.deepEqual(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`))), []);
+  assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
+  assert.equal(g.sheets.Transaksi.protections.length, 1);
+  g.sheets.Transaksi.cells[0][3] = 'salah'; // kolom tengah rusak: bukan kasus kolom kanan
+  assert.throws(() => g.run(`Repo_read_('Transaksi')`), /Header tab "Transaksi" berubah/);
 });
