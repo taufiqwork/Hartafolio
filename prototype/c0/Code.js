@@ -31,3 +31,29 @@ function apiTulis() {
   var h = C0_ss_(); h.ss.getSheetByName('Transaksi').appendRow(['TX-' + Date.now(), new Date().toISOString().slice(0, 10), Math.round(Math.random() * 100), Session.getActiveUser().getEmail()]);
   return C0_ringkas_(h);
 }
+
+/* ===== E0: dipanggil dari halaman di luar Apps Script lewat Apps Script API (scripts.run), berjalan sebagai pemanggil ===== */
+
+/** Pasang tugas terjadwal uji untuk pemanggil: tiap 1 menit menambah satu baris di Sheet-nya. Membuktikan tugas jalan tanpa halaman terbuka. */
+function apiPasangTugas() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'tugasUji') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('tugasUji').timeBased().everyMinutes(1).create();
+  return { terpasang: ScriptApp.getProjectTriggers().filter(function (t) { return t.getHandlerFunction() === 'tugasUji'; }).length, email: Session.getActiveUser().getEmail() };
+}
+
+function apiHentikanTugas() {
+  var n = 0; ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'tugasUji') { ScriptApp.deleteTrigger(t); n++; } });
+  return { dihentikan: n };
+}
+
+/** Dijalankan Google sesuai jadwal, sebagai pemilik pemicu. Halaman tidak perlu terbuka. */
+function tugasUji() {
+  var h = C0_ss_();
+  h.ss.getSheetByName('Transaksi').appendRow(['TERJADWAL-' + Date.now(), new Date().toISOString().slice(0, 10), 0, 'tugas terjadwal']);
+}
+
+/** Sepuluh baris terakhir, untuk halaman uji. */
+function apiBaris() {
+  var h = C0_ss_(), sh = h.ss.getSheetByName('Transaksi'), n = sh.getLastRow(), dari = Math.max(2, n - 9);
+  return { email: Session.getActiveUser().getEmail(), url: h.ss.getUrl(), baris: n > 1 ? sh.getRange(dari, 1, n - dari + 1, 4).getValues() : [] };
+}
