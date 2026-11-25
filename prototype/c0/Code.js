@@ -72,3 +72,12 @@ function apiBaris() {
   var h = C0_ss_(), sh = h.ss.getSheetByName('Transaksi'), n = sh.getLastRow(), dari = Math.max(2, n - 9);
   return { email: Session.getActiveUser().getEmail(), url: h.ss.getUrl(), baris: n > 1 ? sh.getRange(dari, 1, n - dari + 1, 4).getValues() : [] };
 }
+
+/** Diagnosa izin skrip untuk pemanggil: status, tautan izin (bila perlu), dan izin yang sudah ada. */
+function apiAutorisasi() {
+  var i = ScriptApp.getAuthorizationInfo(ScriptApp.AuthMode.FULL), st = i.getAuthorizationStatus();
+  var out = { status: String(st), diperlukan: st === ScriptApp.AuthorizationStatus.REQUIRED, url: null, email: Session.getActiveUser().getEmail() };
+  if (out.diperlukan) { try { out.url = i.getAuthorizationUrl(); } catch (e) { out.url = 'galat: ' + e.message; } }
+  try { out.izinSkrip = ScriptApp.getOAuthToken() ? 'ada token' : 'tidak ada'; } catch (e) { out.izinSkrip = 'galat: ' + e.message; }
+  return out;
+}

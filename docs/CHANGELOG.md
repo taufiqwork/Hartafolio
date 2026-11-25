@@ -211,3 +211,10 @@
 ## 26 Nov 2026 · Hasil E0 dan diagnosa tugas terjadwal
 - **Terbukti:** tombol "Masuk dengan akun Google" di halaman biasa membuka pemilih akun standar (semua akun tampil, tanpa masalah banyak akun); layar izin memuat Sheets dan "run when you are not present"; `scripts.run` berjalan sebagai pengguna (Sheet milik akunnya); pemicu terjadwal yang dipasang lewat halaman dimiliki akun pengguna dan berjalan tiap menit tanpa halaman terbuka. Waktu panggilan 3 sampai 4,5 detik; token ±60 menit dan masuk ulang tiap halaman dibuka.
 - **Belum berhasil:** semua jalan `tugasUji` Failed dengan durasi 0 detik tanpa pesan galat di editor. Dugaan: izin skrip untuk pemicu (berbeda dari izin klien OAuth halaman). Ditambah pencatatan tahap di `tugasUji` dan `apiStatusTugas` (tombol "Status tugas") untuk memisahkan: kode tidak sempat jalan (izin skrip) vs gagal akses Sheet.
+
+## 26 Nov 2026 · E0: penyebab tugas terjadwal gagal ditemukan
+- **Cara:** `clasp logs` (dengan nomor proyek Cloud di `.clasp.json` lokal, tidak masuk git) membaca log proyek. Setiap menit `tugasUji` gagal dengan: "We're sorry, a server error occurred while reading from storage. Error code PERMISSION_DENIED".
+- **Artinya:** pemilik pemicu ("Other user", akun uji) tidak punya hak membaca berkas proyek skrip, sehingga Google tidak bisa memuat kodenya saat pemicu berjalan. Bukan masalah izin OAuth (status izin skrip `NOT_REQUIRED`, pemicu yang dipasang dari web app pun gagal sama).
+- **Uji yang menyingkirkan penyebab lain:** pemicu dipasang lewat Execution API dan lewat web app (dijalankan sebagai pengguna): keduanya gagal, jejak `tugas.mulai` kosong. Status izin skrip untuk pemanggil `NOT_REQUIRED`. Kode `tugasUji` tidak sempat berjalan.
+- **Dugaan yang diuji berikutnya:** berkas proyek perlu dibagikan ke pengguna (Viewer, atau "siapa saja dengan tautan"). Bila benar, Jalan 2 dan hibrida sama-sama mensyaratkan kode proyek pusat dibuka untuk dibaca; Jalan 1 (salinan milik keluarga) tidak terkena.
+- Penambahan fungsi diagnosa (`apiAutorisasi`, tombol di halaman E0 dan web app percobaan) ikut dicatat.

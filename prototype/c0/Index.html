@@ -5,12 +5,14 @@ h1{font-size:24px;margin:0 0 8px}p{color:#5b665f;line-height:1.5}button{font:inh
 pre{background:#fff;border:1px solid #d8ddd5;border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-all}a{color:#1f6b4f}</style></head>
 <body><h1>Hartafolio · percobaan C0</h1>
 <p>Halaman uji. Tekan Mulai: aplikasi membuat Google Sheet di Drive Anda (bila belum ada), lalu Anda bisa menulis satu baris uji.</p>
-<button id="a">Mulai</button><button id="b" disabled>Tulis satu baris uji</button>
+<button id="a">Mulai</button><button id="b" disabled>Tulis satu baris uji</button><br><button id="c">Pasang tugas (1 menit)</button><button id="d">Status tugas</button><button id="e">Izin skrip</button>
 <pre id="o">Belum dimulai.</pre>
 <script>
 var out=document.getElementById('o'),a=document.getElementById('a'),b=document.getElementById('b');
 function tampil(r){out.innerHTML='Akun: '+r.email+'\nSheet baru dibuat sekarang: '+(r.dibuatSekarang?'ya':'tidak (dipakai ulang)')+'\nJumlah baris uji: '+r.baris+'\nWaktu: '+r.waktu+'\n<a href="'+r.url+'" target="_blank">Buka Sheet saya</a>';out.style.whiteSpace='pre-wrap';b.disabled=false}
 function gagal(e){out.textContent='GALAT: '+(e&&e.message||e)}
 a.onclick=function(){out.textContent='Memuat…';google.script.run.withSuccessHandler(tampil).withFailureHandler(gagal).apiMulai()};
+function nanti(fn){out.textContent='Memanggil '+fn+'…';google.script.run.withSuccessHandler(function(r){out.textContent=fn+': '+JSON.stringify(r,null,1)}).withFailureHandler(gagal)[fn]()}
+document.getElementById('c').onclick=function(){nanti('apiPasangTugas')};document.getElementById('d').onclick=function(){nanti('apiStatusTugas')};document.getElementById('e').onclick=function(){nanti('apiAutorisasi')};
 b.onclick=function(){out.textContent='Menulis…';google.script.run.withSuccessHandler(tampil).withFailureHandler(gagal).apiTulis()};
 </script></body></html>
