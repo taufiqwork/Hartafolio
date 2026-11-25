@@ -108,6 +108,29 @@ test('Bayar dari lokasi lain di data nyata: boleh, baris membawa alat_bayar_loka
   assert.equal(b[c.HF.ledger.key('PM-001', 'AS-USDT', 'LK-002')], 500 - 400);
 });
 
+test('Biaya Pindah dalam Rupiah: Keluar (Biaya) dari aset yang dipindah = Rp dibagi harga; tanpa harga ditandai belum lengkap', () => {
+  const trx = [{ trx_id: 'TX-1', tanggal: '2026-11-20', jenis: 'Saldo awal', anggota_id: 'PM-001', aset_id: 'AS-EMAS', lokasi_id: 'LK-002', jumlah: 10, status: 'aktif' }];
+  const mk = (harga) => { const c = E(); const s = JSON.parse(JSON.stringify(STATE)); s.aset = c.HF.catalog.all(); s.transaksi = trx; s.harga = harga; return { c, ctx: c.HF.catatCtx.fromState(s, { y: 2026, m: 11, d: 25, hh: 9, mm: 5 }) }; };
+  const st = { fJ: 'Pindah', fA: 'Emas fisik', fL: 'Brankas', fK: 'Binance', qv: '2', fee: '47.600' };
+  const sans = mk({ terakhir: {}, kursSeries: [] });
+  const v0 = sans.c.HF.catat.view(st, sans.ctx, { mulai: 'pindah' });
+  assert.equal(v0.incomplete, true); assert.match(v0.feeNote, /belum ada/);
+  assert.equal(sans.c.HF.catatCtx.toRows(v0, sans.ctx, {}).error, 'biaya-rupiah');
+  const ada = mk({ terakhir: { 'AS-EMAS': { harga: 2380000, mata_uang: 'IDR' } }, kursSeries: [] });
+  const v = ada.c.HF.catat.view(st, ada.ctx, { mulai: 'pindah' });
+  assert.equal(v.incomplete, false);
+  const rows = ada.c.HF.catatCtx.toRows(v, ada.ctx, {}).rows;
+  assert.equal(rows.length, 2); assert.equal(rows[0].jenis, 'Pindah'); assert.equal(rows[1].jenis, 'Keluar');
+  assert.equal(rows[1].jumlah, 0.02); assert.equal(rows[1].asal_alasan, 'Biaya'); assert.equal(rows[1].lokasi_id, 'LK-002'); assert.equal(rows[1].lokasi_tujuan_id, undefined);
+  const all = rows.map((r, i) => Object.assign(r, { trx_id: 'TX-9' + i, status: 'aktif' }));
+  const b = ada.c.HF.ledger.balances(trx.concat(all));
+  assert.equal(b[ada.c.HF.ledger.key('PM-001', 'AS-EMAS', 'LK-002')], 10 - 2 - 0.02);
+  assert.equal(b[ada.c.HF.ledger.key('PM-001', 'AS-EMAS', 'LK-001')], 2);
+  // biaya dalam satuan aset tidak butuh harga
+  const v2 = sans.c.HF.catat.view(Object.assign({}, st, { fu: 'gram', fee: '0,5' }), sans.ctx, { mulai: 'pindah' });
+  assert.equal(v2.incomplete, false); assert.equal(sans.c.HF.catatCtx.toRows(v2, sans.ctx, {}).rows[1].jumlah, 0.5);
+});
+
 test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; data nyata lewat antrean', async () => {
   const store = {}; let calls = [];
   const c = load(['engine/schema.js', 'engine/queue.js', 'web/js/catat-save.js'], {

@@ -27,8 +27,12 @@
       var row = held[m].filter(function (x) { return x[0] === a; })[0];
       if (!row) held[m].push([a, [l]]); else if (row[1].indexOf(l) < 0) row[1].push(l);
     });
-    var assets = {};
-    aset.forEach(function (a) { assets[label(a)] = { unit: a.satuan, cat: a.kelas, quote: a.mata_uang_harga && a.mata_uang_harga !== 'IDR' ? a.mata_uang_harga : undefined }; });
+    var assets = {}, H = state.harga || {}, last = H.terakhir || {}, ks = H.kursSeries || [], usdidr = ks.length ? ks[ks.length - 1].harga : null;
+    aset.forEach(function (a) {
+      var h = last[a.aset_id], price = null; // harga IDR per satuan dari tab Harga (aset manual atau harga otomatis kelak); kosong = belum ada
+      if (h && h.mata_uang === 'IDR') price = h.harga; else if (h && h.mata_uang === 'USD' && usdidr) price = h.harga * usdidr;
+      assets[label(a)] = { unit: a.satuan, cat: a.kelas, quote: a.mata_uang_harga && a.mata_uang_harga !== 'IDR' ? a.mata_uang_harga : undefined, price: price };
+    });
     var cat = aset.filter(function (a) { return a.aset_id !== 'AS-IDR'; }).map(function (a) { return [label(a), a.nama, a.kelas, a.satuan]; });
     return { demo: false, members: members.map(function (m) { return m.nama; }), lokasi: lokasi.map(function (l) { return l.nama; }), held: held, bal: bal, assets: assets, rates: {},
       payCur: aset.filter(function (a) { return a.kelas === 'Mata uang' && a.aset_id !== 'AS-IDR' || a.simbol === 'USDT'; }).map(label), catalog: cat, now: now, ids: ids,
@@ -59,8 +63,10 @@
     var rows = [base];
     if (vm.isMove && vm.hasFee) {
       var fee = N(vm.fee);
-      if (vm.feeUnit === vm.unit && vm.unit !== 'Rp') rows.push(Object.assign({}, base, { jenis: 'Keluar', jumlah: fee, asal_alasan: 'Biaya', lokasi_tujuan_id: undefined, anggota_tujuan_id: undefined }));
-      else return { rows: rows, error: 'biaya-rupiah' }; // dibahas di putaran Pindah
+      var price = (ctx.assets[vm.fA] || {}).price, qty = vm.feeUnit === 'Rp' ? (price > 0 ? Math.round(fee / price * 1e8) / 1e8 : 0) : fee;
+      if (!(qty > 0)) return { rows: rows, error: 'biaya-rupiah' }; // Rp tanpa harga aset: tidak bisa dikonversi
+      // Biaya Pindah = Keluar sendiri dari aset yang dipindah di lokasi asal (Rp dibagi harga hari itu). Keputusan Ticon 25 Nov.
+      rows.push(Object.assign({}, base, { jenis: 'Keluar', jumlah: qty, asal_alasan: 'Biaya', lokasi_tujuan_id: undefined, anggota_tujuan_id: undefined, catatan: vm.feeUnit === 'Rp' ? 'Biaya Pindah Rp ' + fee : '' }));
     }
     if (o.nomor) base.bukti = o.nomor;
     return { rows: rows, error: null };
