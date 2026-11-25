@@ -43,9 +43,13 @@
         onClose: function () { location.hash = '#/' + lastTab; },
         onLokasi: ctx.demo ? null : function (nama, jenis) { return HF.api.call('apiLokasiTambah', { nama: nama, jenis: jenis }); },
         onAset: ctx.demo ? null : function (d) { return HF.api.call('apiAsetTambah', d); },
-        onSave: function (res, vm) {
+        onSave: function (res, vm, c, photo) {
           if (res.error) return;
-          HF.catatSave.submit(res.rows, ctx.demo);
+          var done = HF.catatSave.submit(res.rows, ctx.demo);
+          if (photo && !ctx.demo) done.then(function (r) {
+            if ((r.ditolak || []).length) return;
+            return HF.api.call('apiBuktiUnggah', r.utama, { nama: photo.nama, mime: photo.mime, base64: photo.base64 });
+          }).catch(function () { HF.berandaScreen.flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.' }); });
           HF.berandaScreen.flash({ text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
           location.hash = '#/' + lastTab;
         } });

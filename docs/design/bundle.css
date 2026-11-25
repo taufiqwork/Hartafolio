@@ -566,3 +566,11 @@ input::placeholder{font-weight:400;color:var(--ink-muted);opacity:.75}
 .su-seg{display:grid;width:100%;box-sizing:border-box}
 .su-seg button{width:auto;height:40px;font:inherit;font-size:14px;font-weight:600;line-height:20px}
 .ct-note{min-height:96px;padding:12px;resize:none;line-height:24px}
+.ct-fo{display:flex;flex-direction:column}
+.ct-fo-r{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:center;padding:12px 16px}
+.ct-fo-th{width:56px;height:56px;border-radius:8px;display:grid;place-items:center;background:var(--surface-sunken);color:var(--ink-muted);overflow:hidden}
+.ct-fo-th img{width:56px;height:56px;object-fit:cover}
+.ct-fo-t{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ct-fo-n{font-size:15px;line-height:22px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ct-fo-a{display:flex;gap:8px;padding:0 16px 12px}
+.ct-fr{font:inherit;color:var(--ink);text-align:left;display:grid;grid-template-columns:40px minmax(0,1fr) 18px;gap:12px;align-items:center;padding:10px 0;min-height:56px;border:0;border-top:1px solid var(--line);background:transparent;cursor:pointer;width:100%}

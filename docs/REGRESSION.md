@@ -85,6 +85,7 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 - [ ] `npm run pixel`: semua skenario `04-Catat*` (19 board, 28 gulir, 22 interaksi, 5 animasi) = 0 piksel beda. Deviasi sah: tombol Pajak, catatan dimatikan (`DEV_FOTO`), board 2n memakai `patch` 44 ke 40 px.
 - [ ] `npm test`: `tests/catat.test.js` (total sama dengan board, saldo kurang, bayar tidak cukup, kalender, data nyata, baris lolos `ledger.validate`, bayar lokasi lain diblokir, data contoh tidak pernah memanggil server).
 - [ ] Data contoh (`?demo`) tidak pernah ke Sheet. Data nyata: baris masuk antrean (`hf-queue`) lalu `apiTransaksiTambah`; `trx_id` tetap.
+- [ ] Foto: skenario 2t, 2u, 2v = 0 piksel beda; `apiBuktiUnggah` diuji (folder sekali, tautan di `bukti`). Izin tetap `drive.file`, jangan melebar ke `drive`.
 - [ ] Pembaruan layar di tempat (`HF.morph`): mengetik tidak menghilangkan fokus; animasi lembar hanya memutar saat lembar baru muncul.
 
 ## 5. Data dan aturan produk

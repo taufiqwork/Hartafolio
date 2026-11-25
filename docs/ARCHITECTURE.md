@@ -40,6 +40,8 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Catat: simpan (antrean perangkat, kirim, data contoh hanya lokal) | `src/web/js/catat-save.js` | `HF.catatSave.submit/flush/pending` |
 | Pembaruan DOM di tempat (transisi dan animasi tetap jalan) | `src/web/js/morph.js` | `HF.morph(el, html)` |
 | Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |
+| Foto bukti: validasi dan pengecilan di perangkat | `src/web/js/foto.js` | `HF.foto.prepare/pilih` |
+| Foto bukti: unggah ke Drive (izin `drive.file`) | `src/gas/Bukti.js` | `apiBuktiUnggah` |
 | Aset buatan sendiri | `src/gas/Master.js` | `apiAsetTambah` |
 | Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi, 4 Import (tahap 1; tombol unduh/pilih file mati sampai Tahap 8) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |
 | Form bersama tambah/ubah anggota dan lokasi (hfForm) | `src/web/screens/setup-form.js` | `HF.setupForm.render` |

@@ -17,9 +17,10 @@
   /** rows dari HF.catatCtx.toRows; ctx.demo menentukan tujuan. Mengembalikan Promise berisi baris yang diterima atau ditolak. */
   function submit(rows, demo) {
     var today = rows[0].tanggal, list = withIds(rows, today);
-    if (demo) { write(DK, read(DK).concat(list)); return Promise.resolve({ diterima: list.map(function (t) { return t.trx_id; }), ditolak: [] }); }
+    if (demo) { write(DK, read(DK).concat(list)); return Promise.resolve({ diterima: list.map(function (t) { return t.trx_id; }), ditolak: [], utama: list[0].trx_id }); }
     var q = queue(); list.forEach(function (t) { q = root.HF.queue.enqueue(q, t); }); saveQ(q);
-    return flush();
+    var utama = list[0].trx_id;
+    return flush().then(function (r) { r.utama = utama; return r; });
   }
 
   /** Kirim semua yang menunggu. Berhasil/duplikat keluar dari antrean; gagal jaringan tetap di antrean. */

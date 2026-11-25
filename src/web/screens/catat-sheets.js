@@ -43,12 +43,23 @@
       }).join('') + '</div><div class="ct-sheet-cta"><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" data-act="close-sheet">Batal</button></div></section>';
   }
 
+  var CAM = svg(['M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z'], 20).replace('</svg>', '<circle cx="12" cy="13" r="3"></circle></svg>');
+  var GAL = svg(['m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'], 20).replace('</svg>', '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle></svg>');
+  function foto() {
+    function r(ic, t, c, act) { return '<button type="button" class="ct-fr" data-act="' + act + '"><span class="ct-photo-ic">' + ic + '</span><span class="ct-photo-tx"><span class="ct-photo-t">' + t + '</span><span class="caption ct-m">' + c + '</span></span><span class="ct-m ct-ic">' + svg(['m9 18 6-6-6-6'], 18) + '</span></button>'; }
+    return '<section class="hf-sheet hf-sheet-flush" role="dialog" aria-label="Lampirkan foto"><div class="hf-scroll ct-by-body"><span aria-hidden="true" class="hf-sheet-handle"></span>' +
+      '<div class="ct-by-h"><span class="heading">Lampirkan foto</span><span class="caption ct-m">Foto dikecilkan, lalu disimpan di Google Drive Anda (folder Hartafolio). Sheet hanya menyimpan tautannya.</span></div>' +
+      '<div class="ct-by-g">' + r(CAM, 'Ambil foto', 'Pakai kamera HP', 'pick-cam') + r(GAL, 'Pilih dari galeri', 'Foto atau tangkapan layar', 'pick-gal') + '</div></div>' +
+      '<div class="ct-sheet-cta"><button class="hf-btn hf-btn-ghost hf-btn-block" type="button" data-act="close-sheet">Batal</button></div></section>';
+  }
+
   /** HTML lembar yang terbuka (kosong bila tidak ada). form = hasil HF.setupForm.render untuk Lokasi baru / Aset manual, atau ''. */
   function sheets(vm, form) {
     var s = vm.sheet;
     if (!s) return '';
     if (s === 'aset') return '<div class="hf-scrim" data-act="close-sheet"></div>' + aset(vm);
     if (s === 'tgl') return '<div class="hf-scrim" data-act="close-sheet"></div>' + tgl(vm);
+    if (s === 'foto') return '<div class="hf-scrim" data-act="close-sheet"></div>' + foto();
     if (s === 'bayar') return '<div class="hf-scrim" data-act="close-sheet"></div>' + bayar(vm);
     return form || '';
   }

@@ -69,8 +69,7 @@ export const catatActions = [
   ACT('@x-beli-lokasi-lain', '04-Catat', 'beli', KLIK('Bybit'))
 ];
 // Boards foto dan pajak (dibuat 25 Nov, 05.u sampai 05.y). Keadaan awal = prop mulai board.
-// Board foto (2t, 2u, 2v) belum dibangun di aplikasi: menunggu keputusan izin Google Drive. Hanya Pajak dan catatan (2w, 2x) yang dibandingkan.
-export const catatBukti = [['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
+export const catatBukti = [['-2t-Foto-Pilih', 'foto-pilih', false], ['-2u-Foto-Terlampir', 'foto-terlampir', true], ['-2v-Foto-Gagal', 'foto-gagal', true], ['-2w-Pajak-Catatan', 'pajak-catatan', true], ['-2x-Pajak-Catatan-Terisi', 'pajak-terisi', true]]
   .map(([id, mulai, gulir]) => CT(id, mulai, gulir ? { boardJs: SCROLL, js: SCROLL, deviasi: [] } : {}));
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),

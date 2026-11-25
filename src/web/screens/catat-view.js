@@ -6,6 +6,7 @@
   var PLUS = svg(['M5 12h14', 'M12 5v14']);
   var CAL = svg(['M8 2v4', 'M16 2v4', 'M3 10h18'], 20).replace('</svg>', '<rect width="18" height="18" x="3" y="4" rx="2"></rect></svg>');
   var CAMERA = svg(['M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z'], 20).replace('</svg>', '<circle cx="12" cy="13" r="3"></circle></svg>');
+  var IMG = svg(['m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'], 24).replace('</svg>', '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle></svg>');
   var CHEV = svg(['m9 18 6-6-6-6'], 18), CHEVUP = svg(['m18 15-6-6-6 6']);
 
   function chip(l, on, act, v) { return '<button class="hf-chip" type="button" aria-pressed="' + on + '" data-act="' + act + '" data-v="' + esc(v === undefined ? l : v) + '">' + esc(l) + '</button>'; }
@@ -81,10 +82,19 @@
       dateBtn('tglA', 'Tanggal saldo', vm.tglAwal, 'Ubah bila sudah dimiliki sejak lama.');
   }
 
+  function fotoRow(vm) {
+    var f = vm.foto;
+    if (f && f.ok) {
+      return '<div class="ct-fo"><div class="ct-fo-r"><span class="ct-fo-th">' + (f.thumb ? '<img src="' + esc(f.thumb) + '" alt="">' : IMG) + '</span><span class="ct-fo-t"><span class="ct-fo-n">' + esc(f.nama) + '</span><span class="caption ct-m">Dikecilkan · ' + f.kb + ' KB · diunggah saat disimpan</span></span></div>' +
+        '<div class="ct-fo-a"><button class="hf-btn hf-btn-ghost" type="button" data-act="open-foto">Ganti foto</button><button class="hf-btn hf-btn-ghost hf-btn-danger" type="button" data-act="del-foto">Hapus foto</button></div></div>';
+    }
+    var err = f && f.ok === false;
+    return '<button type="button" class="ct-photo" data-act="open-foto"><span class="ct-photo-ic">' + CAMERA + '</span><span class="ct-photo-tx"><span class="ct-photo-t">Lampirkan foto</span><span class="caption" style="color: ' + (err ? 'var(--loss)' : 'var(--ink-muted)') + ';">' +
+      (err ? 'Foto tidak bisa dipakai. Pilih JPG atau PNG, paling besar 10 MB.' : 'Nota, struk, atau tangkapan layar') + '</span></span><span class="ct-m ct-ic">' + CHEV + '</span></button>';
+  }
   function proof(vm) {
-    return '<section class="ct-f" aria-label="Bukti"><div class="ct-lr ct-base"><span class="label ct-m">Bukti</span><span class="caption ct-m">opsional</span></div><div class="hf-card ct-proof">' +
-      '<button type="button" class="ct-photo" disabled><span class="ct-photo-ic">' + CAMERA + '</span><span class="ct-photo-tx"><span class="ct-photo-t">Lampirkan foto</span><span class="caption ct-m">Nota, struk, atau tangkapan layar</span></span><span class="ct-m ct-ic">' + CHEV + '</span></button>' +
-      '<label for="nota" class="ct-nota"><span class="ct-photo-t">No. referensi</span><input class="hf-input" id="nota" type="text" placeholder="No. nota, ID order, atau tx hash" data-in="nota"><span class="caption ct-m ct-n4">Dipakai agar import ulang tidak dobel.</span></label></div></section>' +
+    return '<section class="ct-f" aria-label="Bukti"><div class="ct-lr ct-base"><span class="label ct-m">Bukti</span><span class="caption ct-m">opsional</span></div><div class="hf-card ct-proof">' + fotoRow(vm) +
+      '<label for="nota" class="ct-nota"><span class="ct-photo-t">No. referensi</span><input class="hf-input" id="nota" type="text" placeholder="No. nota, ID order, atau tx hash" data-in="nota" value="' + esc(vm.nota) + '"><span class="caption ct-m ct-n4">Dipakai agar import ulang tidak dobel.</span></label></div></section>' +
       '<button class="hf-btn hf-btn-ghost ct-more" type="button" data-act="toggle-pajak" aria-expanded="' + vm.pajakOn + '">' + (vm.pajakOn ? CHEVUP : PLUS) + 'Pajak, catatan</button>' + (vm.pajakOn ? taxFields(vm) : '');
   }
   function taxFields(vm) {

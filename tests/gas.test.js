@@ -42,13 +42,15 @@ function boot() {
     console, Math, Date, Object, Array, String, Number, JSON, Error,
     SpreadsheetApp: { getActiveSpreadsheet: () => ss, ProtectionType: { RANGE: 'RANGE' }, getUi: () => ({}) },
     LockService: { getDocumentLock: () => ({ waitLock() {}, releaseLock() {} }) },
-    Utilities: { formatDate: () => '2026-11-19 10:00' }
+    Utilities: { formatDate: () => '2026-11-19 10:00' },
+    ScriptApp: { getOAuthToken: () => 'tok' },
+    UrlFetchApp: { calls: [], fetch(url, o) { this.calls.push({ url, o }); const folder = /\/drive\/v3\/files\?fields=id$/.test(url); return { getResponseCode: () => (this.fail ? 403 : 200), getContentText: () => JSON.stringify(folder ? { id: 'FOLDER1' } : { id: 'FILE1', webViewLink: 'https://drive.google.com/file/d/FILE1/view' }) }; } }
   });
   ctx.globalThis = ctx;
   const root = path.join(__dirname, '..', 'src');
   ['catalog', 'dates', 'format', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
-  ['Repo', 'Setup', 'Master'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
+  ['Repo', 'Setup', 'Master', 'Bukti'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
 }
 
@@ -239,4 +241,27 @@ test('apiTransaksiTambah: bayar dari lokasi lain mengurangi lokasi pembayar; lok
   assert.equal(bad.ditolak[0].error, 'lokasi:tidak-ada');
   const rows = JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)));
   assert.equal(rows[1].alat_bayar_lokasi_id, 'LK-002');
+});
+
+test('apiBuktiUnggah: folder dibuat sekali, foto masuk folder itu, tautan ditambahkan ke bukti (setelah No. referensi), hanya izin sempit', () => {
+  const g = boot();
+  g.run('setupHartafolio()');
+  g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:1, sumber:'manual', bukti:'INV-77'}])`);
+  const r = JSON.parse(JSON.stringify(g.run(`apiBuktiUnggah('TX-1', {nama:'nota binance.jpg', mime:'image/jpeg', base64:'QUJD'})`)));
+  assert.equal(r.url, 'https://drive.google.com/file/d/FILE1/view');
+  const calls = g.ctx.UrlFetchApp.calls;
+  assert.equal(calls.length, 2); assert.match(calls[1].o.contentType, /multipart\/related/); assert.match(calls[1].o.payload, /"parents":\["FOLDER1"\]/); assert.match(calls[1].o.payload, /QUJD/);
+  assert.equal(calls[1].o.headers.Authorization, 'Bearer tok');
+  assert.equal(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)))[0].bukti, 'INV-77\nhttps://drive.google.com/file/d/FILE1/view');
+  g.run(`apiBuktiUnggah('TX-1', {nama:'b.png', mime:'image/png', base64:'QUJD'})`);
+  assert.equal(calls.length, 3); // folder tidak dibuat lagi
+  assert.equal(g.run('apiState()').pengaturan.folder_bukti_id, 'FOLDER1');
+  assert.throws(() => g.run(`apiBuktiUnggah('TX-9', {mime:'image/jpeg', base64:'QUJD'})`), /tidak ditemukan/);
+  assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'application/pdf', base64:'QUJD'})`), /JPG atau PNG/);
+  g.ctx.UrlFetchApp.fail = true;
+  assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'image/png', base64:'QUJD'})`), /Foto belum terunggah/);
+  const m = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'gas', 'appsscript.json'), 'utf8'));
+  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file'));
+  assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); // bukan akses seluruh Drive
 });
