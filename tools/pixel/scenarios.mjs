@@ -73,6 +73,10 @@ export const catatBukti = [['-2t-Foto-Pilih', 'foto-pilih', false], ['-2u-Foto-T
   .map(([id, mulai, gulir]) => CT(id, mulai, gulir ? { boardJs: SCROLL, js: SCROLL, deviasi: [] } : {}));
 // Toast foto di Beranda (boards Main-2s dan Main-2t, dibuat 25 Nov).
 export const berandaFoto = [{ id: 'Main-2s-Foto-Gagal', board: 'Main-2s-Foto-Gagal', query: 'demo=foto-gagal' }, { id: 'Main-2t-Foto-Terunggah', board: 'Main-2t-Foto-Terunggah', query: 'demo=foto-terunggah' }];
+export const catatLengkap = [CT('-2y-Belum-Lengkap', 'belum-lengkap', { boardJs: `document.querySelector('.hf-scroll').scrollTop = 300;`, js: `document.querySelector('.hf-scroll').scrollTop = 300;` })];
+// Pajak dibuka: layar menggulir halus ke bawah (diukur setelah gulir selesai).
+const BUKA_PAJAK = KLIK('Pajak, catatan') + `await new Promise(r=>setTimeout(r,900));`;
+export const catatPajakGulir = [ACT('@x-pajak-gulir', '04-Catat-2u-Foto-Terlampir', 'foto-terlampir', SCROLL + BUKA_PAJAK)];
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
   CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
@@ -137,5 +141,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...berandaFoto, ...catatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatPajakGulir, ...berandaFoto, ...catatFrames
 ];
