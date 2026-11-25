@@ -135,7 +135,8 @@
     var needPrice = isTrade && !(num(pv) >= 0) || (isTrade && cur !== 'IDR' && !(rate > 0));
     var needQ = !(num(q) > 0) && !awal || (awal && !fA);
     var invalid = qErr || payErr; // tampilan tombol Simpan (aturan board): redup hanya bila saldo kurang atau bayar tidak cukup
-    var incomplete = (isTrade && (needPrice || !(num(q) > 0))) || (!isTrade && !awal && !(num(q) > 0)) || (awal && (!fA || !fL || !(num(q) > 0))) || (isMove && !fKr) || (isMoveMem && !fR) || !fA || !fL;
+    var feeNoPrice = isMove && hasFee && (st.fu || 'Rp') === 'Rp' && !(price > 0); // biaya Rupiah butuh harga aset untuk dipotong dari aset yang dipindah
+    var incomplete = feeNoPrice || (isTrade && (needPrice || !(num(q) > 0))) || (!isTrade && !awal && !(num(q) > 0)) || (awal && (!fA || !fL || !(num(q) > 0))) || (isMove && !fKr) || (isMoveMem && !fR) || !fA || !fL;
     var valueText = fA && asetInfo ? (asetInfo.valText || (asetInfo.price != null ? rp(num(q) * asetInfo.price) : '—')) : '—';
     var qtyIdr = fA && asetInfo && asetInfo.price != null ? num(q) * asetInfo.price : null;
     var vm = {
@@ -152,7 +153,7 @@
       payLabel: fJ === 'Jual' ? 'Hasilnya masuk ke' : 'Dibayar dengan', payMoreL: fJ === 'Jual' ? 'Ke aset lain…' : 'Aset lain…',
       byTitle: fJ === 'Jual' ? 'Hasil masuk ke aset lain' : 'Bayar dengan aset lain', byDesc: 'Aset milik ' + fM + ' di Hartafolio. Harga ikut aset yang dipilih.',
       curFree: pay === 'luar', curLocked: pay !== 'luar', curTabs: ['IDR', 'USD', 'USDT'], curSel: awal ? avgCur : cur,
-      feeUnits: ['Rp', unit], feeUnit: st.fu || 'Rp', feeNote: (st.fu || 'Rp') === 'Rp' ? 'Dalam Rupiah. Boleh nol.' : 'Dipotong dari aset yang dipindah.',
+      feeUnits: ['Rp', unit], feeUnit: st.fu || 'Rp', feeNote: feeNoPrice ? 'Harga ' + (fA || 'aset') + ' belum ada, jadi biaya Rupiah belum bisa dihitung. Pilih satuan ' + unit + ' atau isi harga di Kelola aset.' : ((st.fu || 'Rp') === 'Rp' ? 'Dalam Rupiah. Boleh nol.' : 'Dipotong dari aset yang dipindah.'),
       asalLabel: isOut ? 'Alasan' : 'Asal', asalList: isOut ? ['Hadiah', 'Sedekah', 'Ke dompet luar', 'Hilang', 'Lainnya'] : ['Hadiah', 'Warisan', 'Dari dompet luar', 'Lainnya'],
       showJenis: !awal, showAsal: (isIn || isOut) && !awal, showSaldoLink: !awal && (fJ === 'Beli' || isIn), showCari: canNew, showPlusLok: canNew,
       title: awal ? 'Saldo awal' : 'Catat transaksi', saveLabel: awal ? 'Simpan & selesai' : 'Simpan transaksi', hintMt: !awal ? '-6px' : '0px',

@@ -136,3 +136,9 @@
 - **Migrasi:** `setupHartafolio` menambah kolom yang kurang di kanan (hanya bila sel header-nya kosong; selain itu berhenti tanpa mengubah apa pun), membuat ulang perlindungan header selebar header baru, dan menaikkan `versi_skema`. Idempoten. **Sebelum menjalankan menu itu, Sheet versi 1 berhenti dengan pesan "Header tab Transaksi berubah"** (disengaja, bukan diam-diam).
 - **Uji:** 68 (sebelumnya 63): ledger (aset pembayar di lokasi lain, saldo kurang, lokasi tidak ada, baris lama), schema, migrasi di Sheet tiruan (termasuk perlindungan tetap satu dan idempoten), `apiTransaksiTambah` end to end, Catat data nyata.
 - **Terverifikasi di Google (Ticon, 25 Nov 2026):** Hartafolio › Siapkan sheet dijalankan di Sheet uji, kolom ke-29 muncul, hasil baik. Perlindungan header setelah migrasi belum dicek terpisah.
+
+## 25 Nov 2026 · Biaya Pindah dalam Rupiah
+- **Keputusan Ticon:** biaya Rupiah dipotong dari aset yang dipindah. Sesuai aturan "biaya Pindah = Keluar sendiri": baris Pindah diikuti baris Keluar (alasan Biaya, catatan "Biaya Pindah Rp ...") di lokasi asal, jumlahnya Rp dibagi harga IDR aset. Biaya dalam satuan aset langsung jadi jumlah Keluar.
+- **Harga:** `catat-ctx.fromState` kini mengisi harga aset dari tab Harga (IDR, atau USD dikali kurs bila ada). Tanpa harga (belum ada sumber otomatis, Tahap 6), biaya Rupiah ditandai belum lengkap dengan catatan di bawah kolom biaya; Simpan memberi garis merah, bukan menebak. Satuan aset tidak butuh harga.
+- **Uji:** 69 (+1): konversi, saldo asal dan tujuan, tanpa harga, satuan aset. Piksel 5 skenario Pindah tetap 0 beda.
+- **Catatan:** dua baris dikirim sebagai dua transaksi; bila yang kedua ditolak server, Pindah sudah tersimpan (belum ada penautan atau pembatalan bersama).
