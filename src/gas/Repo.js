@@ -20,6 +20,13 @@ function Repo_checkHeader_(tab, sh) {
   var n = Math.max(sh.getLastColumn(), HF.schema.colNames(tab).length);
   var header = sh.getRange(1, 1, 1, n).getValues()[0];
   var r = HF.schema.checkHeader(tab, header);
+  if (!r.ok && r.mismatches.every(function (m) { return m.got === ''; })) {
+    // Hanya kolom baru di kanan yang kosong (mis. kolom hilang atau Sheet belum dimigrasi): lengkapi sendiri, jangan menghentikan aplikasi.
+    Repo_ensureGrid_(sh, sh.getMaxRows(), HF.schema.colNames(tab).length);
+    r.mismatches.forEach(function (m) { sh.getRange(1, m.col, 1, 1).setValue(m.want); });
+    Setup_dropProtection_(sh); Setup_protectHeader_(sh, tab);
+    return;
+  }
   if (!r.ok) throw new Error('Header tab "' + tab + '" berubah (kolom ' + r.mismatches[0].col + ': seharusnya "' + r.mismatches[0].want + '"). Kembalikan header atau jalankan Siapkan sheet.');
 }
 
