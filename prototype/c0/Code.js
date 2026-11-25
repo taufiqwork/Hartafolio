@@ -46,10 +46,25 @@ function apiHentikanTugas() {
   return { dihentikan: n };
 }
 
-/** Dijalankan Google sesuai jadwal, sebagai pemilik pemicu. Halaman tidak perlu terbuka. */
+/**
+ * Dijalankan Google sesuai jadwal, sebagai pemilik pemicu. Halaman tidak perlu terbuka.
+ * Mencatat tahapnya di properti akun (PropertiesService tidak butuh izin Sheet): "mulai" berarti kode sempat jalan,
+ * "ok" berarti baris tertulis, "galat" berisi pesan bila gagal di tengah. Bila tidak ada satu pun, Google menolak sebelum kode berjalan.
+ */
 function tugasUji() {
-  var h = C0_ss_();
-  h.ss.getSheetByName('Transaksi').appendRow(['TERJADWAL-' + Date.now(), new Date().toISOString().slice(0, 10), 0, 'tugas terjadwal']);
+  var p = PropertiesService.getUserProperties(), now = new Date().toISOString();
+  p.setProperty('tugas.mulai', now);
+  try {
+    var h = C0_ss_();
+    h.ss.getSheetByName('Transaksi').appendRow(['TERJADWAL-' + Date.now(), now.slice(0, 10), 0, 'tugas terjadwal']);
+    p.setProperty('tugas.ok', now); p.deleteProperty('tugas.galat');
+  } catch (e) { p.setProperty('tugas.galat', now + ' ' + String(e && e.message || e).slice(0, 400)); throw e; }
+}
+
+/** Jejak tugas terjadwal terakhir untuk pemanggil. */
+function apiStatusTugas() {
+  var p = PropertiesService.getUserProperties();
+  return { mulai: p.getProperty('tugas.mulai'), ok: p.getProperty('tugas.ok'), galat: p.getProperty('tugas.galat'), sekarang: new Date().toISOString() };
 }
 
 /** Sepuluh baris terakhir, untuk halaman uji. */
