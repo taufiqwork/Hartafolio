@@ -43,8 +43,8 @@
         '<span class="su-foot-note">Dipakai untuk membuat dan membuka Google Sheet Anda</span>');
   }
 
-  function emptyCard(icon, title, note) {
-    return '<section class="hf-card su-empty" aria-label="' + esc(title) + '"><span class="su-empty-ico">' + svg(icon, 24) + '</span><span class="heading">' + esc(title) + '</span><span class="su-empty-note">' + esc(note) + '</span></section>';
+  function emptyCard(icon, title, note, leave) {
+    return '<section class="hf-card su-empty' + (leave ? ' su-leave' : '') + '"' + (leave ? ' aria-hidden="true"' : '') + ' aria-label="' + esc(title) + '"><span class="su-empty-ico">' + svg(icon, 24) + '</span><span class="heading">' + esc(title) + '</span><span class="su-empty-note">' + esc(note) + '</span></section>';
   }
   var PEN = svg(['M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'], 18);
   function editBtn(label, id) {
@@ -58,12 +58,13 @@
   function anggota(d) {
     var rows = d.anggota, n = rows.length;
     var list = n ? '<div class="hf-card su-list" aria-label="Anggota">' + rows.map(function (m) {
-      return '<div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span class="su-av' + (m.is_pengelola ? ' mgr' : '') + '">' + esc(m.nama.charAt(0).toUpperCase()) + '</span>' +
+      return '<div class="hf-detail' + (waiting(m.anggota_id) ? ' su-enter' : '') + '" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span class="su-av' + (m.is_pengelola ? ' mgr' : '') + '">' + esc(m.nama.charAt(0).toUpperCase()) + '</span>' +
         '<div class="hf-detail-main"><span class="hf-detail-name">' + esc(m.nama) + '</span><span class="hf-detail-meta">' + (waiting(m.anggota_id) ? SPIN + esc(m.hubungan) + ' · Menyimpan…' : esc(m.hubungan)) + '</span></div>' +
         '<span class="su-row-end">' + (m.is_pengelola ? '<span class="hf-badge hf-badge-brand">Pengelola</span>' : '') + editBtn(m.nama, m.anggota_id) + '</span></div>';
-    }).join('') + '</div>' : emptyCard(['M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2', 'M22 21v-2a4 4 0 0 0-3-3.87', 'M16 3.128a4 4 0 0 1 0 7.744', 'M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'], 'Belum ada anggota', 'Mulai dari Anda sendiri.');
+    }).join('') + '</div>' : '';
+    var empty = (!n || d.leave) ? emptyCard(['M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2', 'M22 21v-2a4 4 0 0 0-3-3.87', 'M16 3.128a4 4 0 0 1 0 7.744', 'M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'], 'Belum ada anggota', 'Mulai dari Anda sendiri.', n > 0) : '';
     return head(2, 'Anggota', true) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Siapa saja anggota keluarganya?</h1>' +
-      '<p class="su-lead">Tambahkan Anda dan keluarga yang hartanya Anda kelola. Mereka tidak perlu punya akun.</p></div>' + errCard(d) + list +
+      '<p class="su-lead">Tambahkan Anda dan keluarga yang hartanya Anda kelola. Mereka tidak perlu punya akun.</p></div>' + errCard(d) + empty + list +
       '<button class="hf-btn hf-btn-block" type="button" data-act="add">' + svg(['M5 12h14', 'M12 5v14'], 18) + '<span>' + (n ? 'Tambah anggota' : 'Tambah diri Anda') + '</span></button></main>' +
       foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Lokasi</button><span class="su-foot-note">' + n + ' anggota · bisa ditambah kapan saja</span>'
         : '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" disabled>Tambah minimal 1 anggota</button>');
@@ -73,14 +74,15 @@
     var rows = d.lokasi, n = rows.length, plus = svg(['M5 12h14', 'M12 5v14']);
     var list = n ? '<section class="hf-card su-list" aria-label="Lokasi">' + rows.map(function (l) {
       var ik = F.lokasiIkon(l.jenis), gold = F.GOLD.indexOf(ik) >= 0;
-      return '<div class="hf-detail" style="grid-template-columns: 40px minmax(0, 1fr) auto;"><span class="su-tile' + (gold ? ' gold' : '') + '">' + svg(F.IC[ik], 20) + '</span>' +
+      return '<div class="hf-detail' + (hl === l.nama ? ' su-enter' : '') + '" style="grid-template-columns: 40px minmax(0, 1fr) auto;"><span class="su-tile' + (gold ? ' gold' : '') + '">' + svg(F.IC[ik], 20) + '</span>' +
         '<div class="hf-detail-main"><span class="hf-detail-name">' + esc(l.nama) + '</span><span class="hf-detail-meta">' + esc(l.jenis) + '</span></div>' +
         '<span class="su-row-end">' + (hl === l.nama ? '<span class="hf-badge hf-badge-brand">Baru</span>' : '') + editBtn(l.nama, l.lokasi_id) + '</span></div>';
-    }).join('') + '</section>' : emptyCard(F.IC.vault, 'Belum ada lokasi', 'Pilih di Tambah cepat, atau ketuk Lokasi lain.');
+    }).join('') + '</section>' : '';
+    var empty = (!n || d.leave) ? emptyCard(F.IC.vault, 'Belum ada lokasi', 'Pilih di Tambah cepat, atau ketuk Lokasi lain.', n > 0) : '';
     var quick = QUICK.filter(function (q) { return !rows.some(function (l) { return l.nama.toLowerCase() === q[0].toLowerCase(); }); })
       .map(function (q) { return '<button class="hf-chip" type="button" data-act="quick" data-nama="' + esc(q[0]) + '" data-jenis="' + esc(q[1]) + '">' + plus + esc(q[0]) + '</button>'; }).join('');
     return head(3, 'Lokasi', true) + '<main class="su-main hf-scroll"><div class="su-hd"><h1 class="title">Di mana saja aset disimpan?</h1>' +
-      '<p class="su-lead">Lokasi membantu memisahkan aset yang sama di tempat berbeda.</p></div>' + errCard(d) + list +
+      '<p class="su-lead">Lokasi membantu memisahkan aset yang sama di tempat berbeda.</p></div>' + errCard(d) + empty + list +
       '<section class="su-quick" aria-label="Tambah cepat"><span class="label su-lbl">Tambah cepat</span><div class="su-chips">' + quick +
       '<button class="hf-chip hf-chip-add" type="button" data-act="add">' + plus + 'Lokasi lain</button></div></section></main>' +
       foot(n ? '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="next">Lanjut ke Import</button><span class="su-foot-note">' + n + ' lokasi · bisa diubah nanti</span>'
@@ -110,9 +112,22 @@
     else if (st.anggota.length) st.step = 3;
     if (opts.step) st.step = opts.step;
 
+    /* Sama langkah: perbarui di tempat (HF.morph) supaya hanya kartu baru yang masuk dengan animasi, bukan seluruh layar berkedip.
+       Pindah langkah: gambar ulang penuh, isi layar memudar masuk seperti biasa. */
     function paint() {
+      var empty = st.step === 2 ? !st.anggota.length : st.step === 3 ? !st.lokasi.length : false, cur = el.firstElementChild, same = cur && cur.classList.contains('su') && st.drawn === st.step;
+      if (!same) st.leave = false;
+      else if (st.wasEmpty && !empty && !st.leave) { // kartu kosong menciut sebentar sambil kartu pertama masuk, lalu dilepas
+        st.leave = true;
+        setTimeout(function () {
+          var x = cur.querySelector('.su-leave'); if (x) x.remove();
+          st.leave = false;
+        }, 340);
+      }
+      st.wasEmpty = empty; st.drawn = st.step;
       var scr = [null, akun, anggota, function () { return lokasi(st, st.hl); }, import4][st.step];
-      el.innerHTML = '<div class="su">' + scr(st) + (st.fm ? F.render(st.fm) : '') + '</div>';
+      var inner = scr(st) + (st.fm ? F.render(st.fm) : '');
+      if (same) root.HF.morph(cur, inner); else el.innerHTML = '<div class="su">' + inner + '</div>';
     }
     function idKey(k) { return k === 'anggota' ? 'anggota_id' : 'lokasi_id'; }
     function swap(k, id, rec) { // rec = null: buang; selain itu ganti catatan ber-id itu
@@ -170,7 +185,11 @@
       st.err = null; st.lokasi = st.lokasi.concat([tmp]); st.hl = nama; paint();
       root.HF.api.call('apiLokasiTambah', { nama: nama, jenis: jenis })
         .then(function (r) { swap('lokasi', tmp.lokasi_id, r); paint(); })
-        .catch(function () { swap('lokasi', tmp.lokasi_id, null); oops(nama + ' belum tersimpan', SYNC + 'Ketuk ' + nama + ' di Tambah cepat untuk mencoba lagi.'); });
+        .catch(function (e) {
+          swap('lokasi', tmp.lokasi_id, null);
+          if (/^Sudah ada/.test(e.message)) oops(nama + ' sudah ada', 'Lokasi dengan nama ini sudah tercatat. Pilih nama lain.'); // bukan masalah Google Sheet
+          else oops(nama + ' belum tersimpan', SYNC + 'Ketuk ' + nama + ' di Tambah cepat untuk mencoba lagi.');
+        });
     }
     function finish() {
       root.HF.api.call('apiSetupSelesai').catch(function () { if (opts.onFail) opts.onFail({ anggota: st.anggota, lokasi: st.lokasi }); });

@@ -238,3 +238,9 @@
 - **Diterapkan di app:** `?tanpa-dummy` memperlihatkan tampilan akhir (tanpa grafik, "dari bulan lalu", kartu Harga); tanpa parameter itu dummy sementara masih aktif sesuai keputusan Ticon. Setelah Ticon setuju: hapus blok `// DUMMY` di `berandaNyata()` (`app.js`) dan parameter `tanpa-dummy` tidak diperlukan lagi.
 - **Uji piksel:** 3 skenario baru (`Main-2u/2v/2w`), 0 piksel beda.
 - **Laporan Ticon: Google meminta izin lagi dan foto tidak terunggah.** Layar izin yang muncul meminta akses Google Drive ("See and download all your Google Drive files"). Itu izin `drive` yang ditambahkan untuk foto bukti (commit `17e1eca`). Dugaan saya, izin itu belum pernah disetujui di akun pemilik, jadi unggah foto gagal dan Google menampilkan layar persetujuan. BELUM TERVERIFIKASI: penyebab persisnya, dan apakah layar itu muncul lagi besok setelah disetujui.
+
+## 27 Nov 2026 · Setup langkah 2 dan 3: animasi kartu baru, dan tiruan dev disamakan dengan server
+- Setiap perubahan daftar di Setup dulu menggambar ulang seluruh layar, jadi isi layar berkedip (animasi `hfPageIn` memutar lagi). Sekarang, di langkah yang sama, layar diperbarui di tempat (`HF.morph`). Hanya baris baru yang masuk: naik dari bawah kartu sebelumnya (`suRowIn`, 320 ms), tinggi daftar tumbuh, dan Tambah cepat bergeser halus. Kartu "Belum ada ..." menciut di tempat (`suLeave`) saat kartu pertama tiba. Pindah langkah tetap memudar masuk seperti biasa. CSS di `docs/design/bundle.css`.
+- Diukur di Chrome: elemen `main` tetap sama setelah Tambah cepat (tidak digambar ulang), tinggi baris 0 ke 72 px, posisi Tambah cepat turun bertahap.
+- Bug tiruan dev (`localhost`): nama yang sudah dihapus (aktif = tidak) tetap dihitung sebagai nama ganda, padahal `Master.js` di Google mengabaikannya. Menambah ulang lokasi yang pernah dihapus gagal hanya di localhost. Tiruan kini sama dengan server.
+- Pesan Tambah cepat tidak lagi menyebut "Google Sheet tidak merespons" untuk nama ganda. Kini "X sudah ada".
