@@ -1,6 +1,7 @@
 // Skenario perbandingan piksel: tiap board mockup dipasangkan dengan keadaan aplikasi yang sama.
 // seed = isi data dev (localStorage); step = paksa langkah Setup (hanya mode dev); js = klik/ketik sesudah dimuat.
 // Aturan: tiap layar baru WAJIB menambah skenario untuk semua state-nya di sini (lihat docs/REGRESSION.md).
+import { SEEDS } from './real-seeds.mjs';
 const A = (nama, rel, mgr, i) => ({ anggota_id: 'PM-00' + i, nama, hubungan: rel, is_pengelola: !!mgr, aktif: true });
 const L = (nama, jenis, i) => ({ lokasi_id: 'LK-00' + i, nama, jenis, aktif: true });
 const seed = (anggota, lokasi) => ({ pengaturan: {}, anggota: anggota || [], lokasi: lokasi || [] });
@@ -124,6 +125,10 @@ export const scenarios = [
   { id: 'Main-2a-Per-Aset', board: 'Main-2a-Per-Aset', query: 'demo', js: `q('[data-act=mode][data-mode=aset]').click();await sleep(80);` },
   { id: 'Main-2b-Menu-Anggota', board: 'Main-2b-Menu-Anggota', query: 'demo', js: `q('[data-act=menu]').click();await sleep(80);` },
   { id: 'Main-2c-Satu-Anggota', board: 'Main-2c-Satu-Anggota', query: 'demo', js: `q('[data-act=menu]').click();await sleep(60);document.querySelectorAll('[data-act=opt]')[1].click();await sleep(80);` },
+  // Beranda data nyata (tampilan akhir tanpa grafik, "dari bulan lalu", dan kartu Harga): data uji di tools/pixel/real-seeds.mjs
+  { id: 'Main-2u-Data-Nyata', board: 'Main-2u-Data-Nyata', seed: SEEDS.awal, query: 'tanpa-dummy' },
+  { id: 'Main-2v-Data-Nyata-Lonceng', board: 'Main-2v-Data-Nyata-Lonceng', seed: SEEDS.lonceng, query: 'tanpa-dummy', js: `q('[data-act=bell]').click();await sleep(300);` },
+  { id: 'Main-2w-Data-Nyata-Tanpa-Kurs', board: 'Main-2w-Data-Nyata-Tanpa-Kurs', seed: SEEDS.tanpaKurs, query: 'tanpa-dummy' },
   { id: 'Main-2d-Kosong', board: 'Main-2d-Kosong', seed: { pengaturan: { setup_selesai: 'ya' }, anggota: AZLAN, lokasi: [L('Binance', 'Exchange crypto', 1)] } },
   { id: 'Main-2k-Banyak-Anggota', board: 'Main-2k-Banyak-Anggota', query: 'demo=banyak' },
   { id: 'Main-2l-Banyak-Sisanya', board: 'Main-2l-Banyak-Sisanya', query: 'demo=banyak', js: `document.querySelectorAll('[data-act=row]')[4].click();await sleep(80);` },

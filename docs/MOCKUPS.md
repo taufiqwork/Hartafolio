@@ -59,6 +59,9 @@ Ukuran: phone 390x844, desktop 1440x900, tablet 1024x768, board Alur/Arsip lebar
 | 02.q · Beranda · Sisanya terbuka | `png/Main-2l-Banyak-Sisanya.png` | `src/Main-2l-Banyak-Sisanya.dc.html` |
 | 02.r · Beranda · Azlan, Emas dipilih | `png/Main-2m-Satu-Anggota-Pilih.png` | `src/Main-2m-Satu-Anggota-Pilih.dc.html` |
 | 02.s · Beranda · Per jenis aset, Emas dipilih | `png/Main-2n-Per-Aset-Pilih.png` | `src/Main-2n-Per-Aset-Pilih.dc.html` |
+| 02.t · Beranda · Data nyata, bulan pertama (tanpa grafik, "dari bulan lalu", kartu Harga) | `png/Main-2u-Data-Nyata.png` | `src/Main-2u-Data-Nyata.dc.html` |
+| 02.u · Beranda · Data nyata, lonceng harga | `png/Main-2v-Data-Nyata-Lonceng.png` | `src/Main-2v-Data-Nyata-Lonceng.dc.html` |
+| 02.v · Beranda · Data nyata, kurs dolar belum ada | `png/Main-2w-Data-Nyata-Tanpa-Kurs.png` | `src/Main-2w-Data-Nyata-Tanpa-Kurs.dc.html` |
 | 03.a · Aset · Utama | `png/03-Aset.png` | `src/03-Aset.dc.html` |
 | 03.b · Aset · Satu anggota dipilih | `png/03-Aset-2a-Satu-Anggota.png` | `src/03-Aset-2a-Satu-Anggota.dc.html` |
 | 03.c · Aset · Filter lokasi terbuka | `png/03-Aset-2b-Lokasi-Menu.png` | `src/03-Aset-2b-Lokasi-Menu.dc.html` |
