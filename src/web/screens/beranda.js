@@ -42,11 +42,11 @@
   }
 
   function hero(d, v) {
-    var spark = !d ? '' : '<a class="hf-spark" aria-label="Lihat laporan bulanan"><span class="br-spark-wrap"><svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hfSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".26"></stop><stop offset="1" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs><polygon class="area" points="' + v.spark.area + '" style="fill: url(#hfSparkFill);"></polygon><polyline class="line" pathLength="100" points="' + v.spark.pts + '"></polyline></svg><span class="hf-spark-end" aria-hidden="true" style="left: 98%; top: ' + v.spark.dy + ';"><span class="hf-spark-pulse"></span><span class="hf-spark-core"></span></span></span><span class="hf-spark-axis"><span>Jun</span><span>6 bln</span><span>Nov</span></span></a>';
+    var spark = !d || !v.spark ? '' : '<a class="hf-spark" aria-label="Lihat laporan bulanan"><span class="br-spark-wrap"><svg viewBox="0 0 100 48" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="hfSparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".26"></stop><stop offset="1" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs><polygon class="area" points="' + v.spark.area + '" style="fill: url(#hfSparkFill);"></polygon><polyline class="line" pathLength="100" points="' + v.spark.pts + '"></polyline></svg><span class="hf-spark-end" aria-hidden="true" style="left: 98%; top: ' + v.spark.dy + ';"><span class="hf-spark-pulse"></span><span class="hf-spark-core"></span></span></span><span class="hf-spark-axis"><span>Jun</span><span>6 bln</span><span>Nov</span></span></a>';
     var str = d ? v.hero.str : 'Rp 0';
-    return '<section class="hf-total hf-hero' + (d ? ' hf-total-with-link' : '') + '" aria-label="Total harta"><div class="br-total-col"><span class="hf-total-label">Total semua anggota</span>' +
+    return '<section class="hf-total hf-hero' + (d && (v.spark || d.piutang) ? ' hf-total-with-link' : '') + '" aria-label="Total harta"><div class="br-total-col"><span class="hf-total-label">Total semua anggota</span>' +
       '<span class="hf-total-amount" aria-label="' + str + '"><span aria-hidden="true">Rp <span class="hf-count" style="--n: ' + (d ? v.hero.int : 0) + ';"></span>' + (d ? v.hero.dec : '') + '</span></span>' +
-      (d ? '<span class="hf-total-sub">' + esc(d.usd) + ' · <span class="hf-delta hf-delta-up">↑ ' + esc(d.delta) + '</span></span>' + (d.piutang ? '<a class="hf-total-link" aria-label="Termasuk piutang ' + esc(d.piutang) + ', buka Piutang">Termasuk piutang ' + esc(d.piutang) + CHEV + '</a>' : '')
+      (d ? '<span class="hf-total-sub">' + esc(d.usd) + (d.delta ? ' · <span class="hf-delta hf-delta-up">↑ ' + esc(d.delta) + '</span>' : '') + '</span>' + (d.piutang ? '<a class="hf-total-link" aria-label="Termasuk piutang ' + esc(d.piutang) + ', buka Piutang">Termasuk piutang ' + esc(d.piutang) + CHEV + '</a>' : '')
         : '<span class="hf-total-sub">$ 0 · belum ada catatan</span>') + '</div>' + spark + '</section>';
   }
 
@@ -98,7 +98,7 @@
   function html(d) {
     if (d && !ui.init) { ui.init = true; ui.per = !!d.perOpen; ui.hi = d.hi == null ? null : d.hi; ui.toast = d.toast || null; } // keadaan awal dari data contoh
     var v = d ? B.view(d, ui) : null;
-    return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + banner(d) + (d ? card(v) + harga(d) : empty()) + '</main>';
+    return head(d) + '<main class="hf-scroll br-main" id="screen">' + hero(d, v) + banner(d) + (d ? card(v) + (d.harga ? harga(d) : '') : empty()) + '</main>';
   }
 
   /** Pasang interaksi. Pembaruan sehalus board: menyorot baris hanya mengubah gaya lingkaran (transisi), mengganti tampilan

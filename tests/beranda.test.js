@@ -86,3 +86,14 @@ test('fromState: piutang terlambat memberi banner piutang, nilainya ikut total, 
   assert.equal(a.banner.title, 'Piutang terlambat 6 hari'); assert.match(a.banner.desc, /^Bu Rina · 1 cicilan · perak 50 g milik Azlan$/);
   assert.equal(a.notes[0].t, 'Piutang Bu Rina terlambat 6 hari');
 });
+test('fromState: tanpa tab Harga, harga Beli terakhir jadi perkiraan dan dicatat di lonceng', () => {
+  catalogReady();
+  const s = mkState({ harga: { terakhir: {}, kursSeries: [] }, transaksi: [
+    T({ trx_id: 'a', jenis: 'Beli', aset_id: 'AS-PAXG', jumlah: 0.0225, harga_per_unit: 72658500, harga_mata_uang: 'IDR', biaya: 0, tanggal: '2026-11-20' }),
+    T({ trx_id: 'b', jenis: 'Beli', aset_id: 'AS-PAXG', jumlah: 0.0225, harga_per_unit: 80000000, harga_mata_uang: 'IDR', biaya: 0, tanggal: '2026-11-25' }),
+    T({ trx_id: 'c', jenis: 'Beli', aset_id: 'AS-BTC', jumlah: 0.01, harga_per_unit: 100000, harga_mata_uang: 'USDT', kurs: 16000, kurs_sumber: 'manual', biaya: 0, tanggal: '2026-11-25' })] });
+  const d = B.fromState(s); d.spark = [1, 2, 3, 4, 5, 6];
+  assert.equal(d.noPrice.length, 0); assert.deepEqual(d.estimasi, ['PAXG', 'BTC']);
+  assert.equal(B.view(d, { mode: 'anggota', sel: null }).hero.str, 'Rp 19,6 jt'); // 0,045 x 80 jt (3,6) + 0,01 BTC x 100.000 USDT x 16.000 (16)
+  assert.equal(B.attention(d).notes[0].t, 'Harga PAXG, BTC dari transaksi terakhir');
+});

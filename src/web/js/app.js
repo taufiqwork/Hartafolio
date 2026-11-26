@@ -39,6 +39,7 @@
      agar tampilannya bisa dinilai. Setelah Ticon setuju: hapus blok DUMMY di bawah dan sembunyikan ketiganya (lihat CHANGELOG). */
   function berandaNyata(s) {
     var d = HF.beranda.fromState(s, {}); if (!d) return null;
+    if (param('tanpa-dummy') !== null) return d; // tampilan akhir (setelah dummy dibuang): tanpa grafik, "dari bulan lalu", dan kartu Harga
     var dm = HF.demo.get(''); // DUMMY
     d.spark = dm.spark; d.delta = dm.delta; d.harga = dm.harga; d.live = dm.live; // DUMMY
     return d;
