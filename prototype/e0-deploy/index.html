@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hartafolio E0</title>
+<style>body{font-family:system-ui,sans-serif;margin:0;padding:20px;background:#f4f5f1;color:#17211c;max-width:560px}
+h1{font-size:22px;margin:0 0 6px}p{color:#5d6a63;line-height:1.5;margin:6px 0}label{display:block;font-size:13px;color:#5d6a63;margin-top:10px}
+input{width:100%;font:inherit;padding:10px;border:1px solid #cfd6cd;border-radius:10px;background:#fff}
+button{font:inherit;font-weight:600;min-height:46px;padding:0 16px;border:0;border-radius:12px;background:#1f6b4f;color:#fff;margin:8px 8px 0 0;cursor:pointer}
+button[disabled]{opacity:.45;cursor:default}button.sec{background:#fff;color:#1f6b4f;border:1px solid #1f6b4f}
+pre{background:#fff;border:1px solid #dde2da;border-radius:12px;padding:12px;white-space:pre-wrap;word-break:break-word;font-size:13px}
+.row{display:flex;flex-wrap:wrap}</style></head>
+<body>
+<h1>Hartafolio · percobaan E0</h1>
+<p>Halaman biasa (bukan Apps Script) yang masuk dengan Google, lalu memanggil fungsi Apps Script yang berjalan sebagai Anda. Uji: masuk dari tombol di halaman, Sheet dibuat sendiri, dan tugas terjadwal berjalan tanpa halaman ini terbuka.</p>
+<label for="cid">ID klien OAuth (Web)</label><input id="cid" placeholder="123-abc.apps.googleusercontent.com">
+<label for="sid">ID skrip Apps Script</label><input id="sid" placeholder="1tqOn2…">
+<div class="row"><button id="masuk">Masuk dengan akun Google</button><button id="mulai" class="sec" disabled>Mulai (buat atau buka Sheet)</button></div>
+<div class="row"><button id="tulis" class="sec" disabled>Tulis baris uji</button><button id="pasang" class="sec" disabled>Pasang tugas terjadwal (1 menit)</button><button id="henti" class="sec" disabled>Hentikan tugas</button><button id="baris" class="sec" disabled>Lihat baris</button><button id="status" class="sec" disabled>Status tugas</button><button id="izin" class="sec" disabled>Izin skrip</button></div>
+<pre id="o">Isi dua kolom di atas, lalu tekan Masuk.</pre>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+var $=function(i){return document.getElementById(i)},out=$('o'),token=null,tokenExp=0,client=null;
+['cid','sid'].forEach(function(k){try{$(k).value=localStorage.getItem('e0-'+k)||''}catch(e){}});
+function simpan(){['cid','sid'].forEach(function(k){try{localStorage.setItem('e0-'+k,$(k).value.trim())}catch(e){}})}
+function log(t){out.textContent=t}
+function aktif(b){['mulai','tulis','pasang','henti','baris','status','izin'].forEach(function(i){$(i).disabled=!b})}
+$('masuk').onclick=function(){
+  simpan(); if(!window.google||!google.accounts){return log('Skrip Google belum termuat. Coba lagi.')}
+  client=google.accounts.oauth2.initTokenClient({client_id:$('cid').value.trim(),
+    scope:'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/script.scriptapp',
+    callback:function(r){ if(r.error){return log('Masuk gagal: '+r.error+(r.error_description?' · '+r.error_description:''))}
+      token=r.access_token;tokenExp=Date.now()+(r.expires_in||3600)*1000;aktif(true);log('Masuk berhasil. Token berlaku ±'+Math.round((r.expires_in||3600)/60)+' menit. Tekan Mulai.')},
+    error_callback:function(e){log('Jendela masuk ditutup atau diblokir: '+(e&&e.type))}});
+  client.requestAccessToken({prompt:''});
+};
+function panggil(fn){
+  var t0=performance.now();log('Memanggil '+fn+'…');
+  return fetch('https://script.googleapis.com/v1/scripts/'+encodeURIComponent($('sid').value.trim())+':run',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({function:fn,parameters:[],devMode:false})})
+  .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})}).then(function(x){
+    var ms=Math.round(performance.now()-t0);
+    if(!x.ok||x.j.error){var e=x.j.error||{};var d=(e.details&&e.details[0])||{};return log('GALAT '+fn+' ('+ms+' ms)\n'+(e.message||JSON.stringify(x.j))+(d.errorMessage?'\n'+d.errorMessage:''))}
+    log(fn+' selesai dalam '+ms+' ms\n'+JSON.stringify(x.j.response&&x.j.response.result,null,1)+'\nToken sisa: ±'+Math.max(0,Math.round((tokenExp-Date.now())/60000))+' menit');
+  }).catch(function(e){log('Gagal menghubungi Google: '+e.message)});
+}
+[['mulai','apiMulai'],['tulis','apiTulis'],['pasang','apiPasangTugas'],['henti','apiHentikanTugas'],['baris','apiBaris'],['status','apiStatusTugas'],['izin','apiAutorisasi']].forEach(function(p){$(p[0]).onclick=function(){panggil(p[1])}});
+</script></body></html>

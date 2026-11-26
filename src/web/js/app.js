@@ -34,7 +34,15 @@
   }
   var demoParam = param('demo'), berandaData = demoParam === null ? null : HF.demo.get(demoParam); // ?demo = data contoh (src/demo)
 
-  var lastTab = 'beranda', appState = null;
+  var lastTab = 'beranda', appState = null, loadSeq = 0; // loadSeq: data yang telat tiba tidak boleh menimpa layar yang sudah berganti (mis. Setup yang dibuka lagi)
+  /* Beranda dari data nyata. SEMENTARA: grafik kecil, "dari Okt", dan kartu Harga terkini memakai data contoh (belum ada sumber nyata, Tahap 6)
+     agar tampilannya bisa dinilai. Setelah Ticon setuju: hapus blok DUMMY di bawah dan sembunyikan ketiganya (lihat CHANGELOG). */
+  function berandaNyata(s) {
+    var d = HF.beranda.fromState(s, {}); if (!d) return null;
+    var dm = HF.demo.get(''); // DUMMY
+    d.spark = dm.spark; d.delta = dm.delta; d.harga = dm.harga; d.live = dm.live; // DUMMY
+    return d;
+  }
   /* Catat transaksi: layar penuh di atas shell. Data contoh (?demo) atau data nyata dari apiState. */
   /* Unggah foto bukti di belakang layar. Gagal = toast dengan Coba lagi (foto ditahan di memori selama aplikasi terbuka). */
   function unggah(id, photo) {
@@ -55,7 +63,10 @@
         onSave: function (res, vm, c, photo) {
           if (res.error) return;
           var done = HF.catatSave.submit(res.rows, ctx.demo);
-          appState = null; // Catat berikutnya memuat saldo terbaru
+          // Perbarui data lokal langsung (Beranda dan Catat berikutnya tidak menunggu Google); ditolak server = muat ulang nanti.
+          if (appState && done.rows) appState.transaksi = (appState.transaksi || []).concat(done.rows.map(function (t) { return Object.assign({ status: 'aktif' }, t); }));
+          else appState = null;
+          done.then(function (r) { if ((r.ditolak || []).length) appState = null; }).catch(function () { /* tetap di antrean perangkat; data lokal sudah mencakupnya */ });
           if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
           done.then(function (r) { if ((r.ditolak || []).length) HF.berandaScreen.flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
             .catch(function () { HF.berandaScreen.flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
@@ -74,9 +85,18 @@
     lastTab = r;
     if (r === 'beranda') {
       var el = document.getElementById('app');
-      el.innerHTML = HF.berandaScreen.html(berandaData) + nav('beranda') + '<div class="br-overlays">' + HF.berandaScreen.overlays(berandaData) + '</div>';
-      HF.berandaScreen.bind(el, berandaData);
       document.title = 'Beranda · Hartafolio';
+      var seq = ++loadSeq;
+      var draw = function (d) {
+        if (route() !== 'beranda' || seq !== loadSeq) return; // pengguna sudah pindah layar (atau Setup dibuka lagi) selama data dimuat
+        el.innerHTML = HF.berandaScreen.html(d) + nav('beranda') + '<div class="br-overlays">' + HF.berandaScreen.overlays(d) + '</div>';
+        HF.berandaScreen.bind(el, d);
+      };
+      if (demoParam !== null) return draw(berandaData);
+      var ready = function (s) { appState = s; draw(berandaNyata(s)); };
+      if (appState) return ready(appState);
+      el.innerHTML = HF.setup.splash();
+      HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
       return;
     }
     var screen = '<main class="app-screen hf-scroll" id="screen">' +
@@ -98,6 +118,7 @@
   /* Hanya mode dev (untuk perbandingan piksel): ?hold menahan splash, ?step=N memaksa langkah Setup. */
   var dev = HF.api.isDev, hold = dev && /[?&]hold\b/.test(location.search), forced = dev && /[?&]step=(\d)/.exec(location.search);
   function openSetup(s, err) {
+    loadSeq++; // batalkan gambar Beranda yang masih menunggu data
     HF.setup.mount(app, s, { err: err, step: forced ? +forced[1] : 0, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
   }
   if (demoParam !== null) startShell(); // data contoh: langsung ke aplikasi

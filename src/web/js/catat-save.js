@@ -20,7 +20,9 @@
     if (demo) { write(DK, read(DK).concat(list)); return Promise.resolve({ diterima: list.map(function (t) { return t.trx_id; }), ditolak: [], utama: list[0].trx_id }); }
     var q = queue(); list.forEach(function (t) { q = root.HF.queue.enqueue(q, t); }); saveQ(q);
     var utama = list[0].trx_id;
-    return flush().then(function (r) { r.utama = utama; return r; });
+    var p = flush().then(function (r) { r.utama = utama; return r; });
+    p.rows = list; // baris lengkap (dengan trx_id) agar layar bisa memperbarui data lokal tanpa memuat ulang
+    return p;
   }
 
   /** Kirim semua yang menunggu. Berhasil/duplikat keluar dari antrean; gagal jaringan tetap di antrean. */
