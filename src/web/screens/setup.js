@@ -58,7 +58,7 @@
   function anggota(d) {
     var rows = d.anggota, n = rows.length;
     var list = n ? '<div class="hf-card su-list" aria-label="Anggota">' + rows.map(function (m) {
-      return '<div class="hf-detail' + (waiting(m.anggota_id) ? ' su-enter' : '') + '" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span class="su-av' + (m.is_pengelola ? ' mgr' : '') + '">' + esc(m.nama.charAt(0).toUpperCase()) + '</span>' +
+      return '<div class="hf-detail' + (d.hl === m.nama ? ' su-enter' : '') + '" style="grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center;"><span class="su-av' + (m.is_pengelola ? ' mgr' : '') + '">' + esc(m.nama.charAt(0).toUpperCase()) + '</span>' +
         '<div class="hf-detail-main"><span class="hf-detail-name">' + esc(m.nama) + '</span><span class="hf-detail-meta">' + (waiting(m.anggota_id) ? SPIN + esc(m.hubungan) + ' · Menyimpan…' : esc(m.hubungan)) + '</span></div>' +
         '<span class="su-row-end">' + (m.is_pengelola ? '<span class="hf-badge hf-badge-brand">Pengelola</span>' : '') + editBtn(m.nama, m.anggota_id) + '</span></div>';
     }).join('') + '</div>' : '';
@@ -159,7 +159,7 @@
         rec = k === 'anggota' ? { anggota_id: 'tmp-' + (++st.tmp), nama: nama, hubungan: fm.owner ? 'Diri sendiri' : fm.v.rel, is_pengelola: fm.owner, aktif: true }
           : { lokasi_id: 'tmp-' + (++st.tmp), nama: nama, jenis: fm.v.jenis, aktif: true };
         st[k] = st[k].concat([rec]);
-        if (k === 'lokasi') st.hl = nama;
+        st.hl = nama; // penanda baris baru: animasi masuk tetap hidup walau server menjawab seketika
         p = k === 'anggota' ? call('apiAnggotaTambah', { nama: nama, hubungan: fm.v.rel }) : call('apiLokasiTambah', { nama: nama, jenis: fm.v.jenis });
       } else {
         rec = Object.assign({}, fm.old, k === 'anggota' ? { nama: nama, hubungan: fm.old.is_pengelola ? fm.old.hubungan : fm.v.rel } : { nama: nama, jenis: fm.v.jenis });

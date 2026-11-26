@@ -244,3 +244,6 @@
 - Diukur di Chrome: elemen `main` tetap sama setelah Tambah cepat (tidak digambar ulang), tinggi baris 0 ke 72 px, posisi Tambah cepat turun bertahap.
 - Bug tiruan dev (`localhost`): nama yang sudah dihapus (aktif = tidak) tetap dihitung sebagai nama ganda, padahal `Master.js` di Google mengabaikannya. Menambah ulang lokasi yang pernah dihapus gagal hanya di localhost. Tiruan kini sama dengan server.
 - Pesan Tambah cepat tidak lagi menyebut "Google Sheet tidak merespons" untuk nama ganda. Kini "X sudah ada".
+
+## 27 Nov 2026 · Setup langkah 2: animasi anggota baru disamakan dengan langkah 3
+- Di langkah 2 baris anggota baru tidak beranimasi: penanda animasinya (`tmp-`) hilang saat server menjawab, sebelum frame pertama tergambar. Kini memakai penanda nama (`st.hl`) seperti Lokasi. Diukur: tinggi baris 28 ke 72 px, opasitas 0,21 ke 1, tombol "Tambah anggota" bergeser halus, sama dengan langkah 3.
