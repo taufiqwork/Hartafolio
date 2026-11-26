@@ -31,7 +31,7 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Boot: splash lalu Setup atau shell 5 tab, rute | `src/web/js/app.js` | IIFE; Setup bila `pengaturan.setup_selesai` bukan "ya" |
 | Jembatan layar ke server (dan tiruan untuk `npm run dev`) | `src/web/js/api.js` | `HF.api.call(nama, ...args)` |
 | Beranda: tampilan (kepala, total, kartu Pembagian harta, Harga terkini, kosong) | `src/web/screens/beranda.js` | `HF.berandaScreen.html/bind/overlays` (lembar lonceng dan toast) |
-| Beranda: logika kartu (urutan, Sisanya, donut, sorotan, pilihan) dan pengingat (banner, lonceng) | `src/engine/beranda.js` | `HF.beranda.view`, `attention`, `fromState` (kosong bila tanpa transaksi) |
+| Beranda: logika kartu (urutan, Sisanya, donut, sorotan, pilihan) dan pengingat (banner, lonceng) | `src/engine/beranda.js` | `HF.beranda.view`, `attention`, `fromState(state, {hariIni})` (kosong bila tanpa transaksi; data nyata dari ledger, valuation, zakat, piutang). Grafik, "dari Okt", dan kartu Harga di data nyata masih dummy sementara di `app.js` (`berandaNyata`, tanda `// DUMMY`) |
 | Data contoh Beranda (bisa dihapus) | `src/demo/demo.js` | `HF.demo.get('' \| 'banyak')`; aktif dengan `?demo` atau `?demo=<keadaan>` (banyak, zakat-hari-h, zakat-terlambat, zakat-mendekati, piutang-hari-h, piutang-terlambat, zakat-dan-piutang, perhatian, perhatian-kosong, perhatian-zakat-piutang, tersimpan) |
 | Catat: logika (vm, reduksi state, kalender, saldo, kurs) | `src/engine/catat.js` | `HF.catat.view(st, ctx, {mulai})`, `reduce`, `calendar` |
 | Catat: data nyata → ctx, keadaan layar → baris Transaksi | `src/engine/catat-ctx.js` | `HF.catatCtx.fromState`, `toRows`, `nowOf` |

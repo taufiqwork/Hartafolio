@@ -46,7 +46,7 @@
     var str = d ? v.hero.str : 'Rp 0';
     return '<section class="hf-total hf-hero' + (d ? ' hf-total-with-link' : '') + '" aria-label="Total harta"><div class="br-total-col"><span class="hf-total-label">Total semua anggota</span>' +
       '<span class="hf-total-amount" aria-label="' + str + '"><span aria-hidden="true">Rp <span class="hf-count" style="--n: ' + (d ? v.hero.int : 0) + ';"></span>' + (d ? v.hero.dec : '') + '</span></span>' +
-      (d ? '<span class="hf-total-sub">' + esc(d.usd) + ' · <span class="hf-delta hf-delta-up">↑ ' + esc(d.delta) + '</span></span><a class="hf-total-link" aria-label="Termasuk piutang ' + esc(d.piutang) + ', buka Piutang">Termasuk piutang ' + esc(d.piutang) + CHEV + '</a>'
+      (d ? '<span class="hf-total-sub">' + esc(d.usd) + ' · <span class="hf-delta hf-delta-up">↑ ' + esc(d.delta) + '</span></span>' + (d.piutang ? '<a class="hf-total-link" aria-label="Termasuk piutang ' + esc(d.piutang) + ', buka Piutang">Termasuk piutang ' + esc(d.piutang) + CHEV + '</a>' : '')
         : '<span class="hf-total-sub">$ 0 · belum ada catatan</span>') + '</div>' + spark + '</section>';
   }
 

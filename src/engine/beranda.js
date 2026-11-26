@@ -102,7 +102,18 @@
     late: ['Piutang terlambat 56 hari', 'Bu Rina · 2 cicilan · perak 60 g milik Azlan', 'Lihat tunggakan', 'var(--loss-soft)', 'var(--loss)', 'var(--loss)', 'hf-btn hf-btn-loss hf-btn-block']
   };
   function mk(t, d, ic, tcls) { return { t: t, d: d, icon: ICO[ic], tcls: tcls }; }
+  /** Pengingat dari data nyata (d.real): teks dibangun fromState, gaya banner dan tombol sama dengan board. */
+  function attentionReal(d) {
+    var z = d.zkList[0], p = d.pkList[0], bz = !!z, it = bz ? z : p, st = bz ? Z[z.k] : (p ? P[p.k] : null);
+    var banner = !it ? null : { title: bz ? it.t : it.bt, desc: bz ? it.d : it.bd, cta: st[2], bg: st[3], bd: st[4], tile: st[5], btnCls: st[6], label: bz ? 'Pengingat zakat' : 'Pengingat piutang', icon: ICO[bz ? 'cal' : 'coin'] };
+    var notes = d.zkList.map(function (x) { return mk(x.t, x.d, 'cal', x.k === 'late' ? 'is-loss' : ''); })
+      .concat(d.pkList.map(function (x) { return mk(x.t, x.d, 'coin', x.k === 'late' ? 'is-loss' : ''); }))
+      .concat(d.noPrice.map(function (n) { return mk('Harga ' + n + ' belum diisi', 'Isi manual agar nilainya masuk total', 'cloud', ''); }));
+    var loss = d.zkList.concat(d.pkList).some(function (x) { return x.k === 'late'; });
+    return { banner: banner, notes: notes, badge: notes.length, badgeLoss: loss, label: notes.length ? 'Perlu perhatian, ' + notes.length + ' hal' : 'Perlu perhatian, tidak ada' };
+  }
   function attention(d) {
+    if (d.real) return attentionReal(d);
     var zk = d.zk || 'none', pk = d.pk || 'none', bz = zk !== 'none', b = bz ? Z[zk] : (pk !== 'none' ? P[pk] : null);
     var banner = !b ? null : { title: b[0], desc: b[1], cta: b[2], bg: b[3], bd: b[4], tile: b[5], btnCls: b[6], label: bz ? 'Pengingat zakat' : 'Pengingat piutang', icon: ICO[bz ? 'cal' : 'coin'] };
     var pNote = pk === 'late' ? mk('Piutang Bu Rina terlambat 56 hari', '2 cicilan · perak 60 g milik Azlan belum diterima', 'coin', 'is-loss') : mk('Cicilan Bu Sari jatuh tempo hari ini', 'Perak 50 g milik Azlan · catat bila sudah diterima', 'coin', '');
@@ -112,10 +123,89 @@
     return { banner: banner, notes: notes, badge: notes.length, badgeLoss: zk === 'late' || pk === 'late', label: notes.length ? 'Perlu perhatian, ' + notes.length + ' hal' : 'Perlu perhatian, tidak ada' };
   }
 
-  /** Data nyata dari Sheet. Tanpa transaksi aktif = Beranda kosong (null). Pemetaan ke angka menyusul bersama Catat (Tahap 5). */
-  function fromState(state) {
-    var aktif = (state && state.transaksi || []).filter(function (t) { return t.status !== 'dihapus'; });
-    return aktif.length ? { belumDipetakan: true } : null;
+  /* ---- Data nyata dari Sheet ---- */
+  function lib(name, file) { return (root.HF && root.HF[name]) || require(file); }
+  function lab(a) { return a.sumber_harga === 'manual' ? a.nama : (a.bentuk === 'Fisik' ? a.nama + ' fisik' : a.simbol); }
+  function rp(n) { return 'Rp ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  var BLN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  function tgl(s) { return +s.slice(8, 10) + ' ' + BLN[+s.slice(5, 7) - 1] + ' ' + s.slice(0, 4); }
+  function qtyText(n, a) { var x = Math.round(n * 1e4) / 1e4; return String(x).replace('.', ',') + ' ' + (a.satuan === 'gram' ? 'g' : a.satuan); }
+  function pct(g) { var r = Math.round(g * 10) / 10; return r === 0 ? '0%' : (r > 0 ? '+' : '−') + Math.abs(r).toFixed(1).replace('.', ',') + '%'; }
+  var URUT = ['Emas', 'Crypto', 'Perak', 'Saham', 'Reksa dana', 'Mata uang', 'Properti', 'Lainnya'];
+
+  /**
+   * Data nyata dari Sheet (state = hasil apiState). Tanpa transaksi aktif = Beranda kosong (null).
+   * Hasil memakai bentuk yang sama dengan data contoh (view/attention), ditambah d.real=true dan daftar pengingat nyata
+   * (d.zkList, d.pkList, d.noPrice). Grafik kecil, persen "dari bulan lalu", dan kartu Harga terkini BELUM ada sumber nyata
+   * (Tahap 6): pemanggil mengisinya dengan data contoh sementara (d.spark, d.delta, d.harga, d.live) atau menyembunyikannya.
+   * o.hariIni = 'YYYY-MM-DD' (bawaan: tanggal serverWaktu).
+   */
+  function fromState(state, o) {
+    var trx = ((state && state.transaksi) || []).filter(function (t) { return !t.status || t.status === 'aktif'; });
+    if (!trx.length) return null;
+    var Lg = lib('ledger', './ledger.js'), V = lib('valuation', './valuation.js'), Z = lib('zakat', './zakat.js'), Pu = lib('piutang', './piutang.js'), C = lib('catalog', './catalog.js');
+    var hariIni = (o && o.hariIni) || String(state.serverWaktu || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(hariIni)) { var n = new Date(); hariIni = n.getFullYear() + '-' + ('0' + (n.getMonth() + 1)).slice(-2) + '-' + ('0' + n.getDate()).slice(-2); } // tanpa jam server (mode dev): tanggal perangkat
+    var anggota = (state.anggota || []).filter(function (m) { return m.aktif !== false; }), aset = state.aset || [];
+    var lokasi = {}, A = {}, M = {};
+    (state.lokasi || []).forEach(function (l) { lokasi[l.lokasi_id] = l.nama; });
+    aset.forEach(function (a) { A[a.aset_id] = a; });
+    anggota.forEach(function (m) { M[m.anggota_id] = m.nama; });
+    var H = state.harga || {}, prices = H.terakhir || {}, ks = H.kursSeries || [], kurs = ks.length ? ks[ks.length - 1].harga : 0;
+
+    var pinjam = (state.piutang || []).filter(function (p) { return p.status !== 'lunas'; }).map(function (p) { return { p: p, st: Pu.status(p, state.transaksi || [], hariIni) }; }).filter(function (x) { return !x.st.lunas; });
+    var bal = Lg.balances(trx);
+    var nilai = V.nilai({ bal: bal, aset: aset, anggota: state.anggota || [], prices: prices, kursUsd: kurs,
+      piutang: pinjam.map(function (x) { return { pemberi_anggota_id: x.p.pemberi_anggota_id, aset_id: x.p.aset_id, sisa: x.st.sisa }; }) });
+
+    var CLS = URUT.filter(function (k) { return anggota.some(function (m) { return ((nilai.perAnggota[m.anggota_id] || {}).perKelas || {})[k] > 0; }); });
+    var MEM = anggota.map(function (m) { return m.nama; });
+    var MX = anggota.map(function (m) { var pk = (nilai.perAnggota[m.anggota_id] || {}).perKelas || {}; return CLS.map(function (k) { return (pk[k] || 0) / 1e6; }); });
+    var AR = [];
+    Object.keys(bal).forEach(function (k) {
+      var q = Lg.parseKey(k), a = A[q.aset_id];
+      if (bal[k] > 0 && a && M[q.anggota_id] && lokasi[q.lokasi_id]) AR.push([lab(a), a.kelas, lokasi[q.lokasi_id], M[q.anggota_id]]);
+    });
+
+    // % sejak awal dicatat: hanya dari bagian yang modalnya diketahui dan harganya ada; selain itu '—'.
+    var pos = Lg.costBasis(trx).posisi, gm = {}, gc = {};
+    function acc(map, key, v, c) { var r = map[key] || (map[key] = { v: 0, c: 0 }); r.v += v; r.c += c; }
+    Object.keys(pos).forEach(function (k) {
+      var p = pos[k], i = k.split('|'), a = A[i[1].split('~')[0]], h = a ? V.hargaIdr(a, prices, kurs) : null;
+      if (!a || !M[i[0]] || h === null || !(p.qtyKnown > 0) || !(p.cost > 0)) return;
+      acc(gm, M[i[0]], p.qtyKnown * h, p.cost); acc(gc, a.kelas, p.qtyKnown * h, p.cost);
+    });
+    function out(map) { var r = {}; Object.keys(map).forEach(function (k) { r[k] = pct((map[k].v - map[k].c) / map[k].c * 100); }); return r; }
+    var GM = out(gm), GC = out(gc);
+    MEM.forEach(function (n) { if (!GM[n]) GM[n] = '—'; }); CLS.forEach(function (n) { if (!GC[n]) GC[n] = '—'; }); GC['Sisanya'] = '—';
+
+    var d = { real: true, MEM: MEM, CLS: CLS, MX: MX, AR: AR, GM: GM, GC: GC,
+      usd: kurs > 0 ? '$ ' + Math.round(nilai.salinan / kurs).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '$ —',
+      piutang: nilai.piutang > 0 ? jt(nilai.piutang / 1e6) : null, noPrice: [], zkList: [], pkList: [], zk: 'none', pk: 'none' };
+
+    nilai.tanpaHarga.forEach(function (id) { if (A[id]) d.noPrice.push(lab(A[id])); });
+
+    var hg = {};
+    aset.forEach(function (a) { var kat = a.kategori_zakat || C.zakatKategori(a), h = V.hargaIdr(a, prices, kurs), g = C.gramPerUnit(a); if (kat && h > 0 && g > 0 && !hg[kat]) hg[kat] = h / g; });
+    Z.hitung({ trx: trx, aset: aset, anggota: anggota, bayar: state.zakatBayar || [], pengaturan: state.pengaturan || {}, hariIni: hariIni, hargaGram: hg }).forEach(function (r) {
+      var sisa = r.hari_tersisa, st = r.status_haul === 'terlambat' ? 'late' : r.status_haul === 'jatuh tempo' ? 'due' : (r.status_haul === 'berjalan' && sisa <= 14 ? 'soon' : null);
+      if (!st) return;
+      var nm = M[r.anggota_id], amt = r.zakat_idr ? rp(r.zakat_idr) : null, g = String(Math.round(r.saldo_akhir_haul * 10) / 10).replace('.', ',') + ' g';
+      var t = st === 'late' ? 'Zakat mal terlambat ' + (-sisa) + ' hari' : st === 'due' ? 'Zakat mal jatuh tempo hari ini' : 'Zakat mal jatuh tempo ' + sisa + ' hari lagi';
+      var ds = st === 'late' ? nm + ' · jatuh tempo ' + tgl(r.jatuh_tempo) + (amt ? ' · ' + amt : '') : st === 'due' ? nm + (amt ? ' · ' + amt : '') + ' · ' + r.logam + ' ' + g : nm + ' · ' + tgl(r.jatuh_tempo) + (amt ? ' · perkiraan ± ' + amt : '');
+      d.zkList.push({ k: st, t: t, d: ds, rank: st === 'late' ? 0 : st === 'due' ? 1 : 2, sisa: sisa });
+    });
+    d.zkList.sort(function (a, b) { return a.rank - b.rank || a.sisa - b.sisa; });
+
+    pinjam.forEach(function (x) {
+      var p = x.p, st = x.st, a = A[p.aset_id]; if (!a) return;
+      var what = a.nama.toLowerCase() + ' ' + qtyText(p.jumlah_pokok, a) + ' milik ' + (M[p.pemberi_anggota_id] || '');
+      if (st.terlambat) d.pkList.push({ k: 'late', t: 'Piutang ' + p.peminjam_nama + ' terlambat ' + st.hariTerlambat + ' hari', d: st.cicilanTerlambat + ' cicilan · ' + what + ' belum diterima', bt: 'Piutang terlambat ' + st.hariTerlambat + ' hari', bd: p.peminjam_nama + ' · ' + st.cicilanTerlambat + ' cicilan · ' + what, rank: 0, hari: st.hariTerlambat });
+      else if (st.jatuhTempoHariIni) d.pkList.push({ k: 'due', t: 'Cicilan ' + p.peminjam_nama + ' jatuh tempo hari ini', d: what + ' · catat bila sudah diterima', bt: 'Cicilan piutang jatuh tempo hari ini', bd: p.peminjam_nama + ' · ' + what, rank: 1, hari: 0 });
+    });
+    d.pkList.sort(function (a, b) { return a.rank - b.rank || b.hari - a.hari; });
+    d.zk = d.zkList.length ? d.zkList[0].k : 'none'; d.pk = d.pkList.length ? d.pkList[0].k : 'none';
+    return d;
   }
 
   var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, jt: jt };
