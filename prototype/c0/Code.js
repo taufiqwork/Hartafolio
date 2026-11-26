@@ -54,10 +54,11 @@ function apiHentikanTugas() {
 function tugasUji() {
   var p = PropertiesService.getUserProperties(), now = new Date().toISOString();
   p.setProperty('tugas.mulai', now);
+  console.log('tugasUji mulai oleh ' + Session.getEffectiveUser().getEmail());
   try {
     var h = C0_ss_();
     h.ss.getSheetByName('Transaksi').appendRow(['TERJADWAL-' + Date.now(), now.slice(0, 10), 0, 'tugas terjadwal']);
-    p.setProperty('tugas.ok', now); p.deleteProperty('tugas.galat');
+    p.setProperty('tugas.ok', now); p.deleteProperty('tugas.galat'); console.log('tugasUji ok');
   } catch (e) { p.setProperty('tugas.galat', now + ' ' + String(e && e.message || e).slice(0, 400)); throw e; }
 }
 

@@ -218,3 +218,8 @@
 - **Uji yang menyingkirkan penyebab lain:** pemicu dipasang lewat Execution API dan lewat web app (dijalankan sebagai pengguna): keduanya gagal, jejak `tugas.mulai` kosong. Status izin skrip untuk pemanggil `NOT_REQUIRED`. Kode `tugasUji` tidak sempat berjalan.
 - **Dugaan yang diuji berikutnya:** berkas proyek perlu dibagikan ke pengguna (Viewer, atau "siapa saja dengan tautan"). Bila benar, Jalan 2 dan hibrida sama-sama mensyaratkan kode proyek pusat dibuka untuk dibaca; Jalan 1 (salinan milik keluarga) tidak terkena.
 - Penambahan fungsi diagnosa (`apiAutorisasi`, tombol di halaman E0 dan web app percobaan) ikut dicatat.
+
+## 26 Nov 2026 · E0: tugas terjadwal berhasil setelah berkas skrip dibagikan
+- **Hasil (Ticon, 26 Nov):** setelah berkas skrip dibagikan ke akun uji sebagai Viewer, pemicu yang dipasang lewat halaman biasa (Execution API) berjalan tiap menit dengan status Completed dan menambah baris "tugas terjadwal" ke Sheet akun itu, tanpa halaman terbuka. Pemicu dimiliki "Other user" dengan error rate 0%.
+- **Terbukti:** (1) tombol masuk Google di halaman sendiri; (2) fungsi Apps Script berjalan sebagai pengguna; (3) tugas terjadwal berjalan di akun pengguna tanpa server; (4) penyebab kegagalan awal = pemilik pemicu tidak punya hak baca berkas skrip.
+- **Belum terbukti (syarat sebelum disebut aman):** akun yang belum pernah dibagikan dengan pembagian "siapa saja dengan tautan"; perilaku setelah 7 hari dan status Testing vs Production; masuk ulang tiap sesi (token ±1 jam) dan jendela masuk di HP; halaman di HTTPS dan pemasangan ke layar utama; layar izin untuk pengguna baru di luar daftar uji.
