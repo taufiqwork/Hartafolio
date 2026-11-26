@@ -29,7 +29,7 @@
   }
   function clean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
   function dupe(rows, nama, skip, key) {
-    return rows.some(function (r) { return r[key] !== skip && r.nama.toLowerCase() === nama.toLowerCase(); });
+    return rows.some(function (r) { return r.aktif !== false && r[key] !== skip && r.nama.toLowerCase() === nama.toLowerCase(); }); // sama seperti Master.js: yang sudah dihapus (aktif tidak) tidak dihitung
   }
   function fail(msg) { return Promise.reject(new Error(msg)); }
 
