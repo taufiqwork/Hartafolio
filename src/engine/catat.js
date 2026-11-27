@@ -26,7 +26,7 @@
 
   function num(x) { return parseFloat(String(x).replace(/\./g, '').replace(',', '.')); }
   function fmt(n, d) { return (isFinite(n) ? n : 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d }); }
-  function rp(n) { return n >= 1e6 ? 'Rp ' + fmt(n / 1e6, 2) + ' jt' : 'Rp ' + fmt(n, 0); }
+  function rp(n) { return n >= 1e12 ? 'Rp ' + fmt(n / 1e12, 2) + ' T' : n >= 1e9 ? 'Rp ' + fmt(n / 1e9, 2) + ' M' : n >= 1e6 ? 'Rp ' + fmt(n / 1e6, 2) + ' jt' : 'Rp ' + fmt(n, 0); } // miliar "M", sama dengan Beranda dan HF.format.rupiahShort
   function p2(n) { return String(n).padStart(2, '0'); }
   function pill(l, on, key) { return { l: l, pressed: String(on), key: key === undefined ? l : key }; }
   function has(arr, v) { return arr.indexOf(v) >= 0; }
