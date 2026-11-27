@@ -247,3 +247,8 @@
 
 ## 27 Nov 2026 · Setup langkah 2: animasi anggota baru disamakan dengan langkah 3
 - Di langkah 2 baris anggota baru tidak beranimasi: penanda animasinya (`tmp-`) hilang saat server menjawab, sebelum frame pertama tergambar. Kini memakai penanda nama (`st.hl`) seperti Lokasi. Diukur: tinggi baris 28 ke 72 px, opasitas 0,21 ke 1, tombol "Tambah anggota" bergeser halus, sama dengan langkah 3.
+
+## 27 Nov 2026 · Beranda: nilai miliar ditulis "M", bukan ribuan juta
+- Total di Beranda selalu ditulis dalam juta dengan satu desimal. Nilai Rp 7.560.000.000 tampil "Rp 7560,0 jt": tanpa titik ribuan dan tidak memakai satuan miliar. Kini mulai 1.000 jt ditulis "Rp 7,56 M" (triliun "T"), sama dengan `HF.format.rupiahShort` dan aturan di design-system. Di bawah 1.000 jt tidak berubah ("Rp 174,2 jt"), jadi board tetap sama.
+- Bug kecil di hero: 7,96 jt dipecah jadi "7" dan ",10 jt" ("Rp 7,10 jt"). Kini bagian bulat dan sisa diambil dari teks yang sama, jadi "Rp 8,0 jt".
+- Belum diubah: form Catat menulis "Rp 7.560 jt" untuk nilai miliar (titik ribuan benar, tapi beda dengan "M"). Menunggu keputusan Ticon.

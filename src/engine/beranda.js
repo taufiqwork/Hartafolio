@@ -8,7 +8,19 @@
   'use strict';
   var C = 2 * Math.PI * 86;
   function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
-  function jt(v) { return 'Rp ' + v.toFixed(1).replace('.', ',') + ' jt'; }
+  /* v dalam juta Rupiah. Sampai 999,9 jt: "Rp 174,2 jt". Mulai 1.000 jt ditulis miliar "Rp 7,56 M" (triliun "T"), sama dengan
+     HF.format.rupiahShort. Dulu 7,56 miliar tampil "Rp 7560,0 jt": tanpa titik ribuan dan bukan satuan miliar. */
+  function jt(v) {
+    if (Math.round(Math.abs(v) * 10) / 10 < 1000) return 'Rp ' + v.toFixed(1).replace('.', ',') + ' jt';
+    var x = Math.abs(v) / 1000, u = 'M';
+    if (x >= 1000) { x /= 1000; u = 'T'; }
+    return (v < 0 ? '\u2212' : '') + 'Rp ' + x.toFixed(2).replace('.', ',') + ' ' + u;
+  }
+  /* Angka hero dipecah dari teks jt(): bagian bulat (dianimasikan) dan sisanya ",56 M". */
+  function heroParts(v) {
+    var str = jt(v), m = /^Rp (\d+)(,\d+)? (\S+)$/.exec(str);
+    return m ? { str: str, int: +m[1], dec: (m[2] || '') + ' ' + m[3] } : { str: str, int: 0, dec: '' };
+  }
   function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
 
   /** ui = { mode:'anggota'|'aset', sel:null|indeks, hi:null|indeks sorotan, k:penghitung animasi } */
@@ -70,13 +82,12 @@
       pts = vals.map(function (v, i) { return (2 + i * 96 / (vals.length - 1)).toFixed(1) + ',' + (42 - (v - lo) / (hi - lo) * 36).toFixed(1); }).join(' ');
       spark = { pts: pts, area: '2,48 ' + pts + ' 98,48', dy: ((42 - (vals[vals.length - 1] - lo) / (hi - lo) * 36) / 48 * 100).toFixed(1) + '%' };
     }
-    var gi = Math.floor(grand + 1e-9);
     return {
       title: title, segs: segs, rows: rows, opts: opts, selLabel: s === null ? allLabel : list[s], mode: m, sel: s,
       cName: hs === null ? short : items[hs][0], cHasCtx: hs !== null, cCtx: s === null ? (m === 'anggota' ? 'Total harta' : 'Total') : short,
       cValue: jt(hs === null ? total : items[hs][1]), cHasShare: hs !== null, cShare: hs === null ? '' : Math.round(items[hs][1] / total * 100) + '%',
       swCls: 'sw' + ((ui.k || 0) % 2), rwCls: 'rw' + ((ui.k || 0) % 2),
-      hero: { str: jt(grand), int: gi, dec: ',' + Math.round((grand - gi) * 10) + ' jt' },
+      hero: heroParts(grand),
       spark: spark
     };
   }
@@ -221,7 +232,7 @@
     return d;
   }
 
-  var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, jt: jt };
+  var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, jt: jt, heroParts: heroParts };
   root.HF = root.HF || {};
   root.HF.beranda = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
