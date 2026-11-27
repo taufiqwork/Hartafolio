@@ -104,6 +104,15 @@ export const catatFrames = [
   CTF('buka-bayar', 'beli', KLIK('Aset lain…'), [0, 100, 250, 450]), CTF('buka-aset', 'beli', KLIK('Aset lain'), [0, 100, 250, 450])
 ];
 
+// Aset (?demo=<keadaan>#/aset: data contoh src/demo/aset-demo.js, keadaan awal sama dengan prop `mulai` board).
+const AS = (id, mulai) => ({ id: '03-Aset' + id, board: '03-Aset' + id, query: 'demo=' + mulai, hash: '#/aset' });
+const ASF = (id, act, at, mulai, board) => ({ id: '03-Aset@' + id, board: board || '03-Aset', query: 'demo=' + (mulai || 'default'), hash: '#/aset', frames: { act, at } });
+export const asetFrames = [
+  ASF('buka-lokasi', `document.querySelector('.hf-chip[aria-haspopup]').click();`, [0, 100, 300]),
+  ASF('pilih-anggota', `document.querySelectorAll('[role=group] .hf-chip')[1].click();`, [0, 150, 400]),
+  ASF('pilih-lokasi', `document.querySelectorAll('.hf-select-opt')[1].click();`, [0, 150, 400], 'lokasi', '03-Aset-2b-Lokasi-Menu')
+];
+export const aset = [AS('', 'default'), AS('-2a-Satu-Anggota', 'satu'), AS('-2b-Lokasi-Menu', 'lokasi'), AS('-2c-Kosong', 'kosong'), AS('-2d-Tersimpan', 'tersimpan')];
 export const scenarios = [
   { id: '00-Splash', board: '00-Splash', hold: true },
   { id: '01-Setup-1-Akun', board: '01-Setup-1-Akun', seed: seed(), step: 1 },
@@ -166,5 +175,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames, ...riwayat, ...riwayatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames, ...riwayat, ...riwayatFrames, ...aset, ...asetFrames
 ];

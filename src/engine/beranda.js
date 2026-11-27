@@ -156,6 +156,23 @@
    * (Tahap 6): pemanggil mengisinya dengan data contoh sementara (d.spark, d.delta, d.harga, d.live) atau menyembunyikannya.
    * o.hariIni = 'YYYY-MM-DD' (bawaan: tanggal serverWaktu).
    */
+  /**
+   * Harga dan kurs untuk menilai posisi. Dari tab Harga; sebelum ada sumber harga otomatis (Tahap 6) dan bila tab Harga kosong:
+   * harga Beli/Jual terakhir (dan kurs yang dibekukan di sana) jadi perkiraan. Dipakai Beranda dan Aset.
+   */
+  function hargaPerkiraan(state, trx) {
+    var Lg = lib('ledger', './ledger.js');
+    var H = state.harga || {}, prices = Object.assign({}, H.terakhir || {}), ks = H.kursSeries || [], kurs = ks.length ? ks[ks.length - 1].harga : 0;
+    // Sebelum ada sumber harga otomatis (Tahap 6) dan bila tab Harga kosong: harga Beli/Jual terakhir (dan kurs yang dibekukan di sana) jadi perkiraan.
+    var estimasi = [];
+    Lg.sortTrx(trx).forEach(function (t) {
+      var mu = t.harga_mata_uang || 'IDR', usd = mu === 'USD' || mu === 'USDT';
+      if (usd && +t.kurs > 0 && !ks.length) kurs = +t.kurs;
+      if ((t.jenis === 'Beli' || t.jenis === 'Jual') && +t.harga_per_unit > 0 && (mu === 'IDR' || usd) && !(H.terakhir || {})[t.aset_id]) { prices[t.aset_id] = { harga: +t.harga_per_unit, mata_uang: mu }; if (estimasi.indexOf(t.aset_id) < 0) estimasi.push(t.aset_id); }
+    });
+    return { prices: prices, kurs: kurs, estimasi: estimasi };
+  }
+
   function fromState(state, o) {
     var trx = ((state && state.transaksi) || []).filter(function (t) { return !t.status || t.status === 'aktif'; });
     if (!trx.length) return null;
@@ -167,14 +184,7 @@
     (state.lokasi || []).forEach(function (l) { lokasi[l.lokasi_id] = l.nama; });
     aset.forEach(function (a) { A[a.aset_id] = a; });
     anggota.forEach(function (m) { M[m.anggota_id] = m.nama; });
-    var H = state.harga || {}, prices = Object.assign({}, H.terakhir || {}), ks = H.kursSeries || [], kurs = ks.length ? ks[ks.length - 1].harga : 0;
-    // Sebelum ada sumber harga otomatis (Tahap 6) dan bila tab Harga kosong: harga Beli/Jual terakhir (dan kurs yang dibekukan di sana) jadi perkiraan.
-    var estimasi = [];
-    Lg.sortTrx(trx).forEach(function (t) {
-      var mu = t.harga_mata_uang || 'IDR', usd = mu === 'USD' || mu === 'USDT';
-      if (usd && +t.kurs > 0 && !ks.length) kurs = +t.kurs;
-      if ((t.jenis === 'Beli' || t.jenis === 'Jual') && +t.harga_per_unit > 0 && (mu === 'IDR' || usd) && !(H.terakhir || {})[t.aset_id]) { prices[t.aset_id] = { harga: +t.harga_per_unit, mata_uang: mu }; if (estimasi.indexOf(t.aset_id) < 0) estimasi.push(t.aset_id); }
-    });
+    var H = state.harga || {}, hp = hargaPerkiraan(state, trx), prices = hp.prices, kurs = hp.kurs, estimasi = hp.estimasi;
 
     var pinjam = (state.piutang || []).filter(function (p) { return p.status !== 'lunas'; }).map(function (p) { return { p: p, st: Pu.status(p, state.transaksi || [], hariIni) }; }).filter(function (x) { return !x.st.lunas; });
     var bal = Lg.balances(trx);
@@ -232,7 +242,7 @@
     return d;
   }
 
-  var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, jt: jt, heroParts: heroParts };
+  var api = { attention: attention, view: view, miniSpark: miniSpark, fromState: fromState, hargaPerkiraan: hargaPerkiraan, jt: jt, heroParts: heroParts };
   root.HF = root.HF || {};
   root.HF.beranda = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

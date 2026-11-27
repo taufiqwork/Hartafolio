@@ -50,7 +50,7 @@
     });
   }
   /* Toast setelah Catat menyimpan: tampil di tab yang akan dibuka (Beranda atau Riwayat). */
-  function flash(t) { (lastTab === 'riwayat' ? HF.riwayatScreen : HF.berandaScreen).flash(t); }
+  function flash(t) { (lastTab === 'riwayat' ? HF.riwayatScreen : lastTab === 'aset' ? HF.asetScreen : HF.berandaScreen).flash(t); }
   /* Koreksi data nyata (Ubah, Hapus, Pulihkan): aturan yang sama dengan server dicek di perangkat dulu (jawaban cepat, tanpa menunggu Google),
      lalu layar langsung diperbarui dan server dikirimi; bila server menolak atau gagal, data dimuat ulang dari Sheet. */
   function koreksiLokal(id, aksi, isi) {
@@ -143,6 +143,21 @@
     HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
   }
 
+  /* Aset: data contoh (?demo=keadaan) atau data nyata dari apiState (posisi dari saldo x harga). */
+  function renderAset() {
+    var el = document.getElementById('app'), seq = ++loadSeq;
+    document.title = 'Aset · Hartafolio';
+    if (demoParam !== null) { var g = HF.asetDemo.get(demoParam); return HF.asetScreen.mount(el, { data: g.data, ui: g.ui, saved: g.saved, real: false }, nav('aset')); }
+    var ready = function (s) {
+      appState = s;
+      if (route() !== 'aset' || seq !== loadSeq) return;
+      HF.asetScreen.mount(el, { data: HF.aset.fromState(s, {}), real: true }, nav('aset'));
+    };
+    if (appState) return ready(appState);
+    el.innerHTML = HF.setup.splash();
+    HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
+  }
+
   function render() {
     HF.listen.reset(document.getElementById('app')); // pendengar layar sebelumnya dilepas (kalau tidak, tombol Simpan di Catat jalan berlipat)
     var r = route();
@@ -166,6 +181,7 @@
       return;
     }
     if (r === 'riwayat') return renderRiwayat();
+    if (r === 'aset') return renderAset();
     var screen = '<main class="app-screen hf-scroll" id="screen">' +
       '<h1 class="app-title">' + TITLES[r] + '</h1>' +
       '<p class="app-soon">Layar ini dibangun pada tahap berikutnya.</p></main>';

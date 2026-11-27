@@ -47,6 +47,8 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Data contoh Riwayat (bisa dihapus) | `src/demo/riwayat-demo.js` | `HF.riwayatDemo.get(keadaan)`; `?demo=<default\|filter\|detail\|detail-zakat\|detail-pinjam\|detail-cicilan\|detail-lunas\|detail-pindah\|terhapus\|daftar-terhapus\|kosong\|tersimpan\|diubah>#/riwayat` |
 | Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |
 | Foto bukti: validasi dan pengecilan di perangkat | `src/web/js/foto.js` | `HF.foto.prepare/pilih` |
+| Aset: tampilan (kartu per kelas, chip anggota, menu lokasi, kosong, toast) | `src/web/screens/aset.js` | `HF.asetScreen.mount/flash`; pembaruan lewat `HF.morph` |
+| Aset: posisi dari Sheet, pengelompokan, filter | `src/engine/aset.js` | `HF.aset.fromState`, `view(d, ui)`; data contoh `src/demo/aset-demo.js` (`?demo=default\|satu\|lokasi\|kosong\|tersimpan`) |
 | Cadangan Sheet mingguan (jadwal, salinan, folder, simpan 8) | `src/gas/Cadangan.js` | `cadanganNyalakan`, `cadanganMatikan`, `cadanganSekarang`, `cadanganMingguan`, `Cadangan_buat_` |
 | Foto bukti: unggah ke Drive (izin `drive.file`) | `src/gas/Bukti.js` | `apiBuktiUnggah` |
 | Aset buatan sendiri | `src/gas/Master.js` | `apiAsetTambah` |
