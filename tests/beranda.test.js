@@ -97,3 +97,17 @@ test('fromState: tanpa tab Harga, harga Beli terakhir jadi perkiraan dan dicatat
   assert.equal(B.view(d, { mode: 'anggota', sel: null }).hero.str, 'Rp 19,6 jt'); // 0,045 x 80 jt (3,6) + 0,01 BTC x 100.000 USDT x 16.000 (16)
   assert.equal(B.attention(d).notes[0].t, 'Harga PAXG, BTC dari transaksi terakhir');
 });
+
+test('jt: miliar ditulis M, bukan "7560,0 jt"; hero dipecah benar', () => {
+  assert.equal(B.jt(7560), 'Rp 7,56 M');
+  assert.equal(B.jt(999.94), 'Rp 999,9 jt');
+  assert.equal(B.jt(999.96), 'Rp 1,00 M');
+  assert.equal(B.jt(1480), 'Rp 1,48 M');
+  assert.equal(B.jt(2500000), 'Rp 2,50 T');
+  assert.equal(B.jt(7.96), 'Rp 8,0 jt');
+});
+test('hero: bagian bulat dan sisa untuk jt dan M', () => {
+  assert.deepEqual(B.heroParts(174.2), { str: 'Rp 174,2 jt', int: 174, dec: ',2 jt' });
+  assert.deepEqual(B.heroParts(7.96), { str: 'Rp 8,0 jt', int: 8, dec: ',0 jt' }); // dulu "7" + ",10 jt"
+  assert.deepEqual(B.heroParts(7560), { str: 'Rp 7,56 M', int: 7, dec: ',56 M' });
+});
