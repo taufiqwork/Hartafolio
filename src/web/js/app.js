@@ -37,15 +37,8 @@
   var demoParam = param('demo'), berandaData = demoParam === null ? null : HF.demo.get(demoParam); // ?demo = data contoh (src/demo)
 
   var lastTab = 'beranda', appState = null, loadSeq = 0; // loadSeq: data yang telat tiba tidak boleh menimpa layar yang sudah berganti (mis. Setup yang dibuka lagi)
-  /* Beranda dari data nyata. SEMENTARA: grafik kecil, "dari Okt", dan kartu Harga terkini memakai data contoh (belum ada sumber nyata, Tahap 6)
-     agar tampilannya bisa dinilai. Setelah Ticon setuju: hapus blok DUMMY di bawah dan sembunyikan ketiganya (lihat CHANGELOG). */
-  function berandaNyata(s) {
-    var d = HF.beranda.fromState(s, {}); if (!d) return null;
-    if (param('tanpa-dummy') !== null) return d; // tampilan akhir (setelah dummy dibuang): tanpa grafik, "dari bulan lalu", dan kartu Harga
-    var dm = HF.demo.get(''); // DUMMY
-    d.spark = dm.spark; d.delta = dm.delta; d.harga = dm.harga; d.live = dm.live; // DUMMY
-    return d;
-  }
+  /* Beranda dari data nyata: hanya yang benar-benar ada di Sheet (tanpa grafik, persen "dari bulan lalu", dan kartu Harga terkini; ketiganya menunggu sumber harga, Tahap 6). */
+  function berandaNyata(s) { return HF.beranda.fromState(s, {}); }
   /* Catat transaksi: layar penuh di atas shell. Data contoh (?demo) atau data nyata dari apiState. */
   /* Unggah foto bukti di belakang layar. Gagal = toast dengan Coba lagi (foto ditahan di memori selama aplikasi terbuka). */
   function unggah(id, photo) {

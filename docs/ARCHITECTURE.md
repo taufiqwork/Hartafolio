@@ -47,6 +47,7 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Data contoh Riwayat (bisa dihapus) | `src/demo/riwayat-demo.js` | `HF.riwayatDemo.get(keadaan)`; `?demo=<default\|filter\|detail\|detail-zakat\|detail-pinjam\|detail-cicilan\|detail-lunas\|detail-pindah\|terhapus\|daftar-terhapus\|kosong\|tersimpan\|diubah>#/riwayat` |
 | Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |
 | Foto bukti: validasi dan pengecilan di perangkat | `src/web/js/foto.js` | `HF.foto.prepare/pilih` |
+| Cadangan Sheet mingguan (jadwal, salinan, folder, simpan 8) | `src/gas/Cadangan.js` | `cadanganNyalakan`, `cadanganMatikan`, `cadanganSekarang`, `cadanganMingguan`, `Cadangan_buat_` |
 | Foto bukti: unggah ke Drive (izin `drive.file`) | `src/gas/Bukti.js` | `apiBuktiUnggah` |
 | Aset buatan sendiri | `src/gas/Master.js` | `apiAsetTambah` |
 | Setup: splash, langkah 1 Akun, 2 Anggota, 3 Lokasi, 4 Import (tahap 1; tombol unduh/pilih file mati sampai Tahap 8) | `src/web/screens/setup.js` | `HF.setup.mount`, `HF.setup.splash` |

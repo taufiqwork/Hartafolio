@@ -50,7 +50,7 @@ function boot() {
   const root = path.join(__dirname, '..', 'src');
   ['catalog', 'dates', 'format', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
-  ['Repo', 'Setup', 'Master', 'Bukti'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
+  ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
 }
 
@@ -288,6 +288,28 @@ test('apiBuktiUnggah: folder lama tak terlihat oleh izin sempit -> dicari lagi, 
   g.run(`apiBuktiUnggah('TX-1', {nama:'a.jpg', mime:'image/jpeg', base64:'QUJD'})`);
   assert.equal(g.run('apiState()').pengaturan.folder_bukti_id, 'BARU');
   assert.deepEqual(Array.from(bikin[1].parents), ['BARU']);
+});
+
+test('cadangan: salinan ke folder, simpan 8 terakhir (yang lama ke sampah), jadwal Minggu 03.00 dibuat sekali, galat dicatat', () => {
+  const g = boot(); const ss = g.ctx.SpreadsheetApp.getActiveSpreadsheet(); let n = 0; const pindah = [], sampah = [], jadwal = [];
+  ss.copy = (nama) => ({ getId: () => 'C' + (++n), nama });
+  g.ctx.Drive = { Files: { get: () => { throw new Error('404'); }, create: () => ({ id: 'FOLDERC' }), update(res, id, m, opt) { if (res.trashed) sampah.push(id); else pindah.push([id, opt.addParents]); return { id }; } } };
+  g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
+  g.ctx.ScriptApp = { WeekDay: { SUNDAY: 'SUN' }, deleted: 0, getProjectTriggers: () => jadwal.slice(), deleteTrigger() { g.ctx.ScriptApp.deleted++; jadwal.length = 0; },
+    newTrigger(f) { const t = { f, getHandlerFunction: () => f, timeBased: () => t, onWeekDay: (d) => { t.d = d; return t; }, atHour: (h) => { t.h = h; return t; }, inTimezone: () => t, create: () => { jadwal.push(t); return t; } }; return t; } };
+  g.run('setupHartafolio()');
+  g.run('cadanganNyalakan()'); g.run('cadanganNyalakan()'); // dua kali: satu jadwal saja
+  assert.equal(jadwal.length, 1); assert.equal(jadwal[0].f, 'cadanganMingguan'); assert.equal(jadwal[0].d, 'SUN'); assert.equal(jadwal[0].h, 3);
+  assert.deepEqual(pindah[0], ['C1', 'FOLDERC']);
+  for (let i = 0; i < 8; i++) g.run('cadanganMingguan()');
+  const p = g.run('apiState()').pengaturan;
+  assert.equal(p.cadangan_ids.split(',').length, 8); assert.equal(sampah.length, 2); assert.deepEqual(sampah, ['C1', 'C2']); assert.equal(p.cadangan_aktif, 'ya');
+  g.run('cadanganMatikan()'); assert.equal(jadwal.length, 0); assert.equal(g.run('apiState()').pengaturan.cadangan_aktif, 'tidak');
+  g.ctx.Drive.Files.update = () => { throw new Error('izin'); }; // pindah dan buang gagal: salinan tetap dibuat, catatan muncul
+  const r = JSON.parse(JSON.stringify(g.run('cadanganSekarang()')));
+  assert.equal(r.catatan.length, 2); assert.match(g.run('apiState()').pengaturan.cadangan_terakhir, /dengan catatan/);
+  ss.copy = () => { throw new Error('kuota'); };
+  assert.throws(() => g.run('cadanganMingguan()'), /kuota/); assert.match(g.run('apiState()').pengaturan.cadangan_terakhir, /GAGAL: kuota/);
 });
 
 test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perlindungan tetap satu; header salah tetap berhenti', () => {

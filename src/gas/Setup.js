@@ -9,6 +9,10 @@ function onOpen() {
     .addItem('Periksa struktur', 'periksaStruktur')
     .addItem('Perbaiki header', 'perbaikiHeader')
     .addItem('Izinkan Google Drive', 'izinkanDrive')
+    .addSeparator()
+    .addItem('Nyalakan cadangan mingguan', 'cadanganNyalakan')
+    .addItem('Matikan cadangan mingguan', 'cadanganMatikan')
+    .addItem('Cadangkan sekarang', 'cadanganSekarang')
     .addToUi();
 }
 
