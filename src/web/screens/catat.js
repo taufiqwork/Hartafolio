@@ -116,13 +116,13 @@
       st = Object.assign({}, st, { ext: (st.ext || []).concat([[name, '', cat, unit]]), fA: name, fL: null, qv: undefined, sheet: null, sq: '', cat: 'Semua' });
     }
 
-    el.addEventListener('click', function (e) {
+    root.HF.listen.on(el, 'click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t || !el.contains(t) || t.disabled) return;
       var a = t.getAttribute('data-act'), v = t.getAttribute('data-v'); if (v === null) v = t.getAttribute('data-val');
       if (!A[a]) return; A[a](v, t); if (a !== 'close') draw();
     });
     var ANGKA = { qv: 1, pv: 1, fee: 1, kv: 1, pajakV: 1, avg: 1 }; // kolom angka: titik ribuan disisipkan saat diketik
-    el.addEventListener('input', function (e) {
+    root.HF.listen.on(el, 'input', function (e) {
       var k = e.target.getAttribute && e.target.getAttribute('data-in'); if (!k) return;
       if (fm && (st.sheet === 'lokasi' || st.sheet === 'manual') && (k === 'nama' || k === 'gram' || k === 'harga')) {
         var v0 = e.target.value;
@@ -155,7 +155,7 @@
       }
       st = Object.assign({}, st, p); draw();
     });
-    el.addEventListener('focusout', function (e) { // yang masih ragu ditandai setelah kolom ditinggalkan
+    root.HF.listen.on(el, 'focusout', function (e) { // yang masih ragu ditandai setelah kolom ditinggalkan
       var k = e.target.getAttribute && e.target.getAttribute('data-in');
       if (k && ANGKA[k] && !(st.nBlur || {})[k]) { var b = Object.assign({}, st.nBlur || {}); b[k] = true; st = Object.assign({}, st, { nBlur: b }); draw(); }
     });

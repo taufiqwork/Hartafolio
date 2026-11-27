@@ -379,7 +379,7 @@ class Component extends DCLogic {
     const checksBal = isMove || fJ === 'Jual' || isOut;
     const qErr = checksBal && bal && !(hfAngka(q).galat && hfAngka(q).galat.pasti && hfAngka(q).galat.jenis !== 'karakter') && num(q) > num(bal);
     const fmt = (n, d) => (isFinite(n) ? n : 0).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d });
-    const rp = n => n >= 1e6 ? 'Rp ' + fmt(n / 1e6, 2) + ' jt' : 'Rp ' + fmt(n, 0);
+    const rp = n => n >= 1e12 ? 'Rp ' + fmt(n / 1e12, 2) + ' T' : n >= 1e9 ? 'Rp ' + fmt(n / 1e9, 2) + ' M' : n >= 1e6 ? 'Rp ' + fmt(n / 1e6, 2) + ' jt' : 'Rp ' + fmt(n, 0);
     const dd = st.d ?? (INIT.d || 11), hh = st.hh ?? (INIT.hh ?? 14), mm = st.mm ?? (INIT.mm ?? 20);
     const p2 = n => String(n).padStart(2, '0');
     const isToday = dd === 11;

@@ -140,7 +140,7 @@
     return prefix + '-' + s;
   }
 
-  /** trx_id mengikuti tanggal: TX-20261103-0007. Dipakai juga oleh antrean offline di perangkat. */
+  /** trx_id mengikuti tanggal: TX-20261103-0007 (nomor) atau TX-20261103-K3F9QZ (kode acak, dipakai Catat). Dipakai juga oleh antrean offline di perangkat. */
   function newTrxId(dateIso, seq) {
     var s = String(seq);
     while (s.length < 4) s = '0' + s;

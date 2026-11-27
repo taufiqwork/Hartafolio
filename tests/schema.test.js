@@ -59,3 +59,9 @@ test('Transaksi v2: alat_bayar_lokasi_id paling kanan (kolom ke-29), versi skema
   const n = s.colNames('Transaksi');
   assert.equal(n.length, 29); assert.equal(n[28], 'alat_bayar_lokasi_id'); assert.equal(n[27], 'diubah_pada'); assert.equal(s.VERSI, 2);
 });
+
+test('newTrxId: kode acak dipakai apa adanya (huruf besar), nomor tetap berisi nol di depan', () => {
+  const s = require('../src/engine/schema.js');
+  assert.equal(s.newTrxId('2026-11-27', 'K3F9QZ'), 'TX-20261127-K3F9QZ');
+  assert.equal(s.newTrxId('2026-11-27', 7), 'TX-20261127-0007');
+});
