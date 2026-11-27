@@ -99,6 +99,7 @@
   }
 
   function render() {
+    HF.listen.reset(document.getElementById('app')); // pendengar layar sebelumnya dilepas (kalau tidak, tombol Simpan di Catat jalan berlipat)
     var r = route();
     if (r === 'catat') { document.title = 'Catat transaksi · Hartafolio'; return openCatat(); }
     lastTab = r;
@@ -138,6 +139,7 @@
   /* Hanya mode dev (untuk perbandingan piksel): ?hold menahan splash, ?step=N memaksa langkah Setup. */
   var dev = HF.api.isDev, hold = dev && /[?&]hold\b/.test(location.search), forced = dev && /[?&]step=(\d)/.exec(location.search);
   function openSetup(s, err) {
+    HF.listen.reset(app);
     loadSeq++; // batalkan gambar Beranda yang masih menunggu data
     HF.setup.mount(app, s, { err: err, step: forced ? +forced[1] : 0, onDone: startShell, onFail: function (now) { openSetup({ pengaturan: s.pengaturan, anggota: now.anggota, lokasi: now.lokasi }, 'lewati'); } });
   }

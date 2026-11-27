@@ -9,9 +9,11 @@
   function queue() { return memQ || (memQ = read(QK)); }
   function saveQ(q) { memQ = q; write(QK, q); }
 
+  /* Kode acak 6 karakter, bukan nomor urut: nomor urut dihitung dari antrean yang kosong lagi setelah terkirim, sehingga transaksi kedua
+     di hari yang sama bernomor sama, dianggap duplikat oleh server, dan dibuang tanpa kabar. Dua perangkat juga tidak bisa bertabrakan. */
+  function kode() { var k = ''; while (k.length < 6) k += Math.floor(Math.random() * 36).toString(36); return k.toUpperCase(); }
   function withIds(rows, today) {
-    var seq = read(DK).length + queue().length + 1;
-    return rows.map(function (r, i) { return Object.assign({ trx_id: root.HF.schema.newTrxId(today, seq + i) }, r); });
+    return rows.map(function (r) { return Object.assign({ trx_id: root.HF.schema.newTrxId(today, kode()) }, r); });
   }
 
   /** rows dari HF.catatCtx.toRows; ctx.demo menentukan tujuan. Mengembalikan Promise berisi baris yang diterima atau ditolak. */

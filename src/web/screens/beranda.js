@@ -137,7 +137,7 @@
       var bellBtn = el.querySelector('[data-act="bell"]'); if (bellBtn) bellBtn.setAttribute('aria-expanded', String(ui.per));
     }
     ui.repaint = paintBell;
-    el.addEventListener('click', function (e) {
+    root.HF.listen.on(el, 'click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t) return;
       var a = t.getAttribute('data-act'), i = t.getAttribute('data-i');
       if (a === 'mode') { ui = { mode: t.getAttribute('data-mode'), sel: null, hi: null, open: false, k: ui.k + 1 }; paintView(B.view(d, ui)); }
