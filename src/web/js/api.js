@@ -49,6 +49,19 @@
       });
       save(); return Promise.resolve({ diterima: ok, duplikat: dup, ditolak: bad });
     },
+    /* Koreksi transaksi: aturan sama dengan Repo.js lewat HF.ledger.terapkan (galat jadi penolakan berisi kalimat untuk pengguna). */
+    koreksi: function (id, aksi, isi) {
+      var s = load(), L = root.HF.ledger; s.transaksi = s.transaksi || [];
+      var all = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []);
+      var now = new Date(), p2 = function (n) { return ('0' + n).slice(-2); }, stamp = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
+      var r = L.terapkan(s.transaksi, id, aksi, isi, { asetIds: all.map(function (a) { return a.aset_id; }), anggotaIds: s.anggota.map(function (a) { return a.anggota_id; }), lokasiIds: s.lokasi.map(function (a) { return a.lokasi_id; }) }, stamp);
+      if (r.error) return fail(L.pesan(r.error));
+      var t = s.transaksi.filter(function (x) { return x.trx_id === id; })[0]; Object.keys(r.patch).forEach(function (k) { t[k] = r.patch[k]; });
+      save(); return Promise.resolve({ id: id, diubah_pada: stamp });
+    },
+    apiTransaksiUbah: function (id, isi) { return dev.koreksi(id, 'ubah', isi); },
+    apiTransaksiHapus: function (id) { return dev.koreksi(id, 'hapus', null); },
+    apiTransaksiPulihkan: function (id) { return dev.koreksi(id, 'pulihkan', null); },
     apiBootState: function () { return dev.apiState(); },
     apiAnggotaTambah: function (d) {
       var s = load(), nama = clean(d.nama);

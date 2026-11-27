@@ -27,7 +27,7 @@ export const catatScenarios = [
   CT('-2n-Pilih-Tanggal', 'pilih-tanggal', { patch: TOMBOL_40 }),
   // putaran B dan C
   CT('-2c-Pindah', 'pindah'), CT('-2e-Pindah-Anggota', 'pindah-anggota'), CT('-2f-Pindah-Anggota-Beda-Lokasi', 'pindah-anggota-lokasi'),
-  CT('-2d-Saldo-Awal', 'awal'), CT('-2g-Saldo-Awal-Lanjut', 'awal-lanjut'), CT('-2h-Cari-Aset', 'cari-aset'), CT('-2i-Lokasi-Baru', 'lokasi-baru'), CT('-2j-Aset-Manual', 'aset-manual')
+  CT('-2d-Saldo-Awal', 'awal'), CT('-2g-Saldo-Awal-Lanjut', 'awal-lanjut'), CT('-2h-Cari-Aset', 'cari-aset'), CT('-2i-Lokasi-Baru', 'lokasi-baru'), CT('-2j-Aset-Manual', 'aset-manual'), CT('-2l-Ubah', 'ubah')
 ];
 
 // Animasi Catat: klik di board dan di aplikasi, bekukan pada T ms. Selektor berdasarkan teks tombol (sama di keduanya).
@@ -35,7 +35,7 @@ const KLIK = (txt) => `[...document.querySelectorAll('button')].find(b=>b.textCo
 const CTF = (id, mulai, act, at) => ({ id: '04-Catat@' + id, board: '04-Catat' + (mulai === 'pilih-tanggal' ? '' : ''), query: 'demo&mulai=beli', hash: '#/catat', frames: { act, at } });
 // Tiap board form digulir: tengah (400 px) dan dasar, supaya bagian di bawah lipatan layar ikut dibandingkan.
 const FORM = [['', 'beli'], ['-2a-Jual', 'jual'], ['-2b-Masuk', 'masuk'], ['-2k-Keluar', 'keluar'], ['-2m-Beli-Dari-Luar', 'beli-luar'], ['-2p-Bayar-Dengan-BTC', 'bayar-btc'], ['-2q-Bayar-Dari-Bybit', 'bayar-bybit'], ['-2r-Tanggal-Lalu', 'tanggal-lalu'], ['-2s-Kurs-Manual', 'kurs-manual'],
-  ['-2c-Pindah', 'pindah'], ['-2e-Pindah-Anggota', 'pindah-anggota'], ['-2f-Pindah-Anggota-Beda-Lokasi', 'pindah-anggota-lokasi'], ['-2d-Saldo-Awal', 'awal'], ['-2g-Saldo-Awal-Lanjut', 'awal-lanjut']];
+  ['-2c-Pindah', 'pindah'], ['-2e-Pindah-Anggota', 'pindah-anggota'], ['-2f-Pindah-Anggota-Beda-Lokasi', 'pindah-anggota-lokasi'], ['-2d-Saldo-Awal', 'awal'], ['-2g-Saldo-Awal-Lanjut', 'awal-lanjut'], ['-2l-Ubah', 'ubah']];
 const MID = `document.querySelector('.hf-scroll').scrollTop = 400;`;
 export const catatScroll = FORM.flatMap(([id, mulai]) => [
   CT(id + '@tengah', mulai, { board: '04-Catat' + id, boardJs: MID, js: MID }),
@@ -86,7 +86,7 @@ export const catatAsetAngka = [CT('-3e-Aset-Manual-Angka', 'aset-manual-angka')]
 
 // Riwayat (?demo=<keadaan>#/riwayat: data contoh src/demo/riwayat-demo.js, keadaan awal sama dengan prop `mulai` board). Ubah dimatikan sampai putaran E.
 const RW = (id, mulai, extra) => Object.assign({ id: '05-Riwayat' + id, board: '05-Riwayat' + id, query: 'demo=' + mulai, hash: '#/riwayat' }, extra || {});
-const UBAH = { deviasi: [{ box: [16, 744, 176, 56], alasan: 'Tombol Ubah dimatikan: layar Ubah transaksi dibangun di putaran E' }] };
+const UBAH = {}; // Ubah aktif sejak putaran E
 const RWF = (id, mulai, board, act, at, extra) => Object.assign({ id: '05-Riwayat@' + id, board, query: 'demo=' + mulai, hash: '#/riwayat', frames: { act, at } }, extra || {});
 export const riwayatFrames = [
   RWF('buka-menu', 'default', '05-Riwayat', `document.querySelectorAll('.hf-chip')[1].click();`, [0, 100, 300]),

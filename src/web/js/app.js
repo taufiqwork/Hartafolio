@@ -13,8 +13,10 @@
   ];
   var TITLES = { beranda: 'Beranda', aset: 'Aset', riwayat: 'Riwayat', alat: 'Alat', catat: 'Catat transaksi' };
 
+  var ubahId = null; // #/ubah/<trx_id>: layar Ubah transaksi (bagian dari alur Riwayat)
   function route() {
     var h = (location.hash || '#/beranda').replace(/^#\//, '');
+    if (/^ubah\//.test(h)) { ubahId = decodeURIComponent(h.slice(5)); return 'ubah'; }
     return TITLES[h] ? h : 'beranda';
   }
 
@@ -56,29 +58,78 @@
   }
   /* Toast setelah Catat menyimpan: tampil di tab yang akan dibuka (Beranda atau Riwayat). */
   function flash(t) { (lastTab === 'riwayat' ? HF.riwayatScreen : HF.berandaScreen).flash(t); }
-  function openCatat() {
-    var el = document.getElementById('app'), mulai = demoParam !== null ? (param('mulai') || 'beli') : 'beli';
-    function go(ctx) {
-      HF.catatScreen.mount(el, { ctx: ctx, mulai: mulai,
+  /* Koreksi data nyata (Ubah, Hapus, Pulihkan): aturan yang sama dengan server dicek di perangkat dulu (jawaban cepat, tanpa menunggu Google),
+     lalu layar langsung diperbarui dan server dikirimi; bila server menolak atau gagal, data dimuat ulang dari Sheet. */
+  function koreksiLokal(id, aksi, isi) {
+    var s = appState; if (!s) return { error: 'Data belum dimuat. Coba lagi sebentar.' };
+    var r = HF.ledger.terapkan(s.transaksi || [], id, aksi, isi, { asetIds: (s.aset || []).map(function (a) { return a.aset_id; }), anggotaIds: s.anggota.map(function (a) { return a.anggota_id; }), lokasiIds: s.lokasi.map(function (a) { return a.lokasi_id; }) }, (s.serverWaktu || '').slice(0, 16));
+    if (r.error) return { error: HF.ledger.pesan(r.error) };
+    s.transaksi = s.transaksi.map(function (t) { return t.trx_id === id ? Object.assign({}, t, r.patch) : t; });
+    return { ok: true };
+  }
+  function kirimKoreksi(api, id, aksi, isi) {
+    var c = koreksiLokal(id, aksi, isi); if (c.error) return Promise.reject(new Error(c.error));
+    return HF.api.call(api, id, isi).catch(function (e) { appState = null; throw e; }); // ditolak server: muat ulang dari Sheet agar layar sama dengan Sheet
+  }
+  var riwayatAksi = {
+    ubah: function (id) { location.hash = '#/ubah/' + encodeURIComponent(id); },
+    hapus: function (id) { return kirimKoreksi('apiTransaksiHapus', id, 'hapus', null); },
+    pulihkan: function (id) { return kirimKoreksi('apiTransaksiPulihkan', id, 'pulihkan', null); }
+  };
+  var tokoHapus = null; // id transaksi yang baru dihapus dari layar Ubah: Riwayat menampilkan toast Pulihkan
+  function openCatat(ubah) {
+    var el = document.getElementById('app'), mulai = ubah ? 'ubah' : (demoParam !== null ? (param('mulai') || 'beli') : 'beli'), baris = null;
+    function simpanBaru(ctx) {
+      return function (res, vm, c, photo) {
+        if (res.error) return;
+        var done = HF.catatSave.submit(res.rows, ctx.demo);
+        // Perbarui data lokal langsung (Beranda dan Catat berikutnya tidak menunggu Google); ditolak server = muat ulang nanti.
+        if (appState && done.rows) appState.transaksi = (appState.transaksi || []).concat(done.rows.map(function (t) { return Object.assign({ status: 'aktif' }, t); }));
+        else appState = null;
+        done.then(function (r) { if ((r.ditolak || []).length) appState = null; }).catch(function () { /* tetap di antrean perangkat; data lokal sudah mencakupnya */ });
+        if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
+        done.then(function (r) { if ((r.ditolak || []).length) flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
+          .catch(function () { flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
+        flash(ctx.demo ? { text: 'Contoh: ' + vm.fJ + ' ' + (vm.fA || '') + ' tidak masuk ke Sheet' } : { text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
+        location.hash = '#/' + lastTab;
+      };
+    }
+    /* Ubah transaksi nyata: dicek di perangkat (aturan sama dengan server), layar langsung diperbarui, lalu dikirim. Ditolak = tetap di form dengan alasannya. */
+    function simpanUbah(res, vm, c, photo, st) {
+      if (res.error) return;
+      var id = baris.trx_id, isi = Object.assign({}, res.rows[0], { nomor: (st && st.nota) || '' }), extra = res.rows.slice(1);
+      if (baris.kurs_sumber === 'otomatis' && +isi.kurs === +baris.kurs) isi.kurs_sumber = 'otomatis'; // kurs tidak disentuh: tetap otomatis
+      var k = koreksiLokal(id, 'ubah', isi); if (k.error) return { error: k.error };
+      HF.api.call('apiTransaksiUbah', id, isi).then(function () {
+        if (extra.length) { var d = HF.catatSave.submit(extra, false); if (appState && d.rows) appState.transaksi = appState.transaksi.concat(d.rows.map(function (t) { return Object.assign({ status: 'aktif' }, t); })); }
+        if (photo) unggah(id, photo);
+      }).catch(function (e) { appState = null; flash({ text: 'Perubahan belum tersimpan: ' + ((e && e.message) || 'coba lagi') }); });
+      flash({ text: 'Perubahan disimpan · saldo dihitung ulang' });
+      location.hash = '#/riwayat';
+    }
+    function hapusDariUbah() {
+      var k = koreksiLokal(baris.trx_id, 'hapus', null); if (k.error) return { error: k.error };
+      HF.api.call('apiTransaksiHapus', baris.trx_id).catch(function (e) { appState = null; flash({ text: 'Hapus belum tersimpan: ' + ((e && e.message) || 'coba lagi') }); });
+      tokoHapus = baris.trx_id; location.hash = '#/riwayat';
+    }
+    function go(ctx, init) {
+      HF.catatScreen.mount(el, { ctx: ctx, mulai: mulai, init: init,
         onClose: function () { location.hash = '#/' + lastTab; },
         onLokasi: ctx.demo ? null : function (nama, jenis) { return HF.api.call('apiLokasiTambah', { nama: nama, jenis: jenis }); },
         onAset: ctx.demo ? null : function (d) { return HF.api.call('apiAsetTambah', d); },
-        onSave: function (res, vm, c, photo) {
-          if (res.error) return;
-          var done = HF.catatSave.submit(res.rows, ctx.demo);
-          // Perbarui data lokal langsung (Beranda dan Catat berikutnya tidak menunggu Google); ditolak server = muat ulang nanti.
-          if (appState && done.rows) appState.transaksi = (appState.transaksi || []).concat(done.rows.map(function (t) { return Object.assign({ status: 'aktif' }, t); }));
-          else appState = null;
-          done.then(function (r) { if ((r.ditolak || []).length) appState = null; }).catch(function () { /* tetap di antrean perangkat; data lokal sudah mencakupnya */ });
-          if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
-          done.then(function (r) { if ((r.ditolak || []).length) flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
-            .catch(function () { flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
-          flash(ctx.demo ? { text: 'Contoh: ' + vm.fJ + ' ' + (vm.fA || '') + ' tidak masuk ke Sheet' } : { text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
-          location.hash = '#/' + lastTab;
-        } });
+        onSave: ubah && !ctx.demo ? simpanUbah : simpanBaru(ctx),
+        onHapus: ubah ? (ctx.demo ? function () { location.hash = '#/riwayat'; } : hapusDariUbah) : null });
     }
     if (demoParam !== null) return go(HF.demo.catat());
-    function ready(s) { appState = s; go(HF.catatCtx.fromState(s, HF.catatCtx.nowOf())); }
+    function ready(s) {
+      appState = s;
+      var now = HF.catatCtx.nowOf();
+      if (!ubah) return go(HF.catatCtx.fromState(s, now));
+      baris = (s.transaksi || []).filter(function (t) { return t.trx_id === ubahId && t.status !== 'dihapus'; })[0];
+      var ctx = baris && ['Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah'].indexOf(baris.jenis) >= 0 && !baris.link_id ? HF.catatCtx.forUbah(s, baris, now) : null;
+      if (!ctx) { flash({ text: 'Transaksi ini tidak bisa diubah. Aset, anggota, atau lokasinya sudah tidak ada, atau jenisnya belum didukung.' }); location.hash = '#/riwayat'; return; }
+      go(ctx, HF.catatCtx.stateOfTrx(baris, ctx));
+    }
     if (appState) ready(appState); else HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
   }
 
@@ -86,12 +137,13 @@
   function renderRiwayat() {
     var el = document.getElementById('app'), seq = ++loadSeq;
     document.title = 'Riwayat · Hartafolio';
-    if (demoParam !== null) { var g = HF.riwayatDemo.get(demoParam); return HF.riwayatScreen.mount(el, { data: g.data, ui: g.ui, saved: g.saved, real: false }, nav('riwayat')); }
+    if (demoParam !== null) { var g = HF.riwayatDemo.get(demoParam); return HF.riwayatScreen.mount(el, { data: g.data, ui: g.ui, saved: g.saved, real: false, on: { ubah: riwayatAksi.ubah } }, nav('riwayat')); }
     var ready = function (s) {
       appState = s;
       if (route() !== 'riwayat' || seq !== loadSeq) return;
       var now = new Date(), hari = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
-      HF.riwayatScreen.mount(el, { data: HF.riwayat.fromState(s, { hariIni: (s.serverWaktu || '').slice(0, 10) || hari }), real: true }, nav('riwayat'));
+      var toast = tokoHapus; tokoHapus = null;
+      HF.riwayatScreen.mount(el, { data: HF.riwayat.fromState(s, { hariIni: (s.serverWaktu || '').slice(0, 10) || hari }), real: true, on: riwayatAksi, ui: toast ? { toast: toast } : null }, nav('riwayat'));
     };
     if (appState) return ready(appState);
     el.innerHTML = HF.setup.splash();
@@ -102,6 +154,7 @@
     HF.listen.reset(document.getElementById('app')); // pendengar layar sebelumnya dilepas (kalau tidak, tombol Simpan di Catat jalan berlipat)
     var r = route();
     if (r === 'catat') { document.title = 'Catat transaksi · Hartafolio'; return openCatat(); }
+    if (r === 'ubah') { document.title = 'Ubah transaksi · Hartafolio'; lastTab = 'riwayat'; return openCatat(true); }
     lastTab = r;
     if (r === 'beranda') {
       var el = document.getElementById('app');

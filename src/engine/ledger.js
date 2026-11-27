@@ -193,7 +193,67 @@
     return { posisi: pos, realized: realized };
   }
 
-  var api = { key: key, parseKey: parseKey, sortTrx: sortTrx, effects: effects, balances: balances, rollup: rollup,
+
+  /**
+   * Id transaksi aktif yang membuat sebuah saldo minus pada saat terjadinya (urutan kronologis). Dipakai untuk menolak perubahan:
+   * mengubah atau menghapus transaksi lama tidak boleh membuat penjualan sesudahnya tidak punya barang.
+   */
+  function shortfalls(list) {
+    var bal = {}, bad = {};
+    sortTrx(list.filter(isActive)).forEach(function (t) {
+      var eff = effects(t);
+      eff.forEach(function (e) { var k = key(e.anggota_id, e.aset_id, e.lokasi_id); bal[k] = (bal[k] || 0) + e.delta; });
+      eff.forEach(function (e) { if (e.delta < 0 && (bal[key(e.anggota_id, e.aset_id, e.lokasi_id)] || 0) < -1e-9) bad[t.trx_id] = 1; });
+    });
+    return Object.keys(bad);
+  }
+
+  var EDIT_COLS = ['tanggal', 'jam', 'anggota_id', 'aset_id', 'lokasi_id', 'lokasi_tujuan_id', 'anggota_tujuan_id', 'jumlah', 'harga_per_unit', 'harga_mata_uang',
+    'kurs', 'kurs_sumber', 'kurs_tanggal', 'kurs_waktu', 'biaya', 'pajak', 'alat_bayar_aset_id', 'alat_bayar_lokasi_id', 'asal_alasan', 'harga_beli_rata2', 'catatan'];
+  var LOCKED = ['Zakat', 'Pinjamkan', 'Cicilan diterima', 'Pelunasan diterima'];
+
+  /**
+   * Terapkan perubahan pada satu transaksi di daftar `list`: aksi 'ubah' (isi = kolom baru), 'hapus', atau 'pulihkan'.
+   * ids = { asetIds, anggotaIds, lokasiIds }. Hasil { error, patch }: error bukan kosong = ditolak (patch kosong).
+   * Kode error: tidak-ada, terkunci, sudah-dihapus, sudah-aktif, atau galat validasi baris, atau saldo:setelahnya (ada transaksi sesudahnya yang jadi minus).
+   * Server (Repo.js) dan tiruan dev memakai fungsi yang sama, jadi aturannya tidak bisa berbeda.
+   */
+  function terapkan(list, trxId, aksi, isi, ids, now) {
+    var cur = list.filter(function (t) { return t.trx_id === trxId; })[0];
+    function no(e) { return { error: e, patch: null }; }
+    if (!cur) return no('tidak-ada');
+    if (aksi === 'hapus' && !isActive(cur)) return no('sudah-dihapus');
+    if (aksi === 'pulihkan' && isActive(cur)) return no('sudah-aktif');
+    if (aksi === 'ubah' && !isActive(cur)) return no('sudah-dihapus');
+    if ((aksi === 'ubah' || aksi === 'hapus') && (LOCKED.indexOf(cur.jenis) >= 0 || cur.link_id)) return no('terkunci');
+    var patch;
+    if (aksi === 'ubah') {
+      patch = {}; EDIT_COLS.forEach(function (k) { var v = isi ? isi[k] : undefined; patch[k] = v === undefined || v === '' ? null : v; });
+      if (cur.jenis !== 'Pindah') { patch.lokasi_tujuan_id = null; patch.anggota_tujuan_id = null; }
+      if (isi && isi.nomor !== undefined) {
+        var urls = String(cur.bukti || '').split(/\s+/).filter(function (x) { return /^https?:/.test(x); });
+        patch.bukti = (isi.nomor ? [String(isi.nomor).trim()] : []).concat(urls).join('\n') || null;
+      }
+      patch.diubah_pada = now || '';
+    } else patch = { status: aksi === 'hapus' ? 'dihapus' : 'aktif' };
+    var merged = Object.assign({}, cur, patch);
+    if (aksi === 'ubah') {
+      var errs = validate(merged, Object.assign({ trxList: list.filter(function (t) { return t.trx_id !== trxId; }) }, ids || {}));
+      errs = errs.filter(function (e) { return e.indexOf('saldo:kurang') !== 0; }); // saldo ditimbang menurut urutan waktu di bawah, bukan akhir
+      if (errs.length) return no(errs[0]);
+    }
+    var before = shortfalls(list), after = shortfalls(list.map(function (t) { return t.trx_id === trxId ? merged : t; }));
+    if (after.some(function (id) { return before.indexOf(id) < 0; })) return no('saldo:setelahnya');
+    return { error: null, patch: patch };
+  }
+
+  var PESAN = { 'tidak-ada': 'Transaksi tidak ditemukan.', terkunci: 'Transaksi ini terhubung ke catatan lain (zakat atau piutang), jadi belum bisa diubah atau dihapus di sini.',
+    'sudah-dihapus': 'Transaksi sudah dihapus.', 'sudah-aktif': 'Transaksi sudah aktif.',
+    'saldo:setelahnya': 'Tidak bisa: saldo tidak cukup untuk transaksi sesudahnya. Ubah atau hapus transaksi sesudahnya dulu.' };
+  /** Kalimat untuk pengguna dari kode galat `terapkan`. */
+  function pesan(kode) { return PESAN[kode] || 'Perubahan ditolak (' + kode + ').'; }
+
+  var api = { pesan: pesan, shortfalls: shortfalls, terapkan: terapkan, EDIT_COLS: EDIT_COLS, key: key, parseKey: parseKey, sortTrx: sortTrx, effects: effects, balances: balances, rollup: rollup,
     validate: validate, costBasis: costBasis };
   root.HF = root.HF || {};
   root.HF.ledger = api;

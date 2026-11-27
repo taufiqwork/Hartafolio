@@ -105,19 +105,30 @@ test('apiTransaksiTambah: idempoten dengan trx_id sama, validasi saldo, urut kro
   assert.deepEqual(JSON.parse(JSON.stringify(rows.map(x => x.trx_id))), ['TX-20261103-0001', 'TX-20261103-0003', 'TX-20261103-0004']);
 });
 
-test('apiTransaksiUbah: jenis tidak berubah, hapus = status dihapus, ID tidak ditimpa', () => {
+test('koreksi transaksi: ubah (jenis dan id tetap), hapus, pulihkan; ditolak bila transaksi sesudahnya kekurangan saldo', () => {
   const g = boot();
   g.run('setupHartafolio()');
   g.run(`Repo_append_('Anggota', [{anggota_id:'PM-001', nama:'T', hubungan:'Diri sendiri', is_pengelola:true, aktif:true}]);
          Repo_append_('Lokasi', [{lokasi_id:'LK-001', nama:'B', jenis:'Lainnya', aktif:true}]);`);
-  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-03', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-EMAS', lokasi_id:'LK-001', jumlah:2, sumber:'manual'}])`);
-  assert.equal(g.run(`apiTransaksiUbah('TX-1', {jenis:'Jual', trx_id:'TX-X', status:'dihapus', catatan:'salah ketik'})`), true);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-03', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-EMAS', lokasi_id:'LK-001', jumlah:2, sumber:'manual'},
+    {trx_id:'TX-2', tanggal:'2026-11-04', jam:'10:00', jenis:'Jual', anggota_id:'PM-001', aset_id:'AS-EMAS', lokasi_id:'LK-001', jumlah:1.5, harga_per_unit:100, harga_mata_uang:'IDR', sumber:'manual'}])`);
+  const lama = { tanggal: '2026-11-03', anggota_id: 'PM-001', aset_id: 'AS-EMAS', lokasi_id: 'LK-001' };
+  const gagal = (kode) => assert.throws(() => g.run(kode), /saldo tidak cukup/);
+  gagal(`apiTransaksiHapus('TX-1')`); // Saldo awal 2 menutup Jual 1,5
+  gagal(`apiTransaksiUbah('TX-1', ${JSON.stringify(Object.assign({}, lama, { jumlah: 1 }))})`);
+  const r = g.run(`apiTransaksiUbah('TX-1', ${JSON.stringify(Object.assign({}, lama, { jumlah: 3, catatan: 'salah ketik', jenis: 'Jual', status: 'dihapus' }))})`);
+  assert.equal(r.id, 'TX-1');
   const t = g.run('Repo_read_("Transaksi")[0]');
-  assert.equal(t.jenis, 'Saldo awal');
-  assert.equal(t.trx_id, 'TX-1');
-  assert.equal(t.status, 'dihapus');
-  assert.equal(t.diubah_pada, '2026-11-19 10:00');
-  assert.equal(g.run(`apiTransaksiUbah('TX-404', {catatan:'x'})`), false);
+  assert.equal(t.jenis, 'Saldo awal'); assert.equal(t.trx_id, 'TX-1'); assert.equal(t.status, 'aktif'); assert.equal(t.jumlah, 3);
+  assert.equal(t.catatan, 'salah ketik'); assert.equal(t.diubah_pada, '2026-11-19 10:00');
+  g.run(`apiTransaksiHapus('TX-2')`);
+  assert.equal(g.run('Repo_read_("Transaksi")[1]').status, 'dihapus');
+  assert.throws(() => g.run(`apiTransaksiHapus('TX-2')`), /sudah dihapus/);
+  g.run(`apiTransaksiHapus('TX-1')`); // sekarang tidak ada penjualan sesudahnya
+  assert.throws(() => g.run(`apiTransaksiPulihkan('TX-2')`), /saldo tidak cukup/); // Jual 1,5 tanpa saldo awal
+  g.run(`apiTransaksiPulihkan('TX-1')`); g.run(`apiTransaksiPulihkan('TX-2')`);
+  assert.equal(g.run('Repo_read_("Transaksi")[1]').status, 'aktif');
+  assert.throws(() => g.run(`apiTransaksiUbah('TX-404', {})`), /tidak ditemukan/);
 });
 
 test('apiState menyatukan data; harga terakhir mengabaikan status gagal', () => {

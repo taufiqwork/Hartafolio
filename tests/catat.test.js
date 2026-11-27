@@ -186,3 +186,30 @@ test('Simpan: data contoh hanya ke perangkat dan tidak pernah memanggil server; 
   assert.deepEqual(calls, ['apiTransaksiTambah']); assert.equal(c.HF.catatSave.pending(), 0);
   assert.notEqual(JSON.parse(store['hf-demo-trx'])[0].trx_id, undefined);
 });
+
+// ---- Ubah transaksi: keadaan awal dari baris, lalu kembali ke baris yang sama ----
+test('Ubah: stateOfTrx lalu toRows mengembalikan kolom yang sama (Beli bayar USDT, Jual, Keluar, Pindah lokasi, Pindah anggota)', () => {
+  const T = (o) => Object.assign({ status: 'aktif', anggota_id: 'PM-001', jam: '09:12', sumber: 'manual', lokasi_id: 'LK-001' }, o);
+  const trx = [
+    T({ trx_id: 'S1', jenis: 'Saldo awal', tanggal: '2026-11-01', aset_id: 'AS-USDT', jumlah: 500 }),
+    T({ trx_id: 'S2', jenis: 'Saldo awal', tanggal: '2026-11-01', aset_id: 'AS-PAXG', jumlah: 1 }),
+    T({ trx_id: 'B1', jenis: 'Beli', tanggal: '2026-11-04', aset_id: 'AS-PAXG', jumlah: 0.0225, harga_per_unit: 4425, harga_mata_uang: 'USDT', biaya: 0.1, kurs: 16500, kurs_sumber: 'otomatis', alat_bayar_aset_id: 'AS-USDT', alat_bayar_lokasi_id: 'LK-001', bukti: 'INV-1 https://drive.google.com/file/d/X/view', catatan: 'rutin', pajak: 0.5 }),
+    T({ trx_id: 'J1', jenis: 'Jual', tanggal: '2026-11-05', aset_id: 'AS-PAXG', jumlah: 0.5, harga_per_unit: 70000000, harga_mata_uang: 'IDR', biaya: 1000 }),
+    T({ trx_id: 'K1', jenis: 'Keluar', tanggal: '2026-11-06', aset_id: 'AS-PAXG', jumlah: 0.1, asal_alasan: 'Sedekah' }),
+    T({ trx_id: 'P1', jenis: 'Pindah', tanggal: '2026-11-07', aset_id: 'AS-PAXG', jumlah: 0.2, lokasi_tujuan_id: 'LK-002' }),
+    T({ trx_id: 'P2', jenis: 'Pindah', tanggal: '2026-11-08', aset_id: 'AS-PAXG', jumlah: 0.1, anggota_tujuan_id: 'PM-002', lokasi_tujuan_id: 'LK-002' })
+  ];
+  const { c, s } = real(trx); const now = { y: 2026, m: 11, d: 27, hh: 9, mm: 5 };
+  ['B1', 'J1', 'K1', 'P1', 'P2'].forEach((id) => {
+    const t = trx.filter((x) => x.trx_id === id)[0], ctx = c.HF.catatCtx.forUbah(s, t, now);
+    const st = c.HF.catatCtx.stateOfTrx(t, ctx), v = c.HF.catat.view(st, ctx, { mulai: 'ubah' });
+    assert.equal(v.isUbah, true, id); assert.equal(v.showJenis, false, id); assert.equal(v.fJ, t.jenis, id); assert.equal(v.invalid, false, id + ' ' + JSON.stringify(v.missing));
+    const r = c.HF.catatCtx.toRows(v, ctx, { nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }).rows[0];
+    ['tanggal', 'jam', 'anggota_id', 'aset_id', 'lokasi_id', 'jumlah', 'harga_per_unit', 'harga_mata_uang', 'biaya', 'pajak', 'alat_bayar_aset_id', 'alat_bayar_lokasi_id', 'lokasi_tujuan_id', 'anggota_tujuan_id', 'asal_alasan', 'catatan', 'kurs'].forEach((k) => {
+      if (t[k] === undefined) return;
+      assert.equal(r[k], t[k], id + ' ' + k);
+    });
+  });
+  assert.equal(c.HF.catatCtx.forUbah(s, Object.assign({}, trx[0], { aset_id: 'AS-TIDAK-ADA' }), now), null);
+  assert.equal(c.HF.catatCtx.forUbah(s, trx[2], now).ubah.dicatat, '4 Nov 2026');
+});
