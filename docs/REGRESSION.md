@@ -100,8 +100,17 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana tiap kali menemukan yang baru.
 
 ## Riwayat (putaran D)
-- [ ] `npm run pixel`: 13 state Riwayat (05-Riwayat dan 2a sampai 2l) dan 4 skenario animasi (`05-Riwayat@...`) lulus; satu-satunya deviasi: tombol Ubah dimatikan (putaran E).
+- [ ] `npm run pixel`: 13 state Riwayat (05-Riwayat dan 2a sampai 2l) dan 4 skenario animasi (`05-Riwayat@...`) lulus, tanpa deviasi (Ubah aktif sejak putaran E).
 - [ ] Tanpa `?demo`: Riwayat dari data nyata (`HF.riwayat.fromState`): terbaru di atas, Pindah lokasi dan Pindah anggota dibedakan, transaksi berstatus "dihapus" tidak tampil di daftar tetapi dihitung di "Terhapus (n)".
-- [ ] Dengan `?demo=...`: data contoh, tidak pernah menulis ke Sheet. Hapus dan Pulihkan hanya berfungsi di data contoh; di data nyata dimatikan sampai putaran E.
+- [ ] Dengan `?demo=...`: data contoh, tidak pernah menulis ke Sheet. Hapus dan Pulihkan hanya di layar; Ubah membuka layar contoh.
 - [ ] Filter Anggota, Jenis (termasuk Pindah = kedua jenis, Piutang = tiga jenis), Bulan, dan kotak cari; kosong dan "tidak ada yang cocok" tampil benar.
 - [ ] Toast setelah Catat menyimpan tampil di Riwayat bila tab Riwayat yang dibuka lagi. BELUM TERVERIFIKASI di Google sungguhan.
+
+## Ubah, Hapus, Pulihkan (putaran E)
+- [ ] `npm test`: `tests/koreksi.test.js` (aturan di `HF.ledger.terapkan`), tes `gas.test.js` (koreksi lewat Repo.js), tes Ubah di `catat.test.js` (baris kembali sama), `riwayat.test.js` (bendera `edit`).
+- [ ] `npm run pixel`: `04-Catat-2l-Ubah` (tiga posisi gulir) 0 piksel beda.
+- [ ] Aturan: Hapus atau Ubah ditolak dengan "saldo tidak cukup untuk transaksi sesudahnya" bila ada penjualan, keluar, atau pindah sesudahnya yang jadi minus (urutan tanggal dan jam, bukan saldo akhir). Pulihkan juga dicek. Data lama yang sudah minus tidak menghalangi perubahan lain.
+- [ ] Jenis, id, dan status tidak berubah lewat Ubah; nomor referensi diganti tetapi tautan foto tetap; Zakat, Pinjamkan, Cicilan, Pelunasan terkunci; Saldo awal hanya bisa dihapus (Ubah dimatikan).
+- [ ] Uji dev (`rep8`): Hapus Beli yang dijual lagi ditolak, Hapus Jual lalu Pulihkan berfungsi, Ubah jumlah ke bawah batas ditolak di form, ke atas tersimpan dan Riwayat ikut berubah.
+- [ ] BELUM TERVERIFIKASI di Google sungguhan: `apiTransaksiUbah`, `apiTransaksiHapus`, `apiTransaksiPulihkan` (diuji dengan Sheet tiruan).
+

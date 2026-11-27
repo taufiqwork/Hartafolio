@@ -119,9 +119,11 @@
 
   function main(vm) {
     var h = '';
+    if (vm.isUbah) h += '<div class="ct-lock"><div class="ct-lock-r"><span class="label ct-m">Jenis transaksi</span><span class="hf-badge hf-badge-brand ct-lock-b">' + esc(vm.jenisRo) + '</span></div><span class="caption ct-m">Terkunci karena terhubung ke catatan lain. Salah jenis? Hapus lalu catat ulang.</span></div>';
     if (vm.showJenis) h += toggle(['Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah'].map(function (l) { return { l: l, key: l, pressed: String(vm.fJ === l) }; }), 5, 'jenis');
     if (vm.isMove) h += toggle([['lokasi', 'Antar lokasi'], ['anggota', 'Antar anggota']].map(function (x) { return { l: x[1], key: x[0], pressed: String(vm.fP === x[0]) }; }), 2, 'sub');
     h += '<p class="ct-hint" style="margin: ' + vm.hintMt + ' 0 0;">' + esc(vm.modeHint) + (vm.showSaldoLink ? ' <a class="ct-link" data-act="saldo-awal">Punya aset lama yang belum tercatat? Catat saldo awal.</a>' : '') + '</p>';
+    if (vm.isUbah) h += '<div class="ct-ubah"><span class="ct-ubah-i">' + svg(['M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8', 'M21 3v5h-5'], 18) + '</span><span>' + esc(vm.ubahNote) + '</span></div>';
     h += recorded(vm);
     h += vm.isMove ? moveCards(vm) : pick(vm);
     if (vm.showAsal) h += group(vm.asalLabel, wrap(vm.asalList.map(function (n) { return chip(n, n === vm.fS, 'asal'); }).join('')));
@@ -142,7 +144,9 @@
     }
     if (vm.showTotal) h += '<div class="ct-tot"><span class="label ct-m">' + vm.totLabel + '</span><span class="amount ct-tot-v">' + esc(vm.totValue) + '</span></div>';
     if (vm.missOn) h += '<span class="caption" style="color: var(--loss);">' + esc(vm.missTxt) + '</span>';
+    if (vm.saveErr) h += '<span class="caption" role="alert" style="color: var(--loss);">' + esc(vm.saveErr) + '</span>';
     h += '<button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="save" aria-disabled="' + vm.invalid + '" style="opacity: ' + (vm.invalid ? '0.45' : '1') + '; pointer-events: ' + (vm.invalid ? 'none' : 'auto') + ';">' + vm.saveLabel + '</button>';
+    if (vm.isUbah) h += '<button class="hf-btn hf-btn-ghost hf-btn-block hf-btn-danger" type="button" data-act="hapus-trx">Hapus transaksi</button>';
     if (vm.awal) h += '<button class="hf-btn hf-btn-ghost hf-btn-block" type="button" data-act="save-more">Simpan &amp; tambah aset lain</button>';
     return h;
   }

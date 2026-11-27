@@ -149,13 +149,27 @@ function apiTransaksiTambah(list) {
   } finally { lock.releaseLock(); }
 }
 
-/** Ubah transaksi: jenis tidak bisa diubah; badge "Diubah" lewat diubah_pada. Hapus = status dihapus (bisa dipulihkan). */
-function apiTransaksiUbah(trxId, patch) {
+/**
+ * Koreksi satu transaksi: 'ubah' (isi = kolom baru), 'hapus' (status dihapus, bisa dipulihkan), 'pulihkan'.
+ * Aturan di HF.ledger.terapkan (dipakai juga tiruan dev): jenis dan id tidak berubah, dan perubahan ditolak bila ada transaksi
+ * sesudahnya yang jadi kekurangan saldo. Galat dilempar sebagai Error berisi kalimat untuk pengguna.
+ */
+function Repo_koreksi_(trxId, aksi, isi) {
   var lock = LockService.getDocumentLock();
   lock.waitLock(REPO_LOCK_MS);
   try {
-    delete patch.trx_id; delete patch.jenis; delete patch.dibuat_pada;
-    patch.diubah_pada = Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm');
-    return Repo_update_('Transaksi', trxId, patch);
+    var now = Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm');
+    var all = Repo_read_('Transaksi');
+    var r = HF.ledger.terapkan(all, trxId, aksi, isi, {
+      asetIds: Repo_read_('Aset').map(function (a) { return a.aset_id; }),
+      anggotaIds: Repo_read_('Anggota').map(function (a) { return a.anggota_id; }),
+      lokasiIds: Repo_read_('Lokasi').map(function (a) { return a.lokasi_id; })
+    }, now);
+    if (r.error) throw new Error(HF.ledger.pesan(r.error));
+    Repo_update_('Transaksi', trxId, r.patch);
+    return { id: trxId, diubah_pada: now };
   } finally { lock.releaseLock(); }
 }
+function apiTransaksiUbah(trxId, isi) { return Repo_koreksi_(trxId, 'ubah', isi); }
+function apiTransaksiHapus(trxId) { return Repo_koreksi_(trxId, 'hapus', null); }
+function apiTransaksiPulihkan(trxId) { return Repo_koreksi_(trxId, 'pulihkan', null); }

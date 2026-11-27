@@ -18,9 +18,9 @@
   var HINT = { Beli: 'Aset bertambah. Bila dibayar dengan aset tercatat, saldonya ikut berkurang.', Jual: 'Aset berkurang. Hasilnya bisa masuk ke aset tercatat.',
     Masuk: 'Datang dari luar tanpa dibeli, misalnya hadiah atau warisan.', Keluar: 'Pergi ke luar tanpa dijual, misalnya hadiah atau sedekah.',
     Pindah: 'Antar lokasi atau anggota. Total harta tetap, kecuali biaya.' };
-  var JENIS_MULAI = { 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli',
+  var JENIS_MULAI = { ubah: 'Beli', 'pilih-tanggal': 'Beli', 'tanggal-lalu': 'Beli', 'kurs-manual': 'Beli', 'bayar-lain': 'Beli', 'bayar-btc': 'Beli', 'bayar-bybit': 'Beli', beli: 'Beli', 'beli-luar': 'Beli',
     jual: 'Jual', masuk: 'Masuk', keluar: 'Keluar', pindah: 'Pindah', 'pindah-anggota': 'Pindah', 'pindah-anggota-lokasi': 'Pindah', awal: 'Masuk', 'awal-lanjut': 'Masuk', 'cari-aset': 'Beli', 'lokasi-baru': 'Beli', 'aset-manual': 'Beli', 'foto-pilih': 'Beli', 'aset-manual-angka': 'Beli', 'angka-format': 'Beli', 'angka-titik': 'Beli', 'angka-inggris': 'Beli', 'angka-koma': 'Beli', 'foto-kamera': 'Beli', 'foto-terlampir': 'Beli', 'foto-gagal': 'Beli' };
-  var INIT = { 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' },
+  var INIT = { ubah: { fA: 'PAXG', fL: 'Binance', qv: '0,0225', pv: '4.425', fee: '0,1', pay: 'USDT@Binance', d: 4, hh: 9, mm: 12 }, 'pilih-tanggal': { sheet: 'tgl', d: 10 }, 'tanggal-lalu': { d: 10 }, 'kurs-manual': { kv: '16.250' }, 'bayar-lain': { sheet: 'bayar' }, 'bayar-btc': { pay: 'BTC@Binance', fee: '0' },
     'bayar-bybit': { pay: 'USDT@Bybit' }, 'beli-luar': { fA: 'Emas fisik', fee: '0' }, keluar: { fA: 'Perak fisik', qv: '10' }, jual: { fA: 'GFI' },
     'foto-pilih': { sheet: 'foto' }, 'cari-aset': { sheet: 'aset' }, 'lokasi-baru': { sheet: 'lokasi' }, 'aset-manual': { sheet: 'manual' }, 'aset-manual-angka': { sheet: 'manual' } };
 
@@ -50,7 +50,7 @@
     opt = opt || {};
     var mulai = opt.mulai || 'beli', I = (ctx.demo && INIT[mulai]) || {};
     var now = ctx.now, FM = ctx.held, BAL = ctx.bal, AS = ctx.assets, CURA = ctx.payCur || [];
-    var awal = mulai === 'awal' || mulai === 'awal-lanjut';
+    var awal = mulai === 'awal' || mulai === 'awal-lanjut', isUbah = mulai === 'ubah'; // ubah = koreksi transaksi yang sudah ada (jenis terkunci)
     var nl = st.nl || [], ext = st.ext || [];
     var ALL_LOC = ctx.lokasi.concat(nl);
     var fJ = st.fJ || JENIS_MULAI[mulai] || 'Beli';
@@ -58,7 +58,7 @@
     var fM = st.fM || ctx.members[0];
     var isTrade = fJ === 'Beli' || fJ === 'Jual', isIn = fJ === 'Masuk', isOut = fJ === 'Keluar', isMove = fJ === 'Pindah';
     var isMoveMem = isMove && fP === 'anggota';
-    var canNew = fJ === 'Beli' || isIn || awal;
+    var canNew = (fJ === 'Beli' || isIn || awal) && !isUbah;
     var unitOf = function (a) { return (AS[a] && AS[a].unit) || (ext.filter(function (e) { return e[0] === a; })[0] || [0, 0, 0, 'unit'])[3]; };
     var base = awal ? ctx.awalBase(ALL_LOC) : (FM[fM] || []);
     var fAs = canNew ? base.concat(ext.filter(function (e) { return !base.some(function (b) { return b[0] === e[0]; }); }).map(function (e) { return [e[0], ALL_LOC]; })) : base;
@@ -175,8 +175,9 @@
       curFree: pay === 'luar', curLocked: pay !== 'luar', curTabs: ['IDR', 'USD', 'USDT'], curSel: awal ? avgCur : cur,
       feeUnits: ['Rp', unit], feeUnit: st.fu || 'Rp', feeNote: feeNoPrice ? 'Harga ' + (fA || 'aset') + ' belum ada, jadi biaya Rupiah belum bisa dihitung. Pilih satuan ' + unit + ' atau isi harga di Kelola aset.' : ((st.fu || 'Rp') === 'Rp' ? 'Dalam Rupiah. Boleh nol.' : 'Dipotong dari aset yang dipindah.'),
       asalLabel: isOut ? 'Alasan' : 'Asal', asalList: isOut ? ['Hadiah', 'Sedekah', 'Ke dompet luar', 'Hilang', 'Lainnya'] : ['Hadiah', 'Warisan', 'Dari dompet luar', 'Lainnya'],
-      showJenis: !awal, showAsal: (isIn || isOut) && !awal, showSaldoLink: !awal && (fJ === 'Beli' || isIn), showCari: canNew, showPlusLok: canNew,
-      title: awal ? 'Saldo awal' : 'Catat transaksi', saveLabel: awal ? 'Simpan & selesai' : 'Simpan transaksi', hintMt: !awal ? '-6px' : '0px',
+      showJenis: !awal && !isUbah, showAsal: (isIn || isOut) && !awal, showSaldoLink: !awal && !isUbah && (fJ === 'Beli' || isIn), showCari: canNew, showPlusLok: canNew,
+      title: awal ? 'Saldo awal' : (isUbah ? 'Ubah transaksi' : 'Catat transaksi'), saveLabel: awal ? 'Simpan & selesai' : (isUbah ? 'Simpan perubahan' : 'Simpan transaksi'), hintMt: !awal && !isUbah ? '-6px' : '0px',
+      isUbah: isUbah, jenisRo: fJ, ubahNote: 'Dicatat ' + ((ctx.ubah && ctx.ubah.dicatat) || ((I.d || dd) + ' ' + BULAN[dm - 1] + ' ' + dy)) + '. Saldo sejak tanggal itu dihitung ulang.', saveErr: st.saveErr || null,
       showTotal: !isMoveMem, showTgl: !awal, qLabel: fA ? 'Jumlah (' + unit + ')' : 'Jumlah', pLabel: fA ? 'Harga per ' + unit : 'Harga per unit',
       anggotaLabel: 'Anggota', ownerLabel: isMoveMem ? 'Anggota' : 'Pemilik', fromTitle: isMoveMem ? 'Pengirim' : 'Dari', toTitle: isMoveMem ? 'Penerima' : 'Ke', keLokLabel: isMoveMem ? 'Lokasi penerima' : 'Lokasi tujuan',
       fromSum: fM + ' · ' + (fA || '—') + ' · ' + (fL || '—'), toSum: isMoveMem ? fR + ' · ' + fKr : fKr,

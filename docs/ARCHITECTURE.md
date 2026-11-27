@@ -40,6 +40,9 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Catat: simpan (antrean perangkat, kirim, data contoh hanya lokal) | `src/web/js/catat-save.js` | `HF.catatSave.submit/flush/pending` |
 | Pembaruan DOM di tempat (transisi dan animasi tetap jalan) | `src/web/js/morph.js` | `HF.morph(el, html)` |
 | Riwayat: tampilan (daftar per hari, cari, filter, sheet detail, terhapus, toast) | `src/web/screens/riwayat.js` | `HF.riwayatScreen.mount/flash`; pembaruan di tempat lewat `HF.morph` |
+| Koreksi transaksi (Ubah, Hapus, Pulihkan): aturan satu sumber untuk server dan tiruan dev | `src/engine/ledger.js` | `HF.ledger.terapkan`, `shortfalls`, `pesan`; server: `Repo_koreksi_`, `apiTransaksiUbah/Hapus/Pulihkan` di `src/gas/Repo.js` |
+| Ubah transaksi: ctx dan isian awal dari baris | `src/engine/catat-ctx.js` | `forUbah(state, trx, now)`, `stateOfTrx(trx, ctx)`; layar: `mulai='ubah'` di `engine/catat.js` dan `#/ubah/<trx_id>` di `app.js` |
+| Pendengar layar yang dilepas saat ganti layar | `src/web/js/listen.js` | `HF.listen.on`, `reset` |
 | Riwayat: baris dari Sheet, filter, rincian detail | `src/engine/riwayat.js` | `HF.riwayat.fromState`, `view(d, ui)`, `detail`, `ringkas`, `qtext`, `dayLabel` |
 | Data contoh Riwayat (bisa dihapus) | `src/demo/riwayat-demo.js` | `HF.riwayatDemo.get(keadaan)`; `?demo=<default\|filter\|detail\|detail-zakat\|detail-pinjam\|detail-cicilan\|detail-lunas\|detail-pindah\|terhapus\|daftar-terhapus\|kosong\|tersimpan\|diubah>#/riwayat` |
 | Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |

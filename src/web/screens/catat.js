@@ -8,6 +8,7 @@
   function mount(el, o) {
     var ctx = o.ctx, mulai = o.mulai || 'beli', st = {}, fm = null, vm;
     var ANGKA_DEMO = { 'angka-format': { qv: '1.250', pv: '72.658.500', fee: '16.500' }, 'angka-titik': { qv: '0.0225' }, 'angka-inggris': { pv: '1,234.56' }, 'angka-koma': { qv: '1,2,3' } };
+    if (o.init) st = o.init; // Ubah transaksi: isian awal dari baris yang diubah
     if (ctx.demo && ANGKA_DEMO[mulai]) st = ANGKA_DEMO[mulai];
     if (ctx.demo && mulai === 'belum-lengkap') st = { tried: true, qv: '', pv: '' };
     if (ctx.demo && mulai === 'foto-kamera') st = { kamera: true };
@@ -79,8 +80,12 @@
       save: function () {
         if (vm.invalid) return;
         if (vm.incomplete) { st = Object.assign({}, st, { tried: true }); return; }
-        Promise.all(wait).then(function () { o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx, photo); });
-      }
+        Promise.all(wait).then(function () {
+          var r = o.onSave(HF.catatCtx.toRows(vm, ctx, { avg: st.avg, nomor: st.nota, pajak: st.pajakV, catatan: st.catatanV }), vm, ctx, photo, st);
+          if (r && r.error) { st = Object.assign({}, st, { saveErr: r.error }); draw(); } // ditolak (mis. saldo sesudahnya kurang): tetap di form, pesan di atas tombol
+        });
+      },
+      'hapus-trx': function () { var r = o.onHapus && o.onHapus(); if (r && r.error) st = Object.assign({}, st, { saveErr: r.error }); }
     };
     function tutupKamera() { HF.foto.berhenti(stream); stream = null; st = Object.assign({}, st, { kamera: false }); }
     function hasilFoto(r) {
@@ -119,7 +124,7 @@
     root.HF.listen.on(el, 'click', function (e) {
       var t = e.target.closest('[data-act]'); if (!t || !el.contains(t) || t.disabled) return;
       var a = t.getAttribute('data-act'), v = t.getAttribute('data-v'); if (v === null) v = t.getAttribute('data-val');
-      if (!A[a]) return; A[a](v, t); if (a !== 'close') draw();
+      if (!A[a]) return; if (st.saveErr && a !== 'save') st = Object.assign({}, st, { saveErr: null }); A[a](v, t); if (a !== 'close') draw();
     });
     var ANGKA = { qv: 1, pv: 1, fee: 1, kv: 1, pajakV: 1, avg: 1 }; // kolom angka: titik ribuan disisipkan saat diketik
     root.HF.listen.on(el, 'input', function (e) {

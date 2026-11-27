@@ -39,6 +39,51 @@
       awalBase: function (all) { return aset.filter(function (a) { return a.aset_id !== 'AS-IDR'; }).map(function (a) { return [label(a), all]; }); } };
   }
 
+
+  var BLN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  function nameOf(map, id) { var k = Object.keys(map).filter(function (n) { return map[n] === id; })[0]; return k || null; }
+
+  /**
+   * ctx untuk Ubah transaksi: saldo dihitung TANPA transaksi yang diubah (supaya saldo dan batas jumlah wajar), lalu aset dan lokasi
+   * milik transaksi itu dimasukkan lagi ke pilihan. Mengembalikan null bila anggota, aset, atau lokasinya sudah tidak ada (dihapus atau disembunyikan).
+   */
+  function forUbah(state, trx, now) {
+    var rest = Object.assign({}, state, { transaksi: (state.transaksi || []).filter(function (t) { return t.trx_id !== trx.trx_id; }) });
+    var ctx = fromState(rest, now), m = nameOf(ctx.ids.members, trx.anggota_id), a = nameOf(ctx.ids.aset, trx.aset_id), l = nameOf(ctx.ids.lokasi, trx.lokasi_id);
+    if (!m || !a || !l) return null;
+    var row = (ctx.held[m] = ctx.held[m] || []).filter(function (x) { return x[0] === a; })[0];
+    if (!row) ctx.held[m].push([a, [l]]); else if (row[1].indexOf(l) < 0) row[1].push(l);
+    var p = trx.tanggal.split('-'); ctx.ubah = { dicatat: +p[2] + ' ' + BLN[+p[1] - 1] + ' ' + p[0] };
+    return ctx;
+  }
+
+  /** Keadaan awal layar Catat (mulai 'ubah') dari satu transaksi: kebalikan dari toRows. */
+  function stateOfTrx(trx, ctx) {
+    var C = root.HF.catat, f = function (n) { return C.fmt(+n, 8); }, nm = function (map, id) { return nameOf(map, id); };
+    var p = trx.tanggal.split('-'), jam = String(trx.jam || '00:00').split(':');
+    var st = { fJ: trx.jenis, fM: nm(ctx.ids.members, trx.anggota_id), fA: nm(ctx.ids.aset, trx.aset_id), fL: nm(ctx.ids.lokasi, trx.lokasi_id), qv: f(trx.jumlah), fee: '0',
+      dy: +p[0], dm: +p[1], d: +p[2], hh: +jam[0], mm: +jam[1] || 0, sheet: null };
+    if (trx.jenis === 'Beli' || trx.jenis === 'Jual') {
+      st.pv = f(trx.harga_per_unit); st.fee = trx.biaya > 0 ? f(trx.biaya) : '0';
+      var pa = trx.alat_bayar_aset_id ? nm(ctx.ids.aset, trx.alat_bayar_aset_id) : null, pl = trx.alat_bayar_lokasi_id ? nm(ctx.ids.lokasi, trx.alat_bayar_lokasi_id) : st.fL;
+      st.pay = pa ? pa + '@' + pl : 'luar';
+      if (!pa) st.cur = trx.harga_mata_uang || 'IDR';
+      if (trx.harga_mata_uang && trx.harga_mata_uang !== 'IDR' && trx.kurs > 0) st.kv = f(trx.kurs); // kurs yang dibekukan tetap dipakai, bukan kurs hari ini
+    }
+    if (trx.jenis === 'Masuk' || trx.jenis === 'Keluar') st.fS = trx.asal_alasan || undefined;
+    if (trx.jenis === 'Pindah') {
+      var mem = trx.anggota_tujuan_id && trx.anggota_tujuan_id !== trx.anggota_id;
+      st.fP = mem ? 'anggota' : 'lokasi';
+      if (mem) { st.fR = nm(ctx.ids.members, trx.anggota_tujuan_id); st.fKa = nm(ctx.ids.lokasi, trx.lokasi_tujuan_id || trx.lokasi_id); } else st.fK = nm(ctx.ids.lokasi, trx.lokasi_tujuan_id);
+      st.fu = 'Rp'; // biaya Pindah ada di baris Keluar tersendiri, tidak diubah di sini
+    }
+    var nota = String(trx.bukti || '').split(/\s+/).filter(function (x) { return x && !/^https?:/.test(x); }).join(' ');
+    if (nota) st.nota = nota;
+    if (trx.pajak > 0) { st.pajakOn = true; st.pajakV = f(trx.pajak); }
+    if (trx.catatan) { st.pajakOn = true; st.catatanV = trx.catatan; }
+    return st;
+  }
+
   function two(n) { return String(n).padStart(2, '0'); }
   function nowOf(d) { d = d || new Date(); return { y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate(), hh: d.getHours(), mm: d.getMinutes() }; }
 
@@ -74,7 +119,7 @@
     return { rows: rows, error: null };
   }
 
-  var api = { label: label, fromState: fromState, nowOf: nowOf, toRows: toRows };
+  var api = { forUbah: forUbah, stateOfTrx: stateOfTrx, label: label, fromState: fromState, nowOf: nowOf, toRows: toRows };
   root.HF = root.HF || {};
   root.HF.catatCtx = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

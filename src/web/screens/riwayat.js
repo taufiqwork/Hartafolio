@@ -39,7 +39,7 @@
       return '<main class="hf-scroll rw-main"><p class="rw-lead">Tidak dihitung dalam total. Pulihkan untuk mengembalikan.</p>' +
         (v.delRows.length ? '<div class="hf-card rw-card rw-del">' + v.delRows.map(function (r) {
           return '<div class="hf-detail">' + icon(r, 18, 'rw-ico') + '<div class="hf-detail-main"><span class="hf-detail-name">' + esc(r.j + ' · ' + r.a) + '</span><span class="hf-detail-meta">' + esc(r.mem + ' · ' + r.d) + '</span></div>' +
-            '<button class="hf-btn hf-btn-ghost" type="button" data-act="restore" data-id="' + esc(r.id) + '"' + (model.real ? ' disabled' : '') + '>Pulihkan</button></div>';
+            '<button class="hf-btn hf-btn-ghost" type="button" data-act="restore" data-id="' + esc(r.id) + '">Pulihkan</button></div>';
         }).join('') + '</div>' : '<p class="rw-note" style="padding: 32px 0;">Tidak ada transaksi terhapus.</p>') + '</main>';
     }
     var h = '<main class="hf-scroll rw-main">';
@@ -65,10 +65,10 @@
         '<div class="rw-det">' + s.det.map(function (d) {
           return '<div><span>' + esc(d.k) + '</span>' + (d.href ? '<a href="' + esc(d.ext ? d.href : '#/riwayat') + '"' + (d.ext ? ' target="_blank" rel="noopener"' : ' data-soon="1"') + '>' + esc(d.v) + CHEVR16 + '</a>' : '<b>' + esc(d.v) + '</b>') + '</div>';
         }).join('') + '</div>' +
-        '<div class="rw-acts"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="ubah" disabled>Ubah</button>' +
-        '<button class="hf-btn hf-btn-block hf-btn-danger" type="button" data-act="hapus"' + (model.real ? ' disabled' : '') + '>Hapus</button></div></section>';
+        '<div class="rw-acts"><button class="hf-btn hf-btn-primary hf-btn-block" type="button" data-act="ubah"' + (s.edit ? '' : ' disabled') + '>Ubah</button>' +
+        '<button class="hf-btn hf-btn-block hf-btn-danger" type="button" data-act="hapus"' + (s.edit || model.on ? '' : ' disabled') + '>Hapus</button></div></section>';
     }
-    if (v.toast) ts = '<div class="hf-toast rw-toast" role="status"><span>' + esc(v.toast) + '</span><button class="hf-btn hf-btn-sm hf-btn-on-ink" type="button" data-act="undo" style="flex: none;"' + (model.real ? ' disabled' : '') + '>Pulihkan</button></div>';
+    if (v.toast) ts = '<div class="hf-toast rw-toast" role="status"><span>' + esc(v.toast) + '</span><button class="hf-btn hf-btn-sm hf-btn-on-ink" type="button" data-act="undo" style="flex: none;">Pulihkan</button></div>';
     else if (saved) ts = '<div class="hf-toast rw-toast" role="status"><span>' + esc(saved) + '</span></div>';
     return '<div class="rw-slot">' + scrim + '</div><div class="rw-slot">' + sh + '</div><div class="rw-slot">' + ts + '</div>';
   }
@@ -84,6 +84,15 @@
     ui = Object.assign({ sel: {}, fOpen: null, sheet: null, del: [], view: 'list', toast: null, q: '' }, m.ui || {});
     if (m.data.delIds) ui.del = m.data.delIds.slice();
     function paint() { root.HF.morph(el, html(model)); }
+    /* Hapus/Pulihkan: data nyata (m.on) dikirim ke server dan dikembalikan bila ditolak; data contoh hanya di layar. */
+    function mark(id, v) { m.data.days.forEach(function (d) { d.rows.forEach(function (r) { if (String(r.id) === String(id)) { r.del = v; if (v) r.delText = 'dihapus hari ini'; } }); }); }
+    function setDel(id, v) {
+      if (m.on && (v ? m.on.hapus : m.on.pulihkan)) {
+        mark(id, v);
+        (v ? m.on.hapus : m.on.pulihkan)(id).catch(function (e) { mark(id, !v); if (v) ui.toast = null; saved = (e && e.message) || 'Gagal menyimpan. Coba lagi.'; paint(); clearTimeout(flash.t); flash.t = setTimeout(function () { saved = null; paint(); }, 6000); });
+      } else ui.del = v ? ui.del.concat([id]) : ui.del.filter(function (x) { return String(x) !== String(id); });
+    }
+    if (ui.toast) savedTimer = setTimeout(function () { ui.toast = null; paint(); }, 6000); // toast awal (mis. sesudah Hapus dari layar Ubah)
     function first() { var v = R.view(m.data, ui); el.innerHTML = head(v) + main(v) + nav + overlays(v); }
     first();
     el.onclick = function (e) {
@@ -95,9 +104,10 @@
       else if (a === 'close') { ui.fOpen = null; ui.sheet = null; }
       else if (a === 'del') { ui.view = 'del'; ui.toast = null; ui.fOpen = null; }
       else if (a === 'back') ui.view = 'list';
-      else if (a === 'hapus') { ui.del = ui.del.concat([ui.sheet]); ui.toast = ui.sheet; ui.sheet = null; clearTimeout(savedTimer); savedTimer = setTimeout(function () { ui.toast = null; paint(); }, 6000); }
-      else if (a === 'undo') { ui.del = ui.del.filter(function (x) { return String(x) !== String(ui.toast); }); ui.toast = null; }
-      else if (a === 'restore') ui.del = ui.del.filter(function (x) { return String(x) !== String(id); });
+      else if (a === 'ubah') { if (m.on && m.on.ubah) m.on.ubah(ui.sheet); return; }
+      else if (a === 'hapus') { var hid = ui.sheet; setDel(hid, true, hid); ui.toast = hid; ui.sheet = null; clearTimeout(savedTimer); savedTimer = setTimeout(function () { ui.toast = null; paint(); }, 6000); }
+      else if (a === 'undo') { var uid = ui.toast; setDel(uid, false, uid); ui.toast = null; }
+      else if (a === 'restore') setDel(id, false, id);
       else return;
       paint();
     };

@@ -59,3 +59,16 @@ test('view: sheet detail, hapus lokal dan toast', () => {
   assert.deepEqual(sh.filter((x) => x.k === 'Bukti').map((x) => [x.v, x.ext]), [['1 foto', true]]);
   assert.equal(sh.filter((x) => x.k === 'Harga satuan')[0].v, 'Rp 2,24 jt');
 });
+
+test('fromState: Ubah hanya untuk Beli, Jual, Masuk, Keluar, Pindah tanpa tautan; baris dihapus ikut daftar Terhapus dan hilang dari daftar', () => {
+  const d = R.fromState(state([
+    T({ trx_id: 'a', tanggal: '2026-11-02', jenis: 'Beli', aset_id: 'AS-EMAS', jumlah: 1, harga_per_unit: 2240000, harga_mata_uang: 'IDR' }),
+    T({ trx_id: 'b', tanggal: '2026-11-02', jenis: 'Saldo awal', aset_id: 'AS-EMAS', jumlah: 1 }),
+    T({ trx_id: 'c', tanggal: '2026-11-02', jenis: 'Zakat', aset_id: 'AS-EMAS', jumlah: 0.1 }),
+    T({ trx_id: 'd', tanggal: '2026-11-02', jenis: 'Keluar', aset_id: 'AS-EMAS', jumlah: 0.1, status: 'dihapus' })]), { hariIni: '2026-11-09' });
+  const by = {}; d.days.forEach((x) => x.rows.forEach((r) => { by[r.id] = r; }));
+  assert.deepEqual(['a', 'b', 'c', 'd'].map((k) => by[k].edit), [true, false, false, true]);
+  const v = R.view(d, { view: 'del' });
+  assert.deepEqual(v.delRows.map((r) => r.id), ['d']); assert.equal(v.delRows[0].d, 'dihapus');
+  assert.equal(R.view(d, { sheet: 'b' }).sheet.edit, false); assert.equal(R.view(d, { sheet: 'a' }).sheet.edit, true);
+});

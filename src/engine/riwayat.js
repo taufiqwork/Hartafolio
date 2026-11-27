@@ -86,7 +86,7 @@
       var imp = t.sumber === 'import';
       rows.push(Object.assign({ id: t.trx_id, j: j, a: label(a), q: qtext(t.jenis === 'Pindah' ? 'Pindah' : t.jenis, +t.jumlah || 0, a && a.satuan),
         o: mem + ' · ' + loc, v: v ? v + (t.jenis === 'Saldo awal' ? ' · saldo awal' : '') : null, imp: imp, mem: mem, loc: loc,
-        tgl: t.tanggal, del: t.status === 'dihapus', hs: hs ? F().rupiahShort(hs) : null, nilai: v, bukti: urls, cat: t.catatan || '' }, style(j)));
+        tgl: t.tanggal, del: t.status === 'dihapus', delText: 'dihapus', edit: ['Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah'].indexOf(t.jenis) >= 0 && !t.link_id, hs: hs ? F().rupiahShort(hs) : null, nilai: v, bukti: urls, cat: t.catatan || '' }, style(j)));
     });
     return build(rows, hariIni);
   }
@@ -160,8 +160,8 @@
     return {
       kosong: kosong, hasAny: !kosong, days: days, chips: chips, noMatch: !kosong && live.length > 0 && !days.length,
       listView: (ui.view || 'list') === 'list', delView: ui.view === 'del', hasDel: gone.length > 0, delLabel: 'Terhapus (' + gone.length + ')',
-      delRows: gone.map(function (p) { return Object.assign({}, p[0], { d: 'dihapus hari ini' }); }),
-      sheet: cur ? { id: cur[0].id, title: cur[0].j + ' · ' + cur[0].a, q: cur[0].q, ibg: cur[0].ibg, ifg: cur[0].ifg, paths: cur[0].paths, det: detail(cur[0], cur[1]) } : null,
+      delRows: gone.map(function (p) { return Object.assign({}, p[0], { d: p[0].delText || 'dihapus hari ini' }); }),
+      sheet: cur ? { id: cur[0].id, edit: cur[0].edit !== false, title: cur[0].j + ' · ' + cur[0].a, q: cur[0].q, ibg: cur[0].ibg, ifg: cur[0].ifg, paths: cur[0].paths, det: detail(cur[0], cur[1]) } : null,
       toast: toast && !cur && (ui.view || 'list') === 'list' ? 'Transaksi dihapus' : null, toastId: toast ? toast[0].id : null,
       scrim: !!ui.fOpen || !!cur
     };
