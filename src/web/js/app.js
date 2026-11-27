@@ -48,12 +48,14 @@
   /* Unggah foto bukti di belakang layar. Gagal = toast dengan Coba lagi (foto ditahan di memori selama aplikasi terbuka). */
   function unggah(id, photo) {
     HF.api.call('apiBuktiUnggah', id, { nama: photo.nama, mime: photo.mime, base64: photo.base64 }).then(function () {
-      HF.berandaScreen.flash({ text: 'Foto terunggah' });
+      flash({ text: 'Foto terunggah' });
     }).catch(function (e) {
       if (window.console) console.warn('Unggah foto gagal:', e && e.message);
-      HF.berandaScreen.flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.', act: 'Coba lagi', on: function () { unggah(id, photo); } });
+      flash({ text: 'Foto belum terunggah. Transaksi sudah tersimpan.', act: 'Coba lagi', on: function () { unggah(id, photo); } });
     });
   }
+  /* Toast setelah Catat menyimpan: tampil di tab yang akan dibuka (Beranda atau Riwayat). */
+  function flash(t) { (lastTab === 'riwayat' ? HF.riwayatScreen : HF.berandaScreen).flash(t); }
   function openCatat() {
     var el = document.getElementById('app'), mulai = demoParam !== null ? (param('mulai') || 'beli') : 'beli';
     function go(ctx) {
@@ -69,15 +71,31 @@
           else appState = null;
           done.then(function (r) { if ((r.ditolak || []).length) appState = null; }).catch(function () { /* tetap di antrean perangkat; data lokal sudah mencakupnya */ });
           if (photo && !ctx.demo) done.then(function (r) { if (!(r.ditolak || []).length) unggah(r.utama, photo); });
-          done.then(function (r) { if ((r.ditolak || []).length) HF.berandaScreen.flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
-            .catch(function () { HF.berandaScreen.flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
-          HF.berandaScreen.flash(ctx.demo ? { text: 'Contoh: ' + vm.fJ + ' ' + (vm.fA || '') + ' tidak masuk ke Sheet' } : { text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
+          done.then(function (r) { if ((r.ditolak || []).length) flash({ text: 'Transaksi ditolak server: ' + (/saldo/.test(r.ditolak[0].error) ? 'saldo tidak cukup.' : r.ditolak[0].error) }); })
+            .catch(function () { flash({ text: 'Transaksi belum terkirim. Tersimpan di perangkat, dikirim ulang saat aplikasi dibuka.' }); });
+          flash(ctx.demo ? { text: 'Contoh: ' + vm.fJ + ' ' + (vm.fA || '') + ' tidak masuk ke Sheet' } : { text: vm.fJ + ' ' + (vm.fA || '') + ' ' + vm.q + ' tersimpan', act: 'Lihat' });
           location.hash = '#/' + lastTab;
         } });
     }
     if (demoParam !== null) return go(HF.demo.catat());
     function ready(s) { appState = s; go(HF.catatCtx.fromState(s, HF.catatCtx.nowOf())); }
     if (appState) ready(appState); else HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
+  }
+
+  /* Riwayat: data contoh (?demo=keadaan) atau data nyata dari apiState (transaksi + anggota, lokasi, aset). */
+  function renderRiwayat() {
+    var el = document.getElementById('app'), seq = ++loadSeq;
+    document.title = 'Riwayat · Hartafolio';
+    if (demoParam !== null) { var g = HF.riwayatDemo.get(demoParam); return HF.riwayatScreen.mount(el, { data: g.data, ui: g.ui, saved: g.saved, real: false }, nav('riwayat')); }
+    var ready = function (s) {
+      appState = s;
+      if (route() !== 'riwayat' || seq !== loadSeq) return;
+      var now = new Date(), hari = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+      HF.riwayatScreen.mount(el, { data: HF.riwayat.fromState(s, { hariIni: (s.serverWaktu || '').slice(0, 10) || hari }), real: true }, nav('riwayat'));
+    };
+    if (appState) return ready(appState);
+    el.innerHTML = HF.setup.splash();
+    HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
   }
 
   function render() {
@@ -100,6 +118,7 @@
       HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
       return;
     }
+    if (r === 'riwayat') return renderRiwayat();
     var screen = '<main class="app-screen hf-scroll" id="screen">' +
       '<h1 class="app-title">' + TITLES[r] + '</h1>' +
       '<p class="app-soon">Layar ini dibangun pada tahap berikutnya.</p></main>';
