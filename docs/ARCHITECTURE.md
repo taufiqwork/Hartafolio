@@ -39,6 +39,9 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Catat: state, klik, pasang | `src/web/screens/catat.js` | `HF.catatScreen.mount(el, {ctx, mulai, onClose, onSave, onLokasi, onAset})` |
 | Catat: simpan (antrean perangkat, kirim, data contoh hanya lokal) | `src/web/js/catat-save.js` | `HF.catatSave.submit/flush/pending` |
 | Pembaruan DOM di tempat (transisi dan animasi tetap jalan) | `src/web/js/morph.js` | `HF.morph(el, html)` |
+| Riwayat: tampilan (daftar per hari, cari, filter, sheet detail, terhapus, toast) | `src/web/screens/riwayat.js` | `HF.riwayatScreen.mount/flash`; pembaruan di tempat lewat `HF.morph` |
+| Riwayat: baris dari Sheet, filter, rincian detail | `src/engine/riwayat.js` | `HF.riwayat.fromState`, `view(d, ui)`, `detail`, `ringkas`, `qtext`, `dayLabel` |
+| Data contoh Riwayat (bisa dihapus) | `src/demo/riwayat-demo.js` | `HF.riwayatDemo.get(keadaan)`; `?demo=<default\|filter\|detail\|detail-zakat\|detail-pinjam\|detail-cicilan\|detail-lunas\|detail-pindah\|terhapus\|daftar-terhapus\|kosong\|tersimpan\|diubah>#/riwayat` |
 | Data contoh Catat (bisa dihapus) | `src/demo/catat-demo.js` | `HF.demo.catat()`; `?demo&mulai=beli\|jual\|masuk\|keluar\|pindah\|awal...` |
 | Foto bukti: validasi dan pengecilan di perangkat | `src/web/js/foto.js` | `HF.foto.prepare/pilih` |
 | Foto bukti: unggah ke Drive (izin `drive.file`) | `src/gas/Bukti.js` | `apiBuktiUnggah` |

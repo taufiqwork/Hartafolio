@@ -81,8 +81,23 @@ export const catatPajakGulir = [ACT('@x-pajak-gulir', '04-Catat-2u-Foto-Terlampi
 // Angka diformat otomatis dan galat penulisan (boards 3a sampai 3d, dibuat 25 Nov).
 const GULIR300 = `document.querySelector('.hf-scroll').scrollTop = 300;`;
 export const catatAngka = [['-3a-Angka-Format', 'angka-format'], ['-3b-Angka-Titik-Desimal', 'angka-titik'], ['-3c-Angka-Format-Inggris', 'angka-inggris'], ['-3d-Angka-Banyak-Koma', 'angka-koma']]
-  .map(([id, mulai]) => CT(id, mulai, { boardJs: GULIR300, js: GULIR300 }));
+  .map(([id, mulai]) => CT(id, mulai, Object.assign({ boardJs: GULIR300, js: GULIR300 }, id === '-3a-Angka-Format' ? { deviasi: [{ box: [184, 712, 192, 32], alasan: 'Keputusan Ticon 27 Nov: nilai miliar ditulis "M" dan triliun "T" (board lama: 1.491.315.983,43 jt)' }] } : {})));
 export const catatAsetAngka = [CT('-3e-Aset-Manual-Angka', 'aset-manual-angka')];
+
+// Riwayat (?demo=<keadaan>#/riwayat: data contoh src/demo/riwayat-demo.js, keadaan awal sama dengan prop `mulai` board). Ubah dimatikan sampai putaran E.
+const RW = (id, mulai, extra) => Object.assign({ id: '05-Riwayat' + id, board: '05-Riwayat' + id, query: 'demo=' + mulai, hash: '#/riwayat' }, extra || {});
+const UBAH = { deviasi: [{ box: [16, 744, 176, 56], alasan: 'Tombol Ubah dimatikan: layar Ubah transaksi dibangun di putaran E' }] };
+const RWF = (id, mulai, board, act, at, extra) => Object.assign({ id: '05-Riwayat@' + id, board, query: 'demo=' + mulai, hash: '#/riwayat', frames: { act, at } }, extra || {});
+export const riwayatFrames = [
+  RWF('buka-menu', 'default', '05-Riwayat', `document.querySelectorAll('.hf-chip')[1].click();`, [0, 100, 300]),
+  RWF('buka-detail', 'default', '05-Riwayat', `document.querySelectorAll('.hf-detail[role=button]')[2].click();`, [0, 150, 400], UBAH),
+  RWF('hapus', 'detail', '05-Riwayat-2b-Detail', `document.querySelector('.hf-btn-danger').click();`, [0, 150, 400]),
+  RWF('pilih-filter', 'filter', '05-Riwayat-2a-Filter', `document.querySelectorAll('.hf-select-opt')[1].click();`, [0, 150, 400])
+];
+export const riwayat = [RW('', 'default'), RW('-2a-Filter', 'filter'), RW('-2b-Detail', 'detail', UBAH), RW('-2c-Terhapus', 'terhapus'), RW('-2d-Kosong', 'kosong'), RW('-2e-Daftar-Terhapus', 'daftar-terhapus'),
+  RW('-2f-Tersimpan', 'tersimpan'), RW('-2g-Diubah', 'diubah'), RW('-2h-Detail-Zakat', 'detail-zakat', UBAH), RW('-2i-Detail-Pinjamkan', 'detail-pinjam', UBAH), RW('-2j-Detail-Cicilan', 'detail-cicilan', UBAH),
+  RW('-2k-Detail-Pelunasan', 'detail-lunas', UBAH), RW('-2l-Detail-Pindah', 'detail-pindah', UBAH)];
+
 export const catatFrames = [
   CTF('pilih-jual', 'beli', KLIK('Jual'), [0, 80, 150, 300]), CTF('pilih-aset-btc', 'beli', KLIK('BTC'), [0, 80, 150, 300]),
   CTF('buka-tanggal', 'beli', `document.querySelector('button.hf-input').click();`, [0, 100, 250, 450]),
@@ -151,5 +166,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames, ...riwayat, ...riwayatFrames
 ];

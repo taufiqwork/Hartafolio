@@ -98,3 +98,10 @@ Belum terukur: tahap Periksa/Lengkapi/Simpan Import (belum dibangun) dan mode ge
 
 ## Catatan jebakan
 Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana tiap kali menemukan yang baru.
+
+## Riwayat (putaran D)
+- [ ] `npm run pixel`: 13 state Riwayat (05-Riwayat dan 2a sampai 2l) dan 4 skenario animasi (`05-Riwayat@...`) lulus; satu-satunya deviasi: tombol Ubah dimatikan (putaran E).
+- [ ] Tanpa `?demo`: Riwayat dari data nyata (`HF.riwayat.fromState`): terbaru di atas, Pindah lokasi dan Pindah anggota dibedakan, transaksi berstatus "dihapus" tidak tampil di daftar tetapi dihitung di "Terhapus (n)".
+- [ ] Dengan `?demo=...`: data contoh, tidak pernah menulis ke Sheet. Hapus dan Pulihkan hanya berfungsi di data contoh; di data nyata dimatikan sampai putaran E.
+- [ ] Filter Anggota, Jenis (termasuk Pindah = kedua jenis, Piutang = tiga jenis), Bulan, dan kotak cari; kosong dan "tidak ada yang cocok" tampil benar.
+- [ ] Toast setelah Catat menyimpan tampil di Riwayat bila tab Riwayat yang dibuka lagi. BELUM TERVERIFIKASI di Google sungguhan.

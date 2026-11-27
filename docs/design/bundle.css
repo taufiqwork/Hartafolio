@@ -594,3 +594,40 @@ input::placeholder{font-weight:400;color:var(--ink-muted);opacity:.75}
 .ct-ne{display:flex;flex-direction:row;align-items:baseline;gap:8px;white-space:nowrap}
 .ct-err{color:var(--loss)}
 .ct-fix{font:inherit;font-size:13px;line-height:20px;font-weight:600;color:var(--brand);background:transparent;border:0;padding:0;cursor:pointer;text-align:left}
+
+/* Riwayat (tab Riwayat). Mengikuti board 05-Riwayat*.dc.html; gaya yang di board berupa inline dipindah ke kelas rw-*. */
+.rw-search { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); }
+.rw-search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); outline-offset: 4px; line-height: 24px; }
+.rw-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.rw-chips .hf-select { position: relative; flex: none; }
+.rw-main { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+.rw-back { font: inherit; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--brand); background: transparent; border: 0; padding: 0; cursor: pointer; line-height: 22px; }
+.rw-dellink { font: inherit; align-self: stretch; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 2px; border: 0; background: transparent; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; line-height: 22px; }
+.rw-dellink > span:first-child { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-sunken); color: var(--ink-muted); }
+.rw-dellink > span:nth-child(2) { flex: 1; }
+.rw-dellink > svg { color: var(--ink-muted); }
+.rw-day { display: flex; flex-direction: column; gap: 8px; }
+.rw-day .label { color: var(--ink-muted); }
+.rw-card { padding: 4px 16px; gap: 0; }
+.rw-card .hf-detail { grid-template-columns: 36px minmax(0, 1fr) auto; }
+.rw-card .hf-detail[role="button"] { cursor: pointer; }
+.rw-del .hf-detail { align-items: center; }
+.rw-ico { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; }
+.rw-note { margin: 0; padding: 24px 0; text-align: center; font-size: 14px; color: var(--ink-muted); line-height: 20px; }
+.rw-lead { margin: -6px 0 0; font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+.rw-empty { padding: 24px 16px; gap: 12px; justify-items: center; text-align: center; }
+.rw-empty-ico { width: 48px; height: 48px; border-radius: 999px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
+.rw-empty-note { font-size: 13px; line-height: 20px; color: var(--ink-muted); }
+.rw-foot { margin: 0; color: var(--ink-muted); text-align: center; }
+.rw-sheet-top { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.rw-sheet-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; }
+.rw-sheet-amt { font-size: 20px; font-variant-numeric: tabular-nums; line-height: 28px; font-weight: 700; }
+.rw-det { display: flex; flex-direction: column; }
+.rw-det > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; }
+.rw-det > div > span:first-child { color: var(--ink-muted); }
+.rw-det b, .rw-det a { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.rw-det a { color: var(--brand); text-decoration: none; display: inline-flex; align-items: center; gap: 2px; font-variant-numeric: normal; }
+.rw-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rw-toast { --toast-bottom: calc(var(--safe-bottom) + 83px); }
+.rw-slot { display: contents; }
+.rw-chips .hf-select-menu { min-width: 190px; max-height: none; overflow-y: visible; } /* menu Jenis (9 pilihan) tampil penuh seperti board */

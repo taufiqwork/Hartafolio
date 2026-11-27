@@ -116,7 +116,7 @@ for (const sc of list.filter((x) => x.frames)) {
     await p.go(`${base}/app/Index.html?${sc.query}${sc.hash || ''}`); await sleep(500);
     await p.ev(settle); await p.ev(`(async()=>{${sc.frames.act}})()`); await p.ev(freezeAt(T));
     fs.writeFileSync(a, Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64')); await p.close();
-    const out = JSON.parse(execFileSync('python3', [path.join(import.meta.dirname, 'diff.py'), b, a, d, '[]']).toString());
+    const out = JSON.parse(execFileSync('python3', [path.join(import.meta.dirname, 'diff.py'), b, a, d, JSON.stringify((sc.deviasi || []).map((x) => x.box))]).toString()); // deviasi dikecualikan juga di skenario frames
     const ok = !out.error && out.rasio <= MAX_RASIO; if (!ok) gagal++;
     console.log(`${ok ? 'LULUS ' : 'GAGAL '} ${id.padEnd(34)} ${out.error ? out.error : (out.rasio * 100).toFixed(3) + '% beda (' + out.beda_px + ' px)' + (out.wilayah && out.wilayah[0] && !ok ? '  terbesar: x' + out.wilayah[0].x + ' y' + out.wilayah[0].y + ' ' + out.wilayah[0].w + 'x' + out.wilayah[0].h : '')}`);
   }
