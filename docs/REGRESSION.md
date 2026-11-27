@@ -119,3 +119,10 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 - [ ] BELUM TERVERIFIKASI di Google: menu Nyalakan membuat jadwal; salinan muncul di folder "Hartafolio Cadangan"; Minggu berikutnya salinan baru muncul; salinan ke-9 membuang yang tertua.
 - [ ] Beranda nyata: tidak ada grafik, "dari Okt", atau kartu Harga (Main-2u, 2v, 2w lulus piksel tanpa parameter khusus).
 - [ ] Biaya Pindah satu baris: `koreksi.test.js` (saldo, hapus/pulihkan/ubah, gabung data lama), `gas.test.js` (rapikanBiayaPindah), piksel Pindah (2c, 2e, 2f) dan Riwayat detail Pindah lulus.
+
+## Aset (tab)
+- [ ] `npm run pixel`: 03-Aset (5 state) dan 03-Aset@buka-lokasi, @pilih-anggota, @pilih-lokasi lulus.
+- [ ] `npm test` (`aset.test.js`): demo = board (9 posisi, Rp 174,2 jt, urutan kelas), filter, data nyata (saldo x harga, satuan, tanpa harga).
+- [ ] Tanpa `?demo`: total Aset = total Beranda untuk aset yang punya harga; aset tanpa harga tidak ditampilkan dan memberi titik merah di Kelola.
+- [ ] Toast "tersimpan" setelah Catat dari tab Aset tampil di Aset. BELUM TERVERIFIKASI di Google sungguhan.
+

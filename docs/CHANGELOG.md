@@ -291,3 +291,9 @@
 - **Data lama:** menu **Hartafolio › Rapikan biaya Pindah** menggabungkan baris Keluar "Biaya Pindah ..." ke Pindah-nya (hari, jam, aset, lokasi, anggota sama; yang meragukan dilewati), memberi baris Keluar status dihapus, dan membuat salinan Sheet dulu. Saldo tidak berubah (diuji). Dijalankan Ticon sekali. BELUM TERVERIFIKASI di Google.
 - **Biaya Beli dan Jual** sudah satu baris sejak awal (kolom biaya, pajak); Ubah mengganti keduanya.
 
+## 28 Nov 2026 · Aset (tab): posisi per kelas, filter anggota dan lokasi
+- **Layar Aset** (`src/web/screens/aset.js`, `src/engine/aset.js`, data contoh `src/demo/aset-demo.js`; boards 03-Aset, 2a Satu anggota, 2b Menu lokasi, 2c Kosong, 2d Tersimpan): kartu per kelas aset (urut nilai, "n posisi · x% dari total"), baris per aset dan lokasi, "Milik N anggota" bila Semua dipilih dan jumlah bila satu anggota dipilih, menu Lokasi dengan nilai per lokasi, badge "manual", keadaan kosong, toast setelah Catat. 5 state dan 3 animasi (buka menu, pilih anggota, pilih lokasi) dibandingkan piksel: 0 sampai 68 piksel beda (satu huruf "i" bergeser di nama lokasi, di bawah batas 0,3%); menu lokasi 0 piksel.
+- **Data nyata** (`HF.aset.fromState`): saldo per anggota, aset, lokasi dikali harga. Harga dari tab Harga, bila kosong harga Beli/Jual terakhir (fungsi yang sama dengan Beranda, kini `HF.beranda.hargaPerkiraan`). Aset tanpa harga sama sekali tidak ditampilkan dan menyalakan titik merah di tombol Kelola ("N aset perlu harga"). Satuan: gram "g", token, lot, lembar; koin dan nominal tanpa satuan; Rupiah "tunai". Diuji dengan Sheet tiruan di dev: 13 g emas Rp 2,4 jt = Rp 31,2 jt, filter Yumna 3 g = Rp 7,2 jt.
+- **Belum:** tombol Kelola belum membuka apa pun (layar Kelola aset, boards 14-Aset*, belum dibangun). Tautan "Catat saldo awal" membuka Catat biasa, bukan layar Saldo awal langsung.
+- **Belum diverifikasi di Google:** Aset dari Sheet sungguhan.
+
