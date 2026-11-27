@@ -81,7 +81,7 @@ export const catatPajakGulir = [ACT('@x-pajak-gulir', '04-Catat-2u-Foto-Terlampi
 // Angka diformat otomatis dan galat penulisan (boards 3a sampai 3d, dibuat 25 Nov).
 const GULIR300 = `document.querySelector('.hf-scroll').scrollTop = 300;`;
 export const catatAngka = [['-3a-Angka-Format', 'angka-format'], ['-3b-Angka-Titik-Desimal', 'angka-titik'], ['-3c-Angka-Format-Inggris', 'angka-inggris'], ['-3d-Angka-Banyak-Koma', 'angka-koma']]
-  .map(([id, mulai]) => CT(id, mulai, { boardJs: GULIR300, js: GULIR300 }));
+  .map(([id, mulai]) => CT(id, mulai, Object.assign({ boardJs: GULIR300, js: GULIR300 }, id === '-3a-Angka-Format' ? { deviasi: [{ box: [184, 712, 192, 32], alasan: 'Keputusan Ticon 27 Nov: nilai miliar ditulis "M" dan triliun "T" (board lama: 1.491.315.983,43 jt)' }] } : {})));
 export const catatAsetAngka = [CT('-3e-Aset-Manual-Angka', 'aset-manual-angka')];
 
 // Riwayat (?demo=<keadaan>#/riwayat: data contoh src/demo/riwayat-demo.js, keadaan awal sama dengan prop `mulai` board). Ubah dimatikan sampai putaran E.
