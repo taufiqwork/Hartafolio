@@ -242,25 +242,41 @@ test('apiTransaksiTambah: bayar dari lokasi lain mengurangi lokasi pembayar; lok
   assert.equal(rows[1].alat_bayar_lokasi_id, 'LK-002');
 });
 
-test('apiBuktiUnggah (DriveApp): folder dibuat sekali, foto masuk folder itu, tautan di bukti setelah No. referensi; tanpa Cloud Console', () => {
+test('apiBuktiUnggah (Drive v3, izin drive.file): folder dibuat sekali, foto masuk folder itu, tautan di bukti setelah No. referensi; tanpa Cloud Console', () => {
   const g = boot();
-  const dibuat = []; const folder = { getId: () => 'FOLDER1', getUrl: () => 'https://drive.google.com/drive/folders/FOLDER1', isTrashed: () => false, createFile: (b) => { dibuat.push(b); return { getUrl: () => 'https://drive.google.com/file/d/FILE1/view' }; } };
-  g.ctx.DriveApp = { folders: 0, getFoldersByName() { return { hasNext: () => false }; }, createFolder(n) { this.folders++; this.nama = n; return folder; }, getFolderById: (id) => { if (id !== 'FOLDER1') throw new Error('x'); return folder; } };
+  const dibuat = [], bikin = []; const hilang = new Set();
+  g.ctx.Drive = { Files: {
+    get: (id) => { if (id !== 'FOLDER1' || hilang.has(id)) throw new Error('404'); return { id, trashed: false }; },
+    list: () => ({ files: [] }),
+    create(res, blob, opt) { bikin.push({ res, opt }); if (res.mimeType === 'application/vnd.google-apps.folder') return { id: 'FOLDER1' }; dibuat.push({ res, blob }); return { id: 'FILE1', webViewLink: 'https://drive.google.com/file/d/FILE1/view' }; }
+  } };
   g.ctx.Utilities.base64Decode = (b) => Buffer.from(b, 'base64'); g.ctx.Utilities.newBlob = (data, mime, nama) => ({ data, mime, nama });
   g.run('setupHartafolio()');
   g.run(`apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
   g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:1, sumber:'manual', bukti:'INV-77'}])`);
   const r = JSON.parse(JSON.stringify(g.run(`apiBuktiUnggah('TX-1', {nama:'nota binance.jpg', mime:'image/jpeg', base64:'QUJD'})`)));
   assert.equal(r.url, 'https://drive.google.com/file/d/FILE1/view');
-  assert.equal(g.ctx.DriveApp.nama, 'Hartafolio Bukti'); assert.equal(dibuat[0].mime, 'image/jpeg'); assert.match(dibuat[0].nama, /^TX-1-nota binance\.jpg$/); assert.equal(dibuat[0].data.toString(), 'ABC');
+  assert.equal(bikin[0].res.name, 'Hartafolio Bukti'); assert.equal(dibuat[0].res.mimeType, 'image/jpeg'); assert.deepEqual(Array.from(dibuat[0].res.parents), ['FOLDER1']); assert.match(dibuat[0].res.name, /^TX-1-nota binance\.jpg$/); assert.equal(dibuat[0].blob.data.toString(), 'ABC');
   assert.equal(JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)))[0].bukti, 'INV-77\nhttps://drive.google.com/file/d/FILE1/view');
   g.run(`apiBuktiUnggah('TX-1', {nama:'b.png', mime:'image/png', base64:'QUJD'})`);
-  assert.equal(g.ctx.DriveApp.folders, 1); // folder tidak dibuat lagi
+  assert.equal(bikin.filter((x) => x.res.mimeType === 'application/vnd.google-apps.folder').length, 1); // folder tidak dibuat lagi
   assert.equal(g.run('apiState()').pengaturan.folder_bukti_id, 'FOLDER1');
   assert.throws(() => g.run(`apiBuktiUnggah('TX-9', {mime:'image/jpeg', base64:'QUJD'})`), /tidak ditemukan/);
   assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'application/pdf', base64:'QUJD'})`), /JPG atau PNG/);
   const m = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'gas', 'appsscript.json'), 'utf8'));
-  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/script.external_request'));
+  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file')); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); assert.equal(m.dependencies.enabledAdvancedServices[0].serviceId, 'drive'); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/script.external_request'));
+});
+
+test('apiBuktiUnggah: folder lama tak terlihat oleh izin sempit -> dicari lagi, lalu dibuat baru dan id di Pengaturan diganti', () => {
+  const g = boot(); const bikin = [];
+  g.ctx.Drive = { Files: { get: () => { throw new Error('404'); }, list: () => ({ files: [] }), create(res) { bikin.push(res); return { id: res.mimeType === 'application/vnd.google-apps.folder' ? 'BARU' : 'F2', webViewLink: 'https://x/F2' }; } } };
+  g.ctx.Utilities.base64Decode = (b) => Buffer.from(b, 'base64'); g.ctx.Utilities.newBlob = (data, mime, nama) => ({ data, mime, nama });
+  g.run('setupHartafolio()');
+  g.run(`Repo_append_('Pengaturan', [{ kunci: 'folder_bukti_id', nilai: 'LAMA', keterangan: '' }]); apiAnggotaTambah({nama:'Azlan'}); apiLokasiTambah({nama:'Binance', jenis:'Exchange crypto'});`);
+  g.run(`apiTransaksiTambah([{trx_id:'TX-1', tanggal:'2026-11-25', jam:'09:00', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-PAXG', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  g.run(`apiBuktiUnggah('TX-1', {nama:'a.jpg', mime:'image/jpeg', base64:'QUJD'})`);
+  assert.equal(g.run('apiState()').pengaturan.folder_bukti_id, 'BARU');
+  assert.deepEqual(Array.from(bikin[1].parents), ['BARU']);
 });
 
 test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perlindungan tetap satu; header salah tetap berhenti', () => {
