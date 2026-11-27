@@ -1,7 +1,8 @@
 /**
  * Buku besar: saldo dan modal dihitung dari Transaksi (satu-satunya sumber data).
  * Hanya baris status "aktif". Pindah satu baris; engine menghitung dua sisi.
- * Biaya Pindah adalah transaksi sendiri (Keluar), bukan kolom di baris Pindah.
+ * Biaya Pindah ada di kolom `biaya` baris Pindah, dalam satuan aset yang dipindah, dan keluar dari lokasi asal (keputusan Ticon 28 Nov;
+ * sebelumnya baris Keluar tersendiri, lihat gabungBiayaPindah untuk merapikan data lama).
  */
 (function (root) {
   'use strict';
@@ -59,6 +60,7 @@
       case 'Pindah':
         add(A, S, L, -q, 'asal');
         add(t.anggota_tujuan_id || A, S, t.lokasi_tujuan_id || L, q, 'tujuan');
+        if (num(t.biaya) > 0) add(A, S, L, -num(t.biaya), 'biaya'); // biaya Pindah (satuan aset yang dipindah) ikut keluar dari lokasi asal, satu baris dengan Pindah
         break;
     }
     return out;
@@ -103,6 +105,7 @@
       if (t.harga_mata_uang && t.harga_mata_uang !== 'IDR' && !(num(t.kurs) > 0)) e.push('wajib:kurs');
     }
     if (t.jenis === 'Pindah') {
+      if (t.biaya !== undefined && t.biaya !== null && t.biaya !== '' && !(num(t.biaya) >= 0)) e.push('biaya:negatif');
       if (!t.lokasi_tujuan_id && !t.anggota_tujuan_id) e.push('wajib:tujuan');
       if ((t.lokasi_tujuan_id || t.lokasi_id) === t.lokasi_id && (t.anggota_tujuan_id || t.anggota_id) === t.anggota_id) e.push('pindah:tujuan-sama');
     }
@@ -116,7 +119,7 @@
         // Saldo tidak boleh minus setelah transaksi ini (Jual, Keluar, Pindah, Zakat, Pinjamkan, bayar dengan aset).
         var bal = balances(ctx.trxList.concat([t]));
         effects(t).forEach(function (f) {
-          if (f.delta < 0 && (bal[key(f.anggota_id, f.aset_id, f.lokasi_id)] || 0) < -1e-9) e.push('saldo:kurang:' + f.aset_id);
+          if (f.delta < 0 && (bal[key(f.anggota_id, f.aset_id, f.lokasi_id)] || 0) < -1e-9 && e.indexOf('saldo:kurang:' + f.aset_id) < 0) e.push('saldo:kurang:' + f.aset_id);
         });
       }
     }
@@ -186,6 +189,7 @@
           var B = t.anggota_tujuan_id || A;
           var mv = take(P(A, S), q);
           give(P(B, S), q, mv);
+          if (num(t.biaya) > 0) take(P(A, S), num(t.biaya)); // biaya hilang dari posisi asal, seperti Keluar
           break;
         }
       }
@@ -206,6 +210,23 @@
       eff.forEach(function (e) { if (e.delta < 0 && (bal[key(e.anggota_id, e.aset_id, e.lokasi_id)] || 0) < -1e-9) bad[t.trx_id] = 1; });
     });
     return Object.keys(bad);
+  }
+
+  /**
+   * Data lama: biaya Pindah sebagai baris Keluar (asal_alasan "Biaya", catatan "Biaya Pindah ...") di anggota, aset, lokasi, tanggal, dan jam yang sama
+   * dengan Pindah-nya. Mengembalikan [{ pindah, keluar, biaya }] untuk digabung: biaya masuk ke Pindah, baris Keluar dihapus (status dihapus).
+   * Hanya satu Keluar per Pindah dan hanya Pindah yang belum punya biaya; yang meragukan dilewati.
+   */
+  function gabungBiayaPindah(list) {
+    var act = list.filter(isActive), pakai = {}, out = [];
+    act.filter(function (t) { return t.jenis === 'Keluar' && t.asal_alasan === 'Biaya' && /^Biaya Pindah/.test(t.catatan || '') && !t.link_id; }).forEach(function (k) {
+      var cocok = act.filter(function (p) {
+        return p.jenis === 'Pindah' && !(num(p.biaya) > 0) && !pakai[p.trx_id] && p.anggota_id === k.anggota_id && p.aset_id === k.aset_id && p.lokasi_id === k.lokasi_id && p.tanggal === k.tanggal && (p.jam || '') === (k.jam || '');
+      });
+      if (cocok.length !== 1) return;
+      pakai[cocok[0].trx_id] = 1; out.push({ pindah: cocok[0].trx_id, keluar: k.trx_id, biaya: num(k.jumlah) });
+    });
+    return out;
   }
 
   var EDIT_COLS = ['tanggal', 'jam', 'anggota_id', 'aset_id', 'lokasi_id', 'lokasi_tujuan_id', 'anggota_tujuan_id', 'jumlah', 'harga_per_unit', 'harga_mata_uang',
@@ -253,7 +274,7 @@
   /** Kalimat untuk pengguna dari kode galat `terapkan`. */
   function pesan(kode) { return PESAN[kode] || 'Perubahan ditolak (' + kode + ').'; }
 
-  var api = { pesan: pesan, shortfalls: shortfalls, terapkan: terapkan, EDIT_COLS: EDIT_COLS, key: key, parseKey: parseKey, sortTrx: sortTrx, effects: effects, balances: balances, rollup: rollup,
+  var api = { gabungBiayaPindah: gabungBiayaPindah, pesan: pesan, shortfalls: shortfalls, terapkan: terapkan, EDIT_COLS: EDIT_COLS, key: key, parseKey: parseKey, sortTrx: sortTrx, effects: effects, balances: balances, rollup: rollup,
     validate: validate, costBasis: costBasis };
   root.HF = root.HF || {};
   root.HF.ledger = api;

@@ -45,3 +45,34 @@ test('ubah: nomor referensi diganti tetapi tautan foto tetap; data lama yang sud
   const rusak = [T({ trx_id: 'J', jenis: 'Jual', tanggal: '2026-11-01', jumlah: 1, harga_per_unit: 1 }), T({ trx_id: 'K', jenis: 'Saldo awal', tanggal: '2026-11-05', jumlah: 5 })];
   assert.equal(L.terapkan(rusak, 'K', 'ubah', { tanggal: '2026-11-05', anggota_id: 'PM-001', aset_id: 'AS-PAXG', lokasi_id: 'LK-001', jumlah: 6 }, ids).error, null);
 });
+
+test('biaya Pindah satu baris: saldo asal berkurang jumlah + biaya, tujuan bertambah jumlah; saldo kurang ditolak', () => {
+  const awal = T({ trx_id: 'A', jenis: 'Saldo awal', tanggal: '2026-11-01', jumlah: 10 });
+  const pindah = T({ trx_id: 'P', jenis: 'Pindah', tanggal: '2026-11-02', jumlah: 2, biaya: 0.02, lokasi_tujuan_id: 'LK-002' });
+  const b = L.balances([awal, pindah]);
+  assert.equal(b[L.key('PM-001', 'AS-PAXG', 'LK-001')], 10 - 2 - 0.02); assert.equal(b[L.key('PM-001', 'AS-PAXG', 'LK-002')], 2);
+  assert.deepEqual(L.validate(Object.assign({}, pindah, { jumlah: 9.99, biaya: 0.02 }), { trxList: [awal], lokasiIds: ['LK-001', 'LK-002'] }).filter((x) => /saldo/.test(x)), ['saldo:kurang:AS-PAXG']);
+  assert.equal(L.validate(Object.assign({}, pindah, { biaya: -1 }), { trxList: [awal] }).includes('biaya:negatif'), true);
+});
+
+test('gabungBiayaPindah: Keluar "Biaya Pindah" bergabung ke Pindah yang sama (hari, jam, aset, lokasi), yang meragukan dilewati', () => {
+  const P = T({ trx_id: 'P', jenis: 'Pindah', tanggal: '2026-11-02', jumlah: 2, lokasi_tujuan_id: 'LK-002' });
+  const K = T({ trx_id: 'K', jenis: 'Keluar', tanggal: '2026-11-02', jumlah: 0.02, asal_alasan: 'Biaya', catatan: 'Biaya Pindah Rp 47600' });
+  assert.deepEqual(L.gabungBiayaPindah([P, K]), [{ pindah: 'P', keluar: 'K', biaya: 0.02 }]);
+  assert.deepEqual(L.gabungBiayaPindah([P, K, T({ trx_id: 'P2', jenis: 'Pindah', tanggal: '2026-11-02', jumlah: 1, lokasi_tujuan_id: 'LK-002' })]), []); // dua Pindah cocok: ragu, lewati
+  assert.deepEqual(L.gabungBiayaPindah([P, Object.assign({}, K, { jam: '10:00' })]), []);
+  assert.deepEqual(L.gabungBiayaPindah([Object.assign({}, P, { biaya: 0.5 }), K]), []);
+});
+
+test('Pindah dengan biaya: Hapus menghapus biayanya sekaligus (saldo asal kembali penuh), Pulihkan mengembalikannya, Ubah bisa mengganti biaya', () => {
+  const ids = { asetIds: ['AS-PAXG'], anggotaIds: ['PM-001'], lokasiIds: ['LK-001', 'LK-002'] };
+  const l = [T({ trx_id: 'A', jenis: 'Saldo awal', tanggal: '2026-11-01', jumlah: 10 }), T({ trx_id: 'P', jenis: 'Pindah', tanggal: '2026-11-02', jumlah: 2, biaya: 0.02, lokasi_tujuan_id: 'LK-002' })];
+  const asal = (x) => L.balances(x)[L.key('PM-001', 'AS-PAXG', 'LK-001')];
+  assert.equal(asal(l), 7.98);
+  const h = L.terapkan(l, 'P', 'hapus', null, ids); assert.equal(h.error, null);
+  const hapus = l.map((t) => (t.trx_id === 'P' ? Object.assign({}, t, h.patch) : t));
+  assert.equal(asal(hapus), 10); // pindah dan biayanya sama-sama tidak dihitung
+  assert.equal(L.terapkan(hapus, 'P', 'pulihkan', null, ids).error, null);
+  const u = L.terapkan(l, 'P', 'ubah', { tanggal: '2026-11-02', anggota_id: 'PM-001', aset_id: 'AS-PAXG', lokasi_id: 'LK-001', lokasi_tujuan_id: 'LK-002', jumlah: 2, biaya: 0.05 }, ids);
+  assert.equal(u.error, null); assert.equal(u.patch.biaya, 0.05);
+});

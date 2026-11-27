@@ -20,7 +20,7 @@ Tab hasil (Snapshot, Riwayat_Nilai, Zakat) boleh dibangun ulang dari Transaksi +
 ### Transaksi
 - `jenis`: Beli · Jual · Masuk · Keluar · Pindah · Saldo awal · Zakat · Pinjamkan · Cicilan diterima · Pelunasan diterima · Penyesuaian.
   - Zakat, Pinjamkan, Cicilan diterima, Pelunasan diterima dibuat otomatis dari layar Zakat dan Piutang; pengguna tidak memilihnya di Catat.
-  - **Pindah** satu jenis untuk antar lokasi dan antar anggota (kolom `lokasi_tujuan_id`, `anggota_tujuan_id`); jenis "Pindah lokasi/Pindah anggota" di v1 digabung. Biaya Pindah dicatat sebagai transaksi sendiri (lihat Riwayat rule di design-system.md).
+  - **Pindah** satu jenis untuk antar lokasi dan antar anggota (kolom `lokasi_tujuan_id`, `anggota_tujuan_id`); jenis "Pindah lokasi/Pindah anggota" di v1 digabung. Biaya Pindah ada di kolom `biaya` baris Pindah, dalam satuan aset yang dipindah, dipotong dari lokasi asal (keputusan 28 Nov; data lama digabung lewat menu Rapikan biaya Pindah).
 - Kolom tambahan: `alat_bayar_aset_id` (Beli dibayar dengan aset tercatat; Jual hasil masuk ke aset), `asal_alasan` (Masuk: Hadiah/Warisan/Dari dompet luar/Lainnya; Keluar: Hadiah/Sedekah/Ke dompet luar/Hilang/Lainnya), `link_id` (menaut ke `bayar_id` Zakat_Bayar atau `piutang_id`), `kurs`, `kurs_sumber` (realtime|rata_harian|manual|import), `kurs_tanggal`, `kurs_waktu`, `harga_mata_uang` (IDR|USD|USDT|aset pembayar), `harga_beli_rata2` (hanya Saldo awal, opsional).
 - Tanggal dan jam disimpan (jam menit, langkah 5 menit di UI).
 - Ubah transaksi: jenis tidak bisa diubah; saldo dihitung ulang dari tanggal itu; badge "Diubah".

@@ -15,7 +15,7 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 
 ## Keputusan yang sudah diambil (jangan tanya ulang)
 - Stack: Google Apps Script web app + Google Sheet, template salinan, library pusat plus pembungkus tipis. Hanya Pengelola login.
-- Pindah = satu baris (dua sisi dihitung engine). Biaya Pindah = transaksi Keluar sendiri. Jadwal piutang diturunkan (tanpa tab Piutang_Jadwal).
+- Pindah = satu baris (dua sisi dihitung engine). Biaya Pindah = kolom `biaya` di baris Pindah (28 Nov). Jadwal piutang diturunkan (tanpa tab Piutang_Jadwal).
 - Jenis aset memakai 8 pilihan dari form "Aset manual" (Emas, Perak, Crypto, Saham, Reksa dana, Mata uang, Properti, Lainnya); mockup menang atas DATA_MODEL.md (yang menulis 5).
 - Kolom Transaksi v2: `harga_mata_uang` dan `kurs` (bukan `mata_uang`/`kurs_usdidr` v1). Aset punya `status` (aktif|tersembunyi|dihapus) dan `mata_uang_harga`.
 - Pembagian kerja data: Sheet menyimpan; `apiState()` mengirim seluruh data ke klien; klien menghitung layar dengan engine yang sama (engine diinline ke `Index.html` oleh `tools/build.mjs`). Penulisan selalu lewat `api*` di server, yang memvalidasi ulang.

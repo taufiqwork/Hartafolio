@@ -140,7 +140,7 @@
     var h = '';
     if (vm.isMoveMem) {
       h += '<div class="ct-impact" aria-label="Dampak ke saldo">' + sumLine([vm.fM, vm.fL], '', 'ct-loss', vm.minusTxt) + sumLine([vm.fR, vm.recNote], '', 'ct-brand', vm.plusTxt) +
-        (vm.hasFee ? '<div class="ct-sum"><span class="ct-m">Biaya</span><span class="amount ct-amt ct-loss">−Rp ' + esc(vm.fee) + '</span></div>' : '') + '<span class="caption ct-m">' + vm.famNote + '</span></div>';
+        (vm.hasFee ? '<div class="ct-sum"><span class="ct-m">Biaya</span><span class="amount ct-amt ct-loss">−' + esc(vm.feeTxt) + '</span></div>' : '') + '<span class="caption ct-m">' + vm.famNote + '</span></div>';
     }
     if (vm.showTotal) h += '<div class="ct-tot"><span class="label ct-m">' + vm.totLabel + '</span><span class="amount ct-tot-v">' + esc(vm.totValue) + '</span></div>';
     if (vm.missOn) h += '<span class="caption" style="color: var(--loss);">' + esc(vm.missTxt) + '</span>';

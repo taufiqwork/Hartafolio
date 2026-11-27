@@ -72,3 +72,11 @@ test('fromState: Ubah hanya untuk Beli, Jual, Masuk, Keluar, Pindah tanpa tautan
   assert.deepEqual(v.delRows.map((r) => r.id), ['d']); assert.equal(v.delRows[0].d, 'dihapus');
   assert.equal(R.view(d, { sheet: 'b' }).sheet.edit, false); assert.equal(R.view(d, { sheet: 'a' }).sheet.edit, true);
 });
+
+test('Pindah dengan biaya: rincian menampilkan Biaya dalam satuan aset; tanpa biaya tidak ada baris itu', () => {
+  const d = R.fromState(state([
+    T({ trx_id: 'p', tanggal: '2026-11-02', jenis: 'Pindah', aset_id: 'AS-EMAS', jumlah: 2, biaya: 0.02, lokasi_tujuan_id: 'LK-002' }),
+    T({ trx_id: 'q', tanggal: '2026-11-02', jam: '10:00', jenis: 'Pindah', aset_id: 'AS-EMAS', jumlah: 1, lokasi_tujuan_id: 'LK-002' })]), { hariIni: '2026-11-09' });
+  const rows = d.days[0].rows, det = (id) => R.view(d, { sheet: id }).sheet.det.map((x) => x.k + '=' + x.v);
+  assert.ok(det('p').includes('Biaya=0,02 g')); assert.ok(!det('q').some((x) => /^Biaya/.test(x)));
+});
