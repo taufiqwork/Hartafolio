@@ -8,6 +8,7 @@ function onOpen() {
     .addItem('Siapkan sheet', 'setupHartafolio')
     .addItem('Periksa struktur', 'periksaStruktur')
     .addItem('Perbaiki header', 'perbaikiHeader')
+    .addItem('Rapikan biaya Pindah', 'rapikanBiayaPindah')
     .addItem('Izinkan Google Drive', 'izinkanDrive')
     .addSeparator()
     .addItem('Nyalakan cadangan mingguan', 'cadanganNyalakan')
@@ -161,4 +162,25 @@ function perbaikiHeader() {
   if (!lap.length) { ui.alert('Semua header sudah cocok.'); return []; }
   if (ui.alert('Perbaiki header?', 'Yang tidak cocok:\n' + lap.join('\n') + '\n\nBila kolom hanya bergeser, kolom disusun ulang bersama datanya (salinan cadangan dibuat dulu). Bila tidak, hanya judul yang ditulis ulang.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return [];
   var out = Setup_perbaikiHeader_(); ui.alert(out.join('\n')); return out;
+}
+
+/**
+ * Menu Hartafolio › Rapikan biaya Pindah: data lama punya biaya Pindah sebagai baris Keluar tersendiri. Menggabungkannya ke baris Pindah
+ * (kolom biaya); baris Keluar lama diberi status dihapus (tidak dibuang). Saldo tidak berubah. Salinan Sheet dibuat dulu. Aman diulang.
+ */
+function rapikanBiayaPindah() {
+  var ui = SpreadsheetApp.getUi();
+  return Master_dalamKunci_(function () {
+    var g = HF.ledger.gabungBiayaPindah(Repo_read_('Transaksi'));
+    if (!g.length) { ui.alert('Tidak ada biaya Pindah lama yang perlu digabung.'); return 0; }
+    if (ui.alert('Gabungkan ' + g.length + ' biaya Pindah ke baris Pindah-nya? Salinan Sheet dibuat dulu. Saldo tidak berubah.', ui.ButtonSet.YES_NO) !== ui.Button.YES) return 0;
+    var now = Master_now_();
+    SpreadsheetApp.getActiveSpreadsheet().copy('Hartafolio cadangan sebelum rapikan biaya ' + now.replace(/[: ]/g, '-'));
+    g.forEach(function (x) {
+      Repo_update_('Transaksi', x.pindah, { biaya: x.biaya, diubah_pada: now });
+      Repo_update_('Transaksi', x.keluar, { status: 'dihapus', diubah_pada: now });
+    });
+    ui.alert(g.length + ' biaya Pindah digabung.');
+    return g.length;
+  });
 }

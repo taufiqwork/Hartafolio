@@ -75,7 +75,7 @@
       var mem = trx.anggota_tujuan_id && trx.anggota_tujuan_id !== trx.anggota_id;
       st.fP = mem ? 'anggota' : 'lokasi';
       if (mem) { st.fR = nm(ctx.ids.members, trx.anggota_tujuan_id); st.fKa = nm(ctx.ids.lokasi, trx.lokasi_tujuan_id || trx.lokasi_id); } else st.fK = nm(ctx.ids.lokasi, trx.lokasi_tujuan_id);
-      st.fu = 'Rp'; // biaya Pindah ada di baris Keluar tersendiri, tidak diubah di sini
+      if (trx.biaya > 0) { st.fee = f(trx.biaya); st.fu = (ctx.assets[st.fA] || {}).unit; } else st.fu = 'Rp'; // biaya tersimpan dalam satuan aset
     }
     var nota = String(trx.bukti || '').split(/\s+/).filter(function (x) { return x && !/^https?:/.test(x); }).join(' ');
     if (nota) st.nota = nota;
@@ -89,7 +89,7 @@
 
   /**
    * Baris Transaksi dari keadaan layar (vm hasil HF.catat.view). Mengembalikan { rows:[...], error } .
-   * Pindah dengan biaya Rupiah menghasilkan baris Keluar tambahan (aturan: biaya Pindah = transaksi Keluar sendiri).
+   * Biaya Pindah ikut satu baris dengan Pindah (kolom biaya, satuan aset yang dipindah).
    */
   function toRows(vm, ctx, o) {
     var N = root.HF.catat.num, ids = ctx.ids, id = function (k, v) { return ids[k][v]; };
@@ -105,14 +105,13 @@
     if (vm.isMove) {
       if (vm.isMoveMem) { base.anggota_tujuan_id = id('members', vm.fR); base.lokasi_tujuan_id = id('lokasi', vm.fKa); } else base.lokasi_tujuan_id = id('lokasi', vm.fK);
     }
-    var rows = [base];
     if (vm.isMove && vm.hasFee) {
       var fee = N(vm.fee);
       var price = (ctx.assets[vm.fA] || {}).price, qty = vm.feeUnit === 'Rp' ? (price > 0 ? Math.round(fee / price * 1e8) / 1e8 : 0) : fee;
-      if (!(qty > 0)) return { rows: rows, error: 'biaya-rupiah' }; // Rp tanpa harga aset: tidak bisa dikonversi
-      // Biaya Pindah = Keluar sendiri dari aset yang dipindah di lokasi asal (Rp dibagi harga hari itu). Keputusan Ticon 25 Nov.
-      rows.push(Object.assign({}, base, { jenis: 'Keluar', jumlah: qty, asal_alasan: 'Biaya', lokasi_tujuan_id: undefined, anggota_tujuan_id: undefined, catatan: vm.feeUnit === 'Rp' ? 'Biaya Pindah Rp ' + fee : '' }));
+      if (!(qty > 0)) return { rows: [base], error: 'biaya-rupiah' }; // Rp tanpa harga aset: tidak bisa dikonversi
+      base.biaya = qty; // satu baris Pindah: biaya dalam satuan aset, dipotong dari lokasi asal (Rp dibagi harga hari itu). Keputusan Ticon 28 Nov.
     }
+    var rows = [base];
     if (o.nomor) base.bukti = o.nomor;
     if (N(o.pajak) > 0) base.pajak = N(o.pajak);
     if (o.catatan && String(o.catatan).trim()) base.catatan = String(o.catatan).trim();

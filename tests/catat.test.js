@@ -108,7 +108,7 @@ test('Bayar dari lokasi lain di data nyata: boleh, baris membawa alat_bayar_loka
   assert.equal(b[c.HF.ledger.key('PM-001', 'AS-USDT', 'LK-002')], 500 - 400);
 });
 
-test('Biaya Pindah dalam Rupiah: Keluar (Biaya) dari aset yang dipindah = Rp dibagi harga; tanpa harga ditandai belum lengkap', () => {
+test('Biaya Pindah dalam Rupiah: satu baris Pindah, kolom biaya = Rp dibagi harga, dipotong dari lokasi asal; tanpa harga ditandai belum lengkap', () => {
   const trx = [{ trx_id: 'TX-1', tanggal: '2026-11-20', jenis: 'Saldo awal', anggota_id: 'PM-001', aset_id: 'AS-EMAS', lokasi_id: 'LK-002', jumlah: 10, status: 'aktif' }];
   const mk = (harga) => { const c = E(); const s = JSON.parse(JSON.stringify(STATE)); s.aset = c.HF.catalog.all(); s.transaksi = trx; s.harga = harga; return { c, ctx: c.HF.catatCtx.fromState(s, { y: 2026, m: 11, d: 25, hh: 9, mm: 5 }) }; };
   const st = { fJ: 'Pindah', fA: 'Emas fisik', fL: 'Brankas', fK: 'Binance', qv: '2', fee: '47.600' };
@@ -120,15 +120,14 @@ test('Biaya Pindah dalam Rupiah: Keluar (Biaya) dari aset yang dipindah = Rp dib
   const v = ada.c.HF.catat.view(st, ada.ctx, { mulai: 'pindah' });
   assert.equal(v.incomplete, false);
   const rows = ada.c.HF.catatCtx.toRows(v, ada.ctx, {}).rows;
-  assert.equal(rows.length, 2); assert.equal(rows[0].jenis, 'Pindah'); assert.equal(rows[1].jenis, 'Keluar');
-  assert.equal(rows[1].jumlah, 0.02); assert.equal(rows[1].asal_alasan, 'Biaya'); assert.equal(rows[1].lokasi_id, 'LK-002'); assert.equal(rows[1].lokasi_tujuan_id, undefined);
+  assert.equal(rows.length, 1); assert.equal(rows[0].jenis, 'Pindah'); assert.equal(rows[0].biaya, 0.02); assert.equal(rows[0].jumlah, 2);
   const all = rows.map((r, i) => Object.assign(r, { trx_id: 'TX-9' + i, status: 'aktif' }));
   const b = ada.c.HF.ledger.balances(trx.concat(all));
   assert.equal(b[ada.c.HF.ledger.key('PM-001', 'AS-EMAS', 'LK-002')], 10 - 2 - 0.02);
   assert.equal(b[ada.c.HF.ledger.key('PM-001', 'AS-EMAS', 'LK-001')], 2);
   // biaya dalam satuan aset tidak butuh harga
   const v2 = sans.c.HF.catat.view(Object.assign({}, st, { fu: 'gram', fee: '0,5' }), sans.ctx, { mulai: 'pindah' });
-  assert.equal(v2.incomplete, false); assert.equal(sans.c.HF.catatCtx.toRows(v2, sans.ctx, {}).rows[1].jumlah, 0.5);
+  assert.equal(v2.incomplete, false); assert.equal(sans.c.HF.catatCtx.toRows(v2, sans.ctx, {}).rows[0].biaya, 0.5);
 });
 
 test('Pajak ikut total (Beli menambah, Jual mengurangi) dan tersimpan di kolom pajak; catatan tersimpan', () => {
@@ -212,4 +211,15 @@ test('Ubah: stateOfTrx lalu toRows mengembalikan kolom yang sama (Beli bayar USD
   });
   assert.equal(c.HF.catatCtx.forUbah(s, Object.assign({}, trx[0], { aset_id: 'AS-TIDAK-ADA' }), now), null);
   assert.equal(c.HF.catatCtx.forUbah(s, trx[2], now).ubah.dicatat, '4 Nov 2026');
+});
+
+test('Ubah Pindah dengan biaya: keadaan awal membawa biaya dalam satuan aset dan kembali ke baris yang sama', () => {
+  const T = (o) => Object.assign({ status: 'aktif', anggota_id: 'PM-001', jam: '09:12', sumber: 'manual', lokasi_id: 'LK-001' }, o);
+  const trx = [T({ trx_id: 'S', jenis: 'Saldo awal', tanggal: '2026-11-01', aset_id: 'AS-EMAS', jumlah: 10 }),
+    T({ trx_id: 'P', jenis: 'Pindah', tanggal: '2026-11-07', aset_id: 'AS-EMAS', jumlah: 2, biaya: 0.02, lokasi_tujuan_id: 'LK-002' })];
+  const { c, s } = real(trx), now = { y: 2026, m: 11, d: 27, hh: 9, mm: 5 };
+  const ctx = c.HF.catatCtx.forUbah(s, trx[1], now), st = c.HF.catatCtx.stateOfTrx(trx[1], ctx), v = c.HF.catat.view(st, ctx, { mulai: 'ubah' });
+  assert.equal(v.hasFee, true); assert.equal(v.feeUnit, 'gram'); assert.equal(v.invalid, false);
+  const rows = c.HF.catatCtx.toRows(v, ctx, {}).rows;
+  assert.equal(rows.length, 1); assert.equal(rows[0].biaya, 0.02); assert.equal(rows[0].jumlah, 2); assert.equal(rows[0].lokasi_tujuan_id, 'LK-002');
 });

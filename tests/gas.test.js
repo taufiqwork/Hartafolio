@@ -312,6 +312,26 @@ test('cadangan: salinan ke folder, simpan 8 terakhir (yang lama ke sampah), jadw
   assert.throws(() => g.run('cadanganMingguan()'), /kuota/); assert.match(g.run('apiState()').pengaturan.cadangan_terakhir, /GAGAL: kuota/);
 });
 
+test('rapikanBiayaPindah: biaya Keluar lama masuk ke Pindah, Keluar jadi dihapus, saldo sama, salinan dibuat, aman diulang', () => {
+  const g = boot(); const ss = g.ctx.SpreadsheetApp.getActiveSpreadsheet(); const pesan = [];
+  g.ctx.SpreadsheetApp.getUi = () => ({ ButtonSet: { YES_NO: 1 }, Button: { YES: 'Y' }, alert: (m) => { pesan.push(m); return 'Y'; } });
+  g.run('setupHartafolio()');
+  g.run(`Repo_append_('Anggota', [{anggota_id:'PM-001', nama:'T', hubungan:'Diri sendiri', is_pengelola:true, aktif:true}]);
+         Repo_append_('Lokasi', [{lokasi_id:'LK-001', nama:'A', jenis:'Lainnya', aktif:true},{lokasi_id:'LK-002', nama:'B', jenis:'Lainnya', aktif:true}]);`);
+  const dasar = { anggota_id: 'PM-001', aset_id: 'AS-EMAS', lokasi_id: 'LK-001', sumber: 'manual', tanggal: '2026-11-05', jam: '09:00' };
+  g.run(`apiTransaksiTambah(${JSON.stringify([Object.assign({}, dasar, { trx_id: 'S', jenis: 'Saldo awal', jumlah: 10, tanggal: '2026-11-01' }),
+    Object.assign({}, dasar, { trx_id: 'P', jenis: 'Pindah', jumlah: 2, lokasi_tujuan_id: 'LK-002' }),
+    Object.assign({}, dasar, { trx_id: 'K', jenis: 'Keluar', jumlah: 0.02, asal_alasan: 'Biaya', catatan: 'Biaya Pindah Rp 47600' })])})`);
+  const saldo = () => JSON.stringify(g.run(`HF.ledger.balances(Repo_read_('Transaksi'))`));
+  const sebelum = saldo();
+  assert.equal(g.run('rapikanBiayaPindah()'), 1);
+  const rows = JSON.parse(JSON.stringify(g.run(`Repo_read_('Transaksi')`)));
+  assert.equal(rows.find((r) => r.trx_id === 'P').biaya, 0.02); assert.equal(rows.find((r) => r.trx_id === 'K').status, 'dihapus');
+  assert.equal(saldo(), sebelum); // saldo tidak berubah
+  assert.equal(ss.copies.length, 1);
+  assert.equal(g.run('rapikanBiayaPindah()'), 0); assert.match(pesan[pesan.length - 1], /Tidak ada/);
+});
+
 test('kolom kanan yang hilang dilengkapi otomatis saat dibaca (tanpa menu), perlindungan tetap satu; header salah tetap berhenti', () => {
   const g = boot();
   g.run('setupHartafolio()');

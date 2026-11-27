@@ -85,7 +85,7 @@
       var v = per > 0 ? ringkas(per * Math.abs(+t.jumlah || 0)) : null;
       var imp = t.sumber === 'import';
       rows.push(Object.assign({ id: t.trx_id, j: j, a: label(a), q: qtext(t.jenis === 'Pindah' ? 'Pindah' : t.jenis, +t.jumlah || 0, a && a.satuan),
-        o: mem + ' · ' + loc, v: v ? v + (t.jenis === 'Saldo awal' ? ' · saldo awal' : '') : null, imp: imp, mem: mem, loc: loc,
+        o: mem + ' · ' + loc, fee: t.jenis === 'Pindah' && +t.biaya > 0 ? numStr(+t.biaya) + (UNIT[a && a.satuan] || '') : null, v: v ? v + (t.jenis === 'Saldo awal' ? ' · saldo awal' : '') : null, imp: imp, mem: mem, loc: loc,
         tgl: t.tanggal, del: t.status === 'dihapus', delText: 'dihapus', edit: ['Beli', 'Jual', 'Masuk', 'Keluar', 'Pindah'].indexOf(t.jenis) >= 0 && !t.link_id, hs: hs ? F().rupiahShort(hs) : null, nilai: v, bukti: urls, cat: t.catatan || '' }, style(j)));
     });
     return build(rows, hariIni);
@@ -120,8 +120,8 @@
       'Beli': base.concat([hs, val, bukti]), 'Jual': base.concat([hs, val, bukti]),
       'Masuk': base.concat([val], imp), 'Saldo awal': base.concat([val], imp),
       'Keluar': base.concat([val, { k: 'Catatan', v: r.cat || 'Tidak diisi' }]),
-      'Pindah lokasi': [{ k: 'Anggota', v: r.mem }, { k: 'Dari lokasi', v: r.loc.split(' → ')[0] || '' }, { k: 'Ke lokasi', v: r.loc.split(' → ')[1] || '' }, tgl, val],
-      'Pindah anggota': [{ k: 'Dari anggota', v: r.mem.split(' → ')[0] }, { k: 'Ke anggota', v: r.mem.split(' → ')[1] || '' }, { k: 'Lokasi', v: r.loc }, tgl, val],
+      'Pindah lokasi': [{ k: 'Anggota', v: r.mem }, { k: 'Dari lokasi', v: r.loc.split(' → ')[0] || '' }, { k: 'Ke lokasi', v: r.loc.split(' → ')[1] || '' }, tgl, val].concat(r.fee ? [{ k: 'Biaya', v: r.fee }] : []),
+      'Pindah anggota': [{ k: 'Dari anggota', v: r.mem.split(' → ')[0] }, { k: 'Ke anggota', v: r.mem.split(' → ')[1] || '' }, { k: 'Lokasi', v: r.loc }, tgl, val].concat(r.fee ? [{ k: 'Biaya', v: r.fee }] : []),
       'Zakat': base.concat([val, { k: 'Untuk haul', v: r.haul || '—', href: r.haulHref }, { k: 'Sumber', v: 'Pembayaran zakat' }]),
       'Pinjamkan': [{ k: 'Pemberi', v: r.mem }, { k: 'Peminjam', v: r.peminjam || 'Peminjam' }, { k: 'Lokasi', v: aw[1] }, tgl, val, { k: 'Rencana', v: r.rencana || '—' }, { k: 'Piutang', v: 'Lihat detail', href: r.piutangHref }],
       'Cicilan diterima': [{ k: 'Dari', v: r.dari || '—' }, { k: 'Diterima oleh', v: r.mem }, { k: 'Lokasi', v: aw[1] }, tgl, val, { k: 'Cicilan ke', v: r.cicilan || '—' }, { k: 'Sisa piutang', v: r.sisa || '—' }, { k: 'Piutang', v: 'Lihat detail', href: r.piutangHref }],

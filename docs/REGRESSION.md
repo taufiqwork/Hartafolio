@@ -118,4 +118,4 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 - [ ] `npm test`: tes cadangan di `gas.test.js` (satu jadwal Minggu 03.00, simpan 8, yang lama ke sampah, galat pindah/buang dicatat, galat salin dicatat sebagai "GAGAL").
 - [ ] BELUM TERVERIFIKASI di Google: menu Nyalakan membuat jadwal; salinan muncul di folder "Hartafolio Cadangan"; Minggu berikutnya salinan baru muncul; salinan ke-9 membuang yang tertua.
 - [ ] Beranda nyata: tidak ada grafik, "dari Okt", atau kartu Harga (Main-2u, 2v, 2w lulus piksel tanpa parameter khusus).
-
+- [ ] Biaya Pindah satu baris: `koreksi.test.js` (saldo, hapus/pulihkan/ubah, gabung data lama), `gas.test.js` (rapikanBiayaPindah), piksel Pindah (2c, 2e, 2f) dan Riwayat detail Pindah lulus.
