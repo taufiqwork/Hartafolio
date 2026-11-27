@@ -114,3 +114,8 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 - [ ] Uji dev (`rep8`): Hapus Beli yang dijual lagi ditolak, Hapus Jual lalu Pulihkan berfungsi, Ubah jumlah ke bawah batas ditolak di form, ke atas tersimpan dan Riwayat ikut berubah.
 - [ ] BELUM TERVERIFIKASI di Google sungguhan: `apiTransaksiUbah`, `apiTransaksiHapus`, `apiTransaksiPulihkan` (diuji dengan Sheet tiruan).
 
+## Cadangan mingguan
+- [ ] `npm test`: tes cadangan di `gas.test.js` (satu jadwal Minggu 03.00, simpan 8, yang lama ke sampah, galat pindah/buang dicatat, galat salin dicatat sebagai "GAGAL").
+- [ ] BELUM TERVERIFIKASI di Google: menu Nyalakan membuat jadwal; salinan muncul di folder "Hartafolio Cadangan"; Minggu berikutnya salinan baru muncul; salinan ke-9 membuang yang tertua.
+- [ ] Beranda nyata: tidak ada grafik, "dari Okt", atau kartu Harga (Main-2u, 2v, 2w lulus piksel tanpa parameter khusus).
+
