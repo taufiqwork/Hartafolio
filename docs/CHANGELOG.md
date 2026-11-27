@@ -252,3 +252,6 @@
 - Total di Beranda selalu ditulis dalam juta dengan satu desimal. Nilai Rp 7.560.000.000 tampil "Rp 7560,0 jt": tanpa titik ribuan dan tidak memakai satuan miliar. Kini mulai 1.000 jt ditulis "Rp 7,56 M" (triliun "T"), sama dengan `HF.format.rupiahShort` dan aturan di design-system. Di bawah 1.000 jt tidak berubah ("Rp 174,2 jt"), jadi board tetap sama.
 - Bug kecil di hero: 7,96 jt dipecah jadi "7" dan ",10 jt" ("Rp 7,10 jt"). Kini bagian bulat dan sisa diambil dari teks yang sama, jadi "Rp 8,0 jt".
 - Belum diubah: form Catat menulis "Rp 7.560 jt" untuk nilai miliar (titik ribuan benar, tapi beda dengan "M"). Menunggu keputusan Ticon.
+
+## 27 Nov 2026 · Catat: nilai miliar ditulis "M"
+- Ringkasan di form Catat menulis nilai miliar sebagai "Rp 7.560 jt". Kini "Rp 7,56 M" (triliun "T"), sama dengan Beranda dan `HF.format.rupiahShort`. Di bawah 1 miliar tidak berubah, jadi board Catat tetap sama (data demo di bawah Rp 1 miliar).
