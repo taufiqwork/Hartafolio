@@ -9,6 +9,8 @@ Tab hasil (Snapshot, Riwayat_Nilai, Zakat) boleh dibangun ulang dari Transaksi +
 ## Perubahan terhadap v1
 
 ### Aset
+- Kolom di kanan (skema v3, 28 Nov 2026): `kategori_zakat_lama` dan `jenis_berlaku` (tanggal). Diisi saat Jenis token diubah di Ubah (Crypto, Emas, Perak): hitungan zakat sebelum `jenis_berlaku` memakai `kategori_zakat_lama`, sesudahnya `kategori_zakat`. Pada `jenis_berlaku` seluruh saldo aset itu pindah ke kategori baru. Hanya perubahan terakhir yang diingat.
+- Mata uang selain Dolar AS: `sumber_harga` kurs, `kode_sumber` kode mata uang (SGD, EUR, ...); harga Rupiah per 1 unit = kurs USD/IDR dibagi kurs mata uang itu terhadap USD.
 - `kelas` (Jenis aset, 8 pilihan, sesuai form "Aset manual" di mockup): Emas · Perak · Crypto · Saham · Reksa dana · Mata uang · Properti · Lainnya ("Crypto", bukan "Kripto"). Satuan: gram, oz, koin, token, lot, lembar, unit, nominal, m².
 - Kolom `status` (aktif | tersembunyi | dihapus) menggantikan `aktif`; kolom `mata_uang_harga` (mis. saham GFI dalam USD) ditambahkan.
 - `kategori_zakat` diturunkan: hanya kelas Emas dan Perak (fisik/digital, ETF emas/perak); selain itu kosong. Wajib `gram_per_unit` untuk emas/perak yang satuannya bukan gram (1 oz = 31,1035 g). USDT dan mata uang lain tidak dihitung zakat.

@@ -127,6 +127,17 @@
       if (d.otomatis && (!K.canAuto(a) || a.sumber_harga === 'tetap')) return fail('Aset ini tidak punya sumber harga otomatis.');
       var simpan = K.namaSimpan({ id: a.aset_id, a: K.lab(a), nama: a.nama }, nama);
       if (s.aset.some(function (x) { return x.aset_id !== aid && x.status !== 'dihapus' && (K.lab(x).toLowerCase() === nama.toLowerCase() || x.nama.toLowerCase() === simpan.toLowerCase()); })) return fail('Sudah ada aset bernama "' + nama + '".');
+      if (d.kelas !== undefined || d.gram !== undefined) { // jenis token (sama dengan AsetKelola_jenis_ di server)
+        if (a.sumber_harga !== 'coingecko') return fail('Jenis hanya bisa diubah untuk token crypto.');
+        var kl = clean(d.kelas === undefined ? a.kelas : d.kelas), gr = K.num(d.gram), lg = kl === 'Emas' || kl === 'Perak';
+        if (['Crypto', 'Emas', 'Perak'].indexOf(kl) < 0) return fail('Pilih Crypto, Emas, atau Perak.');
+        if (lg && !(gr > 0) && !(a.gram_per_unit > 0)) return fail('Isi setara gram per token.');
+        if (lg && gr > 0) a.gram_per_unit = gr;
+        if (kl !== a.kelas) {
+          var lama = a.kategori_zakat || root.HF.catalog.zakatKategori(a), baru = root.HF.catalog.zakatKategori({ kelas: kl });
+          a.kelas = kl; a.kategori_zakat = baru; if (lama !== baru) { a.kategori_zakat_lama = lama; a.jenis_berlaku = dev.stamp().slice(0, 10); }
+        }
+      }
       s.harga = s.harga || { terakhir: {}, kursSeries: [] };
       var harga = K.num(d.harga);
       if (!d.otomatis && !(harga > 0) && !(s.harga.terakhir[aid] && s.harga.terakhir[aid].harga > 0)) return fail('Isi harga per ' + a.satuan + '.');
@@ -153,6 +164,18 @@
       if (c.a && c.a.status !== 'dihapus' && c.a.status !== 'tersembunyi') return fail(cat.simbol + ' sudah ada di daftar.');
       if (c.a) { c.a.status = 'aktif'; c.a.kunci_manual = false; } else c.s.aset.push(cat);
       save(); return Promise.resolve(c.a || cat);
+    },
+    /* Dev: tidak ada pengambil harga, jadi tambah dari pencarian tidak mengecek harga (di Google ditolak bila harga belum bisa diambil). Saham: daftar tetap saja (Yahoo butuh server). */
+    apiAsetCari: function (tipe, q) { var s = load(); return Promise.resolve(tipe === 'saham' ? root.HF.populer.cariTetap(q, 'Saham', s.aset || root.HF.catalog.all()) : []); },
+    apiAsetCariTambah: function (pilih) {
+      var c = dev.asetCari('-'), s = c.s, P = root.HF.populer, k = String(pilih && pilih.key || '');
+      var ada = s.aset.filter(function (x) { return k && P.kunci(x) === k; })[0];
+      if (ada && ada.status === 'aktif') return fail(ada.simbol + ' sudah ada di daftar.');
+      if (ada) { ada.status = 'aktif'; ada.kunci_manual = false; save(); return Promise.resolve(ada); }
+      var b = P.jadiAset(pilih); if (!b) return fail('Aset tidak dikenal.');
+      if (s.aset.some(function (x) { return x.status !== 'dihapus' && (x.simbol.toLowerCase() === b.simbol.toLowerCase() || x.nama.toLowerCase() === b.nama.toLowerCase()); })) return fail('Sudah ada aset bernama "' + b.nama + '".');
+      var kat = root.HF.catalog.katalog().filter(function (x) { return P.kunci(x) === k; })[0];
+      b.aset_id = kat ? kat.aset_id : id('AS', s.aset, 'aset_id'); b.dibuat_pada = dev.stamp(); s.aset.push(b); save(); return Promise.resolve(b);
     },
     stamp: function () { var n = new Date(), p2 = function (x) { return ('0' + x).slice(-2); }; return n.getFullYear() + '-' + p2(n.getMonth() + 1) + '-' + p2(n.getDate()) + ' ' + p2(n.getHours()) + ':' + p2(n.getMinutes()); },
     apiBuktiUnggah: function (trxId) { return Promise.resolve({ url: 'https://drive.google.com/file/d/dev-' + trxId + '/view' }); },

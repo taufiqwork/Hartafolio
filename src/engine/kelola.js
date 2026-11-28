@@ -15,7 +15,7 @@
   function blnTahun(d) { var m = /^(\d{4})-(\d{2})/.exec(String(d || '')); return m ? BLN[+m[2] - 1] + ' ' + m[1] : ''; }
   function perLabel(a) {
     if (a.kelas === 'Mata uang') return a.nama;
-    var u = a.kelas === 'Crypto' && a.satuan === 'koin' ? a.simbol : a.satuan;
+    var u = a.kelas === 'Crypto' && a.satuan === 'koin' ? a.simbol : (a.satuan === 'koin' ? 'token' : a.satuan); // token emas/perak yang tadinya Crypto memakai 'token'
     return 'per ' + u + (a.mata_uang_harga === 'USD' && a.sumber_harga !== 'coingecko' ? ' · US$' : '');
   }
   function canAuto(a) { return ['coingecko', 'logam', 'saham', 'kurs', 'tetap'].indexOf(a.sumber_harga) >= 0; }
@@ -24,7 +24,7 @@
   /** Teks harga untuk daftar: Rp penuh; aset berharga USD yang diisi manual tampil "US$ 33,10". */
   function hargaTeks(a, p, kurs, auto) {
     if (a.sumber_harga === 'tetap') return '';
-    if (a.sumber_harga === 'kurs') return kurs > 0 ? F().rupiah(Math.round(kurs)) : '';
+    if (a.sumber_harga === 'kurs' && (a.kode_sumber || 'USD') === 'USD') return kurs > 0 ? F().rupiah(Math.round(kurs)) : '';
     if (!p || !(p.harga > 0)) return '';
     if (!auto && p.mata_uang === 'USD') return 'US$ ' + F().number(p.harga, 2);
     var idr = p.mata_uang === 'USD' || p.mata_uang === 'USDT' ? p.harga * (kurs || 0) : p.harga;
@@ -39,6 +39,7 @@
     if (!String(o.nama || '').trim()) return 'Nama aset wajib diisi.';
     if (o.otomatis && !r.canAuto) return 'Aset ini tidak punya sumber harga otomatis.';
     if (!o.otomatis && !(num(o.harga) > 0) && !r.punyaHarga) return 'Isi harga per ' + r.unit + '.';
+    if (r.jenisBisa && (o.kelas === 'Emas' || o.kelas === 'Perak') && !(num(o.gram) > 0)) return 'Isi setara gram per token.';
     return '';
   }
 
@@ -89,18 +90,19 @@
         hargaIsi: man ? (man.mata_uang === 'USD' ? F().number(man.harga, 2) : F().number(man.harga)) : (mataManual(a) === 'IDR' && h > 0 ? F().number(Math.round(h)) : ''),
         hidNote: 'Terjual habis ' + blnTahun(last[a.aset_id]) + ' · ' + (jml[a.aset_id] || 0) + ' transaksi' + (auto ? '' : ' · harga manual'),
         nilai: held[a.aset_id] && h > 0 && qty[a.aset_id] ? qty[a.aset_id] * h : 0,
-        mata: a.mata_uang_harga || 'IDR', mataMan: mataManual(a), punyaHarga: !!(p && p.harga > 0), kunci: isKunci(a), kelasAset: a.kelas };
+        mata: a.mata_uang_harga || 'IDR', mataMan: mataManual(a), punyaHarga: !!(p && p.harga > 0), kunci: isKunci(a), kelasAset: a.kelas,
+        jenisBisa: a.sumber_harga === 'coingecko', gramTeks: a.gram_per_unit > 0 ? String(+a.gram_per_unit).replace('.', ',') : '' };
     }
     var aktif = (state.aset || []).filter(function (a) { return !a.status || a.status === 'aktif'; }).map(row);
     var tersembunyi = (state.aset || []).filter(function (a) { return a.status === 'tersembunyi'; }).map(row);
     var ada = {}; (state.aset || []).forEach(function (a) { if (a.status !== 'dihapus') ada[a.aset_id] = true; });
     var kat = root.HF.catalog.katalog().filter(function (c) { return !ada[c.aset_id]; }).map(function (c) {
-      return { n: c.simbol, f: c.nama, c: c.kelas, id: c.aset_id, auto: true, per: perLabel(c) };
+      return { n: c.simbol, f: c.nama, c: c.kelas, id: c.aset_id, key: root.HF.populer.kunci(c), auto: true, per: perLabel(c) };
     });
     var tot = {}; aktif.forEach(function (r) { tot[r.kelas] = (tot[r.kelas] || 0) + (r.nilai || 0); });
     var order = KELAS.concat(aktif.map(function (r) { return r.kelas; })).filter(function (k, i, a) { return a.indexOf(k) === i && aktif.some(function (r) { return r.kelas === k; }); })
       .sort(function (x, y) { return (tot[y] || 0) - (tot[x] || 0); }); // urutan jenis: dari nilai terbesar (aturan proyek); seri mengikuti urutan KELAS
-    return { real: true, A: aktif, HID: tersembunyi, KAT: kat, order: order };
+    return { real: true, A: aktif, HID: tersembunyi, KAT: kat, order: order, aset: state.aset || [] };
   }
 
   function sub(r) {
@@ -122,6 +124,40 @@
     return { title: 'Kelola aset', intro: 'Aset keluarga dan sumber harganya: otomatis dari pasar, atau diisi sendiri.', need: need.length, needName: need.length ? need[0].a : '', groups: groups };
   }
 
+  /** Nama aset di daftar yang cocok dengan pencarian, untuk catatan "X dan Y sudah ada di daftar." */
+  function sudahAda(d, q, kelas) {
+    var s = String(q || '').trim().toLowerCase();
+    if (!s) return [];
+    return d.A.filter(function (r) { return (!kelas || kelas === 'Semua' || r.kelas === kelas) && ((r.a + ' ' + (r.simbol || '') + ' ' + (r.nama || '')).toLowerCase().indexOf(s) >= 0); }).map(function (r) { return r.a; }).slice(0, 3);
+  }
+
+  /**
+   * Model pilihan Tambah aset (board 14-Aset-2e dan 2q sampai 2t). Tanpa pencarian: katalog yang belum di daftar lalu daftar populer per jenis.
+   * Dengan pencarian: daftar tetap (saham, mata uang, logam) ditambah hasil jaringan di ui.hasil (crypto dan saham), disaring menurut jenis.
+   * ui.fix = model beku (hanya untuk perbandingan board). Tanpa d.aset (data contoh lama) hanya katalog.
+   */
+  function picker(d, ui) {
+    if (ui.fix) return ui.fix;
+    var P = root.HF.populer, kelas = ui.pk || 'Semua', q = String(ui.q || '').trim(), secs = [], notice = null, note = d.aset ? 'Ketik nama atau kode untuk mencari semua aset di sumber harga. Tidak ada? Tambahkan dengan harga sendiri.' : 'Tidak ada di daftar? Tambahkan dengan harga sendiri.'; // tanpa d.aset = data contoh board 2e
+    var seen = {};
+    function uniq(items) { return items.filter(function (i) { var k = i.key || i.id; if (seen[k]) return false; seen[k] = 1; return true; }); }
+    if (q) {
+      var ada = d.aset ? P.fromAset(d.aset) : {}, items = (ui.hasil || []).concat(P.cariTetap(q, kelas, d.aset || [])).filter(function (i) { // hasil jaringan (dengan peringkat) menang atas daftar tetap yang sama
+        var p = i.key.split(':'); return (kelas === 'Semua' || i.c === kelas) && !(ada[p[0]] && ada[p[0]][p.slice(1).join(':')]); });
+      items = uniq(items);
+      if (items.length) secs.push({ t: 'Hasil pencarian · harga otomatis', items: items });
+      if (ui.cariGagal && !items.length) notice = { t: 'Pencarian belum tersambung ke sumber harga. Periksa internet, lalu coba lagi.', act: 'Coba lagi' };
+      var sa = sudahAda(d, q, kelas);
+      note = (sa.length ? sa.join(' dan ') + ' sudah ada di daftar. ' : (kelas === 'Saham' && items.length ? 'Saham Bursa Efek Indonesia dan bursa Amerika. ' : '')) + 'Tidak ada yang cocok? Tambahkan dengan harga sendiri.';
+    } else {
+      var kat = katalog(d, '', kelas).map(function (k) { return k.key ? k : Object.assign({}, k, { key: 'katalog:' + k.id }); });
+      kat = uniq(kat);
+      if (kat.length) secs.push({ t: 'Katalog harga otomatis', items: kat });
+      if (d.aset) P.daftar(kelas, d.aset, ui.urut).forEach(function (s) { var it = uniq(s.items); if (it.length) secs.push({ t: s.t, items: it }); });
+    }
+    return { ph: 'Nama atau kode aset', q: ui.q || '', chips: P.KELAS_CHIP, cat: kelas, sections: secs, notice: notice, note: note, link: 'Tambah aset baru' };
+  }
+
   function katalog(d, q, kelas) {
     var s = String(q || '').trim().toLowerCase();
     return d.KAT.filter(function (k) { return (!kelas || kelas === 'Semua' || k.c === kelas) && (!s || (k.n + ' ' + k.f).toLowerCase().indexOf(s) >= 0); });
@@ -137,8 +173,7 @@
   function sheet(d, ui) {
     var id = ui.sheet, r = d.A[ui.sel || 0] || {};
     if (!id || id === 'manual') return null;
-    if (id === 'tambah') return { title: 'Tambah aset', picker: { ph: 'Nama atau kode aset', q: ui.q || '', chips: ['Semua', 'Crypto', 'Saham', 'Emas', 'Perak', 'Mata uang'], cat: ui.pk || 'Semua',
-      items: katalog(d, ui.q, ui.pk), sec: 'Katalog harga otomatis', note: 'Tidak ada di daftar? Tambahkan dengan harga sendiri.', link: 'Tambah aset baru' } };
+    if (id === 'tambah') return { title: 'Tambah aset', picker: picker(d, ui) };
     if (id === 'saldo' || id === 'saldo-manual') { var ad = ui.added || {};
       return { title: ad.n + ' ditambahkan', desc: 'Belum dimiliki siapa pun. Catat jumlah yang sudah ada sekarang?', lines: [['Harga', ad.harga], ['Di daftar', ad.c + ' · belum dimiliki']],
         primary: { l: 'Catat saldo awal', act: 'saldo-awal' }, secondary: { l: 'Nanti saja', act: 'nanti' } }; }
@@ -164,7 +199,14 @@
     var price = manual ? { l: 'Harga manual per ' + u + (usd ? ' (US$)' : ' (Rp)'), v: ui.harga === undefined || ui.harga === null ? (r.hargaIsi || '') : ui.harga, input: true, hint: hint }
       : { l: 'Harga otomatis sekarang', v: (r.b || '-') + ' per ' + u, input: false, hint: 'Pasar · diperbarui ' + (r.upd || '-') + '. Hanya info, tidak bisa diubah.' };
     var gfi = manual && r.perlu;
-    return { title: 'Ubah ' + r.a, fields: [{ l: 'Nama', v: nama, input: true, key: 'nama' }, { l: 'Jenis', v: r.kelas }, { l: 'Satuan', v: unit, hint: 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.' }],
+    var fields = [{ l: 'Nama', v: nama, input: true, key: 'nama' }, { l: 'Jenis', v: r.kelas }, { l: 'Satuan', v: unit, hint: 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.' }];
+    if (r.jenisBisa) { // token crypto: jenis bisa diubah (Crypto, Emas, Perak); berlaku untuk hitungan zakat berikutnya
+      var kl = ui.kelas || r.kelasAset || r.kelas;
+      fields = [fields[0], { l: 'Jenis aset', v: kl, seg: ['Crypto', 'Emas', 'Perak'], key: 'kelas', hint: 'Zakat yang sudah dibayar tidak berubah. Jenis baru dipakai mulai hitungan zakat berikutnya.' }];
+      if (kl !== 'Crypto') fields.push({ l: 'Setara gram per token', v: ui.gram === undefined || ui.gram === null ? (r.gramTeks || '') : ui.gram, input: true, key: 'gram', hint: 'Lihat keterangan penerbit token. Dipakai untuk nisab dan haul.' });
+      fields.push({ l: 'Satuan', v: unit, hint: 'Satuan tidak bisa diubah setelah aset dipakai.' });
+    }
+    return { title: 'Ubah ' + r.a, fields: fields,
       fields2: [price], optLabel: 'Sumber harga', opts: opts, optDef: opt,
       primary: { l: gfi ? 'Simpan harga' : 'Simpan', act: 'simpan-ubah' }, secondary: { l: 'Hapus aset', danger: true, act: 'hapus-buka' } };
   }
@@ -174,10 +216,11 @@
    * layar memuat ulang dari Sheet sehingga hasil akhir selalu dari server. aksi: ubah | sembunyikan | tampilkan | hapus | katalog | manual.
    */
   function patch(d, aksi, p, hariIni) {
-    var n = { A: d.A.map(function (r) { return Object.assign({}, r); }), HID: d.HID.map(function (r) { return Object.assign({}, r); }), KAT: d.KAT.slice(), order: d.order };
+    var n = { A: d.A.map(function (r) { return Object.assign({}, r); }), HID: d.HID.map(function (r) { return Object.assign({}, r); }), KAT: d.KAT.slice(), order: d.order, aset: d.aset };
     if (aksi === 'ubah') {
       var r = n.A[p.i], usd = r.mataMan === 'USD';
       r.a = String(p.nama || r.a).trim() || r.a; r.auto = !!p.otomatis; r.kunci = !p.otomatis;
+      if (r.jenisBisa && p.kelas) { r.kelas = p.kelas; r.kelasAset = p.kelas; if (p.gram) r.gramTeks = String(p.gram); if (n.order && n.order.indexOf(p.kelas) < 0) n.order = n.order.concat([p.kelas]); }
       if (!p.otomatis && num(p.harga) > 0) { r.b = usd ? 'US$ ' + F().number(num(p.harga), 2) : F().rupiah(Math.round(num(p.harga))); r.diisi = 'diisi ' + tglPendek(hariIni); r.perlu = false; r.punyaHarga = true; r.hargaIsi = p.harga; }
       if (r.perlu && !r.auto && !(num(p.harga) > 0)) r.perlu = true;
     } else if (aksi === 'sembunyikan') {
@@ -195,7 +238,7 @@
     return n;
   }
 
-  var api = { patch: patch, sheet: sheet, KELAS: KELAS, stats: stats, mataManual: mataManual, cekStatus: cekStatus, fromState: fromState, list: list, sub: sub, hapusKeputusan: hapusKeputusan, cekUbah: cekUbah, katalog: katalog,
+  var api = { picker: picker, patch: patch, sheet: sheet, KELAS: KELAS, stats: stats, mataManual: mataManual, cekStatus: cekStatus, fromState: fromState, list: list, sub: sub, hapusKeputusan: hapusKeputusan, cekUbah: cekUbah, katalog: katalog,
     namaSimpan: namaSimpan, tglPendek: tglPendek, blnTahun: blnTahun, num: num, lab: lab, canAuto: canAuto, perLabel: perLabel };
   root.HF = root.HF || {};
   root.HF.kelola = api;

@@ -122,16 +122,16 @@ function apiAsetCari(tipe, q) {
  * dihidupkan lagi, bukan dibuat ganda. Aset baru ditambahkan hanya bila hargamu bisa diambil dari sumbernya sekarang; kalau tidak, ditolak.
  */
 function apiAsetCariTambah(pilih) {
-  var P = HF.populer, baris = P.jadiAset(pilih);
-  if (!baris) throw new Error('Aset tidak dikenal.');
-  var kunciBaru = P.kunci(baris);
-  var semua = Repo_read_('Aset'), ada = semua.filter(function (x) { return P.kunci(x) === kunciBaru; })[0];
-  if (ada && ada.status === 'aktif') throw new Error(baris.simbol + ' sudah ada di daftar.');
+  var P = HF.populer, kunciBaru = String(pilih && pilih.key || '');
+  var semua = Repo_read_('Aset'), ada = semua.filter(function (x) { return kunciBaru && P.kunci(x) === kunciBaru; })[0];
+  if (ada && ada.status === 'aktif') throw new Error(ada.simbol + ' sudah ada di daftar.');
   if (ada) {
     var hasilLama = Master_dalamKunci_(function () { Repo_update_('Aset', ada.aset_id, { status: 'aktif', kunci_manual: false }); return AsetKelola_cari_(ada.aset_id); });
     AsetKelola_segarkanHarga_();
     return hasilLama;
   }
+  var baris = P.jadiAset(pilih);
+  if (!baris) throw new Error('Aset tidak dikenal.');
   if (semua.some(function (x) { return x.status !== 'dihapus' && (Master_sama_(x.simbol, baris.simbol) || Master_sama_(x.nama, baris.nama)); })) throw new Error('Sudah ada aset bernama "' + baris.nama + '".');
   var kat = HF.catalog.katalog().filter(function (c) { return P.kunci(c) === kunciBaru; })[0]; // mis. BNB: memakai id katalognya
   var id = kat ? kat.aset_id : HF.schema.nextId('AS', semua.map(function (x) { return x.aset_id; }));
