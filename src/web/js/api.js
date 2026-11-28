@@ -31,12 +31,13 @@
   function dupe(rows, nama, skip, key) {
     return rows.some(function (r) { return r.aktif !== false && r[key] !== skip && r.nama.toLowerCase() === nama.toLowerCase(); }); // sama seperti Master.js: yang sudah dihapus (aktif tidak) tidak dihitung
   }
+  function K_num(x) { return root.HF.kelola ? root.HF.kelola.num(x) : Number(x) || 0; }
   function fail(msg) { return Promise.reject(new Error(msg)); }
 
   var dev = {
     apiState: function () {
       var s = JSON.parse(JSON.stringify(load()));
-      s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []); s.transaksi = s.transaksi || []; return Promise.resolve(s);
+      s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []); s.transaksi = s.transaksi || []; s.piutang = s.piutang || []; s.harga = s.harga || { terakhir: {}, kursSeries: [] }; return Promise.resolve(s);
     },
     apiTransaksiTambah: function (list) {
       var s = load(); s.transaksi = s.transaksi || []; var ok = [], dup = [], bad = [];
@@ -112,9 +113,44 @@
       var s = load(); s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []);
       var nama = clean(d.nama); if (!nama) return fail('Nama aset wajib diisi.');
       if (s.aset.some(function (a) { return a.nama.toLowerCase() === nama.toLowerCase(); })) return fail('Sudah ada aset bernama "' + nama + '".');
-      var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', status: 'aktif' };
-      s.aset.push(a); save(); return Promise.resolve(a);
+      var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', kunci_manual: true, status: 'aktif' };
+      s.aset.push(a); s.harga = s.harga || { terakhir: {}, kursSeries: [] };
+      if (K_num(d.harga) > 0) s.harga.terakhir[a.aset_id] = { harga: K_num(d.harga), mata_uang: 'IDR', sumber: 'manual', status: 'manual', waktu: dev.stamp() };
+      save(); return Promise.resolve(a);
     },
+    /* Kelola aset: aturan sama dengan src/gas/AsetKelola.js lewat HF.kelola (cekStatus, mataManual, namaSimpan). */
+    asetCari: function (aid) { var s = load(); s.aset = s.aset || root.HF.catalog.all(); return { s: s, a: s.aset.filter(function (x) { return x.aset_id === aid; })[0] }; },
+    apiAsetUbah: function (aid, d) {
+      var c = dev.asetCari(aid), s = c.s, a = c.a, K = root.HF.kelola;
+      if (!a || a.status === 'dihapus') return fail('Aset tidak ditemukan.');
+      var nama = clean(d.nama); if (!nama) return fail('Nama aset wajib diisi.');
+      if (d.otomatis && (!K.canAuto(a) || a.sumber_harga === 'tetap')) return fail('Aset ini tidak punya sumber harga otomatis.');
+      var simpan = K.namaSimpan({ id: a.aset_id, a: K.lab(a), nama: a.nama }, nama);
+      if (s.aset.some(function (x) { return x.aset_id !== aid && x.status !== 'dihapus' && (K.lab(x).toLowerCase() === nama.toLowerCase() || x.nama.toLowerCase() === simpan.toLowerCase()); })) return fail('Sudah ada aset bernama "' + nama + '".');
+      s.harga = s.harga || { terakhir: {}, kursSeries: [] };
+      var harga = K.num(d.harga);
+      if (!d.otomatis && !(harga > 0) && !(s.harga.terakhir[aid] && s.harga.terakhir[aid].harga > 0)) return fail('Isi harga per ' + a.satuan + '.');
+      if (simpan !== a.nama) { a.nama = simpan; if (a.bentuk !== 'Fisik' && a.sumber_harga !== 'manual') a.simbol = simpan; }
+      a.kunci_manual = !d.otomatis;
+      if (!d.otomatis && harga > 0) s.harga.terakhir[aid] = { harga: harga, mata_uang: K.mataManual(a), sumber: 'manual', status: 'manual', waktu: dev.stamp() };
+      save(); return Promise.resolve(a);
+    },
+    apiAsetStatus: function (aid, aksi) {
+      var c = dev.asetCari(aid), K = root.HF.kelola, a = c.a;
+      if (!a) return fail('Aset tidak ditemukan.');
+      var st = K.stats({ transaksi: c.s.transaksi || [], piutang: c.s.piutang || [] });
+      var e = K.cekStatus({ a: K.lab(a), own: !!st.held[aid], n: st.jml[aid] || 0 }, a.status || 'aktif', aksi);
+      if (e) return fail(e);
+      a.status = aksi === 'tampilkan' ? 'aktif' : (aksi === 'sembunyikan' ? 'tersembunyi' : 'dihapus'); save(); return Promise.resolve(a);
+    },
+    apiAsetKatalogTambah: function (aid) {
+      var c = dev.asetCari(aid), cat = root.HF.catalog.katalog().filter(function (x) { return x.aset_id === aid; })[0];
+      if (!cat) return fail('Aset tidak ada di katalog.');
+      if (c.a && c.a.status !== 'dihapus' && c.a.status !== 'tersembunyi') return fail(cat.simbol + ' sudah ada di daftar.');
+      if (c.a) { c.a.status = 'aktif'; c.a.kunci_manual = false; } else c.s.aset.push(cat);
+      save(); return Promise.resolve(c.a || cat);
+    },
+    stamp: function () { var n = new Date(), p2 = function (x) { return ('0' + x).slice(-2); }; return n.getFullYear() + '-' + p2(n.getMonth() + 1) + '-' + p2(n.getDate()) + ' ' + p2(n.getHours()) + ':' + p2(n.getMinutes()); },
     apiBuktiUnggah: function (trxId) { return Promise.resolve({ url: 'https://drive.google.com/file/d/dev-' + trxId + '/view' }); },
     apiSetupSelesai: function () {
       var s = load(); s.pengaturan.setup_selesai = 'ya'; save(); return Promise.resolve(true);

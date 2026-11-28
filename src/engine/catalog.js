@@ -23,6 +23,11 @@
     ['AS-GFI', 'GFI', 'Gold Fields', 'Saham', 'Digital', 'lembar', null, 'USD', 'saham', 'GFI']
   ];
 
+  /** Katalog tambahan: tidak ikut ditanam di Setup; baru masuk daftar keluarga lewat Kelola aset › Tambah aset. */
+  var EXTRA = [
+    ['AS-BNB', 'BNB', 'BNB', 'Crypto', 'Token', 'koin', null, 'USD', 'coingecko', 'binancecoin']
+  ];
+
   /** Kunci USD/IDR yang disimpan di tab Harga (bukan aset). */
   var KURS_ID = 'USDIDR';
 
@@ -52,7 +57,7 @@
     });
   }
 
-  var api = { OZ: OZ, SEED: SEED, KURS_ID: KURS_ID, all: function () { return SEED.map(toObj); },
+  var api = { OZ: OZ, SEED: SEED, EXTRA: EXTRA, KURS_ID: KURS_ID, all: function () { return SEED.map(toObj); }, katalog: function () { return SEED.concat(EXTRA).map(toObj); },
     search: search, zakatKategori: zakatKategori, gramPerUnit: gramPerUnit };
   root.HF = root.HF || {};
   root.HF.catalog = api;

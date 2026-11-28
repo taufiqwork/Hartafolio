@@ -12,7 +12,8 @@ Tab hasil (Snapshot, Riwayat_Nilai, Zakat) boleh dibangun ulang dari Transaksi +
 - `kelas` (Jenis aset, 8 pilihan, sesuai form "Aset manual" di mockup): Emas · Perak · Crypto · Saham · Reksa dana · Mata uang · Properti · Lainnya ("Crypto", bukan "Kripto"). Satuan: gram, oz, koin, token, lot, lembar, unit, nominal, m².
 - Kolom `status` (aktif | tersembunyi | dihapus) menggantikan `aktif`; kolom `mata_uang_harga` (mis. saham GFI dalam USD) ditambahkan.
 - `kategori_zakat` diturunkan: hanya kelas Emas dan Perak (fisik/digital, ETF emas/perak); selain itu kosong. Wajib `gram_per_unit` untuk emas/perak yang satuannya bukan gram (1 oz = 31,1035 g). USDT dan mata uang lain tidak dihitung zakat.
-- Aset bisa disembunyikan (status tersembunyi) dan dihapus hanya bila tidak punya transaksi; lihat bagian Kelola aset di design-system.md.
+- Aset bisa disembunyikan (status tersembunyi) dan dihapus hanya bila tidak punya transaksi; lihat bagian Kelola aset di design-system.md. Hapus = status `dihapus` (baris tetap); menambah lagi dari katalog menghidupkan baris itu.
+- Sumber harga: `kunci_manual = ya` berarti harga diisi sendiri (baris Harga berstatus `manual`, dalam Rupiah; dolar hanya untuk saham luar negeri) dan aset tidak diambil otomatis; `sumber_harga` asli (coingecko, logam, saham, kurs) tetap sehingga aset bisa kembali ke Otomatis. Katalog tambahan (BNB) tidak ditanam Setup; masuk lewat Kelola aset › Tambah aset.
 
 ### Lokasi
 - `jenis` (urutan tampil): Exchange crypto, Wallet crypto, Sekuritas saham, Aplikasi investasi, Emas digital, Bank atau deposito, Dompet digital, Simpanan fisik, Lainnya. (Menggantikan daftar v1.)

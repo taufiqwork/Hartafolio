@@ -48,9 +48,9 @@ function boot() {
   });
   ctx.globalThis = ctx;
   const root = path.join(__dirname, '..', 'src');
-  ['catalog', 'dates', 'format', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
+  ['beranda', 'catalog', 'dates', 'format', 'harga-fetch', 'kelola', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
-  ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
+  ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan', 'Harga', 'AsetKelola'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
 }
 
@@ -275,7 +275,7 @@ test('apiBuktiUnggah (Drive v3, izin drive.file): folder dibuat sekali, foto mas
   assert.throws(() => g.run(`apiBuktiUnggah('TX-9', {mime:'image/jpeg', base64:'QUJD'})`), /tidak ditemukan/);
   assert.throws(() => g.run(`apiBuktiUnggah('TX-1', {mime:'application/pdf', base64:'QUJD'})`), /JPG atau PNG/);
   const m = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'gas', 'appsscript.json'), 'utf8'));
-  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file')); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); assert.equal(m.dependencies.enabledAdvancedServices[0].serviceId, 'drive'); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/script.external_request'));
+  assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/drive.file')); assert.ok(!m.oauthScopes.includes('https://www.googleapis.com/auth/drive')); assert.equal(m.dependencies.enabledAdvancedServices[0].serviceId, 'drive'); assert.ok(m.oauthScopes.includes('https://www.googleapis.com/auth/script.external_request')) /* untuk harga otomatis (Harga.js), bukan untuk foto */;
 });
 
 test('apiBuktiUnggah: folder lama tak terlihat oleh izin sempit -> dicari lagi, lalu dibuat baru dan id di Pengaturan diganti', () => {
@@ -375,4 +375,80 @@ test('Perbaiki header: kolom yang bergeser disusun ulang bersama datanya (cadang
   assert.equal(baris.length, 1); assert.equal(baris[0].jumlah, 7); assert.equal(baris[0].catatan, 'cat'); assert.equal(baris[0].trx_id, 'TX-1'); assert.equal(baris[0].lokasi_id, 'LK-001');
   assert.equal(sh.cells[1].includes('sisip'), true); // kolom sisipan berdata tidak hilang (dibawa ke kanan)
   assert.deepEqual(JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()'))), ['Semua header sudah cocok']);
+});
+
+test('harga otomatis: baris Harga dari sumber tiruan, gagal tercatat, jadwal 6 jam satu saja, harga manual tidak ditimpa', () => {
+  const g = boot(); const jadwal = []; const diminta = [];
+  g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
+  g.ctx.ScriptApp = { getOAuthToken: () => 'tok', getProjectTriggers: () => jadwal.slice(), deleteTrigger() { jadwal.length = 0; },
+    newTrigger(f) { const t = { f, getHandlerFunction: () => f, timeBased: () => t, everyHours: (h) => { t.h = h; return t; }, create: () => { jadwal.push(t); return t; } }; return t; } };
+  const jawab = (u) => {
+    if (/coingecko/.test(u)) return JSON.stringify({ bitcoin: { usd: 60000 }, 'pax-gold': { usd: 3650 }, 'tether-gold': { usd: 3652 }, ethereum: { usd: 1668 }, tether: { usd: 1 } });
+    if (/er-api/.test(u)) return JSON.stringify({ result: 'success', rates: { IDR: 16250 } });
+    if (/gold-api/.test(u)) return JSON.stringify({ price: /XAU/.test(u) ? 3650 : 43.23 });
+    if (/BBCA/.test(u)) return JSON.stringify({ chart: { result: [{ meta: { currency: 'IDR', regularMarketPrice: 6000 } }] } });
+    return null; // saham lain gagal
+  };
+  g.ctx.UrlFetchApp = { fetchAll: (reqs) => reqs.map((r) => { diminta.push(r.url); const t = jawab(r.url); return { getResponseCode: () => (t ? 200 : 500), getContentText: () => t }; }) };
+  g.run('setupHartafolio()');
+  g.run('hargaNyalakan()'); g.run('hargaNyalakan()');
+  assert.equal(jadwal.length, 1); assert.equal(jadwal[0].f, 'hargaOtomatis'); assert.equal(jadwal[0].h, 6);
+  const h = g.run('apiState()').harga.terakhir;
+  assert.equal(h['AS-BTC'].harga, 60000); assert.equal(h['AS-BTC'].mata_uang, 'USD');
+  assert.equal(h['AS-BBCA'].harga, 600000);
+  assert.equal(h['AS-USD'].harga, 16250);
+  assert.ok(Math.abs(h['AS-EMAS'].harga - 3650 * 16250 / 31.1035) < 1e-6);
+  assert.equal(h['AS-BBRI'], undefined); // gagal: tidak jadi harga
+  const p = g.run('apiState()').pengaturan; assert.equal(p.harga_aktif, 'ya'); assert.match(p.harga_terakhir, /\(3 gagal\)/);
+  // aset manual dengan harga yang diisi tidak ikut diambil dan tidak tertimpa
+  g.run("apiAsetTambah({ nama: 'Emas perhiasan', kelas: 'Emas', satuan: 'gram', harga: '1.900.000' })");
+  const sebelum = diminta.length; g.run('hargaSekarang()');
+  assert.ok(diminta.slice(sebelum).every((u) => !/perhiasan/i.test(u)));
+  assert.equal(g.run('apiState()').harga.terakhir['AS-001'] === undefined ? 1 : g.run('apiState()').harga.terakhir[Object.keys(g.run('apiState()').harga.terakhir).find((k) => /^AS-\d+$/.test(k))].harga, 1900000);
+  g.run('hargaMatikan()'); assert.equal(jadwal.length, 0); assert.equal(g.run('apiState()').pengaturan.harga_aktif, 'tidak');
+  g.ctx.UrlFetchApp.fetchAll = () => { throw new Error('layanan luar mati'); };
+  assert.throws(() => g.run('hargaOtomatis()'), /layanan luar mati/); assert.match(g.run('apiState()').pengaturan.harga_terakhir, /GAGAL: layanan luar mati/);
+});
+
+test('Kelola aset di server: katalog BNB, harga manual vs otomatis, sembunyikan/tampilkan/hapus menurut saldo dan riwayat', () => {
+  const g = boot(); const fetched = [];
+  g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
+  g.ctx.UrlFetchApp = { fetchAll: (reqs) => reqs.map((r) => { fetched.push(r.url); return { getResponseCode: () => 500, getContentText: () => '' }; }) };
+  g.run('setupHartafolio()');
+  g.run("apiAnggotaTambah({ nama: 'Azlan' })"); g.run("apiLokasiTambah({ nama: 'Brankas', jenis: 'Simpanan fisik' })");
+  const ST = () => JSON.parse(JSON.stringify(g.run('apiState()')));
+  const aset = (id) => ST().aset.find((a) => a.aset_id === id);
+  // katalog: BNB tidak ikut Setup; masuk lewat Tambah aset; dua kali ditolak; baris aset hanya satu
+  assert.equal(aset('AS-BNB'), undefined);
+  assert.equal(g.run("apiAsetKatalogTambah('AS-BNB')").simbol, 'BNB'); assert.equal(aset('AS-BNB').status, 'aktif');
+  assert.throws(() => g.run("apiAsetKatalogTambah('AS-BNB')"), /sudah ada di daftar/);
+  assert.throws(() => g.run("apiAsetKatalogTambah('AS-NOPE')"), /tidak ada di katalog/);
+  // Ubah ke manual: wajib harga; harga masuk tab Harga sebagai manual; kunci_manual menyala; tidak lagi diambil otomatis
+  assert.throws(() => g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: false, harga: '' })"), /Isi harga per koin/);
+  g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: false, harga: '52.300.000' })");
+  assert.equal(aset('AS-ETH').kunci_manual, true);
+  const h = ST().harga.terakhir['AS-ETH']; assert.deepEqual([h.harga, h.mata_uang, h.status], [52300000, 'IDR', 'manual']);
+  fetched.length = 0; g.run('hargaSekarang()'); assert.ok(!fetched.some((u) => /ethereum/.test(u)));
+  // Kembali ke otomatis: kunci mati dan pengambilan harga dijalankan sekali
+  fetched.length = 0; g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: true })");
+  assert.equal(aset('AS-ETH').kunci_manual, false); assert.ok(fetched.some((u) => /ethereum/.test(u)));
+  assert.throws(() => g.run("apiAsetUbah('AS-IDR', { nama: 'IDR', otomatis: true })"), /tidak punya sumber harga otomatis/);
+  // Nama: ganti, ganda ditolak, kosong ditolak
+  g.run("apiAsetUbah('AS-BNB', { nama: 'BNB Chain', otomatis: true })"); assert.equal(aset('AS-BNB').simbol, 'BNB Chain');
+  assert.throws(() => g.run("apiAsetUbah('AS-BNB', { nama: 'eth', otomatis: true })"), /Sudah ada aset bernama/);
+  assert.throws(() => g.run("apiAsetUbah('AS-BNB', { nama: '  ', otomatis: true })"), /Nama aset wajib/);
+  // Hapus aturan: dimiliki -> ditolak; terjual habis (punya riwayat) -> tidak bisa dihapus, bisa disembunyikan; tampilkan lagi; tanpa riwayat -> dihapus
+  g.run(`apiTransaksiTambah([{trx_id:'T1', tanggal:'2026-11-03', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-BTC', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"), /masih dimiliki/);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'hapus')"), /masih dimiliki/);
+  g.run(`apiTransaksiTambah([{trx_id:'T2', tanggal:'2026-11-04', jenis:'Keluar', anggota_id:'PM-001', aset_id:'AS-BTC', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'hapus')"), /Sembunyikan saja/);
+  g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"); assert.equal(aset('AS-BTC').status, 'tersembunyi');
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"), /tidak ada di daftar/);
+  g.run("apiAsetStatus('AS-BTC', 'tampilkan')"); assert.equal(aset('AS-BTC').status, 'aktif');
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'tampilkan')"), /tidak sedang tersembunyi/);
+  g.run("apiAsetStatus('AS-ANTM', 'hapus')"); assert.equal(aset('AS-ANTM').status, 'dihapus');
+  assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1); // baris tidak hilang
+  g.run("apiAsetKatalogTambah('AS-ANTM')"); assert.equal(aset('AS-ANTM').status, 'aktif'); assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1);
+  assert.throws(() => g.run("apiAsetStatus('AS-ANTM', 'bakar')"), /Aksi tidak dikenal/);
 });

@@ -11,7 +11,7 @@
     { id: 'riwayat', label: 'Riwayat', icon: 'receipt' },
     { id: 'alat', label: 'Alat', icon: 'wrench' }
   ];
-  var TITLES = { beranda: 'Beranda', aset: 'Aset', riwayat: 'Riwayat', alat: 'Alat', catat: 'Catat transaksi' };
+  var TITLES = { beranda: 'Beranda', aset: 'Aset', riwayat: 'Riwayat', alat: 'Alat', catat: 'Catat transaksi', kelola: 'Kelola aset' };
 
   var ubahId = null; // #/ubah/<trx_id>: layar Ubah transaksi (bagian dari alur Riwayat)
   function route() {
@@ -69,9 +69,11 @@
     hapus: function (id) { return kirimKoreksi('apiTransaksiHapus', id, 'hapus', null); },
     pulihkan: function (id) { return kirimKoreksi('apiTransaksiPulihkan', id, 'pulihkan', null); }
   };
+  var catatMulai = null, kelolaDari = 'aset'; // catatMulai: 'awal' dari Kelola aset (Catat saldo awal); kelolaDari: layar yang membuka Kelola aset
   var tokoHapus = null; // id transaksi yang baru dihapus dari layar Ubah: Riwayat menampilkan toast Pulihkan
   function openCatat(ubah) {
-    var el = document.getElementById('app'), mulai = ubah ? 'ubah' : (demoParam !== null ? (param('mulai') || 'beli') : 'beli'), baris = null;
+    var el = document.getElementById('app'), mulai = ubah ? 'ubah' : (demoParam !== null ? (param('mulai') || 'beli') : (catatMulai || 'beli')), baris = null;
+    catatMulai = null;
     function simpanBaru(ctx) {
       return function (res, vm, c, photo) {
         if (res.error) return;
@@ -158,11 +160,31 @@
     HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
   }
 
+  /* Kelola aset (layar penuh, tanpa menu bawah): data contoh (?demo=keadaan) atau data nyata dari apiState. Tulis ke Sheet lewat apiAset*. */
+  function renderKelola() {
+    var el = document.getElementById('app'), seq = ++loadSeq, dari = kelolaDari;
+    document.title = 'Kelola aset · Hartafolio';
+    if (demoParam !== null) { var g = HF.kelolaDemo.get(demoParam); return HF.kelolaScreen.mount(el, { data: g.data, ui: g.ui, toast: g.toast, notice: g.notice, simpan: g.simpan, dari: g.dari, real: false }); }
+    var segar = function () { return HF.api.call('apiState').then(function (s) { appState = s; return HF.kelola.fromState(s); }); };
+    var ready = function (s) {
+      appState = s;
+      if (route() !== 'kelola' || seq !== loadSeq) return;
+      HF.kelolaScreen.mount(el, { data: HF.kelola.fromState(s), real: true, dari: dari, refresh: segar,
+        on: { ubah: function (id, d) { appState = null; return HF.api.call('apiAsetUbah', id, d); }, status: function (id, aksi) { appState = null; return HF.api.call('apiAsetStatus', id, aksi); },
+          katalog: function (id) { appState = null; return HF.api.call('apiAsetKatalogTambah', id); }, manual: function (d) { appState = null; return HF.api.call('apiAsetTambah', d); },
+          saldoAwal: function () { catatMulai = 'awal'; location.hash = '#/catat'; } } });
+    };
+    if (appState) return ready(appState);
+    el.innerHTML = HF.setup.splash();
+    HF.api.call('apiState').then(ready).catch(function (e) { el.innerHTML = HF.setup.splash().replace('Menyiapkan data Anda', e.message); });
+  }
+
   function render() {
     HF.listen.reset(document.getElementById('app')); // pendengar layar sebelumnya dilepas (kalau tidak, tombol Simpan di Catat jalan berlipat)
     var r = route();
     if (r === 'catat') { document.title = 'Catat transaksi · Hartafolio'; return openCatat(); }
     if (r === 'ubah') { document.title = 'Ubah transaksi · Hartafolio'; lastTab = 'riwayat'; return openCatat(true); }
+    if (r === 'kelola') { kelolaDari = lastTab === 'kelola' ? kelolaDari : lastTab; lastTab = r; return renderKelola(); }
     lastTab = r;
     if (r === 'beranda') {
       var el = document.getElementById('app');

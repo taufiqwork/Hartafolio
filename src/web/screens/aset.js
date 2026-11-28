@@ -13,7 +13,7 @@
   var model = null, nav = '', saved = null, elRef = null;
 
   function head(v) {
-    var kelola = v.hasRows ? '<a class="hf-btn hf-btn-sm" href="#/aset" data-soon="1" aria-label="Kelola aset' + (v.perluHarga ? ', ' + v.perluHarga + ' aset perlu harga' : '') + '" style="position: relative; flex: none;">' + GEAR + 'Kelola' +
+    var kelola = v.hasRows ? '<a class="hf-btn hf-btn-sm" href="#/kelola" aria-label="Kelola aset' + (v.perluHarga ? ', ' + v.perluHarga + ' aset perlu harga' : '') + '" style="position: relative; flex: none;">' + GEAR + 'Kelola' +
       (v.perluHarga ? '<span aria-hidden="true" style="position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 999px; background: var(--loss); box-shadow: 0 0 0 2px var(--surface);"></span>' : '') + '</a>' : '';
     return '<div class="hf-head"><header style="display: flex; justify-content: space-between; align-items: center;"><h1 class="title" style="margin: 0;">Aset</h1>' + kelola + '</header>' +
       '<div style="display: flex; flex-wrap: wrap; gap: 8px;" role="group" aria-label="Anggota">' + v.pills.map(function (p) {
