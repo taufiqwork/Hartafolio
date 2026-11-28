@@ -81,8 +81,9 @@
       var s = a.sumber_harga, cur = a.mata_uang_harga || 'IDR';
       if (s === 'kurs') { if (kurs) ok(a.aset_id, kurs, 'IDR', 'kurs'); else gagal(a.aset_id, 'IDR', 'kurs'); return; }
       if (s === 'coingecko') {
-        var c = (hasil.coingecko && hasil.coingecko[a.kode_sumber] && num(hasil.coingecko[a.kode_sumber].usd) ? hasil.coingecko : hasil.llama || {})[a.kode_sumber], usd = c && num(c.usd);
-        if (usd) ok(a.aset_id, usd, 'USD', 'coingecko'); else gagal(a.aset_id, 'USD', 'coingecko');
+        var cg = hasil.coingecko && hasil.coingecko[a.kode_sumber] && num(hasil.coingecko[a.kode_sumber].usd);
+        var usd = cg || (hasil.llama && hasil.llama[a.kode_sumber] && num(hasil.llama[a.kode_sumber].usd));
+        if (usd) ok(a.aset_id, usd, 'USD', cg ? 'coingecko' : 'llama'); else gagal(a.aset_id, 'USD', 'coingecko'); // sumber = asal angka sebenarnya
         return;
       }
       if (s === 'logam') {

@@ -472,7 +472,7 @@ test('harga crypto: CoinGecko gagal (429) lalu cadangan llama dipakai; kode HTTP
   const { g } = bootHarga((u) => /llama/.test(u) ? LLAMA : /coingecko/.test(u) ? null : LAIN(u));
   const r = JSON.parse(JSON.stringify(g.run('hargaSekarang()')));
   assert.equal(r.gagal, 0);
-  const h = g.run('apiState()').harga.terakhir; assert.equal(h['AS-BTC'].harga, 59000); assert.equal(h['AS-BTC'].sumber, 'coingecko');
+  const h = g.run('apiState()').harga.terakhir; assert.equal(h['AS-BTC'].harga, 59000); assert.equal(h['AS-BTC'].sumber, 'llama');
   assert.match(g.run('apiState()').pengaturan.harga_terakhir, /coingecko: HTTP 429/);
 });
 

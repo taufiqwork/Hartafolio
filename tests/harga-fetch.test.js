@@ -28,7 +28,7 @@ test('rencana: semua sumber terkumpul sekali, kurs ikut diambil', () => {
 
 test('susun: angka tiap sumber (kurs, crypto USD, emas per gram, saham lot x100, saham luar USD)', () => {
   const r = H.susun(ASET, HASIL, W);
-  assert.equal(byId(r, C.KURS_ID).harga, 16250);
+  assert.equal(byId(r, C.KURS_ID).harga, 16250); assert.equal(byId(r, 'AS-BTC').sumber, 'coingecko');
   assert.deepEqual([byId(r, 'AS-BTC').harga, byId(r, 'AS-BTC').mata_uang], [60000, 'USD']);
   const emas = byId(r, 'AS-EMAS'); assert.equal(emas.mata_uang, 'IDR');
   assert.ok(Math.abs(emas.harga - 3650 * 16250 / 31.1035) < 1e-6);
@@ -75,7 +75,7 @@ test('cadangan llama: url memakai id CoinGecko, parse, dan dipakai bila CoinGeck
   assert.deepEqual(H.parse.llama('{"coins":{"coingecko:bitcoin":{"price":59000},"x:y":{"price":1}}}'), { bitcoin: { usd: 59000 } });
   assert.equal(H.parse.llama('{"coins":{}}'), null);
   const r = H.susun(ASET, Object.assign({}, HASIL, { coingecko: null, llama: { bitcoin: { usd: 59000 }, ethereum: { usd: 1660 } } }), W);
-  assert.equal(byId(r, 'AS-BTC').harga, 59000); assert.equal(byId(r, 'AS-BTC').status, 'ok');
+  assert.equal(byId(r, 'AS-BTC').harga, 59000); assert.equal(byId(r, 'AS-BTC').status, 'ok'); assert.equal(byId(r, 'AS-BTC').sumber, 'llama');
   assert.equal(byId(r, 'AS-PAXG').status, 'gagal'); // tidak ada di kedua sumber
 });
 
