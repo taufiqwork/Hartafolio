@@ -52,8 +52,8 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Kelola aset: tampilan (daftar, lembar Ubah/Hapus/Tambah/Tersembunyi/Saldo, form manual) | `src/web/screens/kelola.js` | `HF.kelolaScreen.mount`; memakai `HF.setupForm.render` untuk form Aset manual |
 | Kelola aset: model dan aturan (satu sumber untuk layar, tiruan dev, server) | `src/engine/kelola.js` | `HF.kelola.fromState`, `list`, `sheet`, `patch`, `cekStatus`, `cekUbah`, `stats`; data contoh `src/demo/kelola-demo.js` (`?demo=<mulai board>#/kelola`) |
 | Kelola aset: penulisan ke Sheet | `src/gas/AsetKelola.js` | `apiAsetUbah`, `apiAsetStatus`, `apiAsetKatalogTambah` (area sensitif: penulisan Repo) |
-| Harga otomatis: rencana, pengurai, penyusun baris Harga (murni) | `src/engine/harga-fetch.js` | `HF.hargaFetch.rencana/urls/parse/susun` |
-| Harga otomatis: pengambilan, jadwal 6 jam, menu | `src/gas/Harga.js` | `hargaOtomatis`, `hargaNyalakan`, `hargaMatikan`, `hargaSekarang`; izin `script.external_request` |
+| Harga otomatis: rencana, pengurai, penyusun baris Harga (murni) | `src/engine/harga-fetch.js` | `HF.hargaFetch.rencana/urls/parse/susun/saring/padatkan` |
+| Harga otomatis: pengambilan, jadwal 3 jam, saat dibuka, padatkan mingguan, menu | `src/gas/Harga.js` | `hargaOtomatis`, `apiHargaSegarkan`, `hargaPadatkan`, `hargaNyalakan`, `hargaMatikan`, `hargaSekarang`; izin `script.external_request` |
 | Cadangan Sheet mingguan (jadwal, salinan, folder, simpan 8) | `src/gas/Cadangan.js` | `cadanganNyalakan`, `cadanganMatikan`, `cadanganSekarang`, `cadanganMingguan`, `Cadangan_buat_` |
 | Foto bukti: unggah ke Drive (izin `drive.file`) | `src/gas/Bukti.js` | `apiBuktiUnggah` |
 | Aset buatan sendiri | `src/gas/Master.js` | `apiAsetTambah` |

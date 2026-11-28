@@ -68,3 +68,31 @@ test('parse: bentuk jawaban nyata dan jawaban rusak', () => {
   assert.deepEqual(H.parse.coingecko('{"bitcoin":{"usd":1}}'), { bitcoin: { usd: 1 } });
   assert.equal(H.parse.coingecko('x'), null);
 });
+
+test('cadangan llama: url memakai id CoinGecko, parse, dan dipakai bila CoinGecko kosong', () => {
+  const u = H.urls(H.rencana(ASET));
+  assert.match(u.llama, /^https:\/\/coins\.llama\.fi\/prices\/current\/coingecko:[a-z-]+,.*coingecko:bitcoin/);
+  assert.deepEqual(H.parse.llama('{"coins":{"coingecko:bitcoin":{"price":59000},"x:y":{"price":1}}}'), { bitcoin: { usd: 59000 } });
+  assert.equal(H.parse.llama('{"coins":{}}'), null);
+  const r = H.susun(ASET, Object.assign({}, HASIL, { coingecko: null, llama: { bitcoin: { usd: 59000 }, ethereum: { usd: 1660 } } }), W);
+  assert.equal(byId(r, 'AS-BTC').harga, 59000); assert.equal(byId(r, 'AS-BTC').status, 'ok');
+  assert.equal(byId(r, 'AS-PAXG').status, 'gagal'); // tidak ada di kedua sumber
+});
+
+test('Dolar AS dikunci manual: kurs tidak diambil dan baris USDIDR tidak ditulis, tetapi emas tetap dihitung dengan kurs yang diberikan', () => {
+  const m = ASET.map((a) => Object.assign({}, a)); m.find((a) => a.aset_id === 'AS-USD').kunci_manual = true;
+  const p = H.rencana(m); assert.equal(p.kursKunci, true); assert.equal(H.urls(p).kurs, null);
+  const r = H.susun(m, Object.assign({}, HASIL, { kurs: 18250 }), W);
+  assert.equal(byId(r, C.KURS_ID), undefined); assert.equal(byId(r, 'AS-USD'), undefined);
+  assert.ok(Math.abs(byId(r, 'AS-EMAS').harga - 3650 * 18250 / 31.1035) < 1e-6);
+});
+
+test('saring: gagal dan harga sama (hari sama) tidak ditulis; hari baru tetap ditulis; padatkan: satu per aset per hari, manual utuh', () => {
+  const baris = [{ aset_id: 'A', harga: 1, status: 'ok' }, { aset_id: 'B', harga: 2, status: 'ok' }, { aset_id: 'C', harga: 0, status: 'gagal' }, { aset_id: 'D', harga: 4, status: 'ok' }];
+  const t = { A: { harga: 1, waktu: '2026-11-28 07:00', status: 'ok' }, B: { harga: 9, waktu: '2026-11-28 07:00', status: 'ok' }, D: { harga: 4, waktu: '2026-11-27 23:00', status: 'ok' } };
+  assert.deepEqual(H.saring(baris, t, '2026-11-28 10:00').map((r) => r.aset_id), ['B', 'D']);
+  const rows = [{ waktu: '2026-10-01 01:00', aset_id: 'A', status: 'ok' }, { waktu: '2026-10-01 07:00', aset_id: 'A', status: 'ok' }, { waktu: '2026-10-01 08:00', aset_id: 'A', status: 'gagal' },
+    { waktu: '2026-10-01 07:00', aset_id: 'B', status: 'manual' }, { waktu: '2026-11-27 07:00', aset_id: 'A', status: 'ok' }];
+  const r = H.padatkan(rows, '2026-11-21 00:00');
+  assert.equal(r.buang, 2); assert.deepEqual(r.simpan.map((x) => x.waktu + x.aset_id), ['2026-10-01 07:00A', '2026-10-01 07:00B', '2026-11-27 07:00A']);
+});

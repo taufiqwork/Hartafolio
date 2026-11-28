@@ -18,6 +18,7 @@ function onOpen() {
     .addItem('Nyalakan harga otomatis', 'hargaNyalakan')
     .addItem('Matikan harga otomatis', 'hargaMatikan')
     .addItem('Perbarui harga sekarang', 'hargaSekarang')
+    .addItem('Rapikan tab Harga sekarang', 'hargaPadatkanSekarang')
     .addToUi();
 }
 

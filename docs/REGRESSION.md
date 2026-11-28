@@ -138,4 +138,6 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 ## Harga otomatis
 - [ ] `npm test`: `tests/harga-fetch.test.js` dan kasus harga di `tests/gas.test.js` lulus.
 - [ ] Aset manual atau `kunci_manual` tidak pernah ditimpa pengambilan otomatis; yang gagal berstatus `gagal` dan harga terakhir yang baik tetap dipakai.
-- [ ] BELUM TERVERIFIKASI di Google sungguhan: izin `script.external_request`, menu Nyalakan harga otomatis, jadwal 6 jam, tiap sumber (CoinGecko, gold-api, Yahoo, open.er-api).
+- [ ] BELUM TERVERIFIKASI di Google sungguhan: izin `script.external_request`, menu Nyalakan harga otomatis, jadwal 3 jam, pengambilan saat dibuka, padatkan mingguan, tiap sumber (CoinGecko dan cadangan llama, gold-api, Yahoo, open.er-api).
+- [ ] Dolar AS manual mengubah kurs di Beranda dan Aset; terkunci manual = USDIDR tidak ditulis. Kurs Ubah transaksi: ganti kurs = kurs_waktu baru, tidak disentuh = lama.
+- [ ] Tab Harga: gagal tidak ditulis, harga sama sehari tidak ditulis ulang, padatkan menyisakan satu baris per aset per hari (manual utuh).
