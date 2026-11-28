@@ -55,9 +55,9 @@ test('katalog: zakat hanya Emas dan Perak, gram per unit', () => {
   assert.ok(cat.search('pax').length === 1);
 });
 
-test('Transaksi v2: alat_bayar_lokasi_id paling kanan (kolom ke-29), versi skema 2, kolom lama tidak bergeser', () => {
+test('Transaksi v2: alat_bayar_lokasi_id paling kanan (kolom ke-29), versi skema 3 (Aset: dua kolom di kanan), kolom lama tidak bergeser', () => {
   const n = s.colNames('Transaksi');
-  assert.equal(n.length, 29); assert.equal(n[28], 'alat_bayar_lokasi_id'); assert.equal(n[27], 'diubah_pada'); assert.equal(s.VERSI, 2);
+  assert.equal(n.length, 29); assert.equal(n[28], 'alat_bayar_lokasi_id'); const na = s.colNames('Aset'); assert.deepEqual(na.slice(-2), ['kategori_zakat_lama', 'jenis_berlaku']); assert.equal(na[13], 'dibuat_pada'); assert.equal(n[27], 'diubah_pada'); assert.equal(s.VERSI, 3);
 });
 
 test('newTrxId: kode acak dipakai apa adanya (huruf besar), nomor tetap berisi nol di depan', () => {

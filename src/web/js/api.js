@@ -133,7 +133,7 @@
       if (simpan !== a.nama) { a.nama = simpan; if (a.bentuk !== 'Fisik' && a.sumber_harga !== 'manual') a.simbol = simpan; }
       a.kunci_manual = !d.otomatis;
       if (!d.otomatis && harga > 0) s.harga.terakhir[aid] = { harga: harga, mata_uang: K.mataManual(a), sumber: 'manual', status: 'manual', waktu: dev.stamp() };
-      if (!d.otomatis && harga > 0 && a.sumber_harga === 'kurs') { // Dolar AS: kurs seluruh aplikasi dibaca dari seri USDIDR (sama dengan server)
+      if (!d.otomatis && harga > 0 && a.sumber_harga === 'kurs' && (a.kode_sumber || 'USD') === 'USD') { // Dolar AS: kurs seluruh aplikasi dibaca dari seri USDIDR (sama dengan server)
         var w = dev.stamp(); s.harga.kursSeries = (s.harga.kursSeries || []).concat([{ waktu: w, harga: harga }]);
         s.harga.terakhir.USDIDR = { harga: harga, mata_uang: 'IDR', sumber: 'manual', status: 'manual', waktu: w };
       }

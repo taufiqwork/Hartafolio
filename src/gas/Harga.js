@@ -17,9 +17,9 @@ function Harga_ambil_(reqs) {
     .map(function (res) { var k = res.getResponseCode(); return { kode: k, teks: k === 200 ? res.getContentText() : null }; });
 }
 
-/** Ambil semua sumber lalu tambahkan baris Harga yang berubah. Mengembalikan { baris, ok, gagal, waktu, catatan }. */
-function Harga_perbarui_() {
-  var F = HF.hargaFetch, aset = Repo_read_('Aset'), p = F.rencana(aset), u = F.urls(p);
+/** Ambil sumber untuk daftar aset `aset` dan susun baris Harga. Mengembalikan { semua, catatan, waktu }. Tidak menulis apa pun. */
+function Harga_hitung_(aset, terakhir) {
+  var F = HF.hargaFetch, p = F.rencana(aset), u = F.urls(p);
   var reqs = [], tag = [];
   if (u.coingecko) { reqs.push({ url: u.coingecko }); tag.push(['coingecko']); reqs.push({ url: u.llama }); tag.push(['llama']); }
   if (u.kurs) { reqs.push({ url: u.kurs }); tag.push(['kurs']); }
@@ -32,14 +32,20 @@ function Harga_perbarui_() {
     var ok = true;
     if (t[0] === 'coingecko') ok = !!(hasil.coingecko = F.parse.coingecko(x));
     else if (t[0] === 'llama') ok = !!(hasil.llama = F.parse.llama(x));
-    else if (t[0] === 'kurs') ok = !!(hasil.kurs = F.parse.kurs(x));
+    else if (t[0] === 'kurs') { ok = !!(hasil.kurs = F.parse.kurs(x)); hasil.rates = F.parse.rates(x); }
     else if (t[0] === 'logam') ok = !!(hasil.logam[t[1]] = F.parse.logam(x));
     else if (t[0] === 'saham') { var s = F.parse.saham(x); if (s) hasil.saham[t[1]] = s; else ok = false; }
     if (!ok) catatan.push(nama + ': jawaban tidak dikenal');
   });
-  var terakhir = Repo_prices_().terakhir;
   if (p.kursKunci && terakhir[HF.catalog.KURS_ID]) hasil.kurs = terakhir[HF.catalog.KURS_ID].harga; // Dolar AS manual dipakai untuk emas dan perak juga
-  var waktu = Master_now_(), semua = F.susun(aset, hasil, waktu), baris = F.saring(semua, terakhir, waktu);
+  var waktu = Master_now_();
+  return { semua: F.susun(aset, hasil, waktu), catatan: catatan, waktu: waktu };
+}
+
+/** Ambil semua sumber lalu tambahkan baris Harga yang berubah. Mengembalikan { baris, ok, gagal, waktu, catatan }. */
+function Harga_perbarui_() {
+  var terakhir = Repo_prices_().terakhir, h = Harga_hitung_(Repo_read_('Aset'), terakhir), F = HF.hargaFetch;
+  var semua = h.semua, catatan = h.catatan, waktu = h.waktu, baris = F.saring(semua, terakhir, waktu);
   var gagal = semua.filter(function (r) { return r.status === 'gagal'; }).length;
   var ringkas = waktu + (gagal ? ' (' + gagal + ' gagal)' : '') + (catatan.length ? ' · ' + catatan.join('; ') : '');
   Master_dalamKunci_(function () {
