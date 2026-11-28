@@ -48,9 +48,9 @@ function boot() {
   });
   ctx.globalThis = ctx;
   const root = path.join(__dirname, '..', 'src');
-  ['catalog', 'dates', 'format', 'harga-fetch', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
+  ['beranda', 'catalog', 'dates', 'format', 'harga-fetch', 'kelola', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
-  ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan', 'Harga'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
+  ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan', 'Harga', 'AsetKelola'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
 }
 
@@ -408,4 +408,47 @@ test('harga otomatis: baris Harga dari sumber tiruan, gagal tercatat, jadwal 6 j
   g.run('hargaMatikan()'); assert.equal(jadwal.length, 0); assert.equal(g.run('apiState()').pengaturan.harga_aktif, 'tidak');
   g.ctx.UrlFetchApp.fetchAll = () => { throw new Error('layanan luar mati'); };
   assert.throws(() => g.run('hargaOtomatis()'), /layanan luar mati/); assert.match(g.run('apiState()').pengaturan.harga_terakhir, /GAGAL: layanan luar mati/);
+});
+
+test('Kelola aset di server: katalog BNB, harga manual vs otomatis, sembunyikan/tampilkan/hapus menurut saldo dan riwayat', () => {
+  const g = boot(); const fetched = [];
+  g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
+  g.ctx.UrlFetchApp = { fetchAll: (reqs) => reqs.map((r) => { fetched.push(r.url); return { getResponseCode: () => 500, getContentText: () => '' }; }) };
+  g.run('setupHartafolio()');
+  g.run("apiAnggotaTambah({ nama: 'Azlan' })"); g.run("apiLokasiTambah({ nama: 'Brankas', jenis: 'Simpanan fisik' })");
+  const ST = () => JSON.parse(JSON.stringify(g.run('apiState()')));
+  const aset = (id) => ST().aset.find((a) => a.aset_id === id);
+  // katalog: BNB tidak ikut Setup; masuk lewat Tambah aset; dua kali ditolak; baris aset hanya satu
+  assert.equal(aset('AS-BNB'), undefined);
+  assert.equal(g.run("apiAsetKatalogTambah('AS-BNB')").simbol, 'BNB'); assert.equal(aset('AS-BNB').status, 'aktif');
+  assert.throws(() => g.run("apiAsetKatalogTambah('AS-BNB')"), /sudah ada di daftar/);
+  assert.throws(() => g.run("apiAsetKatalogTambah('AS-NOPE')"), /tidak ada di katalog/);
+  // Ubah ke manual: wajib harga; harga masuk tab Harga sebagai manual; kunci_manual menyala; tidak lagi diambil otomatis
+  assert.throws(() => g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: false, harga: '' })"), /Isi harga per koin/);
+  g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: false, harga: '52.300.000' })");
+  assert.equal(aset('AS-ETH').kunci_manual, true);
+  const h = ST().harga.terakhir['AS-ETH']; assert.deepEqual([h.harga, h.mata_uang, h.status], [52300000, 'IDR', 'manual']);
+  fetched.length = 0; g.run('hargaSekarang()'); assert.ok(!fetched.some((u) => /ethereum/.test(u)));
+  // Kembali ke otomatis: kunci mati dan pengambilan harga dijalankan sekali
+  fetched.length = 0; g.run("apiAsetUbah('AS-ETH', { nama: 'ETH', otomatis: true })");
+  assert.equal(aset('AS-ETH').kunci_manual, false); assert.ok(fetched.some((u) => /ethereum/.test(u)));
+  assert.throws(() => g.run("apiAsetUbah('AS-IDR', { nama: 'IDR', otomatis: true })"), /tidak punya sumber harga otomatis/);
+  // Nama: ganti, ganda ditolak, kosong ditolak
+  g.run("apiAsetUbah('AS-BNB', { nama: 'BNB Chain', otomatis: true })"); assert.equal(aset('AS-BNB').simbol, 'BNB Chain');
+  assert.throws(() => g.run("apiAsetUbah('AS-BNB', { nama: 'eth', otomatis: true })"), /Sudah ada aset bernama/);
+  assert.throws(() => g.run("apiAsetUbah('AS-BNB', { nama: '  ', otomatis: true })"), /Nama aset wajib/);
+  // Hapus aturan: dimiliki -> ditolak; terjual habis (punya riwayat) -> tidak bisa dihapus, bisa disembunyikan; tampilkan lagi; tanpa riwayat -> dihapus
+  g.run(`apiTransaksiTambah([{trx_id:'T1', tanggal:'2026-11-03', jenis:'Saldo awal', anggota_id:'PM-001', aset_id:'AS-BTC', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"), /masih dimiliki/);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'hapus')"), /masih dimiliki/);
+  g.run(`apiTransaksiTambah([{trx_id:'T2', tanggal:'2026-11-04', jenis:'Keluar', anggota_id:'PM-001', aset_id:'AS-BTC', lokasi_id:'LK-001', jumlah:1, sumber:'manual'}])`);
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'hapus')"), /Sembunyikan saja/);
+  g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"); assert.equal(aset('AS-BTC').status, 'tersembunyi');
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'sembunyikan')"), /tidak ada di daftar/);
+  g.run("apiAsetStatus('AS-BTC', 'tampilkan')"); assert.equal(aset('AS-BTC').status, 'aktif');
+  assert.throws(() => g.run("apiAsetStatus('AS-BTC', 'tampilkan')"), /tidak sedang tersembunyi/);
+  g.run("apiAsetStatus('AS-ANTM', 'hapus')"); assert.equal(aset('AS-ANTM').status, 'dihapus');
+  assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1); // baris tidak hilang
+  g.run("apiAsetKatalogTambah('AS-ANTM')"); assert.equal(aset('AS-ANTM').status, 'aktif'); assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1);
+  assert.throws(() => g.run("apiAsetStatus('AS-ANTM', 'bakar')"), /Aksi tidak dikenal/);
 });
