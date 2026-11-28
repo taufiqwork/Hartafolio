@@ -118,7 +118,18 @@
     return { rows: rows, error: null };
   }
 
-  var api = { forUbah: forUbah, stateOfTrx: stateOfTrx, label: label, fromState: fromState, nowOf: nowOf, toRows: toRows };
+  /**
+   * Kurs pada baris yang diubah (Ubah). Kurs tidak disentuh: sumber, tanggal, dan waktu kurs lama dipertahankan.
+   * Kurs diganti pengguna: kurs_waktu menjadi jam perubahan itu (now = nowOf()), supaya terlihat kapan kurs terakhir diubah.
+   */
+  function kursUbah(isi, lama, now) {
+    if (!(+isi.kurs > 0)) return isi;
+    if (+isi.kurs === +lama.kurs) { isi.kurs_sumber = lama.kurs_sumber; isi.kurs_tanggal = lama.kurs_tanggal; isi.kurs_waktu = lama.kurs_waktu; }
+    else { now = now || nowOf(); isi.kurs_waktu = two(now.hh) + ':' + two(now.mm); }
+    return isi;
+  }
+
+  var api = { kursUbah: kursUbah, forUbah: forUbah, stateOfTrx: stateOfTrx, label: label, fromState: fromState, nowOf: nowOf, toRows: toRows };
   root.HF = root.HF || {};
   root.HF.catatCtx = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

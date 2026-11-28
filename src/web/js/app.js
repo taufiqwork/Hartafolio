@@ -93,7 +93,7 @@
     function simpanUbah(res, vm, c, photo, st) {
       if (res.error) return;
       var id = baris.trx_id, isi = Object.assign({}, res.rows[0], { nomor: (st && st.nota) || '' }), extra = res.rows.slice(1);
-      if (baris.kurs_sumber === 'otomatis' && +isi.kurs === +baris.kurs) isi.kurs_sumber = 'otomatis'; // kurs tidak disentuh: tetap otomatis
+      HF.catatCtx.kursUbah(isi, baris); // kurs tidak disentuh: sumber, tanggal, waktu lama tetap; kurs diganti: kurs_waktu = jam perubahan
       var k = koreksiLokal(id, 'ubah', isi); if (k.error) return { error: k.error };
       HF.api.call('apiTransaksiUbah', id, isi).then(function () {
         if (extra.length) { var d = HF.catatSave.submit(extra, false); if (appState && d.rows) appState.transaksi = appState.transaksi.concat(d.rows.map(function (t) { return Object.assign({ status: 'aktif' }, t); })); }
@@ -215,6 +215,12 @@
     if (demoParam === null) HF.catatSave.flush().catch(function () { /* tetap di antrean perangkat */ }); // kirim ulang yang belum terkirim
     window.addEventListener('hashchange', render);
     render();
+    /* Harga segar saat dibuka (server membatasi: paling sering tiap 30 menit). Layar yang memakai harga digambar ulang bila ada yang baru. */
+    if (demoParam === null && !HF.api.isDev) HF.api.call('apiHargaSegarkan').then(function (r) {
+      if (!r || !r.diperbarui) return;
+      appState = null;
+      if (['beranda', 'aset'].indexOf(route()) >= 0) render();
+    }).catch(function () { /* harga yang ada tetap dipakai */ });
   }
 
   /* Pertama kali: splash, lalu Setup bila belum selesai, kalau sudah ke shell. */

@@ -89,18 +89,45 @@ function Repo_settings_() {
   return o;
 }
 
-/** Harga terakhir berstatus ok/manual per aset, ditambah seri USDIDR 3 hari terakhir untuk rata-rata kurs. */
+/** Baris sheet ke-dari sampai ke-sampai (nomor baris Sheet, mulai 2) sebagai objek; baris tanpa ID dilewati. */
+function Repo_readRange_(tab, dari, sampai) {
+  var sh = Repo_sheet_(tab);
+  Repo_checkHeader_(tab, sh);
+  var last = sh.getLastRow(), cols = HF.schema.colNames(tab).length;
+  dari = Math.max(2, dari); sampai = Math.min(last, sampai);
+  if (sampai < dari) return [];
+  var vals = sh.getRange(dari, 1, sampai - dari + 1, cols).getValues(), out = [];
+  for (var i = 0; i < vals.length; i++) {
+    if (vals[i][0] === '' || vals[i][0] === null) continue;
+    out.push(HF.schema.rowToObj(tab, vals[i]));
+  }
+  return out;
+}
+
+var HARGA_BACA = 2000; // baris terbaru tab Harga yang dibaca tiap buka; sisanya hanya dibaca bila ada aset aktif yang belum punya harga di jendela ini
+
+/**
+ * Harga terakhir berstatus ok/manual per aset, ditambah seri USDIDR untuk rata-rata kurs.
+ * Membaca HARGA_BACA baris terbaru; bila ada aset aktif tanpa harga di situ (mis. harga manual lama), sisa tab dibaca sekali untuk melengkapi.
+ */
 function Repo_prices_() {
-  var rows = Repo_read_('Harga'), last = {}, kursSeries = [], maxW = '';
-  rows.forEach(function (r) { if (r.waktu > maxW) maxW = r.waktu; });
-  rows.forEach(function (r) {
-    if (r.status === 'gagal') return;
-    var cur = last[r.aset_id];
-    if (!cur || r.waktu >= cur.waktu) last[r.aset_id] = { harga: r.harga, mata_uang: r.mata_uang, sumber: r.sumber, waktu: r.waktu, status: r.status };
-    if (r.aset_id === HF.catalog.KURS_ID) kursSeries.push({ waktu: r.waktu, harga: r.harga });
-  });
+  var sh = Repo_sheet_('Harga'), last = sh.getLastRow(), awal = Math.max(2, last - HARGA_BACA + 1);
+  var last_ = {}, kursSeries = [];
+  function lipat(rows) {
+    rows.forEach(function (r) {
+      if (r.status === 'gagal') return;
+      var cur = last_[r.aset_id];
+      if (!cur || r.waktu >= cur.waktu) last_[r.aset_id] = { harga: r.harga, mata_uang: r.mata_uang, sumber: r.sumber, waktu: r.waktu, status: r.status };
+      if (r.aset_id === HF.catalog.KURS_ID) kursSeries.push({ waktu: r.waktu, harga: r.harga });
+    });
+  }
+  lipat(Repo_readRange_('Harga', awal, last));
+  if (awal > 2) {
+    var kurang = Repo_read_('Aset').some(function (a) { return a.status === 'aktif' && !last_[a.aset_id]; });
+    if (kurang) lipat(Repo_readRange_('Harga', 2, awal - 1));
+  }
   kursSeries = kursSeries.sort(function (a, b) { return a.waktu < b.waktu ? -1 : 1; }).slice(-300);
-  return { terakhir: last, kursSeries: kursSeries };
+  return { terakhir: last_, kursSeries: kursSeries };
 }
 
 /** Seluruh keadaan yang dibutuhkan klien untuk menghitung layar. Pengelola hanya satu: akses web app MYSELF. */

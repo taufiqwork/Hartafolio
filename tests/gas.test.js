@@ -26,6 +26,7 @@ function fakeSheet(name) {
     getValues: () => Array.from({ length: nr }, (_, i) => Array.from({ length: nc }, (_, j) => get(r + i, c + j))),
     setValues: vals => { vals.forEach((row, i) => row.forEach((v, j) => set(r + i, c + j, v))); },
     setValue: v => set(r, c, v),
+    clearContent: () => { for (let i = 0; i < nr; i++) for (let j = 0; j < nc; j++) set(r + i, c + j, ''); },
     protect: () => { const p = Object.assign(chain(), { getDescription: () => 'Header Hartafolio', remove: () => { g.protections.splice(g.protections.indexOf(p), 1); } }); g.protections.push(p); return p; }
   }));
   return g;
@@ -377,12 +378,14 @@ test('Perbaiki header: kolom yang bergeser disusun ulang bersama datanya (cadang
   assert.deepEqual(JSON.parse(JSON.stringify(g.run('Setup_perbaikiHeader_()'))), ['Semua header sudah cocok']);
 });
 
-test('harga otomatis: baris Harga dari sumber tiruan, gagal tercatat, jadwal 6 jam satu saja, harga manual tidak ditimpa', () => {
+test('harga otomatis: baris Harga dari sumber tiruan, gagal tercatat, jadwal 3 jam satu saja (plus padatkan mingguan), harga manual tidak ditimpa', () => {
   const g = boot(); const jadwal = []; const diminta = [];
   g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
   g.ctx.ScriptApp = { getOAuthToken: () => 'tok', getProjectTriggers: () => jadwal.slice(), deleteTrigger() { jadwal.length = 0; },
-    newTrigger(f) { const t = { f, getHandlerFunction: () => f, timeBased: () => t, everyHours: (h) => { t.h = h; return t; }, create: () => { jadwal.push(t); return t; } }; return t; } };
+    WeekDay: { SUNDAY: 'SUNDAY' },
+    newTrigger(f) { const t = { f, getHandlerFunction: () => f, timeBased: () => t, everyHours: (h) => { t.h = h; return t; }, onWeekDay: () => t, atHour: () => t, inTimezone: () => t, create: () => { jadwal.push(t); return t; } }; return t; } };
   const jawab = (u) => {
+    if (/llama/.test(u)) return null;
     if (/coingecko/.test(u)) return JSON.stringify({ bitcoin: { usd: 60000 }, 'pax-gold': { usd: 3650 }, 'tether-gold': { usd: 3652 }, ethereum: { usd: 1668 }, tether: { usd: 1 } });
     if (/er-api/.test(u)) return JSON.stringify({ result: 'success', rates: { IDR: 16250 } });
     if (/gold-api/.test(u)) return JSON.stringify({ price: /XAU/.test(u) ? 3650 : 43.23 });
@@ -392,14 +395,14 @@ test('harga otomatis: baris Harga dari sumber tiruan, gagal tercatat, jadwal 6 j
   g.ctx.UrlFetchApp = { fetchAll: (reqs) => reqs.map((r) => { diminta.push(r.url); const t = jawab(r.url); return { getResponseCode: () => (t ? 200 : 500), getContentText: () => t }; }) };
   g.run('setupHartafolio()');
   g.run('hargaNyalakan()'); g.run('hargaNyalakan()');
-  assert.equal(jadwal.length, 1); assert.equal(jadwal[0].f, 'hargaOtomatis'); assert.equal(jadwal[0].h, 6);
+  assert.equal(jadwal.length, 2); assert.equal(jadwal[0].f, 'hargaOtomatis'); assert.equal(jadwal[0].h, 3); assert.equal(jadwal[1].f, 'hargaPadatkan');
   const h = g.run('apiState()').harga.terakhir;
   assert.equal(h['AS-BTC'].harga, 60000); assert.equal(h['AS-BTC'].mata_uang, 'USD');
   assert.equal(h['AS-BBCA'].harga, 600000);
   assert.equal(h['AS-USD'].harga, 16250);
   assert.ok(Math.abs(h['AS-EMAS'].harga - 3650 * 16250 / 31.1035) < 1e-6);
   assert.equal(h['AS-BBRI'], undefined); // gagal: tidak jadi harga
-  const p = g.run('apiState()').pengaturan; assert.equal(p.harga_aktif, 'ya'); assert.match(p.harga_terakhir, /\(3 gagal\)/);
+  const p = g.run('apiState()').pengaturan; assert.equal(p.harga_aktif, 'ya'); assert.match(p.harga_terakhir, /\(3 gagal\)/); assert.match(p.harga_terakhir, /llama: HTTP 500/);
   // aset manual dengan harga yang diisi tidak ikut diambil dan tidak tertimpa
   g.run("apiAsetTambah({ nama: 'Emas perhiasan', kelas: 'Emas', satuan: 'gram', harga: '1.900.000' })");
   const sebelum = diminta.length; g.run('hargaSekarang()');
@@ -451,4 +454,56 @@ test('Kelola aset di server: katalog BNB, harga manual vs otomatis, sembunyikan/
   assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1); // baris tidak hilang
   g.run("apiAsetKatalogTambah('AS-ANTM')"); assert.equal(aset('AS-ANTM').status, 'aktif'); assert.equal(ST().aset.filter((a) => a.aset_id === 'AS-ANTM').length, 1);
   assert.throws(() => g.run("apiAsetStatus('AS-ANTM', 'bakar')"), /Aksi tidak dikenal/);
+});
+
+function bootHarga(jawab) {
+  const g = boot(); const diminta = [];
+  g.ctx.SpreadsheetApp.getUi = () => ({ alert() {} });
+  g.ctx.ScriptApp = { getOAuthToken: () => 'tok', getProjectTriggers: () => [], deleteTrigger() {} };
+  g.ctx.UrlFetchApp = { fetchAll: (reqs) => reqs.map((r) => { diminta.push(r.url); const t = jawab(r.url); return { getResponseCode: () => (t === null ? 429 : 200), getContentText: () => t }; }) };
+  g.run('setupHartafolio()');
+  return { g, diminta };
+}
+const COIN = JSON.stringify({ bitcoin: { usd: 60000 }, 'pax-gold': { usd: 3650 }, 'tether-gold': { usd: 3652 }, ethereum: { usd: 1668 }, tether: { usd: 1 } });
+const LLAMA = JSON.stringify({ coins: { 'coingecko:bitcoin': { price: 59000 }, 'coingecko:pax-gold': { price: 3640 }, 'coingecko:tether-gold': { price: 3641 }, 'coingecko:ethereum': { price: 1660 }, 'coingecko:tether': { price: 1 } } });
+const LAIN = (u) => /er-api/.test(u) ? JSON.stringify({ result: 'success', rates: { IDR: 16250 } }) : /gold-api/.test(u) ? JSON.stringify({ price: 3650 }) : /BBCA|BBRI|ANTM|GFI/.test(u) ? JSON.stringify({ chart: { result: [{ meta: { currency: /GFI/.test(u) ? 'USD' : 'IDR', regularMarketPrice: 100 } }] } }) : null;
+
+test('harga crypto: CoinGecko gagal (429) lalu cadangan llama dipakai; kode HTTP tercatat di Pengaturan', () => {
+  const { g } = bootHarga((u) => /llama/.test(u) ? LLAMA : /coingecko/.test(u) ? null : LAIN(u));
+  const r = JSON.parse(JSON.stringify(g.run('hargaSekarang()')));
+  assert.equal(r.gagal, 0);
+  const h = g.run('apiState()').harga.terakhir; assert.equal(h['AS-BTC'].harga, 59000); assert.equal(h['AS-BTC'].sumber, 'coingecko');
+  assert.match(g.run('apiState()').pengaturan.harga_terakhir, /coingecko: HTTP 429/);
+});
+
+test('harga: yang sama tidak ditulis ulang di hari yang sama, gagal tidak ditulis, tab dipadatkan, jendela baca ekor tetap menemukan harga lama', () => {
+  const { g } = bootHarga((u) => /llama/.test(u) ? null : /coingecko/.test(u) ? COIN : LAIN(u));
+  g.run('hargaSekarang()'); const n1 = g.sheets.Harga.getLastRow();
+  g.run('hargaSekarang()'); assert.equal(g.sheets.Harga.getLastRow(), n1); // harga sama: tidak menambah baris
+  assert.ok(JSON.parse(JSON.stringify(g.run(`Repo_read_('Harga')`))).every((x) => x.status !== 'gagal'));
+  // baris lama menumpuk lalu dipadatkan: satu per aset per hari, baris manual dan baris baru utuh
+  const lama = []; for (let i = 0; i < 6; i++) lama.push({ waktu: '2026-10-01 0' + i + ':00', aset_id: 'AS-BTC', harga: 50000 + i, mata_uang: 'USD', sumber: 'coingecko', status: 'ok' });
+  lama.push({ waktu: '2026-10-02 01:00', aset_id: 'AS-ETH', harga: 1, mata_uang: 'IDR', sumber: 'manual', status: 'manual' });
+  g.ctx.__lama = lama; g.run(`Repo_append_('Harga', __lama)`);
+  const sebelum = g.sheets.Harga.getLastRow() - 1;
+  const r = JSON.parse(JSON.stringify(g.run('Harga_padatkan_()')));
+  assert.equal(r.sebelum, sebelum); assert.equal(r.sesudah, sebelum - 5);
+  const rows = JSON.parse(JSON.stringify(g.run(`Repo_read_('Harga')`)));
+  assert.equal(rows.filter((x) => x.waktu.startsWith('2026-10-01') && x.aset_id === 'AS-BTC').length, 1);
+  assert.ok(rows.some((x) => x.status === 'manual'));
+  assert.equal(g.sheets.Harga.getLastRow() - 1, rows.length); // sisa baris dikosongkan
+  // jendela baca kecil: harga terbaru ada di ekor, harga lama (di luar jendela) tetap ditemukan lewat pembacaan sisa
+  g.run('HARGA_BACA = 3');
+  const t = g.run('apiState()').harga.terakhir; assert.ok(t['AS-BTC'] && t['AS-ETH'] && t['AS-EMAS']);
+});
+
+test('Dolar AS: harga manual juga ditulis di seri USDIDR (kurs seluruh aplikasi); terkunci manual, kurs tidak diambil dan emas memakai kurs itu', () => {
+  const { g, diminta } = bootHarga((u) => /llama/.test(u) ? null : /coingecko/.test(u) ? COIN : LAIN(u));
+  g.run('hargaSekarang()');
+  g.run("apiAsetUbah('AS-USD', { nama: 'Dolar AS', otomatis: false, harga: '18.250' })");
+  let hg = g.run('apiState()').harga; assert.equal(hg.kursSeries[hg.kursSeries.length - 1].harga, 18250);
+  diminta.length = 0; g.run('hargaSekarang()');
+  assert.ok(!diminta.some((u) => /er-api/.test(u)));
+  hg = g.run('apiState()').harga; assert.equal(hg.kursSeries[hg.kursSeries.length - 1].harga, 18250);
+  assert.ok(Math.abs(hg.terakhir['AS-EMAS'].harga - 3650 * 18250 / 31.1035) < 1e-6);
 });

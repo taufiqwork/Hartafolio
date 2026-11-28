@@ -223,3 +223,13 @@ test('Ubah Pindah dengan biaya: keadaan awal membawa biaya dalam satuan aset dan
   const rows = c.HF.catatCtx.toRows(v, ctx, {}).rows;
   assert.equal(rows.length, 1); assert.equal(rows[0].biaya, 0.02); assert.equal(rows[0].jumlah, 2); assert.equal(rows[0].lokasi_tujuan_id, 'LK-002');
 });
+
+test('Ubah: kurs diganti mengubah kurs_waktu ke jam perubahan; kurs tidak disentuh mempertahankan kurs lama', () => {
+  const { c } = real();
+  const lama = { kurs: 16250, kurs_sumber: 'otomatis', kurs_tanggal: '2026-11-20', kurs_waktu: '09:05' };
+  const sama = c.HF.catatCtx.kursUbah({ kurs: 16250, kurs_sumber: 'manual', kurs_tanggal: '2026-11-22', kurs_waktu: '11:00' }, lama, { hh: 14, mm: 7 });
+  assert.deepEqual([sama.kurs_sumber, sama.kurs_tanggal, sama.kurs_waktu], ['otomatis', '2026-11-20', '09:05']);
+  const beda = c.HF.catatCtx.kursUbah({ kurs: 16300, kurs_sumber: 'manual', kurs_tanggal: '2026-11-22', kurs_waktu: '11:00' }, lama, { hh: 14, mm: 7 });
+  assert.equal(beda.kurs_waktu, '14:07');
+  assert.equal(beda.kurs_sumber, 'manual');
+});

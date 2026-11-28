@@ -42,7 +42,12 @@ function apiAsetUbah(id, d) {
       patch.kunci_manual = true;
       var ada = Repo_prices_().terakhir[id];
       if (!(harga > 0) && !(ada && ada.harga > 0)) throw new Error('Isi harga per ' + a.satuan + '.');
-      if (harga > 0) Repo_append_('Harga', [{ waktu: Master_now_(), aset_id: id, harga: harga, mata_uang: K.mataManual(a), sumber: 'manual', status: 'manual' }]);
+      if (harga > 0) {
+        var w = Master_now_(), baris = [{ waktu: w, aset_id: id, harga: harga, mata_uang: K.mataManual(a), sumber: 'manual', status: 'manual' }];
+        // Dolar AS: kurs yang dipakai seluruh aplikasi dibaca dari seri USDIDR, jadi harga manual ikut ditulis di sana.
+        if (a.sumber_harga === 'kurs') baris.push({ waktu: w, aset_id: HF.catalog.KURS_ID, harga: harga, mata_uang: 'IDR', sumber: 'manual', status: 'manual' });
+        Repo_append_('Harga', baris);
+      }
     }
     if (Object.keys(patch).length) Repo_update_('Aset', id, patch);
     return AsetKelola_cari_(id);
