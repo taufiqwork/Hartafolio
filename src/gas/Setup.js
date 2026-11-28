@@ -14,6 +14,10 @@ function onOpen() {
     .addItem('Nyalakan cadangan mingguan', 'cadanganNyalakan')
     .addItem('Matikan cadangan mingguan', 'cadanganMatikan')
     .addItem('Cadangkan sekarang', 'cadanganSekarang')
+    .addSeparator()
+    .addItem('Nyalakan harga otomatis', 'hargaNyalakan')
+    .addItem('Matikan harga otomatis', 'hargaMatikan')
+    .addItem('Perbarui harga sekarang', 'hargaSekarang')
     .addToUi();
 }
 

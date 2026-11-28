@@ -297,3 +297,10 @@
 - **Belum:** tombol Kelola belum membuka apa pun (layar Kelola aset, boards 14-Aset*, belum dibangun). Tautan "Catat saldo awal" membuka Catat biasa, bukan layar Saldo awal langsung.
 - **Belum diverifikasi di Google:** Aset dari Sheet sungguhan.
 
+
+## 28 Nov 2026 · Harga otomatis (dasar untuk Kelola aset)
+- `src/engine/harga-fetch.js` (murni, diuji): rencana pengambilan, pengurai jawaban, dan penyusun baris tab Harga. Sumber gratis tanpa kunci: CoinGecko (crypto, PAXG, XAUT; USD), gold-api.com (emas dan perak spot; USD per oz dikali kurs, per gram), Yahoo Finance (saham IDX per lembar dikali 100 untuk satuan lot; GFI dalam USD), open.er-api.com (kurs, baris USDIDR). **Emas dan perak adalah harga spot dunia, bukan harga jual toko emas**; sumber ini belum dikonfirmasi klien.
+- `src/gas/Harga.js`: `hargaOtomatis` (jadwal tiap 6 jam), menu Nyalakan, Matikan, Perbarui harga sekarang. Aset bersumber manual, bertanda `kunci_manual`, atau berstatus bukan aktif tidak diambil. Yang gagal ditulis berstatus `gagal`; pembaca harga mengabaikannya sehingga harga terakhir yang baik tetap dipakai. Catatan di Pengaturan: `harga_aktif`, `harga_terakhir`.
+- Manifest: izin baru `script.external_request`. **Pemilik harus menyetujui ulang sekali**, lalu menjalankan Hartafolio › Nyalakan harga otomatis.
+- Uji: `tests/harga-fetch.test.js` (5), kasus baru di `tests/gas.test.js`. Belum diuji di Google sungguhan.
+- Tab Harga bertambah sekitar 13 baris tiap 6 jam; belum ada pemangkasan (dicatat sebagai pekerjaan berikutnya).
