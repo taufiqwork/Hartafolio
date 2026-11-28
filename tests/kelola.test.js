@@ -26,7 +26,10 @@ test('fromState: dimiliki, terjual habis, belum dimiliki, harga otomatis dalam R
   assert.equal(paxg.own, true); assert.equal(paxg.auto, true); assert.equal(paxg.b, 'Rp 59.312.500'); assert.equal(K.sub(paxg), 'per token · otomatis');
   const eth = by(d, 'AS-ETH');
   assert.equal(eth.own, false); assert.equal(eth.sold, 'terjual habis Agu 2026'); assert.equal(eth.n, 2); assert.equal(K.sub(eth), 'per ETH · otomatis · terjual habis Agu 2026');
-  const btc = by(d, 'AS-BTC'); assert.equal(btc.n, 0); assert.equal(K.sub(btc), 'per BTC · otomatis · belum dimiliki'); assert.equal(btc.perlu, true); assert.equal(btc.b, 'Perlu diisi');
+  const btc = by(d, 'AS-BTC'); assert.equal(btc.n, 0); assert.equal(K.sub(btc), 'per BTC · otomatis · belum dimiliki'); assert.equal(btc.perlu, false); assert.equal(btc.b, ''); // belum dimiliki: tidak perlu harga
+  const s2 = state(); s2.transaksi.push(T({ trx_id: 'Q', jenis: 'Saldo awal', tanggal: '2026-10-01', aset_id: 'AS-BTC', jumlah: 1 }));
+  const btc2 = by(K.fromState(s2), 'AS-BTC'); assert.equal(btc2.perlu, true); assert.equal(btc2.b, 'Perlu diisi'); // dimiliki tanpa harga
+  assert.equal(by(d, 'AS-USD').b, 'Rp 16.250'); assert.equal(K.sub(by(d, 'AS-USD')), 'Dolar AS · otomatis · belum dimiliki');
   const x1 = by(d, 'AS-X1'); assert.equal(K.sub(x1), 'per gram · diisi 2 Nov · belum dimiliki'); assert.equal(x1.b, 'Rp 1.900.000');
   assert.equal(by(d, 'AS-IDR').perlu, false);
 });
@@ -60,7 +63,8 @@ test('tersembunyi dan dihapus keluar dari daftar; katalog menawarkan yang belum 
 });
 
 test('list: kelompok per jenis, "Lainnya" memuat jumlah tersembunyi, pemberitahuan harga untuk aset yang perlu diisi', () => {
-  const d = K.fromState(state()), l = K.list(d);
+  const s0 = state(); s0.transaksi.push(T({ trx_id: 'Q', jenis: 'Saldo awal', tanggal: '2026-10-01', aset_id: 'AS-BTC', jumlah: 1 }));
+  const d = K.fromState(s0), l = K.list(d);
   assert.equal(l.groups[l.groups.length - 1].t, 'Lainnya'); assert.equal(l.groups[l.groups.length - 1].rows[0].b, '0');
   assert.ok(l.need > 0);
   assert.ok(l.groups.find((g) => g.t === 'Crypto').rows.some((r) => r.bad));
@@ -74,4 +78,37 @@ test('cekUbah dan namaSimpan: nama kosong, manual tanpa harga, otomatis tanpa su
   assert.equal(K.cekUbah(Object.assign({}, r, { punyaHarga: true }), { nama: 'A', otomatis: false, harga: '' }), '');
   assert.equal(K.namaSimpan({ id: 'AS-EMAS', a: 'Emas fisik', nama: 'Emas' }, 'Emas Antam fisik'), 'Emas Antam');
   assert.equal(K.namaSimpan({ id: 'AS-X1', a: 'Emas perhiasan', nama: 'Emas perhiasan' }, 'Perhiasan'), 'Perhiasan');
+});
+
+test('patch: ubah, sembunyikan, tampilkan, hapus, katalog, manual mengubah salinan, bukan data asli', () => {
+  const d = K.fromState(state()), ix = (id) => d.A.findIndex((r) => r.id === id), jumlah = d.A.length;
+  const u = K.patch(d, 'ubah', { i: ix('AS-PAXG'), nama: 'PAXG', otomatis: false, harga: '3.700.000' }, '2026-11-28');
+  assert.equal(u.A[ix('AS-PAXG')].auto, false); assert.equal(u.A[ix('AS-PAXG')].b, 'Rp 3.700.000'); assert.equal(u.A[ix('AS-PAXG')].diisi, 'diisi 28 Nov');
+  assert.equal(d.A[ix('AS-PAXG')].auto, true); // asli utuh
+  const s = K.patch(d, 'sembunyikan', { i: ix('AS-ETH') });
+  assert.equal(s.A.length, jumlah - 1); assert.equal(s.HID[0].hidNote, 'Terjual habis Agu 2026 · 2 transaksi');
+  const t = K.patch(s, 'tampilkan', { i: 0 }); assert.equal(t.A.length, jumlah); assert.equal(t.HID.length, 0);
+  assert.equal(K.patch(d, 'hapus', { i: ix('AS-ANTM') }).A.length, jumlah - 1);
+  const k = K.patch(d, 'katalog', { id: 'AS-BNB' }); assert.equal(k.A.length, jumlah + 1); assert.ok(!k.KAT.some((x) => x.id === 'AS-BNB'));
+  const m = K.patch(d, 'manual', { nama: 'Emas perhiasan', kelas: 'Emas', satuan: 'gram', harga: '1.900.000' }, '2026-11-28');
+  assert.equal(m.A[m.A.length - 1].b, 'Rp 1.900.000');
+});
+
+test('sheet: ubah (otomatis/manual), hapus tiga jalur, tersembunyi, tambah dan saldo', () => {
+  const g = require('../src/demo/kelola-demo.js') && globalThis.HF.kelolaDemo.get('ubah-otomatis'), d = g.data;
+  let S = K.sheet(d, g.ui); assert.equal(S.title, 'Ubah BTC'); assert.equal(S.fields2[0].l, 'Harga otomatis sekarang'); assert.equal(S.fields2[0].v, 'Rp 1.452.000.000 per BTC'); assert.equal(S.optDef, 0);
+  S = K.sheet(d, Object.assign({}, g.ui, { opt: 1 })); assert.equal(S.fields2[0].l, 'Harga manual per BTC (Rp)'); assert.equal(S.fields2[0].v, '1.452.000.000');
+  const h = (n) => K.sheet(d, { sheet: 'hapus', sel: d.A.findIndex((r) => r.a === n) });
+  assert.equal(h('PAXG').title, 'PAXG belum bisa dihapus'); assert.deepEqual(h('PAXG').lines[0], ['Saldo', '0,74 token · 4 anggota']);
+  assert.equal(h('ETH').primary.l, 'Sembunyikan dari daftar'); assert.equal(h('SOL').title, 'Hapus SOL?'); assert.equal(h('SOL').primary.danger, true);
+  const gf = K.sheet(d, { sheet: 'ubah', sel: d.A.findIndex((r) => r.a === 'GFI') }); assert.equal(gf.primary.l, 'Simpan harga'); assert.equal(gf.fields2[0].l, 'Harga manual per lembar (US$)');
+  assert.equal(K.sheet(d, { sheet: 'tersembunyi', hid: 1 }).primary.l, 'Tampilkan Emas UBS lagi');
+  assert.equal(K.sheet(d, { sheet: 'tambah', pk: 'Saham' }).picker.items.map((x) => x.n).join(), 'ANTM,TLKM');
+});
+
+test('urutan jenis dari nilai terbesar (aturan proyek), bukan urutan tetap', () => {
+  const s = state(); s.transaksi.push(T({ trx_id: 'Z', jenis: 'Saldo awal', tanggal: '2026-09-01', aset_id: 'AS-X1', jumlah: 1000 })); // emas perhiasan 1000 g x 1,9 jt
+  const d = K.fromState(s); assert.equal(d.order[0], 'Emas');
+  s.transaksi.push(T({ trx_id: 'Y', jenis: 'Saldo awal', tanggal: '2026-09-01', aset_id: 'AS-IDR', jumlah: 5e10 }));
+  assert.equal(K.fromState(s).order[0], 'Mata uang');
 });

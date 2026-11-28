@@ -126,3 +126,16 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 - [ ] Tanpa `?demo`: total Aset = total Beranda untuk aset yang punya harga; aset tanpa harga tidak ditampilkan dan memberi titik merah di Kelola.
 - [ ] Toast "tersimpan" setelah Catat dari tab Aset tampil di Aset. BELUM TERVERIFIKASI di Google sungguhan.
 
+
+## Kelola aset
+- [ ] `npm run pixel`: 14-Aset (17 board) dan 14-Aset@buka-ubah, @buka-tambah, @ke-hapus, @pilih-manual, @nanti-saja, @simpan-harga-hasil lulus.
+- [ ] Tanpa `?demo`: Ubah ke Manual lalu Simpan menaruh baris Harga berstatus manual dan mengunci aset; Ubah kembali ke Otomatis mematikan kunci.
+- [ ] Aset yang dimiliki tidak bisa dihapus atau disembunyikan; yang terjual habis hanya bisa disembunyikan; yang tidak punya riwayat bisa dihapus. Hapus tidak menghilangkan baris di Sheet.
+- [ ] Tampilkan lagi memunculkan aset di daftar, Catat, dan Aset. Tambah dari katalog dua kali ditolak; menambah ulang aset yang dihapus tidak membuat baris ganda.
+- [ ] Penolakan server mengembalikan daftar ke keadaan sebelumnya dengan pesan.
+- [ ] BELUM TERVERIFIKASI di Google sungguhan: semua tulis ke Sheet dari layar ini.
+
+## Harga otomatis
+- [ ] `npm test`: `tests/harga-fetch.test.js` dan kasus harga di `tests/gas.test.js` lulus.
+- [ ] Aset manual atau `kunci_manual` tidak pernah ditimpa pengambilan otomatis; yang gagal berstatus `gagal` dan harga terakhir yang baik tetap dipakai.
+- [ ] BELUM TERVERIFIKASI di Google sungguhan: izin `script.external_request`, menu Nyalakan harga otomatis, jadwal 6 jam, tiap sumber (CoinGecko, gold-api, Yahoo, open.er-api).

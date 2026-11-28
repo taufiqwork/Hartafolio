@@ -47,7 +47,7 @@ Dokumen serah-terima antar sesi. Baca ini dulu, lalu `CLAUDE.md`, `docs/ARCHITEC
 4. Tiap layar: bandingkan dengan board mockup (state kosong, error, sheet, toast ikut), jalankan `npm test`, catat di CHANGELOG, commit.
 
 ## Belum ada di kode (jadwal tahap berikutnya)
-Trigger harga terjadwal dan sumber harga (CoinGecko, logam, saham, kurs), trigger snapshot bulanan, Riwayat_Nilai, laporan, import/export template, tablet/desktop, uji salin ke 2–3 akun, panduan setup dan video.
+Harga terkini (11-Harga, layar tampilan harga; pengambilan harganya sudah ada sejak 28 Nov), trigger snapshot bulanan, Riwayat_Nilai, laporan, import/export template, tablet/desktop, uji salin ke 2–3 akun, panduan setup dan video.
 
 ## Urusan sesi desain (bukan tugas build; laporkan ke Ticon bila ketemu)
 - DATA_MODEL.md masih menulis 5 kelas aset dan kolom v1 di beberapa tempat.

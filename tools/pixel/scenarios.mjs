@@ -113,6 +113,21 @@ export const asetFrames = [
   ASF('pilih-lokasi', `document.querySelectorAll('.hf-select-opt')[1].click();`, [0, 150, 400], 'lokasi', '03-Aset-2b-Lokasi-Menu')
 ];
 export const aset = [AS('', 'default'), AS('-2a-Satu-Anggota', 'satu'), AS('-2b-Lokasi-Menu', 'lokasi'), AS('-2c-Kosong', 'kosong'), AS('-2d-Tersimpan', 'tersimpan')];
+
+// Kelola aset (?demo=<keadaan>#/kelola: data contoh src/demo/kelola-demo.js; keadaan = prop `mulai` board 14-Aset*).
+const KE = (id, mulai) => ({ id: '14-Aset' + id, board: '14-Aset' + id, query: 'demo=' + mulai, hash: '#/kelola' });
+export const kelola = [KE('', 'default'), KE('-2a-Ubah-Otomatis', 'ubah-otomatis'), KE('-2b-Ubah-Manual', 'ubah-manual'), KE('-2c-Isi-Harga', 'isi-harga'), KE('-2d-Harga-Tersimpan', 'harga-tersimpan'),
+  KE('-2e-Tambah-Aset', 'tambah'), KE('-2f-Tambah-Manual', 'tambah-manual'), KE('-2g-Tanya-Saldo-Awal', 'tanya-saldo'), KE('-2h-Dari-Lainnya', 'dari-lainnya'), KE('-2i-Isi-Harga-Dari-Beranda', 'isi-harga-beranda'),
+  KE('-2j-Hapus-Ditolak', 'hapus-ditolak'), KE('-2k-Hapus-Konfirmasi', 'hapus-konfirmasi'), KE('-2l-Sembunyikan', 'hapus-sembunyikan'), KE('-2m-Aset-Tersembunyi', 'tersembunyi'),
+  KE('-2n-Ditampilkan-Lagi', 'ditampilkan'), KE('-2o-Tambah-Emas-Digital', 'tambah-digital'), KE('-2p-Saldo-Tersimpan', 'saldo-tersimpan')];
+const KEF = (id, act, at, mulai, board) => ({ id: '14-Aset@' + id, board: board || '14-Aset', query: 'demo=' + (mulai || 'default'), hash: '#/kelola', frames: { act, at } });
+// Hasil Simpan harga = board 2d (harga tersimpan); board 2c sendiri tidak menggambar hasil klik (daftarnya tidak berubah).
+export const kelolaAksi = [{ id: '14-Aset@simpan-harga-hasil', board: '14-Aset-2d-Harga-Tersimpan', query: 'demo=isi-harga', hash: '#/kelola', js: KLIK('Simpan harga') + `await new Promise(r=>setTimeout(r,700));` }];
+export const kelolaFrames = [
+  KEF('buka-ubah', KLIKI('per BTC'), [0, 100, 250, 450]), KEF('buka-tambah', KLIK('Tambah aset'), [0, 100, 250, 450]),
+  KEF('ke-hapus', KLIK('Hapus aset'), [0, 120, 300], 'ubah-otomatis', '14-Aset-2a-Ubah-Otomatis'),
+  KEF('pilih-manual', KLIKI('Anda isi sendiri'), [0, 150, 400], 'ubah-otomatis', '14-Aset-2a-Ubah-Otomatis'),
+  KEF('nanti-saja', KLIK('Nanti saja'), [0, 100, 300, 600], 'tanya-saldo', '14-Aset-2g-Tanya-Saldo-Awal')];
 export const scenarios = [
   { id: '00-Splash', board: '00-Splash', hold: true },
   { id: '01-Setup-1-Akun', board: '01-Setup-1-Akun', seed: seed(), step: 1 },
@@ -175,5 +190,5 @@ export const scenarios = [
   { id: 'Main-2q-Zakat-Dan-Piutang', board: 'Main-2q-Zakat-Dan-Piutang', query: 'demo=zakat-dan-piutang' },
   { id: 'Main-2r-Perhatian-Zakat-Piutang', board: 'Main-2r-Perhatian-Zakat-Piutang', query: 'demo=perhatian-zakat-piutang' },
   { id: 'Main@buka-lonceng', board: 'Main', query: 'demo', frames: { act: `document.querySelector('.hf-iconbtn').click();`, at: [0, 100, 250, 450] } }
-  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames, ...riwayat, ...riwayatFrames, ...aset, ...asetFrames
+  ,...catatScenarios, ...catatScroll, ...catatActions, ...catatBukti, ...catatLengkap, ...catatAngka, ...catatAsetAngka, ...catatPajakGulir, ...berandaFoto, ...catatFrames, ...riwayat, ...riwayatFrames, ...aset, ...asetFrames, ...kelola, ...kelolaFrames, ...kelolaAksi
 ];

@@ -31,6 +31,7 @@
   function dupe(rows, nama, skip, key) {
     return rows.some(function (r) { return r.aktif !== false && r[key] !== skip && r.nama.toLowerCase() === nama.toLowerCase(); }); // sama seperti Master.js: yang sudah dihapus (aktif tidak) tidak dihitung
   }
+  function K_num(x) { return root.HF.kelola ? root.HF.kelola.num(x) : Number(x) || 0; }
   function fail(msg) { return Promise.reject(new Error(msg)); }
 
   var dev = {
@@ -112,8 +113,10 @@
       var s = load(); s.aset = s.aset || (root.HF.catalog ? root.HF.catalog.all() : []);
       var nama = clean(d.nama); if (!nama) return fail('Nama aset wajib diisi.');
       if (s.aset.some(function (a) { return a.nama.toLowerCase() === nama.toLowerCase(); })) return fail('Sudah ada aset bernama "' + nama + '".');
-      var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', status: 'aktif' };
-      s.aset.push(a); save(); return Promise.resolve(a);
+      var a = { aset_id: id('AS', s.aset, 'aset_id'), simbol: nama, nama: nama, kelas: d.kelas, bentuk: 'Fisik', satuan: d.satuan, gram_per_unit: null, mata_uang_harga: 'IDR', sumber_harga: 'manual', kunci_manual: true, status: 'aktif' };
+      s.aset.push(a); s.harga = s.harga || { terakhir: {}, kursSeries: [] };
+      if (K_num(d.harga) > 0) s.harga.terakhir[a.aset_id] = { harga: K_num(d.harga), mata_uang: 'IDR', sumber: 'manual', status: 'manual', waktu: dev.stamp() };
+      save(); return Promise.resolve(a);
     },
     /* Kelola aset: aturan sama dengan src/gas/AsetKelola.js lewat HF.kelola (cekStatus, mataManual, namaSimpan). */
     asetCari: function (aid) { var s = load(); s.aset = s.aset || root.HF.catalog.all(); return { s: s, a: s.aset.filter(function (x) { return x.aset_id === aid; })[0] }; },
