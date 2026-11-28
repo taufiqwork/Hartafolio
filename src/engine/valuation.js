@@ -8,7 +8,7 @@
 
   function hargaIdr(aset, prices, kursUsd) {
     if (aset.sumber_harga === 'tetap') return 1;
-    if (aset.sumber_harga === 'kurs') return kursUsd || 0;
+    if (aset.sumber_harga === 'kurs' && (aset.kode_sumber || 'USD') === 'USD') return kursUsd || 0; // Dolar AS = kurs aplikasi; mata uang lain memakai harga barisnya sendiri
     var p = prices && prices[aset.aset_id];
     if (!p || !(p.harga >= 0)) return null; // belum ada harga
     if (p.mata_uang === 'USD' || p.mata_uang === 'USDT') return p.harga * (kursUsd || 0);

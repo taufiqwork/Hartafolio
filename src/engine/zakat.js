@@ -12,6 +12,13 @@
   var C = (root.HF && root.HF.catalog) || require('./catalog.js');
   var LOGAM = ['emas', 'perak'];
 
+  /** Kategori zakat aset pada tanggal tertentu. Jenis diubah di Ubah: sebelum jenis_berlaku memakai kategori_zakat_lama, sesudahnya yang baru. */
+  function kategoriPada(a, tgl) {
+    var baru = a.kategori_zakat || C.zakatKategori(a);
+    if (a.jenis_berlaku && tgl < a.jenis_berlaku) return a.kategori_zakat_lama || '';
+    return baru;
+  }
+
   function setting(p, k, d) { var v = p && p[k]; return v === undefined || v === '' || v === null ? d : Number(v); }
 
   /**
@@ -32,9 +39,24 @@
           L.effects(t).forEach(function (e) {
             var a = asetMap[e.aset_id];
             if (!a || e.anggota_id !== m.anggota_id) return;
-            if ((a.kategori_zakat || C.zakatKategori(a)) !== logam) return;
+            if (kategoriPada(a, t.tanggal) !== logam) return;
             ev.push({ tgl: t.tanggal, gram: e.delta * C.gramPerUnit(a), fisik: a.bentuk === 'Fisik' });
           });
+        });
+        // Jenis aset diubah: pada jenis_berlaku seluruh saldo aset itu pindah dari kategori lama ke yang baru (zakat yang sudah dibayar tidak disentuh).
+        o.aset.forEach(function (a) {
+          if (!a.jenis_berlaku) return;
+          var lama = a.kategori_zakat_lama || '', baru = a.kategori_zakat || C.zakatKategori(a);
+          if (lama === baru || (lama !== logam && baru !== logam)) return;
+          var bal = 0;
+          active.forEach(function (t) {
+            if (t.tanggal >= a.jenis_berlaku) return;
+            L.effects(t).forEach(function (e) { if (e.aset_id === a.aset_id && e.anggota_id === m.anggota_id) bal += e.delta; });
+          });
+          if (!bal) return;
+          var g = bal * C.gramPerUnit(a), fisik = a.bentuk === 'Fisik';
+          if (lama === logam) ev.push({ tgl: a.jenis_berlaku, gram: -g, fisik: fisik });
+          if (baru === logam) ev.push({ tgl: a.jenis_berlaku, gram: g, fisik: fisik });
         });
         var pays = (o.bayar || []).filter(function (b) { return b.status !== 'dihapus' && b.anggota_id === m.anggota_id && b.logam === logam; });
         var dates = {};
@@ -89,7 +111,7 @@
     return rows;
   }
 
-  var api = { hitung: hitung, LOGAM: LOGAM };
+  var api = { hitung: hitung, kategoriPada: kategoriPada, LOGAM: LOGAM };
   root.HF = root.HF || {};
   root.HF.zakat = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

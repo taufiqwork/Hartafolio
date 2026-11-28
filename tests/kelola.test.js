@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 global.HF = {};
-['format', 'schema', 'catalog', 'ledger', 'valuation', 'piutang', 'zakat', 'beranda', 'kelola'].forEach((f) => require('../src/engine/' + f + '.js'));
+['format', 'schema', 'catalog', 'populer', 'ledger', 'valuation', 'piutang', 'zakat', 'beranda', 'kelola'].forEach((f) => require('../src/engine/' + f + '.js'));
 const K = globalThis.HF.kelola, C = globalThis.HF.catalog;
 
 const T = (o) => Object.assign({ status: 'aktif', anggota_id: 'PM-001', lokasi_id: 'LK-001', jam: '09:00', sumber: 'manual' }, o);
@@ -103,7 +103,7 @@ test('sheet: ubah (otomatis/manual), hapus tiga jalur, tersembunyi, tambah dan s
   assert.equal(h('ETH').primary.l, 'Sembunyikan dari daftar'); assert.equal(h('SOL').title, 'Hapus SOL?'); assert.equal(h('SOL').primary.danger, true);
   const gf = K.sheet(d, { sheet: 'ubah', sel: d.A.findIndex((r) => r.a === 'GFI') }); assert.equal(gf.primary.l, 'Simpan harga'); assert.equal(gf.fields2[0].l, 'Harga manual per lembar (US$)');
   assert.equal(K.sheet(d, { sheet: 'tersembunyi', hid: 1 }).primary.l, 'Tampilkan Emas UBS lagi');
-  assert.equal(K.sheet(d, { sheet: 'tambah', pk: 'Saham' }).picker.items.map((x) => x.n).join(), 'ANTM,TLKM');
+  assert.equal(K.sheet(d, { sheet: 'tambah', pk: 'Saham' }).picker.sections[0].items.map((x) => x.n).join(), 'ANTM,TLKM'); // data contoh tanpa daftar populer: hanya katalog
 });
 
 test('urutan jenis dari nilai terbesar (aturan proyek), bukan urutan tetap', () => {
@@ -111,4 +111,38 @@ test('urutan jenis dari nilai terbesar (aturan proyek), bukan urutan tetap', () 
   const d = K.fromState(s); assert.equal(d.order[0], 'Emas');
   s.transaksi.push(T({ trx_id: 'Y', jenis: 'Saldo awal', tanggal: '2026-09-01', aset_id: 'AS-IDR', jumlah: 5e10 }));
   assert.equal(K.fromState(s).order[0], 'Mata uang');
+});
+
+test('picker Tambah aset (data nyata): populer per jenis tanpa yang sudah ada; pencarian menyaring, mencatat yang sudah ada, dan gagal jadi pemberitahuan', () => {
+  const d = K.fromState(state()), P = globalThis.HF.populer, ids = (x) => x.sections.reduce((a, s) => a.concat(s.items.map((i) => i.n)), []);
+  const semua = K.picker(d, { pk: 'Semua' }); assert.equal(semua.chips.join(), 'Semua,Crypto,Saham,Emas,Perak,Mata uang');
+  assert.ok(ids(semua).length >= 10 && ids(semua).length <= 40);
+  const cr = K.picker(d, { pk: 'Crypto' }); assert.equal(cr.sections[cr.sections.length - 1].t, 'Crypto populer');
+  assert.ok(!ids(cr).includes('BTC') && !ids(cr).includes('USDT') && ids(cr).includes('XRP')); // yang sudah di daftar tidak ditawarkan
+  const urut = K.picker(d, { pk: 'Crypto', urut: ['solana', 'ripple'] }).sections.find((x) => x.t === 'Crypto populer'); assert.deepEqual(urut.items.slice(0, 2).map((i) => i.n), ['SOL', 'XRP']); // urutan hidup dari nilai pasar; BNB ada di katalog, bukan di sini
+  const sa = K.picker(d, { pk: 'Saham' }), cs = sa.sections.find((s) => s.t === 'Saham populer'); assert.ok(cs.items.length > 10 && cs.items.length <= 20 && cs.items.every((i) => i.c === 'Saham'));
+  assert.equal(K.picker(d, { pk: 'Mata uang' }).sections.slice(-1)[0].items.length >= 15, true);
+  // pencarian: daftar tetap dan hasil jaringan digabung; PAXG sudah ada dan disebut di catatan
+  const hasil = [{ key: 'coingecko:kinesis-gold', n: 'KAU', f: 'Kinesis Gold · peringkat 120', c: 'Emas' }, { key: 'coingecko:pax-gold', n: 'PAXG', f: 'PAX Gold', c: 'Emas' }, { key: 'coingecko:goldfish-gold', n: 'GGBR', f: 'Goldfish Gold', c: 'Crypto' }];
+  const p = K.picker(d, { q: 'gold', pk: 'Semua', hasil: hasil }); assert.equal(p.sections[0].t, 'Hasil pencarian · harga otomatis');
+  assert.deepEqual(p.sections[0].items.map((i) => i.n).sort(), ['GGBR', 'KAU', 'XAUM']); // PAXG disembunyikan: sudah ada; XAUM dari daftar tetap, KAU dari jaringan
+  assert.match(p.note, /sudah ada di daftar/);
+  assert.deepEqual(K.picker(d, { q: 'gold', pk: 'Crypto', hasil: hasil }).sections[0].items.map((i) => i.n), ['GGBR']);
+  const g = K.picker(d, { q: 'pepe', pk: 'Crypto', cariGagal: true }); assert.equal(g.sections.length, 0); assert.match(g.notice.t, /belum tersambung/); assert.equal(g.notice.act, 'Coba lagi');
+  assert.equal(K.picker(d, { q: 'pepe', pk: 'Crypto', cariGagal: true, hasil: [{ key: 'coingecko:pepe', n: 'PEPE', f: 'Pepe', c: 'Crypto' }] }).notice, null);
+  assert.ok(P.TANGGAL);
+});
+
+test('Ubah token crypto: Jenis aset (Crypto, Emas, Perak), setara gram hanya untuk Emas dan Perak, wajib diisi; lainnya tetap tampil Jenis tanpa pilihan', () => {
+  const s = state(); const d = K.fromState(s), i = d.A.findIndex((r) => r.simbol === 'BTC');
+  let S = K.sheet(d, { sheet: 'ubah', sel: i });
+  assert.deepEqual(S.fields.map((f) => f.l), ['Nama', 'Jenis aset', 'Satuan']); assert.deepEqual(S.fields[1].seg, ['Crypto', 'Emas', 'Perak']); assert.equal(S.fields[1].v, 'Crypto');
+  assert.match(S.fields[1].hint, /Zakat yang sudah dibayar tidak berubah/);
+  S = K.sheet(d, { sheet: 'ubah', sel: i, kelas: 'Emas' });
+  assert.deepEqual(S.fields.map((f) => f.l), ['Nama', 'Jenis aset', 'Setara gram per token', 'Satuan']); assert.equal(S.fields[2].v, '');
+  const r = d.A[i];
+  assert.match(K.cekUbah(r, { nama: 'BTC', otomatis: true, kelas: 'Emas', gram: '' }), /setara gram/); assert.equal(K.cekUbah(r, { nama: 'BTC', otomatis: true, kelas: 'Emas', gram: '1' }), '');
+  assert.equal(K.cekUbah(r, { nama: 'BTC', otomatis: true, kelas: 'Crypto' }), '');
+  const n = K.patch(d, 'ubah', { i: i, nama: 'BTC', otomatis: true, kelas: 'Emas', gram: '1' }, '2026-11-28'); assert.equal(n.A[i].kelas, 'Emas'); assert.equal(d.A[i].kelas, 'Crypto');
+  const fisik = d.A.findIndex((x) => x.simbol === 'EMAS' || x.a === 'Emas fisik'); assert.deepEqual(K.sheet(d, { sheet: 'ubah', sel: fisik }).fields.map((f) => f.l), ['Nama', 'Jenis', 'Satuan']);
 });

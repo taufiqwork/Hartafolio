@@ -42,7 +42,8 @@
   }
 
   function field(f, key) {
-    var inner = f.input ? '<input class="hf-input hf-input-num" type="text" value="' + esc(f.v) + '" aria-label="' + esc(f.l) + '"' + (key ? ' data-in="' + key + '"' : '') + '>'
+    var inner = f.seg ? '<div class="hf-toggle" role="group" aria-label="' + esc(f.l) + '" style="display: grid; grid-template-columns: repeat(' + f.seg.length + ', minmax(0, 1fr)); width: 100%; box-sizing: border-box;">' + f.seg.map(function (o) {
+        return '<button type="button" aria-pressed="' + (f.v === o) + '" data-act="seg-kelas" data-v="' + esc(o) + '" style="width: auto; height: 40px; font: inherit; font-size: 14px; font-weight: 600; line-height: 20px;">' + esc(o) + '</button>'; }).join('') + '</div>' : f.input ? '<input class="hf-input hf-input-num" type="text" value="' + esc(f.v) + '" aria-label="' + esc(f.l) + '"' + (key ? ' data-in="' + key + '"' : '') + '>'
       : '<span style="min-height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: var(--surface-sunken); color: var(--ink-muted); font-size: 16px; line-height: 24px;">' + esc(f.v) + '</span>';
     return '<div style="display: flex; flex-direction: column; gap: 8px;"><span class="label" style="' + LBL + '">' + esc(f.l) + '</span>' + inner + (f.hint ? '<span class="caption" style="' + LBL + '">' + esc(f.hint) + '</span>' : '') + '</div>';
   }
@@ -63,10 +64,11 @@
       '<input type="search" value="' + esc(P.q) + '" placeholder="' + esc(P.ph) + '" aria-label="' + esc(P.ph) + '" data-in="q" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); line-height: 24px;"></label>' +
       '<div style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; flex: none; margin: 0 -16px; padding: 0 16px;">' +
       P.chips.map(function (l) { return '<button class="hf-chip" type="button" aria-pressed="' + (P.cat === l) + '" data-act="cat" data-v="' + esc(l) + '" style="flex: none;">' + esc(l) + '</button>'; }).join('') + '</div>' +
-      '<div style="display: flex; flex-direction: column;">' + (P.items.length ? '<span class="label" style="color: var(--ink-muted); padding: 8px 0 4px;">' + esc(P.sec) + '</span>' + P.items.map(function (k) {
-        return '<button type="button" data-act="pick-kat" data-v="' + esc(k.id) + '" style="font: inherit; color: var(--ink); text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; min-height: 48px; border: 0; border-top: 1px solid var(--line); background: transparent; cursor: pointer;">' +
+      (P.notice ? '<div role="status" style="font-size: 14px; line-height: 20px; padding: 12px 16px; border-radius: 12px; background: var(--gold-soft); color: var(--ink); display: flex; flex-direction: column; gap: 8px; align-items: flex-start;"><span>' + esc(P.notice.t) + '</span><button class="hf-btn hf-btn-sm hf-btn-ghost" type="button" data-act="cari-ulang" style="color: var(--brand); padding-left: 0;">' + esc(P.notice.act) + '</button></div>' : '') +
+      '<div style="display: flex; flex-direction: column;">' + P.sections.map(function (sc) { return sc.items.length ? '<span class="label" style="color: var(--ink-muted); padding: 8px 0 4px;">' + esc(sc.t) + '</span>' + sc.items.map(function (k) {
+        return '<button type="button" data-act="pick-kat" data-v="' + esc(k.key || k.id) + '" style="font: inherit; color: var(--ink); text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; min-height: 48px; border: 0; border-top: 1px solid var(--line); background: transparent; cursor: pointer;">' +
           '<span style="display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 15px; font-weight: 600; line-height: 22px;">' + esc(k.n) + '</span><span class="caption" style="' + LBL + '">' + esc(k.f) + '</span></span><span class="hf-badge">' + esc(k.c) + '</span></button>';
-      }).join('') : '') + '</div>';
+      }).join('') : ''; }).join('') + '</div>';
   }
 
   function lines(ls) {
@@ -78,9 +80,9 @@
   function sheetHtml(S) {
     var body = '<div style="display: flex; flex-direction: column; gap: 4px;"><span class="heading">' + esc(S.title) + '</span>' + (S.desc ? '<span style="' + MUTED + '">' + esc(S.desc) + '</span>' : '') + '</div>';
     if (S.picker) body += picker(S.picker);
-    (S.fields || []).forEach(function (f) { body += field(f, f.input ? 'nama' : null); });
+    (S.fields || []).forEach(function (f) { body += field(f, f.key || (f.input ? 'nama' : null)); });
     if (S.opts) body += radios(S, S.optLabel ? 'radio' : 'hid-pilih');
-    (S.fields2 || []).forEach(function (f) { body += field(f, f.input ? 'harga' : null); });
+    (S.fields2 || []).forEach(function (f) { body += field(f, f.key || (f.input ? 'harga' : null)); });
     if (S.lines) body += lines(S.lines);
     var foot = '';
     if (S.picker) foot += '<div style="display: flex; flex-direction: column; gap: 8px;"><span class="caption" style="' + LBL + '">' + esc(S.picker.note) + '</span><button class="hf-btn hf-btn-ghost" type="button" data-act="add-manual" style="align-self: flex-start;">' + PLUS + esc(S.picker.link) + '</button></div>';
@@ -103,9 +105,24 @@
   function html() { return head() + main(K.list(M.data)) + foot() + overlays(); }
   function paint() { root.HF.morph(elRef, html()); }
 
-  function say(t) { ui.toast = t; clearTimeout(toastT); toastT = setTimeout(function () { ui.toast = ''; if (elRef && elRef.querySelector('.hf-scroll')) paint(); }, 4000); }
+  function say(t, ms) { ui.toast = t; clearTimeout(toastT); toastT = setTimeout(function () { ui.toast = ''; if (elRef && elRef.querySelector('.hf-scroll')) paint(); }, ms || 4000); }
   function today() { var n = new Date(), p = function (x) { return ('0' + x).slice(-2); }; return n.getFullYear() + '-' + p(n.getMonth() + 1) + '-' + p(n.getDate()); }
-  function close() { ui = Object.assign({}, ui, { sheet: null, opt: null, nama: undefined, harga: undefined, q: '', pk: 'Semua' }); fm = null; }
+  function close() { ui = Object.assign({}, ui, { sheet: null, opt: null, nama: undefined, harga: undefined, kelas: undefined, gram: undefined, q: '', pk: 'Semua', hasil: [], cariGagal: false, busy: '' }); fm = null; seqCari++; clearTimeout(tCari); }
+
+  /* Pencarian jaringan (crypto dari CoinGecko di browser, saham lewat server): tertunda 350 ms, hasil lama dibuang bila ketikan berganti. */
+  var seqCari = 0, tCari = null;
+  function cariJalan() {
+    var q = String(ui.q || '').trim(); clearTimeout(tCari); var my = ++seqCari;
+    ui.hasil = []; ui.cariGagal = false;
+    if (!M.net || q.length < 2) return;
+    tCari = setTimeout(function () {
+      var gagal = 0, sisa = 2, hasil = [];
+      function selesai(items) { if (my !== seqCari) return; if (items) hasil = hasil.concat(items); else gagal++; if (--sisa === 0) { ui.hasil = hasil; ui.cariGagal = gagal > 0 && !hasil.length; if (elRef) paint(); } }
+      M.net.crypto(q).then(selesai, function () { selesai(null); });
+      M.net.saham(q).then(selesai, function () { selesai(null); });
+    }, 350);
+  }
+  function urutPopuler() { if (M.net && M.net.markets && !ui.urut && !ui.urutMinta) { ui.urutMinta = true; M.net.markets().then(function (ids) { if (ids && elRef) { ui.urut = ids; paint(); } }, function () { /* urutan tetap dipakai */ }); } }
 
   /** Terapkan perubahan lokal seketika, kirim ke server; gagal = kembali ke keadaan sebelumnya. */
   function ubahData(aksi, p, kirim, toastOk) {
@@ -117,33 +134,49 @@
   }
 
   var A = {
-    buka: function (v) { ui = Object.assign({}, ui, { sheet: 'ubah', sel: +v, opt: null, nama: undefined, harga: undefined }); },
+    buka: function (v) { ui = Object.assign({}, ui, { sheet: 'ubah', sel: +v, opt: null, nama: undefined, harga: undefined, kelas: undefined, gram: undefined }); },
     isi: function () { var i = M.data.A.findIndex(function (r) { return r.perlu; }); if (i >= 0) A.buka(i); },
     'hid-buka': function () { ui = Object.assign({}, ui, { sheet: 'tersembunyi', hid: 0 }); },
     'hid-pilih': function (v) { ui.hid = +v; },
     tutup: function () { close(); }, nanti: function () { var n = ui.added ? ui.added.n : ''; close(); say(n + ' ditambahkan · belum dimiliki'); },
-    tambah: function () { ui = Object.assign({}, ui, { sheet: 'tambah', q: '', pk: 'Semua' }); },
+    tambah: function () { ui = Object.assign({}, ui, { sheet: 'tambah', q: '', pk: 'Semua', hasil: [], cariGagal: false }); urutPopuler(); },
     cat: function (v) { ui.pk = v; },
+    'cari-ulang': function () { cariJalan(); },
+    'seg-kelas': function (v) { ui.kelas = v; },
     radio: function (v) { ui.opt = +v; },
     ubah: function () { ui = Object.assign({}, ui, { sheet: 'ubah' }); },
     'hapus-buka': function () { ui = Object.assign({}, ui, { sheet: 'hapus' }); },
     'simpan-ubah': function () {
       var S = K.sheet(M.data, ui), r = M.data.A[ui.sel], otomatis = S.opts[S.optDef].l === 'Otomatis';
       var o = { nama: S.fields[0].v, otomatis: otomatis, harga: otomatis ? '' : S.fields2[0].v };
-      var e = K.cekUbah({ canAuto: r.canAuto || r.tetap, punyaHarga: r.punyaHarga, unit: r.unit.replace(' · US$', '') }, o);
+      if (r.jenisBisa) { o.kelas = ui.kelas || r.kelasAset || r.kelas; if (o.kelas !== 'Crypto') o.gram = ui.gram === undefined || ui.gram === null ? (r.gramTeks || '') : ui.gram; }
+      var e = K.cekUbah({ canAuto: r.canAuto || r.tetap, punyaHarga: r.punyaHarga, unit: r.unit.replace(' · US$', ''), jenisBisa: r.jenisBisa }, o);
       if (e) return say(e);
       var gfi = !otomatis && r.perlu;
-      ubahData('ubah', { i: ui.sel, nama: o.nama, otomatis: otomatis, harga: o.harga }, function () { return M.on.ubah(r.id, o); }, gfi ? 'Harga ' + r.a + ' disimpan' : 'Aset diperbarui');
+      ubahData('ubah', { i: ui.sel, nama: o.nama, otomatis: otomatis, harga: o.harga, kelas: o.kelas, gram: o.gram }, function () { return M.on.ubah(r.id, o); }, gfi ? 'Harga ' + r.a + ' disimpan' : 'Aset diperbarui');
     },
     hapus: function () { var r = M.data.A[ui.sel]; ubahData('hapus', { i: ui.sel }, function () { return M.on.status(r.id, 'hapus'); }, r.a + ' dihapus'); },
     sembunyikan: function () { var r = M.data.A[ui.sel]; ubahData('sembunyikan', { i: ui.sel }, function () { return M.on.status(r.id, 'sembunyikan'); }, r.a + ' disembunyikan · lihat di Aset tersembunyi'); },
     tampilkan: function () { var r = M.data.HID[ui.hid || 0]; if (!r) return; ubahData('tampilkan', { i: ui.hid || 0 }, function () { return M.on.status(r.id, 'tampilkan'); }, r.a + ' tampil lagi di daftar'); },
     'pick-kat': function (v) {
-      var k = M.data.KAT.filter(function (x) { return x.id === v; })[0]; if (!k) return;
+      var pilih = null; K.picker(M.data, ui).sections.forEach(function (sc) { sc.items.forEach(function (i) { if ((i.key || i.id) === v) pilih = i; }); });
+      if (!pilih || ui.busy) return;
+      if (M.on && M.on.cari) { // data nyata: server mengecek harga dulu, jadi lembar menunggu jawabannya (tidak optimistik)
+        ui.busy = v; say('Mengambil harga ' + pilih.n + '...', 20000);
+        var item = { key: pilih.key, n: pilih.n, f: pilih.f, c: pilih.c };
+        Promise.resolve(M.on.cari(item)).then(function (baris) {
+          return Promise.resolve(M.refresh ? M.refresh() : null).then(function (d) { return [baris, d]; });
+        }).then(function (x) {
+          if (!elRef) return; var d = x[1], r = d && d.A.filter(function (y) { return y.id === (x[0] && x[0].aset_id); })[0];
+          if (d) M.data = d;
+          ui = Object.assign({}, ui, { sheet: 'saldo', q: '', pk: 'Semua', hasil: [], cariGagal: false, busy: '', toast: '', added: { n: pilih.n, harga: 'Otomatis · ' + (r && r.b ? r.b + ' ' + r.per : 'harga menyusul'), c: pilih.c } });
+          paint();
+        }).catch(function (e) { ui.busy = ''; say((e && e.message) || 'Tidak tersimpan. Coba lagi.'); if (elRef) paint(); });
+        return;
+      }
+      var k = M.data.KAT.filter(function (y) { return y.id === pilih.id; })[0]; if (!k) return; v = k.id; // data contoh: perubahan lokal seketika
       history = M.data; M.data = K.patch(M.data, 'katalog', { id: v }, today());
       ui = Object.assign({}, ui, { sheet: 'saldo', q: '', pk: 'Semua', added: { n: k.n, harga: 'Otomatis · ' + (M.data.A[M.data.A.length - 1].b ? M.data.A[M.data.A.length - 1].b + ' ' + k.per : 'harga menyusul'), c: k.c } });
-      if (M.on) Promise.resolve(M.on.katalog(v)).then(function () { return M.refresh ? M.refresh() : null; }).then(function (d) { if (d && elRef) { M.data = d; var r = d.A.filter(function (x) { return x.id === v; })[0]; if (r && ui.added && ui.added.n === k.n && r.b) ui.added.harga = 'Otomatis · ' + r.b + ' ' + r.per; paint(); } })
-        .catch(function (e) { M.data = history; close(); say((e && e.message) || 'Tidak tersimpan. Coba lagi.'); paint(); });
     },
     'saldo-awal': function () { var n = ui.added ? ui.added.n : ''; close(); if (M.on && M.on.saldoAwal) M.on.saldoAwal(n); else say('Catat saldo awal dibuka dari tab Aset'); },
     'add-manual': function () { fm = { k: 'aset', mode: 'tambah', v: Object.assign({ nama: '', jenis: null, sat: null, gram: '', harga: '' }, ui.manual || {}), pk: null, sec: 'Kembali ke daftar' }; ui = Object.assign({}, ui, { sheet: 'manual' }); },
@@ -182,7 +215,7 @@
       var k = e.target.getAttribute && e.target.getAttribute('data-in'); if (!k) return;
       var v = e.target.value;
       if (fm && ui.sheet === 'manual') { fm.v[k] = v; fm.error = null; paint(); return; }
-      if (k === 'q') { ui.q = v; paint(); } else ui[k] = v; // nama dan harga: tidak digambar ulang supaya kursor tetap
+      if (k === 'q') { ui.q = v; cariJalan(); paint(); } else ui[k] = v; // nama, harga, gram: tidak digambar ulang supaya kursor tetap
     });
   }
 

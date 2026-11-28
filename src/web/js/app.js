@@ -169,9 +169,9 @@
     var ready = function (s) {
       appState = s;
       if (route() !== 'kelola' || seq !== loadSeq) return;
-      HF.kelolaScreen.mount(el, { data: HF.kelola.fromState(s), real: true, dari: dari, refresh: segar,
+      HF.kelolaScreen.mount(el, { data: HF.kelola.fromState(s), real: true, dari: dari, refresh: segar, net: HF.cariNet,
         on: { ubah: function (id, d) { appState = null; return HF.api.call('apiAsetUbah', id, d); }, status: function (id, aksi) { appState = null; return HF.api.call('apiAsetStatus', id, aksi); },
-          katalog: function (id) { appState = null; return HF.api.call('apiAsetKatalogTambah', id); }, manual: function (d) { appState = null; return HF.api.call('apiAsetTambah', d); },
+          katalog: function (id) { appState = null; return HF.api.call('apiAsetKatalogTambah', id); }, cari: function (pilih) { appState = null; return HF.api.call('apiAsetCariTambah', pilih); }, manual: function (d) { appState = null; return HF.api.call('apiAsetTambah', d); },
           saldoAwal: function () { catatMulai = 'awal'; location.hash = '#/catat'; } } });
     };
     if (appState) return ready(appState);

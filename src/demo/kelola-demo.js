@@ -2,7 +2,7 @@
  * DATA CONTOH (demo) untuk Kelola aset, disalin dari board 14-Aset. Dipakai dengan `?demo=<keadaan>#/kelola`.
  * Bisa dihapus bersama src/demo/ (lihat catatan di demo.js). Keadaan = prop `mulai` board: default, ubah-otomatis, ubah-manual, isi-harga,
  * harga-tersimpan, tambah, tambah-manual, tambah-digital, tanya-saldo, isi-harga-beranda, hapus-ditolak, hapus-sembunyikan, hapus-konfirmasi,
- * tersembunyi, ditampilkan, saldo-tersimpan; `dari` = alat atau beranda mengganti tautan kembali.
+ * tersembunyi, ditampilkan, saldo-tersimpan, tambah-teratas, cari-crypto, cari-saham, cari-gagal, ubah-jenis (board 14-Aset-2q sampai 2u); `dari` = alat atau beranda mengganti tautan kembali.
  */
 (function (root) {
   'use strict';
@@ -21,12 +21,29 @@
     return { id: 'AS-' + x[0], a: x[0], kelas: x[1], per: x[2], auto: !!x[3], canAuto: !!x[3] && x[0] !== 'IDR', tetap: x[0] === 'IDR', b: x[4], diisi: x[3] ? '' : (x[5] || ''),
       own: OWN.indexOf(x[0]) >= 0, sold: OWN.indexOf(x[0]) >= 0 ? '' : (SOLD[x[0]] || (x[0] === 'DOGE' && shown ? 'terjual habis Jun 2026' : '')), perlu: kosong, n: x[0] === 'ETH' ? 7 : (x[0] === 'PAXG' ? 12 : (OWN.indexOf(x[0]) >= 0 ? 4 : (x[0] === 'DOGE' ? 4 : 0))),
       unit: x[2].replace('per ', ''), saldo: x[0] === 'PAXG' ? '0,74 token · 4 anggota' : '', upd: '14.32', mataMan: gfi ? 'USD' : 'IDR', punyaHarga: !kosong,
+      jenisBisa: ['PAXG', 'BTC', 'ETH', 'USDT', 'SOL', 'DGLD'].indexOf(x[0]) >= 0, kelasAset: x[1], gramTeks: x[0] === 'PAXG' ? '31,1035' : (x[0] === 'DGLD' ? '1' : ''),
       hargaIsi: gfi ? (x[4] === 'US$ 33,10' ? '33,10' : '32,92') : x[4].replace('Rp ', ''), perluNote: gfi ? 'Harga otomatis GFI gagal diambil. Isi harga hari ini.' : '' };
   }
+
+  /* Pilihan Tambah aset yang dibekukan, persis isi board 2q sampai 2t (perbandingan piksel); aplikasi nyata menghitungnya dari HF.kelola.picker. */
+  var CH = ['Semua', 'Crypto', 'Saham', 'Emas', 'Perak', 'Mata uang'], PH = 'Nama atau kode aset', LINK = 'Tambah aset baru';
+  function it(n, f, c) { return { n: n, f: f, c: c, key: 'demo:' + n }; }
+  var FIX = {
+    'tambah-teratas': { ph: PH, q: '', chips: CH, cat: 'Semua', link: LINK, note: 'Ketik nama atau kode untuk mencari semua aset di sumber harga. Tidak ada? Tambahkan dengan harga sendiri.', sections: [
+      { t: 'Katalog harga otomatis', items: [it('ANTM', 'Aneka Tambang', 'Saham'), it('XAUT', 'Tether Gold', 'Emas'), it('Emas Antam', 'Logam mulia', 'Emas'), it('TLKM', 'Telkom Indonesia', 'Saham')] },
+      { t: 'Crypto populer', items: [['BNB', 'BNB'], ['USDC', 'USD Coin'], ['XRP', 'XRP'], ['TRX', 'TRON'], ['DOGE', 'Dogecoin'], ['ADA', 'Cardano'], ['LINK', 'Chainlink'], ['XLM', 'Stellar'], ['AVAX', 'Avalanche'], ['SHIB', 'Shiba Inu'], ['TON', 'Toncoin'], ['DOT', 'Polkadot'], ['LTC', 'Litecoin'], ['BCH', 'Bitcoin Cash'], ['XMR', 'Monero']].map(function (x) { return it(x[0], x[1], 'Crypto'); }) }] },
+    'cari-crypto': { ph: PH, q: 'gold', chips: CH, cat: 'Semua', link: LINK, note: 'PAXG dan XAUT sudah ada di daftar. Tidak ada yang cocok? Tambahkan dengan harga sendiri.', sections: [{ t: 'Hasil pencarian · harga otomatis', items: [
+      it('KAU', 'Kinesis Gold · peringkat 120 · 1 token = 1 gram', 'Emas'), it('GGBR', 'Goldfish Gold · peringkat 291', 'Crypto'), it('PGOLD', 'Pleasing Gold · peringkat 310', 'Crypto'), it('XAUM', 'Matrixdock Gold · peringkat 334 · 1 token = 31,1 gram', 'Emas'),
+      it('GPT', 'Gold Park · peringkat 555', 'Crypto'), it('AGLD', 'Adventure Gold · peringkat 984', 'Crypto')] }] },
+    'cari-saham': { ph: PH, q: 'telkom', chips: CH, cat: 'Saham', link: LINK, note: 'Saham Bursa Efek Indonesia dan bursa Amerika. Tidak ada yang cocok? Tambahkan dengan harga sendiri.', sections: [{ t: 'Hasil pencarian · harga otomatis', items: [
+      it('TLKM', 'Telkom Indonesia (Persero) Tbk · BEI · per lot', 'Saham'), it('TLK', 'Telkom Indonesia ADR · NYSE · per lembar · US$', 'Saham')] }] },
+    'cari-gagal': { ph: PH, q: 'pepe', chips: CH, cat: 'Crypto', link: LINK, note: 'Tidak ada yang cocok? Tambahkan dengan harga sendiri.', sections: [], notice: { t: 'Pencarian belum tersambung ke sumber harga. Periksa internet, lalu coba lagi.', act: 'Coba lagi' } }
+  };
 
   function get(mulai) {
     var saved = mulai === 'harga-tersimpan', shown = mulai === 'ditampilkan', rows = base(saved);
     if (shown) rows.splice(6, 0, ['DOGE', 'Crypto', 'per DOGE', 1, 'Rp 2.100']);
+    if (mulai === 'ubah-jenis') rows.push(['DGLD', 'Emas', 'per token', 1, 'Rp 2.140.000']);
     if (mulai === 'tanya-saldo') rows.splice(10, 0, ['ANTM', 'Saham', 'per lot', 1, 'Rp 158.000']);
     var A = rows.map(function (x) { return mk(x, shown); });
     var HID = [{ id: 'AS-DOGE', a: 'DOGE', kelas: 'Crypto', hidNote: 'Terjual habis Jun 2026 · 4 transaksi' }, { id: 'AS-UBS', a: 'Emas UBS', kelas: 'Emas', hidNote: 'Terjual habis Mar 2026 · 2 transaksi · harga manual' }];
@@ -36,12 +53,13 @@
     var idx = function (n) { for (var i = 0; i < A.length; i++) if (A[i].a === n) return i; return 0; };
     var ui = { sheet: null, sel: 0, toast: '', pk: 'Semua', q: '', hid: 0, added: null, opt: null };
     var S = { 'ubah-otomatis': ['ubah', 'Emas fisik'], 'ubah-manual': ['ubah', 'Emas fisik'], 'isi-harga': ['ubah', 'GFI'], 'isi-harga-beranda': ['ubah', 'GFI'], 'hapus-ditolak': ['hapus', 'PAXG'], 'hapus-sembunyikan': ['hapus', 'ETH'], 'hapus-konfirmasi': ['hapus', 'SOL'],
-      'tambah': ['tambah'], 'tambah-manual': ['manual'], 'tambah-digital': ['manual'], 'tanya-saldo': ['saldo'], 'tersembunyi': ['tersembunyi'] }[mulai];
+      'tambah': ['tambah'], 'tambah-teratas': ['tambah'], 'cari-crypto': ['tambah'], 'cari-saham': ['tambah'], 'cari-gagal': ['tambah'], 'ubah-jenis': ['ubah', 'DGLD'], 'tambah-manual': ['manual'], 'tambah-digital': ['manual'], 'tanya-saldo': ['saldo'], 'tersembunyi': ['tersembunyi'] }[mulai];
     if (S) { ui.sheet = S[0]; if (S[1]) ui.sel = idx(S[1]); }
     if (mulai === 'ubah-otomatis' || mulai === 'ubah-manual') ui.sel = idx('BTC'); // board: T[mulai] = 2
     if (mulai === 'ubah-manual') ui.opt = 1;
     if (mulai === 'isi-harga' || mulai === 'isi-harga-beranda') ui.sel = idx('GFI');
     if (mulai === 'tanya-saldo') ui.added = { n: 'ANTM', harga: 'Otomatis · Rp 158.000 per lot', c: 'Saham' };
+    if (FIX[mulai]) ui.fix = FIX[mulai];
     ui.manual = mulai === 'tambah-digital' ? { nama: 'GLD · ETF emas', jenis: 'Emas', sat: 'lembar', gram: '2,88', harga: '6.950.000' } : { nama: 'Emas perhiasan', jenis: 'Emas', sat: 'gram', gram: '31,1035', harga: '1.900.000' };
     var toast = saved ? 'Harga GFI disimpan' : (shown ? 'DOGE tampil lagi di daftar' : '');
     return { data: { A: A, HID: HID, KAT: KAT, order: ['Emas', 'Crypto', 'Perak', 'Saham', 'Mata uang'] }, ui: ui, toast: toast, notice: !saved, simpan: mulai === 'saldo-tersimpan' ? { text: 'Saldo awal ANTM tersimpan', act: 'Lihat' } : null,

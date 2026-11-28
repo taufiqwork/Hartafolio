@@ -213,3 +213,21 @@ test('antrean offline: id sama tidak dobel, server idempoten, ditolak tetap di a
   assert.equal(left[0].error, 'saldo:kurang:AS-EMAS');
   assert.equal(Q.settle(left, { diterima: ['TX-20261109-0002'] }).length, 0);
 });
+
+test('zakat: jenis token diubah Crypto ke Emas dihitung mulai jenis_berlaku (saldo lama ikut pindah, sebelumnya tidak dihitung); zakat yang dibayar tidak berubah', () => {
+  const tok = { aset_id: 'AS-TKN', simbol: 'DGLD', nama: 'DGLD', kelas: 'Emas', bentuk: 'Token', satuan: 'token', gram_per_unit: 1, kategori_zakat: 'emas', kategori_zakat_lama: '', jenis_berlaku: '2026-06-01', status: 'aktif' };
+  const mk = (extra) => Object.assign(zIn([T({ jenis: 'Saldo awal', aset_id: 'AS-TKN', jumlah: 100, tanggal: '2026-01-10' })], { aset: aset.concat([tok]) }), extra);
+  // kategori menurut tanggal: sebelum jenis_berlaku memakai yang lama
+  assert.equal(Z.kategoriPada(tok, '2026-05-31'), ''); assert.equal(Z.kategoriPada(tok, '2026-06-01'), 'emas');
+  // pada jenis_berlaku: 100 gram pindah ke emas, haul mulai hari itu (100 >= nisab 85)
+  const sesudah = emas(Z.hitung(mk({ hariIni: '2026-06-02' })));
+  assert.equal(sesudah.gram_digital, 100); assert.equal(sesudah.mulai_haul, '2026-06-01'); assert.equal(sesudah.status_haul, 'berjalan');
+  // transaksi sesudah tanggal itu langsung dihitung sebagai emas
+  const tambah = emas(Z.hitung(Object.assign(mk({ hariIni: '2026-06-20' }), { trx: mk().trx.concat([T({ jenis: 'Saldo awal', aset_id: 'AS-TKN', jumlah: 10, tanggal: '2026-06-10' })]) })));
+  assert.equal(tambah.gram_digital, 110);
+  // kebalikannya: Emas ke Crypto, gram keluar dari emas pada tanggal itu
+  const balik = Object.assign({}, tok, { kategori_zakat: '', kategori_zakat_lama: 'emas', kelas: 'Crypto' });
+  const r2 = emas(Z.hitung(zIn([T({ jenis: 'Saldo awal', aset_id: 'AS-TKN', jumlah: 100, tanggal: '2026-01-10' })], { aset: aset.concat([balik]), hariIni: '2026-06-02' })));
+  assert.equal(r2.gram_digital, 0); assert.equal(r2.status_haul, 'belum nisab');
+  assert.equal(Z.kategoriPada(balik, '2026-05-31'), 'emas'); assert.equal(Z.kategoriPada(balik, '2026-06-01'), '');
+});

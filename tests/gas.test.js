@@ -49,7 +49,7 @@ function boot() {
   });
   ctx.globalThis = ctx;
   const root = path.join(__dirname, '..', 'src');
-  ['beranda', 'catalog', 'dates', 'format', 'harga-fetch', 'kelola', 'kurs', 'ledger', 'piutang', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
+  ['beranda', 'catalog', 'dates', 'format', 'harga-fetch', 'kelola', 'kurs', 'ledger', 'piutang', 'populer', 'queue', 'schema', 'valuation', 'zakat'].forEach(m =>
     vm.runInContext(fs.readFileSync(path.join(root, 'engine', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   ['Repo', 'Setup', 'Master', 'Bukti', 'Cadangan', 'Harga', 'AsetKelola'].forEach(m => vm.runInContext(fs.readFileSync(path.join(root, 'gas', m + '.js'), 'utf8'), ctx, { filename: m + '.js' }));
   return { ctx, sheets, run: code => vm.runInContext(code, ctx) };
@@ -142,7 +142,7 @@ test('apiState menyatukan data; harga terakhir mengabaikan status gagal', () => 
   const s = g.run('apiState()');
   assert.equal(s.harga.terakhir['AS-BTC'].harga, 100);
   assert.equal(s.harga.kursSeries.length, 1);
-  assert.equal(s.versi, 2);
+  assert.equal(s.versi, 3);
   assert.ok(s.aset.length >= 10);
 });
 
@@ -225,18 +225,21 @@ test('apiAsetTambah: aset buatan sendiri tersimpan dengan harga manual; nama gan
   assert.throws(() => g.run(`apiAsetTambah({ nama: 'Koin', kelas: 'Perak', satuan: 'lembar' })`), /setara gram/);
 });
 
-test('migrasi v1 ke v2: Siapkan sheet menambah kolom ke-29, memperluas perlindungan header, menaikkan versi, data lama utuh', () => {
+test('migrasi v1 ke v3: Siapkan sheet menambah kolom ke-29 Transaksi dan dua kolom Aset, memperluas perlindungan header, menaikkan versi, data lama utuh', () => {
   const g = boot();
   g.run('setupHartafolio()');
   // jadikan Sheet seperti versi 1: 28 kolom, versi_skema 1, ada satu transaksi
   g.sheets.Transaksi.cells[0].length = 28;
+  g.sheets.Aset.cells[0].length = 14; // v2: Aset belum punya kategori_zakat_lama dan jenis_berlaku
   g.run(`Repo_update_('Pengaturan', 'versi_skema', { nilai: '1' })`);
   const hasil = g.run('setupHartafolio()');
   assert.ok(hasil.some(x => /Transaksi: kolom ditambah \(alat_bayar_lokasi_id\)/.test(x)), hasil.join('|'));
   assert.equal(g.sheets.Transaksi.cells[0][28], 'alat_bayar_lokasi_id');
   assert.equal(g.sheets.Transaksi.protections.length, 1); // satu perlindungan, bukan dua
-  assert.equal(g.run('apiState()').versi, 2);
-  assert.equal(g.run('apiState()').pengaturan.versi_skema, '2');
+  assert.deepEqual(g.sheets.Aset.cells[0].slice(14, 16), ['kategori_zakat_lama', 'jenis_berlaku']); assert.equal(g.sheets.Aset.protections.length, 1);
+  assert.equal(g.run("Repo_read_('Aset')").length > 0, true); // data Aset lama tetap terbaca
+  assert.equal(g.run('apiState()').versi, 3);
+  assert.equal(g.run('apiState()').pengaturan.versi_skema, '3');
   assert.deepEqual(JSON.parse(JSON.stringify(g.run('setupHartafolio()'))), ['Struktur sudah lengkap']); // idempoten
 });
 
@@ -466,7 +469,7 @@ function bootHarga(jawab) {
 }
 const COIN = JSON.stringify({ bitcoin: { usd: 60000 }, 'pax-gold': { usd: 3650 }, 'tether-gold': { usd: 3652 }, ethereum: { usd: 1668 }, tether: { usd: 1 } });
 const LLAMA = JSON.stringify({ coins: { 'coingecko:bitcoin': { price: 59000 }, 'coingecko:pax-gold': { price: 3640 }, 'coingecko:tether-gold': { price: 3641 }, 'coingecko:ethereum': { price: 1660 }, 'coingecko:tether': { price: 1 } } });
-const LAIN = (u) => /er-api/.test(u) ? JSON.stringify({ result: 'success', rates: { IDR: 16250 } }) : /gold-api/.test(u) ? JSON.stringify({ price: 3650 }) : /BBCA|BBRI|ANTM|GFI/.test(u) ? JSON.stringify({ chart: { result: [{ meta: { currency: /GFI/.test(u) ? 'USD' : 'IDR', regularMarketPrice: 100 } }] } }) : null;
+const LAIN = (u) => /er-api/.test(u) ? JSON.stringify({ result: 'success', rates: { IDR: 16250 } }) : /gold-api/.test(u) ? JSON.stringify({ price: 3650 }) : /BBCA|BBRI|ANTM|GFI|TLKM/.test(u) ? JSON.stringify({ chart: { result: [{ meta: { currency: /GFI/.test(u) ? 'USD' : 'IDR', regularMarketPrice: 100 } }] } }) : null;
 
 test('harga crypto: CoinGecko gagal (429) lalu cadangan llama dipakai; kode HTTP tercatat di Pengaturan', () => {
   const { g } = bootHarga((u) => /llama/.test(u) ? LLAMA : /coingecko/.test(u) ? null : LAIN(u));
@@ -506,4 +509,70 @@ test('Dolar AS: harga manual juga ditulis di seri USDIDR (kurs seluruh aplikasi)
   assert.ok(!diminta.some((u) => /er-api/.test(u)));
   hg = g.run('apiState()').harga; assert.equal(hg.kursSeries[hg.kursSeries.length - 1].harga, 18250);
   assert.ok(Math.abs(hg.terakhir['AS-EMAS'].harga - 3650 * 18250 / 31.1035) < 1e-6);
+});
+
+function bootCari(jawab, yahoo) {
+  const h = bootHarga(jawab);
+  h.g.ctx.UrlFetchApp.fetch = (url) => { const t = yahoo ? yahoo(url) : null; return { getResponseCode: () => (t === null ? 429 : 200), getContentText: () => t }; };
+  return h;
+}
+const RATES = (u) => /er-api/.test(u) ? JSON.stringify({ result: 'success', rates: { IDR: 16250, SGD: 1.25, USD: 1 } }) : null;
+const SEMUA = (u) => /llama/.test(u) ? JSON.stringify({ coins: { 'coingecko:kinesis-gold': { price: 117 }, 'coingecko:goldfish-gold': { price: 4.2 } } }) : /coingecko/.test(u) ? null : (RATES(u) || LAIN(u));
+const ST = (g) => JSON.parse(JSON.stringify(g.run('apiState()')));
+
+test('Tambah dari pencarian: token emas dikenali (Emas, gram, zakat), harga dicek dulu, ganda ditolak, hidup lagi bila dihapus, gagal diambil ditolak', () => {
+  const { g } = bootCari(SEMUA);
+  const kau = JSON.parse(JSON.stringify(g.run(`apiAsetCariTambah({ key: 'coingecko:kinesis-gold', n: 'KAU', f: 'Kinesis Gold · peringkat 120 · 1 token = 1 gram' })`)));
+  assert.deepEqual([kau.kelas, kau.satuan, kau.gram_per_unit, kau.kategori_zakat, kau.sumber_harga, kau.kode_sumber], ['Emas', 'token', 1, 'emas', 'coingecko', 'kinesis-gold']);
+  assert.match(kau.aset_id, /^AS-\d+$/);
+  assert.equal(ST(g).harga.terakhir[kau.aset_id].harga, 117); // harga hasil cek ikut tersimpan
+  assert.throws(() => g.run(`apiAsetCariTambah({ key: 'coingecko:kinesis-gold', n: 'KAU', f: 'x' })`), /sudah ada di daftar/);
+  // aset yang dihapus dihidupkan lagi, bukan dibuat ganda
+  g.run(`apiAsetStatus('${kau.aset_id}', 'hapus')`);
+  g.run(`apiAsetCariTambah({ key: 'coingecko:kinesis-gold', n: 'KAU', f: 'x' })`);
+  assert.equal(ST(g).aset.filter((a) => a.kode_sumber === 'kinesis-gold').length, 1);
+  assert.equal(ST(g).aset.find((a) => a.kode_sumber === 'kinesis-gold').status, 'aktif');
+  // katalog tambahan (BNB) memakai id katalognya; sumber tidak menjawab = ditolak dan tidak ada baris baru
+  assert.throws(() => g.run(`apiAsetCariTambah({ key: 'coingecko:binancecoin', n: 'BNB', f: 'BNB' })`), /belum bisa diambil/);
+  assert.equal(ST(g).aset.some((a) => a.kode_sumber === 'binancecoin'), false);
+  assert.throws(() => g.run(`apiAsetCariTambah({ key: 'bukan:dikenal', n: 'X', f: 'X' })`), /tidak dikenal/);
+});
+
+test('Tambah mata uang: kurs Rupiah per unit dihitung dari kurs USD dan kurs mata uang itu; Dolar AS tetap satu kurs aplikasi', () => {
+  const { g } = bootCari(SEMUA);
+  const sgd = JSON.parse(JSON.stringify(g.run(`apiAsetCariTambah({ key: 'kurs:SGD', n: 'SGD', f: 'Dolar Singapura' })`)));
+  assert.deepEqual([sgd.kelas, sgd.sumber_harga, sgd.kode_sumber, sgd.satuan], ['Mata uang', 'kurs', 'SGD', 'nominal']);
+  assert.ok(Math.abs(ST(g).harga.terakhir[sgd.aset_id].harga - 16250 / 1.25) < 1e-6);
+  g.run('hargaSekarang()');
+  const t = ST(g).harga.terakhir; assert.equal(t['AS-USD'].harga, 16250); assert.ok(Math.abs(t[sgd.aset_id].harga - 13000) < 1e-6);
+});
+
+test('Cari saham di server: hanya BEI dan bursa Amerika, yang sudah ada disembunyikan, gagal jadi pesan', () => {
+  const Y = JSON.stringify({ quotes: [{ symbol: 'TLKM.JK', longname: 'Telkom Indonesia (Persero) Tbk.', exchange: 'JKT', quoteType: 'EQUITY' }, { symbol: 'TKG.JO', shortname: 'Telkom SA', exchange: 'JNB', quoteType: 'EQUITY' },
+    { symbol: 'TLK', shortname: 'Telkom ADR', exchange: 'NYQ', quoteType: 'EQUITY' }, { symbol: 'BBCA.JK', shortname: 'BCA', exchange: 'JKT', quoteType: 'EQUITY' }, { symbol: 'XX=F', exchange: 'CME', quoteType: 'FUTURE' }] });
+  const { g } = bootCari(SEMUA, () => Y);
+  const r = JSON.parse(JSON.stringify(g.run(`apiAsetCari('saham', 'telkom')`)));
+  assert.deepEqual(r.map((x) => x.key), ['saham:TLKM.JK', 'saham:TLK']); // TKG.JO bursa lain, BBCA sudah ada
+  assert.deepEqual(JSON.parse(JSON.stringify(g.run(`apiAsetCari('saham', 't')`))), []);
+  assert.throws(() => g.run(`apiAsetCari('crypto', 'btc')`), /belum tersedia/);
+  const gagal = bootCari(SEMUA, () => null);
+  assert.throws(() => gagal.g.run(`apiAsetCari('saham', 'telkom')`), /belum tersambung/);
+  const tlk = JSON.parse(JSON.stringify(g.run(`apiAsetCariTambah({ key: 'saham:TLKM.JK', n: 'TLKM', f: 'Telkom Indonesia (Persero) Tbk. · BEI · per lot' })`)));
+  assert.deepEqual([tlk.satuan, tlk.mata_uang_harga, tlk.kode_sumber], ['lot', 'IDR', 'TLKM']);
+});
+
+test('Ubah jenis token: Crypto ke Emas menyimpan kategori lama dan jenis_berlaku hari ini, wajib setara gram; bukan token ditolak', () => {
+  const { g } = bootCari(SEMUA);
+  const t = JSON.parse(JSON.stringify(g.run(`apiAsetCariTambah({ key: 'coingecko:goldfish-gold', n: 'GGBR', f: 'Goldfish Gold · peringkat 291' })`)));
+  assert.deepEqual([t.kelas, t.kategori_zakat], ['Crypto', '']);
+  assert.throws(() => g.run(`apiAsetUbah('${t.aset_id}', { nama: 'GGBR', otomatis: true, kelas: 'Emas', gram: '' })`), /setara gram/);
+  g.run(`apiAsetUbah('${t.aset_id}', { nama: 'GGBR', otomatis: true, kelas: 'Emas', gram: '1' })`);
+  const a = ST(g).aset.find((x) => x.aset_id === t.aset_id);
+  assert.deepEqual([a.kelas, a.kategori_zakat, a.kategori_zakat_lama, a.jenis_berlaku, a.gram_per_unit], ['Emas', 'emas', '', '2026-11-19', 1]);
+  assert.throws(() => g.run(`apiAsetUbah('AS-BBCA', { nama: 'BBCA', otomatis: true, kelas: 'Emas', gram: '1' })`), /hanya bisa diubah untuk token crypto/);
+  assert.throws(() => g.run(`apiAsetUbah('${t.aset_id}', { nama: 'GGBR', otomatis: true, kelas: 'Properti' })`), /Pilih Crypto, Emas, atau Perak/);
+  // balik ke Crypto: kategori lama menjadi emas
+  g.run(`apiAsetUbah('${t.aset_id}', { nama: 'GGBR', otomatis: true, kelas: 'Crypto' })`);
+  const b = ST(g).aset.find((x) => x.aset_id === t.aset_id);
+  assert.deepEqual([b.kelas, b.kategori_zakat, b.kategori_zakat_lama], ['Crypto', '', 'emas']);
 });

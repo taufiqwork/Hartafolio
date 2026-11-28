@@ -7,7 +7,7 @@
 (function (root) {
   'use strict';
 
-  var VERSI = 2; // 2: kolom alat_bayar_lokasi_id di kanan Transaksi (25 Nov 2026)
+  var VERSI = 3; // 2: kolom alat_bayar_lokasi_id di kanan Transaksi (25 Nov 2026). 3: kategori_zakat_lama dan jenis_berlaku di kanan Aset (28 Nov 2026)
   var OZ_GRAM = 31.1035;
 
   var ENUM = {
@@ -49,7 +49,8 @@
     Aset: { kind: 'ref', id: 'aset_id', prefix: 'AS', cols: [
       c('aset_id', 'text', 1), c('simbol', 'text', 1), c('nama', 'text', 1), c('kelas', 'text', 1), c('bentuk', 'text', 1),
       c('satuan', 'text', 1), c('gram_per_unit', 'num'), c('mata_uang_harga', 'text', 1), c('sumber_harga', 'text', 1),
-      c('kode_sumber'), c('kunci_manual', 'bool', 1), c('kategori_zakat'), c('status', 'text', 1), c('dibuat_pada', 'dt')] },
+      c('kode_sumber'), c('kunci_manual', 'bool', 1), c('kategori_zakat'), c('status', 'text', 1), c('dibuat_pada', 'dt'),
+      c('kategori_zakat_lama'), c('jenis_berlaku', 'date')] }, // dua kolom terakhir: jenis aset diubah di Ubah; sebelum jenis_berlaku zakat memakai kategori_zakat_lama
     Transaksi: { kind: 'input', id: 'trx_id', cols: [
       c('trx_id', 'text', 1), c('tanggal', 'date', 1), c('jam', 'text'), c('jenis', 'text', 1), c('anggota_id', 'text', 1),
       c('aset_id', 'text', 1), c('lokasi_id', 'text', 1), c('lokasi_tujuan_id'), c('anggota_tujuan_id'), c('jumlah', 'num', 1),

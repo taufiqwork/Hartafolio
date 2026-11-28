@@ -141,3 +141,11 @@ Daftar jebakan lengkap ada di `CLAUDE.md` bagian "Jebakan". Tambahkan di sana ti
 - [ ] BELUM TERVERIFIKASI di Google sungguhan: izin `script.external_request`, menu Nyalakan harga otomatis, jadwal 3 jam, pengambilan saat dibuka, padatkan mingguan, tiap sumber (CoinGecko dan cadangan llama, gold-api, Yahoo, open.er-api).
 - [ ] Dolar AS manual mengubah kurs di Beranda dan Aset; terkunci manual = USDIDR tidak ditulis. Kurs Ubah transaksi: ganti kurs = kurs_waktu baru, tidak disentuh = lama.
 - [ ] Tab Harga: gagal tidak ditulis, harga sama sehari tidak ditulis ulang, padatkan menyisakan satu baris per aset per hari (manual utuh).
+
+## Tambah aset: populer, pencarian, jenis token
+- [ ] `npm test`: `tests/kelola.test.js` (picker, Ubah jenis), `tests/gas.test.js` (tambah dari pencarian, mata uang, cari saham, ubah jenis), `tests/engine.test.js` (zakat menurut jenis_berlaku), migrasi v1 ke v3 lulus.
+- [ ] Daftar populer: Semua, Crypto, Saham, Emas, Perak, Mata uang; yang sudah ada di daftar tidak tampil; crypto berurut nilai pasar bila CoinGecko terjangkau.
+- [ ] Tambah dari hasil pencarian menunggu server (cek harga); harga tidak bisa diambil = ditolak dengan pesan, tidak ada baris baru. Aset yang dihapus dihidupkan lagi, bukan ganda.
+- [ ] Ubah token: Jenis aset (Crypto, Emas, Perak), setara gram wajib untuk Emas dan Perak; zakat yang sudah dibayar tidak berubah.
+- [ ] BELUM TERVERIFIKASI di Google sungguhan: pencarian CoinGecko dari halaman Apps Script (CORS), pencarian Yahoo di server, migrasi kolom Aset di Sheet nyata (jalankan Hartafolio > Siapkan sheet, atau cukup buka aplikasi: kolom kanan dilengkapi otomatis saat dibaca).
+

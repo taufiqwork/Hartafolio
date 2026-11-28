@@ -23,6 +23,24 @@ function AsetKelola_segarkanHarga_() {
   try { Harga_perbarui_(); } catch (e) { /* izin atau jaringan: harga ikut jadwal berikutnya */ }
 }
 
+/**
+ * Jenis aset dan setara gram (hanya token CoinGecko): Crypto, Emas, Perak. Jenis berubah: kategori zakat lama disimpan dan jenis_berlaku = hari ini,
+ * sehingga hitungan zakat sebelum hari ini memakai kategori lama dan yang sesudahnya yang baru (zakat yang sudah dibayar tidak disentuh).
+ */
+function AsetKelola_jenis_(a, d, patch) {
+  if (!d || (d.kelas === undefined && d.gram === undefined)) return;
+  if (a.sumber_harga !== 'coingecko') throw new Error('Jenis hanya bisa diubah untuk token crypto.');
+  var kelas = d.kelas === undefined ? a.kelas : Master_clean_(d.kelas), gram = HF.kelola.num(d.gram), logam = kelas === 'Emas' || kelas === 'Perak';
+  if (['Crypto', 'Emas', 'Perak'].indexOf(kelas) < 0) throw new Error('Pilih Crypto, Emas, atau Perak.');
+  if (logam && !(gram > 0) && !(a.gram_per_unit > 0)) throw new Error('Isi setara gram per token.');
+  if (logam && gram > 0 && gram !== Number(a.gram_per_unit)) patch.gram_per_unit = gram;
+  if (kelas !== a.kelas) {
+    var lama = a.kategori_zakat || HF.catalog.zakatKategori(a), baru = HF.catalog.zakatKategori({ kelas: kelas });
+    patch.kelas = kelas; patch.kategori_zakat = baru;
+    if (lama !== baru) { patch.kategori_zakat_lama = lama; patch.jenis_berlaku = Master_now_().slice(0, 10); }
+  }
+}
+
 /** d = { nama, otomatis: bool, harga: teks angka gaya Indonesia (kosong = pakai harga yang sudah ada) }. */
 function apiAsetUbah(id, d) {
   var perluSegar = false, hasil = Master_dalamKunci_(function () {
@@ -35,6 +53,7 @@ function apiAsetUbah(id, d) {
     var lain = Repo_read_('Aset').filter(function (x) { return x.aset_id !== id && x.status !== 'dihapus'; });
     if (lain.some(function (x) { return Master_sama_(AsetKelola_label_(x), nama) || Master_sama_(x.nama, simpan); })) throw new Error('Sudah ada aset bernama "' + nama + '".');
     var patch = {}, harga = K.num(d && d.harga);
+    AsetKelola_jenis_(a, d, patch);
     if (simpan !== a.nama) { patch.nama = simpan; if (a.bentuk !== 'Fisik' && a.sumber_harga !== 'manual') patch.simbol = simpan; }
     if (otomatis) {
       if (a.kunci_manual) { patch.kunci_manual = false; perluSegar = true; }
@@ -45,7 +64,7 @@ function apiAsetUbah(id, d) {
       if (harga > 0) {
         var w = Master_now_(), baris = [{ waktu: w, aset_id: id, harga: harga, mata_uang: K.mataManual(a), sumber: 'manual', status: 'manual' }];
         // Dolar AS: kurs yang dipakai seluruh aplikasi dibaca dari seri USDIDR, jadi harga manual ikut ditulis di sana.
-        if (a.sumber_harga === 'kurs') baris.push({ waktu: w, aset_id: HF.catalog.KURS_ID, harga: harga, mata_uang: 'IDR', sumber: 'manual', status: 'manual' });
+        if (a.sumber_harga === 'kurs' && (a.kode_sumber || 'USD') === 'USD') baris.push({ waktu: w, aset_id: HF.catalog.KURS_ID, harga: harga, mata_uang: 'IDR', sumber: 'manual', status: 'manual' });
         Repo_append_('Harga', baris);
       }
     }
@@ -83,4 +102,46 @@ function apiAsetKatalogTambah(id) {
   });
   AsetKelola_segarkanHarga_();
   return hasil;
+}
+
+/** Cari saham di Yahoo (BEI dan bursa Amerika). Dijalankan di server karena Yahoo tidak mengizinkan panggilan dari browser. */
+function apiAsetCari(tipe, q) {
+  var s = Master_clean_(q);
+  if (tipe !== 'saham') throw new Error('Pencarian ini belum tersedia.');
+  if (s.length < 2) return [];
+  var res = UrlFetchApp.fetch(HF.populer.URL.cariSaham(s), { muteHttpExceptions: true, headers: { 'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json' } });
+  if (res.getResponseCode() !== 200) throw new Error('Pencarian belum tersambung ke sumber harga.');
+  var hasil = HF.populer.parse.yahooCari(res.getContentText());
+  if (hasil === null) throw new Error('Pencarian belum tersambung ke sumber harga.');
+  var ada = HF.populer.fromAset(Repo_read_('Aset'));
+  return hasil.filter(function (i) { var p = i.key.split(':'); return !(ada[p[0]] && ada[p[0]][p.slice(1).join(':')]); });
+}
+
+/**
+ * Tambah aset dari daftar populer atau hasil pencarian (pilih = { key, n, f }). Baris lama dengan sumber yang sama (disembunyikan atau dihapus)
+ * dihidupkan lagi, bukan dibuat ganda. Aset baru ditambahkan hanya bila hargamu bisa diambil dari sumbernya sekarang; kalau tidak, ditolak.
+ */
+function apiAsetCariTambah(pilih) {
+  var P = HF.populer, kunciBaru = String(pilih && pilih.key || '');
+  var semua = Repo_read_('Aset'), ada = semua.filter(function (x) { return kunciBaru && P.kunci(x) === kunciBaru; })[0];
+  if (ada && ada.status === 'aktif') throw new Error(ada.simbol + ' sudah ada di daftar.');
+  if (ada) {
+    var hasilLama = Master_dalamKunci_(function () { Repo_update_('Aset', ada.aset_id, { status: 'aktif', kunci_manual: false }); return AsetKelola_cari_(ada.aset_id); });
+    AsetKelola_segarkanHarga_();
+    return hasilLama;
+  }
+  var baris = P.jadiAset(pilih);
+  if (!baris) throw new Error('Aset tidak dikenal.');
+  if (semua.some(function (x) { return x.status !== 'dihapus' && (Master_sama_(x.simbol, baris.simbol) || Master_sama_(x.nama, baris.nama)); })) throw new Error('Sudah ada aset bernama "' + baris.nama + '".');
+  var kat = HF.catalog.katalog().filter(function (c) { return P.kunci(c) === kunciBaru; })[0]; // mis. BNB: memakai id katalognya
+  var id = kat ? kat.aset_id : HF.schema.nextId('AS', semua.map(function (x) { return x.aset_id; }));
+  baris.aset_id = id;
+  var coba = Harga_hitung_([baris], Repo_prices_().terakhir), ok = coba.semua.filter(function (r) { return r.aset_id === id && r.status === 'ok'; });
+  if (!ok.length) throw new Error('Harga ' + baris.simbol + ' belum bisa diambil dari sumbernya, jadi belum ditambahkan. Coba lagi nanti.');
+  return Master_dalamKunci_(function () {
+    baris.dibuat_pada = Master_now_();
+    Repo_append_('Aset', [baris]);
+    Repo_append_('Harga', ok);
+    return baris;
+  });
 }

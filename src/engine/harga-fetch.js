@@ -22,11 +22,13 @@
 
   function tickerYahoo(a) { return String(a.kode_sumber) + (a.mata_uang_harga === 'IDR' ? '.JK' : ''); }
 
+  /** Aset sumber kurs yang mewakili Dolar AS (kurs seluruh aplikasi). Mata uang lain punya harga sendiri per aset. */
+  function isUsd(a) { return (a.kode_sumber || 'USD') === 'USD'; }
   function kunciManual(a) { return a.kunci_manual === true || a.kunci_manual === 'TRUE' || a.kunci_manual === 'true'; }
 
   /** Apa yang harus diambil: { coingecko:[id], logam:[kode], saham:[{aset_id,ticker}], kurs:bool, kursKunci:bool }. Kurs dibutuhkan bila ada kebutuhan USD; kursKunci = Dolar AS dikunci manual. */
   function rencana(aset) {
-    var p = { coingecko: [], logam: [], saham: [], kurs: false, kursKunci: aset.some(function (a) { return a.status === 'aktif' && a.sumber_harga === 'kurs' && kunciManual(a); }) };
+    var p = { coingecko: [], logam: [], saham: [], kurs: false, kursKunci: aset.some(function (a) { return a.status === 'aktif' && a.sumber_harga === 'kurs' && isUsd(a) && kunciManual(a); }) };
     aset.filter(otomatis).forEach(function (a) {
       if (a.sumber_harga === 'coingecko') { if (p.coingecko.indexOf(a.kode_sumber) < 0) p.coingecko.push(a.kode_sumber); p.kurs = true; }
       if (a.sumber_harga === 'logam') { if (p.logam.indexOf(a.kode_sumber) < 0) p.logam.push(a.kode_sumber); p.kurs = true; }
@@ -61,6 +63,8 @@
       return n ? o : null;
     },
     kurs: function (t) { var j = json(t); return j && j.result === 'success' && j.rates ? num(j.rates.IDR) : null; },
+    /** Semua kurs dari USD (mata uang per 1 USD), untuk mata uang selain Dolar AS. */
+    rates: function (t) { var j = json(t); return j && j.result === 'success' && j.rates && typeof j.rates === 'object' ? j.rates : null; },
     saham: function (t) {
       var j = json(t), m = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta;
       return m && num(m.regularMarketPrice) ? { harga: m.regularMarketPrice, mata_uang: m.currency || 'IDR' } : null;
@@ -79,7 +83,12 @@
     if (p.kurs && !p.kursKunci) { if (kurs) ok(C.KURS_ID, kurs, 'IDR', 'kurs'); else gagal(C.KURS_ID, 'IDR', 'kurs'); }
     aset.filter(otomatis).forEach(function (a) {
       var s = a.sumber_harga, cur = a.mata_uang_harga || 'IDR';
-      if (s === 'kurs') { if (kurs) ok(a.aset_id, kurs, 'IDR', 'kurs'); else gagal(a.aset_id, 'IDR', 'kurs'); return; }
+      if (s === 'kurs') {
+        if (isUsd(a)) { if (kurs) ok(a.aset_id, kurs, 'IDR', 'kurs'); else gagal(a.aset_id, 'IDR', 'kurs'); return; }
+        var per = hasil.rates && num(hasil.rates[a.kode_sumber]); // mata uang per 1 USD; harga Rp per 1 unit = kurs USD/IDR dibagi itu
+        if (kurs && per) ok(a.aset_id, kurs / per, 'IDR', 'kurs'); else gagal(a.aset_id, 'IDR', 'kurs');
+        return;
+      }
       if (s === 'coingecko') {
         var cg = hasil.coingecko && hasil.coingecko[a.kode_sumber] && num(hasil.coingecko[a.kode_sumber].usd);
         var usd = cg || (hasil.llama && hasil.llama[a.kode_sumber] && num(hasil.llama[a.kode_sumber].usd));

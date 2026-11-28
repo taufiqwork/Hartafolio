@@ -233,7 +233,8 @@ function CFG(m) {
       ubah: (i, opt) => {
         const x = A[i], auto = x[3] === 1, manual = auto ? (opt === undefined ? (m === 'ubah-manual' ? 1 : 0) : opt) === 1 : true;
         const unit = x[2].replace('per ', '');
-        const fields = [{ l: 'Nama', v: x[0] }, { l: 'Jenis', v: x[1], kind: 'readonly' }, { l: 'Satuan', v: unit, kind: 'readonly', hint: 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.' }];
+        const TOK = ['PAXG', 'BTC', 'ETH', 'USDT', 'SOL'];
+        const fields = TOK.includes(x[0]) ? [{ l: 'Nama', v: x[0] }, { l: 'Jenis aset', v: x[1] === 'Emas' ? 'Emas' : 'Crypto', kind: 'seg', opts: ['Crypto', 'Emas', 'Perak'], hint: 'Zakat yang sudah dibayar tidak berubah. Jenis baru dipakai mulai hitungan zakat berikutnya.' }, { l: 'Setara gram per token', v: x[0] === 'PAXG' ? '31,1035' : '', hint: 'Lihat keterangan penerbit token. Dipakai untuk nisab dan haul.', when: fv => fv['Jenis aset'] !== 'Crypto' }, { l: 'Satuan', v: unit, kind: 'readonly', hint: 'Satuan tidak bisa diubah setelah aset dipakai.' }] : [{ l: 'Nama', v: x[0] }, { l: 'Jenis', v: x[1], kind: 'readonly' }, { l: 'Satuan', v: unit, kind: 'readonly', hint: 'Jenis dan satuan tidak bisa diubah setelah aset dipakai.' }];
         const price = manual
           ? [{ l: 'Harga manual per ' + unit.replace(' · US$', '') + (x[0] === 'GFI' ? ' (US$)' : ' (Rp)'), v: x[0] === 'GFI' ? (saved ? '33,10' : '32,92') : x[4].replace('Rp ', ''), hint: auto ? 'Dipakai sampai Anda menyalakan harga otomatis lagi. Harga pasar tidak dipakai selama mode manual.' : (x[0] === 'GFI' ? 'Harga otomatis GFI gagal diambil. Isi harga hari ini.' : 'Aset ini tidak punya harga otomatis. Terakhir diisi 2 Nov.') }]
           : [{ l: 'Harga otomatis sekarang', v: x[4] + ' per ' + unit, kind: 'readonly', hint: 'Pasar · diperbarui 14.32. Hanya info, tidak bisa diubah.' }];

@@ -51,7 +51,9 @@ Urutan muat engine di Apps Script mengikuti abjad nama berkas (`engine_catalog`,
 | Aset: posisi dari Sheet, pengelompokan, filter | `src/engine/aset.js` | `HF.aset.fromState`, `view(d, ui)`; data contoh `src/demo/aset-demo.js` (`?demo=default\|satu\|lokasi\|kosong\|tersimpan`) |
 | Kelola aset: tampilan (daftar, lembar Ubah/Hapus/Tambah/Tersembunyi/Saldo, form manual) | `src/web/screens/kelola.js` | `HF.kelolaScreen.mount`; memakai `HF.setupForm.render` untuk form Aset manual |
 | Kelola aset: model dan aturan (satu sumber untuk layar, tiruan dev, server) | `src/engine/kelola.js` | `HF.kelola.fromState`, `list`, `sheet`, `patch`, `cekStatus`, `cekUbah`, `stats`; data contoh `src/demo/kelola-demo.js` (`?demo=<mulai board>#/kelola`) |
-| Kelola aset: penulisan ke Sheet | `src/gas/AsetKelola.js` | `apiAsetUbah`, `apiAsetStatus`, `apiAsetKatalogTambah` (area sensitif: penulisan Repo) |
+| Kelola aset: penulisan ke Sheet | `src/gas/AsetKelola.js` | `apiAsetUbah`, `apiAsetStatus`, `apiAsetKatalogTambah`, `apiAsetCari` (Yahoo), `apiAsetCariTambah`, jenis token di `apiAsetUbah` (area sensitif: penulisan Repo) |
+| Pencarian aset: daftar populer, pencarian, pengurai, kunci pilihan, baris Aset dari pilihan (murni) | `src/engine/populer.js` | `HF.populer.daftar/cariTetap/parse/jadiAset/kunci` |
+| Pencarian aset lewat jaringan di browser (CoinGecko) dan server (Yahoo) | `src/web/js/cari-net.js` | `HF.cariNet.crypto/markets/saham` |
 | Harga otomatis: rencana, pengurai, penyusun baris Harga (murni) | `src/engine/harga-fetch.js` | `HF.hargaFetch.rencana/urls/parse/susun/saring/padatkan` |
 | Harga otomatis: pengambilan, jadwal 3 jam, saat dibuka, padatkan mingguan, menu | `src/gas/Harga.js` | `hargaOtomatis`, `apiHargaSegarkan`, `hargaPadatkan`, `hargaNyalakan`, `hargaMatikan`, `hargaSekarang`; izin `script.external_request` |
 | Cadangan Sheet mingguan (jadwal, salinan, folder, simpan 8) | `src/gas/Cadangan.js` | `cadanganNyalakan`, `cadanganMatikan`, `cadanganSekarang`, `cadanganMingguan`, `Cadangan_buat_` |

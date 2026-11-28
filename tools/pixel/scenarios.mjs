@@ -119,7 +119,8 @@ const KE = (id, mulai) => ({ id: '14-Aset' + id, board: '14-Aset' + id, query: '
 export const kelola = [KE('', 'default'), KE('-2a-Ubah-Otomatis', 'ubah-otomatis'), KE('-2b-Ubah-Manual', 'ubah-manual'), KE('-2c-Isi-Harga', 'isi-harga'), KE('-2d-Harga-Tersimpan', 'harga-tersimpan'),
   KE('-2e-Tambah-Aset', 'tambah'), KE('-2f-Tambah-Manual', 'tambah-manual'), KE('-2g-Tanya-Saldo-Awal', 'tanya-saldo'), KE('-2h-Dari-Lainnya', 'dari-lainnya'), KE('-2i-Isi-Harga-Dari-Beranda', 'isi-harga-beranda'),
   KE('-2j-Hapus-Ditolak', 'hapus-ditolak'), KE('-2k-Hapus-Konfirmasi', 'hapus-konfirmasi'), KE('-2l-Sembunyikan', 'hapus-sembunyikan'), KE('-2m-Aset-Tersembunyi', 'tersembunyi'),
-  KE('-2n-Ditampilkan-Lagi', 'ditampilkan'), KE('-2o-Tambah-Emas-Digital', 'tambah-digital'), KE('-2p-Saldo-Tersimpan', 'saldo-tersimpan')];
+  KE('-2n-Ditampilkan-Lagi', 'ditampilkan'), KE('-2o-Tambah-Emas-Digital', 'tambah-digital'), KE('-2p-Saldo-Tersimpan', 'saldo-tersimpan'),
+  KE('-2q-Tambah-Teratas', 'tambah-teratas'), KE('-2r-Cari-Crypto', 'cari-crypto'), KE('-2s-Cari-Saham', 'cari-saham'), KE('-2t-Cari-Gagal', 'cari-gagal'), KE('-2u-Ubah-Jenis-Token', 'ubah-jenis')];
 const KEF = (id, act, at, mulai, board) => ({ id: '14-Aset@' + id, board: board || '14-Aset', query: 'demo=' + (mulai || 'default'), hash: '#/kelola', frames: { act, at } });
 // Hasil Simpan harga = board 2d (harga tersimpan); board 2c sendiri tidak menggambar hasil klik (daftarnya tidak berubah).
 export const kelolaAksi = [{ id: '14-Aset@simpan-harga-hasil', board: '14-Aset-2d-Harga-Tersimpan', query: 'demo=isi-harga', hash: '#/kelola', js: KLIK('Simpan harga') + `await new Promise(r=>setTimeout(r,700));` }];
