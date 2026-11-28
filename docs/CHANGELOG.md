@@ -322,3 +322,9 @@
 - **Ubah transaksi:** bila kurs diganti, `kurs_waktu` menjadi jam perubahan itu; bila kurs tidak disentuh, sumber, tanggal, dan waktu kurs lama dipertahankan (`HF.catatCtx.kursUbah`).
 - Penyimpangan dari usulan: jendela baca 2.000 baris, bukan 3 kali jumlah aset (60 baris), karena satu pengambilan menulis sampai belasan baris dan rata-rata kurs butuh 3 hari data.
 - Terverifikasi di Google sungguhan (Hartafolio Uji, 28 Nov 14:53): CoinGecko menjawab Google dengan HTTP 429; cadangan llama mengisi 5 harga crypto berstatus ok, harga yang tidak berubah tidak ditulis ulang. Baris dari cadangan kini bersumber `llama` (sebelumnya tertulis `coingecko`).
+
+## 28 Nov 2026 · Board baru: Kelola aset, pencarian aset dan jenis token (permintaan Ticon)
+- Lima board digambar di mockup hi-fi (artifact, kolom 04 Kelola aset, 04.r sampai 04.v) dan disalin ke `reference/mockups/src`: crypto populer di Tambah aset, cari crypto, cari saham, pencarian tidak tersambung, Ubah jenis token. Ini sumber kebenaran untuk pembangunan pencarian aset; belum ada kodenya.
+- Keputusan Ticon: jenis token emas ditentukan dari daftar tetap (PAXG, XAUT, XAUM, KAU, KAG) dan bisa diubah di Ubah; jenis yang diubah berlaku untuk hitungan zakat berikutnya, zakat yang sudah dibayar tidak berubah. Daftar awal Tambah aset memakai crypto populer, bukan urutan nilai pasar mentah.
+- Boards memakai komponen yang sama dengan board 04.f (picker, seg, radio); tambahan: kotak pemberitahuan di dalam pencarian dan kolom "Setara gram per token". Contoh data (DGLD, harga) hanya ilustrasi.
+

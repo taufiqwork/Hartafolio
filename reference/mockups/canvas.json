@@ -505,6 +505,114 @@
    "x": 3290,
    "y": 7628
   },
+  "04-Catat-2t-Foto-Pilih.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.u · Catat · Lampirkan foto (pilih sumber)",
+   "w": 390,
+   "x": 3290,
+   "y": 19380
+  },
+  "04-Catat-2u-Foto-Terlampir.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.v · Catat · Foto terlampir, bisa diganti atau dihapus",
+   "w": 390,
+   "x": 3290,
+   "y": 20284
+  },
+  "04-Catat-2v-Foto-Gagal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.w · Catat · Foto tidak bisa dipakai",
+   "w": 390,
+   "x": 3290,
+   "y": 21188
+  },
+  "04-Catat-2w-Pajak-Catatan.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.x · Catat · Pajak dan catatan dibuka",
+   "w": 390,
+   "x": 3290,
+   "y": 22092
+  },
+  "04-Catat-2x-Pajak-Catatan-Terisi.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.y · Catat · Pajak dan catatan terisi",
+   "w": 390,
+   "x": 3290,
+   "y": 22996
+  },
+  "04-Catat-2y-Belum-Lengkap.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.z · Catat · Simpan ditekan, data belum lengkap",
+   "w": 390,
+   "x": 3290,
+   "y": 23900
+  },
+  "04-Catat-2z-Foto-Kamera.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.aa · Catat · Kamera terbuka (Ambil foto di komputer)",
+   "w": 390,
+   "x": 3290,
+   "y": 24804
+  },
+  "04-Catat-3a-Angka-Format.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.ab · Catat · Angka diformat otomatis saat diketik",
+   "w": 390,
+   "x": 3290,
+   "y": 25708
+  },
+  "04-Catat-3b-Angka-Titik-Desimal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.ac · Catat · Galat: titik dipakai sebagai desimal",
+   "w": 390,
+   "x": 3290,
+   "y": 26612
+  },
+  "04-Catat-3c-Angka-Format-Inggris.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.ad · Catat · Galat: format Inggris 1,234.56",
+   "w": 390,
+   "x": 3290,
+   "y": 27516
+  },
+  "04-Catat-3d-Angka-Banyak-Koma.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.ae · Catat · Galat: lebih dari satu koma",
+   "w": 390,
+   "x": 3290,
+   "y": 28420
+  },
+  "04-Catat-3e-Aset-Manual-Angka.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "05.af · Catat · Aset manual, galat penulisan angka",
+   "w": 390,
+   "x": 3290,
+   "y": 29324
+  },
   "04-Catat.dc.html": {
    "h": 844,
    "is_interactive": true,
@@ -1666,6 +1774,51 @@
    "x": 2820,
    "y": 15764
   },
+  "14-Aset-2q-Tambah-Teratas.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.r · Kelola aset · Tambah, crypto populer",
+   "w": 390,
+   "x": 2820,
+   "y": 16668
+  },
+  "14-Aset-2r-Cari-Crypto.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.s · Kelola aset · Cari crypto, harga otomatis",
+   "w": 390,
+   "x": 2820,
+   "y": 17572
+  },
+  "14-Aset-2s-Cari-Saham.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.t · Kelola aset · Cari saham, harga otomatis",
+   "w": 390,
+   "x": 2820,
+   "y": 18476
+  },
+  "14-Aset-2t-Cari-Gagal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.u · Kelola aset · Pencarian tidak tersambung",
+   "w": 390,
+   "x": 2820,
+   "y": 19380
+  },
+  "14-Aset-2u-Ubah-Jenis-Token.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "04.v · Kelola aset · Ubah jenis token (Crypto ke Emas)",
+   "w": 390,
+   "x": 2820,
+   "y": 20284
+  },
   "14-Aset.dc.html": {
    "h": 844,
    "is_interactive": true,
@@ -1916,6 +2069,46 @@
    "title": "16.a · Piutang · Utama",
    "w": 390,
    "x": 13475,
+   "y": 1300
+  },
+  "19-Simpan-2a-Gagal-Form.dc.html": {
+   "h": 844,
+   "radius": 36,
+   "title": "18.b · Simpan ke Sheet · Gagal, form dibuka lagi",
+   "w": 390,
+   "x": 14415,
+   "y": 2204
+  },
+  "19-Simpan-2b-Nama-Ganda.dc.html": {
+   "h": 844,
+   "radius": 36,
+   "title": "18.c · Simpan ke Sheet · Nama ganda",
+   "w": 390,
+   "x": 14415,
+   "y": 3108
+  },
+  "19-Simpan-2c-Gagal-Tambah-Cepat.dc.html": {
+   "h": 844,
+   "radius": 36,
+   "title": "18.d · Simpan ke Sheet · Gagal, Tambah cepat",
+   "w": 390,
+   "x": 14415,
+   "y": 4012
+  },
+  "19-Simpan-2d-Gagal-Lewati.dc.html": {
+   "h": 844,
+   "radius": 36,
+   "title": "18.e · Simpan ke Sheet · Gagal, Lewati",
+   "w": 390,
+   "x": 14415,
+   "y": 4916
+  },
+  "19-Simpan.dc.html": {
+   "h": 844,
+   "radius": 36,
+   "title": "18.a · Simpan ke Sheet · Menyimpan",
+   "w": 390,
+   "x": 14415,
    "y": 1300
   },
   "Alur-1-Sitemap.dc.html": {
@@ -2219,6 +2412,51 @@
    "w": 390,
    "x": 1880,
    "y": 13956
+  },
+  "Main-2s-Foto-Gagal.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.p · Beranda · Foto belum terunggah, tombol Coba lagi",
+   "w": 390,
+   "x": 1880,
+   "y": 18476
+  },
+  "Main-2t-Foto-Terunggah.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.q · Beranda · Foto terunggah sesudah Coba lagi",
+   "w": 390,
+   "x": 1880,
+   "y": 19380
+  },
+  "Main-2u-Data-Nyata.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.t · Beranda · Data nyata, bulan pertama (tanpa grafik, tanpa \"dari bulan lalu\", tanpa kartu Harga)",
+   "w": 390,
+   "x": 1880,
+   "y": 20284
+  },
+  "Main-2v-Data-Nyata-Lonceng.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.u · Beranda · Data nyata, lonceng: harga dari transaksi terakhir dan harga belum diisi",
+   "w": 390,
+   "x": 1880,
+   "y": 21188
+  },
+  "Main-2w-Data-Nyata-Tanpa-Kurs.dc.html": {
+   "h": 844,
+   "is_interactive": true,
+   "radius": 36,
+   "title": "02.v · Beranda · Data nyata, kurs dolar belum ada ($ —)",
+   "w": 390,
+   "x": 1880,
+   "y": 22092
   },
   "Main.dc.html": {
    "h": 844,
@@ -2640,7 +2878,7 @@
    "copiedAt": "2026-11-06T15:00:00Z",
    "namespace": "hartafolio",
    "title": "Hartafolio · Design System",
-   "version": "1795077740-69e1"
+   "version": "1795257698-d068"
   }
  ],
  "launch": {
@@ -2910,6 +3148,11 @@
   "17-Google-Sheet-2f-Terputus.dc.html",
   "17-Google-Sheet-2g-Hubungkan-Ulang.dc.html",
   "17-Google-Sheet-2h-Unduh-Data-Lengkap.dc.html",
+  "19-Simpan.dc.html",
+  "19-Simpan-2a-Gagal-Form.dc.html",
+  "19-Simpan-2b-Nama-Ganda.dc.html",
+  "19-Simpan-2c-Gagal-Tambah-Cepat.dc.html",
+  "19-Simpan-2d-Gagal-Lewati.dc.html",
   "Logo-Hartafolio.dc.html",
   "Logo-Bentuk-Unik.dc.html",
   "Alur-1-Sitemap.dc.html",
@@ -2976,7 +3219,29 @@
   "Arsip-Beranda-Lama.dc.html",
   "Arsip-Alasan-Beranda-Lama.dc.html",
   "Arsip-WD-Setup-4-Segmented.dc.html",
-  "Arsip-Alasan-WD-Setup-4.dc.html"
+  "Arsip-Alasan-WD-Setup-4.dc.html",
+  "04-Catat-2t-Foto-Pilih.dc.html",
+  "04-Catat-2u-Foto-Terlampir.dc.html",
+  "04-Catat-2v-Foto-Gagal.dc.html",
+  "04-Catat-2w-Pajak-Catatan.dc.html",
+  "04-Catat-2x-Pajak-Catatan-Terisi.dc.html",
+  "Main-2s-Foto-Gagal.dc.html",
+  "Main-2t-Foto-Terunggah.dc.html",
+  "Main-2u-Data-Nyata.dc.html",
+  "Main-2v-Data-Nyata-Lonceng.dc.html",
+  "Main-2w-Data-Nyata-Tanpa-Kurs.dc.html",
+  "04-Catat-2y-Belum-Lengkap.dc.html",
+  "04-Catat-2z-Foto-Kamera.dc.html",
+  "04-Catat-3a-Angka-Format.dc.html",
+  "04-Catat-3b-Angka-Titik-Desimal.dc.html",
+  "04-Catat-3c-Angka-Format-Inggris.dc.html",
+  "04-Catat-3d-Angka-Banyak-Koma.dc.html",
+  "04-Catat-3e-Aset-Manual-Angka.dc.html",
+  "14-Aset-2q-Tambah-Teratas.dc.html",
+  "14-Aset-2r-Cari-Crypto.dc.html",
+  "14-Aset-2s-Cari-Saham.dc.html",
+  "14-Aset-2t-Cari-Gagal.dc.html",
+  "14-Aset-2u-Ubah-Jenis-Token.dc.html"
  ],
  "pages": [
   {

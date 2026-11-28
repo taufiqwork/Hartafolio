@@ -84,6 +84,11 @@ Ukuran: phone 390x844, desktop 1440x900, tablet 1024x768, board Alur/Arsip lebar
 | 04.o · Kelola aset · Aset ditampilkan lagi | `png/14-Aset-2n-Ditampilkan-Lagi.png` | `src/14-Aset-2n-Ditampilkan-Lagi.dc.html` |
 | 04.p · Kelola aset · Emas digital, setara gram | `png/14-Aset-2o-Tambah-Emas-Digital.png` | `src/14-Aset-2o-Tambah-Emas-Digital.dc.html` |
 | 04.q · Kelola aset · Saldo awal tersimpan (toast) | `png/14-Aset-2p-Saldo-Tersimpan.png` | `src/14-Aset-2p-Saldo-Tersimpan.dc.html` |
+| 04.r · Kelola aset · Tambah, crypto populer | `src/14-Aset-2q-Tambah-Teratas.dc.html` (belum ada PNG) | `src/14-Aset-2q-Tambah-Teratas.dc.html` |
+| 04.s · Kelola aset · Cari crypto, harga otomatis | `src/14-Aset-2r-Cari-Crypto.dc.html` (belum ada PNG) | `src/14-Aset-2r-Cari-Crypto.dc.html` |
+| 04.t · Kelola aset · Cari saham, harga otomatis | `src/14-Aset-2s-Cari-Saham.dc.html` (belum ada PNG) | `src/14-Aset-2s-Cari-Saham.dc.html` |
+| 04.u · Kelola aset · Pencarian tidak tersambung | `src/14-Aset-2t-Cari-Gagal.dc.html` (belum ada PNG) | `src/14-Aset-2t-Cari-Gagal.dc.html` |
+| 04.v · Kelola aset · Ubah jenis token (Crypto ke Emas) | `src/14-Aset-2u-Ubah-Jenis-Token.dc.html` (belum ada PNG) | `src/14-Aset-2u-Ubah-Jenis-Token.dc.html` |
 | 05.a · Catat · Beli, dibayar USDT | `png/04-Catat.png` | `src/04-Catat.dc.html` |
 | 05.b · Catat · Beli, dibayar dari luar Hartafolio | `png/04-Catat-2m-Beli-Dari-Luar.png` | `src/04-Catat-2m-Beli-Dari-Luar.dc.html` |
 | 05.c · Catat · Pilih alat bayar lain (sheet) | `png/04-Catat-2o-Pilih-Alat-Bayar.png` | `src/04-Catat-2o-Pilih-Alat-Bayar.dc.html` |
